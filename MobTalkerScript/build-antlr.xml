@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<project name="Antlr_v4_Custom" default="build">
+
+	<property name="src" value="../../src/${ant.project.name}" />
+	<property name="bin" value="../../bin/${ant.project.name}" />
+	<property name="lib" value="../../lib/" />
+
+	<target name="build">
+
+		<delete includeemptydirs="true">
+			<fileset dir="${bin}" erroronmissingdir="false" />
+		</delete>
+		<mkdir dir="${bin}" />
+
+		<javac srcdir="${src}" destdir="${bin}" source="6" target="6" includeantruntime="false" />
+
+		<!-- Build the jar -->
+		<zip destfile="${lib}/Antlr4-Custom.jar">
+			<fileset dir="${bin}" />
+		</zip>
+		
+	</target>
+
+</project>

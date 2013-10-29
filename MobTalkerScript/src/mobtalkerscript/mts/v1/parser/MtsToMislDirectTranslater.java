@@ -16,7 +16,6 @@ import mobtalkerscript.mts.v1.parser.MtsParser.CommandMenuOptionContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandSayContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandSceneContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandShowContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.ConstantAssignmentContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.FieldDefExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.FuncDeclContext;
@@ -25,10 +24,12 @@ import mobtalkerscript.mts.v1.parser.MtsParser.IfElseBlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.IndexedFieldContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.JumpContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LabelDeclContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.LiteralContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LiteralExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LocalVariableAssignmentContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LogicalExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.NamedFieldContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.NumericForContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.RepeatBlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ReturnStmtContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableAccessContext;
@@ -399,36 +400,35 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     // Variables
     
     @Override
-    public Void visitConstantAssignment(ConstantAssignmentContext ctx)
-    {
-        checkLineNumber(ctx);
-        
-        String constantStr = ctx.literalExpr().getText();
-        MislValue constant = parseConstant(constantStr);
-        
-        String varName = ctx.variableExpr().Identifier.getText();
-        
-        addInstr(new InstrStoreC(varName, constant));
-        
-        return null;
-    }
-    
-    @Override
     public Void visitVariableAssignment(VariableAssignmentContext ctx)
     {
-        visitChildren(ctx);
-        
-        checkLineNumber(ctx);
-        
-        String varName = ctx.variableExpr().Identifier.getText();
-        
-        if (_locals.contains(varName))
+        if (ctx.expr() instanceof LiteralContext)
         {
-            addInstr(new InstrStoreL(varName));
+            checkLineNumber(ctx);
+            
+            String constantStr = ctx.expr().getText();
+            MislValue constant = parseConstant(constantStr);
+            
+            String varName = ctx.variableExpr().Identifier.getText();
+            
+            addInstr(new InstrStoreC(varName, constant));
         }
         else
         {
-            addInstr(new InstrStore(varName));
+            visitChildren(ctx);
+            
+            checkLineNumber(ctx);
+            
+            String varName = ctx.variableExpr().Identifier.getText();
+            
+            if (_locals.contains(varName))
+            {
+                addInstr(new InstrStoreL(varName));
+            }
+            else
+            {
+                addInstr(new InstrStore(varName));
+            }
         }
         
         return null;
@@ -720,6 +720,12 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
         addInstr(cont);
         
         return null;
+    }
+    
+    @Override
+    public Void visitNumericFor(NumericForContext ctx)
+    {
+        throw new UnsupportedOperationException("Numeric for NYI");
     }
     
     // ========================================

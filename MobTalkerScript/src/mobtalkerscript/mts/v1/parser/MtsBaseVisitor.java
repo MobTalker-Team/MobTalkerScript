@@ -1,4 +1,4 @@
-// Generated from C:\Users\Tobsen\Desktop\Minecraft\MobTalker2\1.6.2\src\MobTalkerScript\mobtalkerscript\mts\v1\parser\Mts.g4 by ANTLR 4.1
+// Generated from C:\Users\Tobsen\Desktop\Minecraft\MobTalker2\MobTalkerScript\MobTalkerScript\src\mobtalkerscript\mts\v1\parser\Mts.g4 by ANTLR 4.1
 package mobtalkerscript.mts.v1.parser;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
@@ -43,14 +43,6 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitCommandSay(@NotNull MtsParser.CommandSayContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
-	@Override public T visitConstantAssignment(@NotNull MtsParser.ConstantAssignmentContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -266,6 +258,14 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitNumericFor(@NotNull MtsParser.NumericForContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitUnaryExpr(@NotNull MtsParser.UnaryExprContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -347,6 +347,14 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitWhileBlock(@NotNull MtsParser.WhileBlockContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitForLoopInitializer(@NotNull MtsParser.ForLoopInitializerContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

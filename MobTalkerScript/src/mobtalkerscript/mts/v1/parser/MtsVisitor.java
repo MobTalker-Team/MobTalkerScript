@@ -1,4 +1,4 @@
-// Generated from C:\Users\Tobsen\Desktop\Minecraft\MobTalker2\1.6.2\src\MobTalkerScript\mobtalkerscript\mts\v1\parser\Mts.g4 by ANTLR 4.1
+// Generated from C:\Users\Tobsen\Desktop\Minecraft\MobTalker2\MobTalkerScript\MobTalkerScript\src\mobtalkerscript\mts\v1\parser\Mts.g4 by ANTLR 4.1
 package mobtalkerscript.mts.v1.parser;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
@@ -38,13 +38,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCommandSay(@NotNull MtsParser.CommandSayContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#ConstantAssignment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConstantAssignment(@NotNull MtsParser.ConstantAssignmentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#Statement}.
@@ -229,6 +222,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitCommandScene(@NotNull MtsParser.CommandSceneContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#NumericFor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumericFor(@NotNull MtsParser.NumericForContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#UnaryExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -304,6 +304,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWhileBlock(@NotNull MtsParser.WhileBlockContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#forLoopInitializer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForLoopInitializer(@NotNull MtsParser.ForLoopInitializerContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#IfElseBlock}.

@@ -1,4 +1,3 @@
-
 grammar Mts;
 
 /* Lexer Rules */
@@ -36,6 +35,8 @@ Break : 'break' ;
 
 Repeat : 'repeat' ;
 Until : 'until' ;
+
+For : 'for' ;
 
 CommandSay : 'say' ;
 
@@ -101,7 +102,7 @@ fragment Digit : [0-9] ;
 /* Parser Rules */
 script : block? ( labelDecl | funcDecl )* EOF ;
 
-block : stmt* ( returnStmt )? ;
+block : ( stmt | returnStmt )+ ;
 
 stmt  : 'break'
         # Break
@@ -109,20 +110,30 @@ stmt  : 'break'
         # Jump
       | 'call' Identifier=Name
         # Call
-      | 'do' block 'end'
-        # DoBlock
-      | 'while' expr 'do' block 'end'
-        # WhileBlock
-      | 'repeat' block 'until' expr ';'
-        # RepeatBlock
-      | ( 'if' Condition+=expr 'then' ThenBlock+=block )
-        ( 'else if' Condition+=expr 'then' ThenBlock+=block )+
-        ( 'else' ElseBlock=block )?
+      | 'do' 
+            block?
         'end'
-        # IfElseBlock
-      | 'if' Condition+=expr 'then' ThenBlock+=block 'else' ElseBlock=block 'end'
-        # IfElseBlock
-      | 'if' Condition+=expr 'then' ThenBlock+=block 'end'
+        # DoBlock
+      | 'while' expr 'do' 
+            block?
+        'end'
+        # WhileBlock
+      | ( ( 'for' Initializer=forLoopInitializer ';' Condition=expr ( ';' Step=expr )? 'do' )
+        | ( 'for' '(' Initializer=forLoopInitializer ';' Condition=expr ( ';' Step=expr )? ')' 'do' ) )
+            block?
+        'end'
+        # NumericFor
+      | 'repeat' 
+            block?
+        'until' expr ';'
+        # RepeatBlock
+      | ( 'if' Condition+=expr 'then' 
+              ThenBlock+=block? )
+        ( 'else if' Condition+=expr 'then' 
+              ThenBlock+=block? )*
+        ( 'else' 
+              ElseBlock=block? )?
+        'end'
         # IfElseBlock
       | commandStmt
         # Command
@@ -180,8 +191,6 @@ variableExpr : VariableKey Identifier=Name ;
 
 assignmentExpr : tableExpr '=' expr
                  # TableAssignment
-               | variableExpr '=' literalExpr
-                 # ConstantAssignment
                | 'local' variableExpr '=' expr
                  # LocalVariableAssignment
                | variableExpr '=' expr
@@ -219,7 +228,9 @@ commandStmt : 'say' Character=expr? Text=expr ';'
               # CommandScene
             | 'hide' Group=expr? ';'
               # CommandHide
-            | 'menu' Caption=expr? commandMenuOption+ 'end'
+            | 'menu' Caption=expr? 
+                  commandMenuOption+
+              'end'
               # CommandMenu
             ;
 
@@ -231,6 +242,14 @@ exprStmt : callExpr
 
 returnStmt : 'return' expr? ';' ;
 
-funcDecl : 'function' Identifier=Name '(' ( Params+=variableExpr ( ',' Params+=variableExpr )* )? ')' block? 'end' ;
+funcDecl : 'function' Identifier=Name '(' ( Params+=variableExpr ( ',' Params+=variableExpr )* )? ')' 
+               block? 
+           'end' 
+         ;
 
-labelDecl : 'label' Identifier=Name block 'end' ;
+labelDecl : 'label' Identifier=Name 
+               block?
+            'end' 
+          ;
+
+forLoopInitializer : variableExpr '=' expr ;

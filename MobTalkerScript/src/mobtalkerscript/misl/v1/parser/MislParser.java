@@ -213,11 +213,11 @@ public class MislParser
             }
             else if (instrToken.equals("if"))
             {
-                MislInstruction lcont = new InstrLabel("continue");
+                InstrLabel lcont = new InstrLabel("continue");
                 
                 for (;;)
                 {
-                    MislInstruction lelse = new InstrLabel("else");
+                    InstrLabel lelse = new InstrLabel("else");
                     
                     MislInstructionList ifCond = parseInstructions(lines);
                     result.add(ifCond);
@@ -241,7 +241,7 @@ public class MislParser
             }
             else if (instrToken.equals("jump"))
             {
-                MislInstruction target = getNamedLabel(argToken);
+                InstrLabel target = getNamedLabel(argToken);
                 result.add(new InstrJump(target, false, true));
             }
             else if (instrToken.equals("label"))
@@ -352,9 +352,9 @@ public class MislParser
             }
             else if (instrToken.equals("while"))
             {
-                MislInstruction lwhile = new InstrLabel("while");
-                MislInstruction ldo = new InstrLabel("do");
-                MislInstruction lcont = new InstrLabel("continue");
+                InstrLabel lwhile = new InstrLabel("while");
+                InstrLabel ldo = new InstrLabel("do");
+                InstrLabel lcont = new InstrLabel("continue");
                 
                 result.add(lwhile);
                 

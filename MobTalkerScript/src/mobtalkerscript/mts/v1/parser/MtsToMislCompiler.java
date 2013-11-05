@@ -1,7 +1,6 @@
 package mobtalkerscript.mts.v1.parser;
 
 import java.util.*;
-import java.util.regex.*;
 
 import mobtalkerscript.*;
 import mobtalkerscript.misl.v1.*;
@@ -9,6 +8,7 @@ import mobtalkerscript.misl.v1.instruction.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.mts.v1.parser.MtsParser.BinaryExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.BlockContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.BooleanLiteralContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CallContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandHideContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandMenuContext;
@@ -24,14 +24,15 @@ import mobtalkerscript.mts.v1.parser.MtsParser.IfElseBlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.IndexedFieldContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.JumpContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LabelDeclContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.LiteralContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.LiteralExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LocalVariableAssignmentContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LogicalExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.NamedFieldContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.NullLiteralContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.NumberLiteralContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.NumericForContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.RepeatBlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ReturnStmtContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.StringLiteralContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableAccessContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableAssignmentContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableCallContext;
@@ -49,7 +50,7 @@ import org.antlr.v4.runtime.*;
 
 import com.google.common.collect.*;
 
-public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
+public class MtsToMislCompiler extends MtsBaseVisitor<Void>
 {
     private final ArrayList<MislInstruction> _instructionList;
     private final MislInstructionList _instructions;
@@ -57,7 +58,7 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     
     // ========================================
     
-    public MtsToMislDirectTranslater(MtsParser parser)
+    public MtsToMislCompiler(MtsParser parser)
     {
         _instructionList = Lists.newArrayListWithExpectedSize(100);
         _instructions = new MislInstructionList();
@@ -228,14 +229,44 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     // Literal
     
     @Override
-    public Void visitLiteralExpr(LiteralExprContext ctx)
+    public Void visitStringLiteral(StringLiteralContext ctx)
     {
         checkLineNumber(ctx);
         
-        String constantStr = ctx.Literal != null ? ctx.Literal.getText() : "nil";
-        MislValue constant = parseConstant(constantStr);
+        String literal = ctx.Literal.getText();
+        addInstr(new InstrPush(literal.substring(1, literal.length() - 1)));
         
-        addInstr(new InstrPush(constant));
+        return null;
+    }
+    
+    @Override
+    public Void visitNumberLiteral(NumberLiteralContext ctx)
+    {
+        checkLineNumber(ctx);
+        
+        int literal = Integer.parseInt(ctx.Literal.getText());
+        addInstr(new InstrPush(literal));
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitBooleanLiteral(BooleanLiteralContext ctx)
+    {
+        checkLineNumber(ctx);
+        
+        boolean literal = Boolean.parseBoolean(ctx.Literal.getText());
+        addInstr(new InstrPush(literal));
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitNullLiteral(NullLiteralContext ctx)
+    {
+        checkLineNumber(ctx);
+        
+        addInstr(new InstrPush(MislValue.NIL));
         
         return null;
     }
@@ -402,33 +433,19 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     @Override
     public Void visitVariableAssignment(VariableAssignmentContext ctx)
     {
-        if (ctx.expr() instanceof LiteralContext)
+        checkLineNumber(ctx);
+        
+        visit(ctx.expr());
+        
+        String varName = ctx.variableExpr().Identifier.getText();
+        
+        if (_locals.contains(varName))
         {
-            checkLineNumber(ctx);
-            
-            String constantStr = ctx.expr().getText();
-            MislValue constant = parseConstant(constantStr);
-            
-            String varName = ctx.variableExpr().Identifier.getText();
-            
-            addInstr(new InstrStoreC(varName, constant));
+            addInstr(new InstrStoreL(varName));
         }
         else
         {
-            visitChildren(ctx);
-            
-            checkLineNumber(ctx);
-            
-            String varName = ctx.variableExpr().Identifier.getText();
-            
-            if (_locals.contains(varName))
-            {
-                addInstr(new InstrStoreL(varName));
-            }
-            else
-            {
-                addInstr(new InstrStore(varName));
-            }
+            addInstr(new InstrStore(varName));
         }
         
         return null;
@@ -437,9 +454,9 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     @Override
     public Void visitLocalVariableAssignment(LocalVariableAssignmentContext ctx)
     {
-        visitChildren(ctx);
-        
         checkLineNumber(ctx);
+        
+        visit(ctx.expr());
         
         String varName = ctx.variableExpr().Identifier.getText();
         
@@ -689,15 +706,22 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     {
         checkLineNumber(ctx);
         
-        InstrLabel cont = new InstrLabel("continue");
+        addInstr(new InstrPushScope());
+        
+        InstrLabel loop = new InstrLabel("while");
+        addInstr(loop);
         
         visit(ctx.expr());
         
+        InstrLabel cont = new InstrLabel("continue");
         addInstr(new InstrJumpIfNot(cont));
         
         visit(ctx.block());
         
+        addInstr(new InstrJump(loop, false, false));
         addInstr(cont);
+        
+        addInstr(new InstrPopScope());
         
         return null;
     }
@@ -707,17 +731,18 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     {
         checkLineNumber(ctx);
         
+        addInstr(new InstrPushScope());
+        
+        InstrLabel loop = new InstrLabel("repeat");
+        addInstr(loop);
+        
         visit(ctx.block());
-        
-        InstrLabel cont = new InstrLabel("continue");
-        
         visit(ctx.expr());
         
-        addInstr(new InstrJumpIfNot(cont));
+        addInstr(new InstrNot());
+        addInstr(new InstrJumpIfNot(loop));
         
-        visit(ctx.block());
-        
-        addInstr(cont);
+        addInstr(new InstrPopScope());
         
         return null;
     }
@@ -725,7 +750,39 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
     @Override
     public Void visitNumericFor(NumericForContext ctx)
     {
-        throw new UnsupportedOperationException("Numeric for NYI");
+        checkLineNumber(ctx);
+        
+        addInstr(new InstrPushScope());
+        
+        visit(ctx.Initializer.expr());
+        String loopVarName = ctx.Initializer.variableExpr().getText();
+        addInstr(new InstrStoreL(loopVarName));
+        
+        InstrLabel loop = new InstrLabel("for");
+        addInstr(loop);
+        
+        visit(ctx.Condition);
+        
+        InstrLabel cont = new InstrLabel("continue");
+        addInstr(new InstrJumpIfNot(cont));
+        
+        visit(ctx.block());
+        
+        if (ctx.Step != null)
+        {
+            visit(ctx.Step);
+        }
+        else
+        {
+            addInstr(new InstrIncr(loopVarName));
+        }
+        
+        addInstr(new InstrJump(loop, false, false));
+        addInstr(cont);
+        
+        addInstr(new InstrPopScope());
+        
+        return null;
     }
     
     // ========================================
@@ -869,46 +926,5 @@ public class MtsToMislDirectTranslater extends MtsBaseVisitor<Void>
         addInstr(cont);
         
         return null;
-    }
-    
-    // ========================================
-    
-    private static final Pattern _booleanPattern = Pattern.compile("^(true|false)$"); // true, false
-    private static final Pattern _numberPattern = Pattern.compile("^([+-]?\\d+(:?\\.\\d+)?)$"); // 0, 0.0
-    private static final Pattern _stringPattern = Pattern.compile("^\"(.*?)\"$"); // "abc"
-    
-    private static MislValue parseConstant(String token)
-    {
-        MislValue result;
-        Matcher matcher;
-        if (token == null)
-        {
-            throw new ScriptParserException("Invalid constant: NullPointer");
-        }
-        else if ((matcher = _booleanPattern.matcher(token)).matches())
-        {
-            boolean bool = Boolean.valueOf(matcher.group(1));
-            result = MislValue.valueOf(bool);
-        }
-        else if ((matcher = _numberPattern.matcher(token)).matches())
-        {
-            double number = Double.valueOf(matcher.group(1));
-            result = MislValue.valueOf(number);
-        }
-        else if ((matcher = _stringPattern.matcher(token)).matches())
-        {
-            String str = matcher.group(1);
-            result = MislValue.valueOf(str);
-        }
-        else if ("nil".equals(token))
-        {
-            result = MislValue.NIL;
-        }
-        else
-        {
-            throw new ScriptParserException("Invalid constant: %s", token);
-        }
-        
-        return result;
     }
 }

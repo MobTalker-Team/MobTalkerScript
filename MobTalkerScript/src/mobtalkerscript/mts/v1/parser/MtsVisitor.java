@@ -33,6 +33,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBlankStatement(@NotNull MtsParser.BlankStatementContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#NullLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNullLiteral(@NotNull MtsParser.NullLiteralContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#CommandSay}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -52,13 +59,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLabelDecl(@NotNull MtsParser.LabelDeclContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#literalExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLiteralExpr(@NotNull MtsParser.LiteralExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#returnStmt}.
@@ -87,6 +87,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlock(@NotNull MtsParser.BlockContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#NumberLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumberLiteral(@NotNull MtsParser.NumberLiteralContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#BinaryExpr}.
@@ -178,6 +185,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIndexedField(@NotNull MtsParser.IndexedFieldContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#StringLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLiteral(@NotNull MtsParser.StringLiteralContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#CommandMenu}.
@@ -325,4 +339,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpressionField(@NotNull MtsParser.ExpressionFieldContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#BooleanLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBooleanLiteral(@NotNull MtsParser.BooleanLiteralContext ctx);
 }

@@ -933,18 +933,52 @@ public class MtsParser extends Parser {
 	}
 
 	public static class LiteralExprContext extends ParserRuleContext {
-		public Token Literal;
-		public TerminalNode String() { return getToken(MtsParser.String, 0); }
-		public TerminalNode Number() { return getToken(MtsParser.Number, 0); }
-		public TerminalNode Null() { return getToken(MtsParser.Null, 0); }
-		public TerminalNode Boolean() { return getToken(MtsParser.Boolean, 0); }
 		public LiteralExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_literalExpr; }
+	 
+		public LiteralExprContext() { }
+		public void copyFrom(LiteralExprContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class StringLiteralContext extends LiteralExprContext {
+		public Token Literal;
+		public TerminalNode String() { return getToken(MtsParser.String, 0); }
+		public StringLiteralContext(LiteralExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MtsVisitor ) return ((MtsVisitor<? extends T>)visitor).visitLiteralExpr(this);
+			if ( visitor instanceof MtsVisitor ) return ((MtsVisitor<? extends T>)visitor).visitStringLiteral(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class NullLiteralContext extends LiteralExprContext {
+		public TerminalNode Null() { return getToken(MtsParser.Null, 0); }
+		public NullLiteralContext(LiteralExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MtsVisitor ) return ((MtsVisitor<? extends T>)visitor).visitNullLiteral(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class NumberLiteralContext extends LiteralExprContext {
+		public Token Literal;
+		public TerminalNode Number() { return getToken(MtsParser.Number, 0); }
+		public NumberLiteralContext(LiteralExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MtsVisitor ) return ((MtsVisitor<? extends T>)visitor).visitNumberLiteral(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BooleanLiteralContext extends LiteralExprContext {
+		public Token Literal;
+		public TerminalNode Boolean() { return getToken(MtsParser.Boolean, 0); }
+		public BooleanLiteralContext(LiteralExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MtsVisitor ) return ((MtsVisitor<? extends T>)visitor).visitBooleanLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -956,24 +990,28 @@ public class MtsParser extends Parser {
 			setState(188);
 			switch (_input.LA(1)) {
 			case Number:
+				_localctx = new NumberLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(184); ((LiteralExprContext)_localctx).Literal = match(Number);
+				setState(184); ((NumberLiteralContext)_localctx).Literal = match(Number);
 				}
 				break;
 			case Boolean:
+				_localctx = new BooleanLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(185); ((LiteralExprContext)_localctx).Literal = match(Boolean);
+				setState(185); ((BooleanLiteralContext)_localctx).Literal = match(Boolean);
 				}
 				break;
 			case String:
+				_localctx = new StringLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(186); ((LiteralExprContext)_localctx).Literal = match(String);
+				setState(186); ((StringLiteralContext)_localctx).Literal = match(String);
 				}
 				break;
 			case Null:
+				_localctx = new NullLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(187); match(Null);

@@ -6,13 +6,13 @@ import mobtalkerscript.util.*;
 public class InstrJump extends MislInstruction
 {
     
-    private final MislInstruction _label;
+    private final InstrLabel _label;
     private final boolean _popFrame;
     private final boolean _popScope;
     
     // ========================================
     
-    public InstrJump(MislInstruction label, boolean popFrame, boolean popScope)
+    public InstrJump(InstrLabel label, boolean popFrame, boolean popScope)
     {
         if (label == null)
         {
@@ -54,7 +54,7 @@ public class InstrJump extends MislInstruction
     @Override
     public String toString()
     {
-        return "jump";
+        return "jump " + _label.getName();
     }
     
 }

@@ -9,11 +9,11 @@ public class InstrJumpIfNot extends AbstractStackInstruction
 {
     
     private MislInstruction _if;
-    private final MislInstruction _else;
+    private final InstrLabel _else;
     
     // ========================================
     
-    public InstrJumpIfNot(MislInstruction nextElse)
+    public InstrJumpIfNot(InstrLabel nextElse)
     {
         _else = nextElse;
     }
@@ -49,7 +49,7 @@ public class InstrJumpIfNot extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "jmpn";
+        return "jumpn " + _else.getName();
     }
     
 }

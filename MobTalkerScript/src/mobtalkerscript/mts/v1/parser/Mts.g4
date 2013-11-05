@@ -172,9 +172,13 @@ expr : Operator=( '-' | 'not' | '#' ) expr
      ;
 
 literalExpr : Literal=Number
+              # NumberLiteral
             | Literal=Boolean
+              # BooleanLiteral
             | Literal=String
+              # StringLiteral
             | Null
+              # NullLiteral
             ;
 
 tableCtorExpr : '{' ( fieldDefExpr ( ',' fieldDefExpr )* ','? )? '}' ;

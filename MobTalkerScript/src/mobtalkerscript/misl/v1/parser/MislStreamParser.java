@@ -199,11 +199,11 @@ public class MislStreamParser
         }
         else if (token.Instruction.equals("if"))
         {
-            MislInstruction lcont = new InstrLabel("continue");
+            InstrLabel lcont = new InstrLabel("continue");
             
             for (;;)
             {
-                MislInstruction lelse = new InstrLabel("else");
+                InstrLabel lelse = new InstrLabel("else");
                 
                 // if condition
                 parseInstructions();
@@ -348,9 +348,9 @@ public class MislStreamParser
         }
         else if (token.Instruction.equals("while"))
         {
-            MislInstruction lwhile = new InstrLabel("while");
-            MislInstruction ldo = new InstrLabel("do");
-            MislInstruction lcont = new InstrLabel("continue");
+            InstrLabel lwhile = new InstrLabel("while");
+            InstrLabel ldo = new InstrLabel("do");
+            InstrLabel lcont = new InstrLabel("continue");
             
             _instrList.add(lwhile);
             

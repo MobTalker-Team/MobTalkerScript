@@ -258,6 +258,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class RepeatBlockContext extends StmtContext {
+		public BlockContext LoopBlock;
+		public ExprContext Condition;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -298,6 +300,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class WhileBlockContext extends StmtContext {
+		public ExprContext Condition;
+		public BlockContext LoopBlock;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -326,6 +330,7 @@ public class MtsParser extends Parser {
 		public ForLoopInitializerContext Initializer;
 		public ExprContext Condition;
 		public ExprContext Step;
+		public BlockContext LoopBlock;
 		public ForLoopInitializerContext forLoopInitializer() {
 			return getRuleContext(ForLoopInitializerContext.class,0);
 		}
@@ -356,6 +361,7 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class DoBlockContext extends StmtContext {
+		public BlockContext Block;
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -431,7 +437,7 @@ public class MtsParser extends Parser {
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << StmtCloser) | (1L << LocalVar) | (1L << Jump) | (1L << Call) | (1L << Return) | (1L << Do) | (1L << If) | (1L << While) | (1L << Break) | (1L << Repeat) | (1L << For) | (1L << CommandSay) | (1L << CommandShow) | (1L << CommandScene) | (1L << CommandHide) | (1L << CommandMenu) | (1L << VariableKey) | (1L << Name))) != 0)) {
 					{
-					setState(66); block();
+					setState(66); ((DoBlockContext)_localctx).Block = block();
 					}
 				}
 
@@ -443,13 +449,13 @@ public class MtsParser extends Parser {
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(70); match(While);
-				setState(71); expr(0);
+				setState(71); ((WhileBlockContext)_localctx).Condition = expr(0);
 				setState(72); match(Do);
 				setState(74);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << StmtCloser) | (1L << LocalVar) | (1L << Jump) | (1L << Call) | (1L << Return) | (1L << Do) | (1L << If) | (1L << While) | (1L << Break) | (1L << Repeat) | (1L << For) | (1L << CommandSay) | (1L << CommandShow) | (1L << CommandScene) | (1L << CommandHide) | (1L << CommandMenu) | (1L << VariableKey) | (1L << Name))) != 0)) {
 					{
-					setState(73); block();
+					setState(73); ((WhileBlockContext)_localctx).LoopBlock = block();
 					}
 				}
 
@@ -510,7 +516,7 @@ public class MtsParser extends Parser {
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << StmtCloser) | (1L << LocalVar) | (1L << Jump) | (1L << Call) | (1L << Return) | (1L << Do) | (1L << If) | (1L << While) | (1L << Break) | (1L << Repeat) | (1L << For) | (1L << CommandSay) | (1L << CommandShow) | (1L << CommandScene) | (1L << CommandHide) | (1L << CommandMenu) | (1L << VariableKey) | (1L << Name))) != 0)) {
 					{
-					setState(102); block();
+					setState(102); ((NumericForContext)_localctx).LoopBlock = block();
 					}
 				}
 
@@ -526,12 +532,12 @@ public class MtsParser extends Parser {
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << StmtCloser) | (1L << LocalVar) | (1L << Jump) | (1L << Call) | (1L << Return) | (1L << Do) | (1L << If) | (1L << While) | (1L << Break) | (1L << Repeat) | (1L << For) | (1L << CommandSay) | (1L << CommandShow) | (1L << CommandScene) | (1L << CommandHide) | (1L << CommandMenu) | (1L << VariableKey) | (1L << Name))) != 0)) {
 					{
-					setState(108); block();
+					setState(108); ((RepeatBlockContext)_localctx).LoopBlock = block();
 					}
 				}
 
 				setState(111); match(Until);
-				setState(112); expr(0);
+				setState(112); ((RepeatBlockContext)_localctx).Condition = expr(0);
 				setState(113); match(StmtCloser);
 				}
 				break;
@@ -697,6 +703,7 @@ public class MtsParser extends Parser {
 	}
 	public static class UnaryExprContext extends ExprContext {
 		public Token Operator;
+		public ExprContext Right;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -752,7 +759,7 @@ public class MtsParser extends Parser {
 					((UnaryExprContext)_localctx).Operator = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(149); expr(13);
+				setState(149); ((UnaryExprContext)_localctx).Right = expr(13);
 				}
 				break;
 
@@ -1033,6 +1040,8 @@ public class MtsParser extends Parser {
 	}
 
 	public static class TableCtorExprContext extends ParserRuleContext {
+		public FieldDefExprContext fieldDefExpr;
+		public List<FieldDefExprContext> FieldExprs = new ArrayList<FieldDefExprContext>();
 		public FieldDefExprContext fieldDefExpr(int i) {
 			return getRuleContext(FieldDefExprContext.class,i);
 		}
@@ -1063,7 +1072,8 @@ public class MtsParser extends Parser {
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Null) | (1L << Boolean) | (1L << LocalVar) | (1L << ExprBraceOpen) | (1L << FieldBraceOpen) | (1L << TableBraceOpen) | (1L << MinusOp) | (1L << UnaryNotOp) | (1L << UnarySizeOp) | (1L << String) | (1L << VariableKey) | (1L << Name) | (1L << Number))) != 0)) {
 				{
-				setState(191); fieldDefExpr();
+				setState(191); ((TableCtorExprContext)_localctx).fieldDefExpr = fieldDefExpr();
+				((TableCtorExprContext)_localctx).FieldExprs.add(((TableCtorExprContext)_localctx).fieldDefExpr);
 				setState(196);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,22,_ctx);
@@ -1072,7 +1082,8 @@ public class MtsParser extends Parser {
 						{
 						{
 						setState(192); match(Separator);
-						setState(193); fieldDefExpr();
+						setState(193); ((TableCtorExprContext)_localctx).fieldDefExpr = fieldDefExpr();
+						((TableCtorExprContext)_localctx).FieldExprs.add(((TableCtorExprContext)_localctx).fieldDefExpr);
 						}
 						} 
 					}
@@ -1117,6 +1128,7 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class IndexedFieldContext extends FieldDefExprContext {
+		public ExprContext VariableExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1128,6 +1140,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class NamedFieldContext extends FieldDefExprContext {
+		public VariableExprContext VariableName;
+		public ExprContext VariableExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1142,6 +1156,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class ExpressionFieldContext extends FieldDefExprContext {
+		public ExprContext VariableNameExpr;
+		public ExprContext VariableExpr;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -1167,10 +1183,10 @@ public class MtsParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(206); match(FieldBraceOpen);
-				setState(207); expr(0);
+				setState(207); ((ExpressionFieldContext)_localctx).VariableNameExpr = expr(0);
 				setState(208); match(FieldBraceClose);
 				setState(209); match(AssignOp);
-				setState(210); expr(0);
+				setState(210); ((ExpressionFieldContext)_localctx).VariableExpr = expr(0);
 				}
 				break;
 
@@ -1178,9 +1194,9 @@ public class MtsParser extends Parser {
 				_localctx = new NamedFieldContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(212); variableExpr();
+				setState(212); ((NamedFieldContext)_localctx).VariableName = variableExpr();
 				setState(213); match(AssignOp);
-				setState(214); expr(0);
+				setState(214); ((NamedFieldContext)_localctx).VariableExpr = expr(0);
 				}
 				break;
 
@@ -1188,7 +1204,7 @@ public class MtsParser extends Parser {
 				_localctx = new IndexedFieldContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(216); expr(0);
+				setState(216); ((IndexedFieldContext)_localctx).VariableExpr = expr(0);
 				}
 				break;
 			}
@@ -1252,6 +1268,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class TableAssignmentContext extends AssignmentExprContext {
+		public TableExprContext TableExpr;
+		public ExprContext VariableExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1266,6 +1284,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class LocalVariableAssignmentContext extends AssignmentExprContext {
+		public VariableExprContext VariableName;
+		public ExprContext VariableExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1280,6 +1300,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class VariableAssignmentContext extends AssignmentExprContext {
+		public VariableExprContext VariableName;
+		public ExprContext VariableExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1304,9 +1326,9 @@ public class MtsParser extends Parser {
 				_localctx = new TableAssignmentContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(222); tableExpr();
+				setState(222); ((TableAssignmentContext)_localctx).TableExpr = tableExpr();
 				setState(223); match(AssignOp);
-				setState(224); expr(0);
+				setState(224); ((TableAssignmentContext)_localctx).VariableExpr = expr(0);
 				}
 				break;
 
@@ -1315,9 +1337,9 @@ public class MtsParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(226); match(LocalVar);
-				setState(227); variableExpr();
+				setState(227); ((LocalVariableAssignmentContext)_localctx).VariableName = variableExpr();
 				setState(228); match(AssignOp);
-				setState(229); expr(0);
+				setState(229); ((LocalVariableAssignmentContext)_localctx).VariableExpr = expr(0);
 				}
 				break;
 
@@ -1325,9 +1347,9 @@ public class MtsParser extends Parser {
 				_localctx = new VariableAssignmentContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(231); variableExpr();
+				setState(231); ((VariableAssignmentContext)_localctx).VariableName = variableExpr();
 				setState(232); match(AssignOp);
-				setState(233); expr(0);
+				setState(233); ((VariableAssignmentContext)_localctx).VariableExpr = expr(0);
 				}
 				break;
 			}
@@ -1423,6 +1445,8 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class TableCallContext extends CallExprContext {
+		public TableExprContext TableExpr;
+		public FuncArgsContext FunctionArgs;
 		public FuncArgsContext funcArgs() {
 			return getRuleContext(FuncArgsContext.class,0);
 		}
@@ -1438,6 +1462,7 @@ public class MtsParser extends Parser {
 	}
 	public static class FunctionCallContext extends CallExprContext {
 		public Token Identifier;
+		public FuncArgsContext FunctionArgs;
 		public FuncArgsContext funcArgs() {
 			return getRuleContext(FuncArgsContext.class,0);
 		}
@@ -1461,15 +1486,15 @@ public class MtsParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(241); ((FunctionCallContext)_localctx).Identifier = match(Name);
-				setState(242); funcArgs();
+				setState(242); ((FunctionCallContext)_localctx).FunctionArgs = funcArgs();
 				}
 				break;
 			case VariableKey:
 				_localctx = new TableCallContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(243); tableExpr();
-				setState(244); funcArgs();
+				setState(243); ((TableCallContext)_localctx).TableExpr = tableExpr();
+				setState(244); ((TableCallContext)_localctx).FunctionArgs = funcArgs();
 				}
 				break;
 			default:
@@ -1488,8 +1513,9 @@ public class MtsParser extends Parser {
 	}
 
 	public static class TableExprContext extends ParserRuleContext {
+		public VariableExprContext ParentTableExpr;
 		public TableFieldAccessContext tableFieldAccess;
-		public List<TableFieldAccessContext> Fields = new ArrayList<TableFieldAccessContext>();
+		public List<TableFieldAccessContext> FieldExprs = new ArrayList<TableFieldAccessContext>();
 		public TableFieldAccessContext tableFieldAccess(int i) {
 			return getRuleContext(TableFieldAccessContext.class,i);
 		}
@@ -1517,7 +1543,7 @@ public class MtsParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(248); variableExpr();
+			setState(248); ((TableExprContext)_localctx).ParentTableExpr = variableExpr();
 			setState(250); 
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,29,_ctx);
@@ -1527,7 +1553,7 @@ public class MtsParser extends Parser {
 					{
 					{
 					setState(249); ((TableExprContext)_localctx).tableFieldAccess = tableFieldAccess();
-					((TableExprContext)_localctx).Fields.add(((TableExprContext)_localctx).tableFieldAccess);
+					((TableExprContext)_localctx).FieldExprs.add(((TableExprContext)_localctx).tableFieldAccess);
 					}
 					}
 					break;
@@ -1553,6 +1579,7 @@ public class MtsParser extends Parser {
 
 	public static class TableFieldAccessContext extends ParserRuleContext {
 		public Token Key;
+		public ExprContext KeyExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1585,7 +1612,7 @@ public class MtsParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(256); match(FieldBraceOpen);
-				setState(257); expr(0);
+				setState(257); ((TableFieldAccessContext)_localctx).KeyExpr = expr(0);
 				setState(258); match(FieldBraceClose);
 				}
 				break;
@@ -1605,6 +1632,8 @@ public class MtsParser extends Parser {
 	}
 
 	public static class FuncArgsContext extends ParserRuleContext {
+		public ExprContext expr;
+		public List<ExprContext> ArgumentExprs = new ArrayList<ExprContext>();
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -1634,7 +1663,8 @@ public class MtsParser extends Parser {
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Null) | (1L << Boolean) | (1L << LocalVar) | (1L << ExprBraceOpen) | (1L << TableBraceOpen) | (1L << MinusOp) | (1L << UnaryNotOp) | (1L << UnarySizeOp) | (1L << String) | (1L << VariableKey) | (1L << Name) | (1L << Number))) != 0)) {
 				{
-				setState(263); expr(0);
+				setState(263); ((FuncArgsContext)_localctx).expr = expr(0);
+				((FuncArgsContext)_localctx).ArgumentExprs.add(((FuncArgsContext)_localctx).expr);
 				setState(268);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -1642,7 +1672,8 @@ public class MtsParser extends Parser {
 					{
 					{
 					setState(264); match(Separator);
-					setState(265); expr(0);
+					setState(265); ((FuncArgsContext)_localctx).expr = expr(0);
+					((FuncArgsContext)_localctx).ArgumentExprs.add(((FuncArgsContext)_localctx).expr);
 					}
 					}
 					setState(270);
@@ -1726,6 +1757,8 @@ public class MtsParser extends Parser {
 	}
 	public static class CommandMenuContext extends CommandStmtContext {
 		public ExprContext Caption;
+		public CommandMenuOptionContext commandMenuOption;
+		public List<CommandMenuOptionContext> Options = new ArrayList<CommandMenuOptionContext>();
 		public List<CommandMenuOptionContext> commandMenuOption() {
 			return getRuleContexts(CommandMenuOptionContext.class);
 		}
@@ -1871,7 +1904,8 @@ public class MtsParser extends Parser {
 				do {
 					{
 					{
-					setState(315); commandMenuOption();
+					setState(315); ((CommandMenuContext)_localctx).commandMenuOption = commandMenuOption();
+					((CommandMenuContext)_localctx).Options.add(((CommandMenuContext)_localctx).commandMenuOption);
 					}
 					}
 					setState(318); 
@@ -1897,6 +1931,8 @@ public class MtsParser extends Parser {
 	}
 
 	public static class CommandMenuOptionContext extends ParserRuleContext {
+		public ExprContext OptionTextExpr;
+		public BlockContext OptionBlock;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -1917,12 +1953,20 @@ public class MtsParser extends Parser {
 	public final CommandMenuOptionContext commandMenuOption() throws RecognitionException {
 		CommandMenuOptionContext _localctx = new CommandMenuOptionContext(_ctx, getState());
 		enterRule(_localctx, 30, RULE_commandMenuOption);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(324); match(CommandMenuOption);
-			setState(325); expr(0);
-			setState(326); block();
+			setState(325); ((CommandMenuOptionContext)_localctx).OptionTextExpr = expr(0);
+			setState(327);
+			_la = _input.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << StmtCloser) | (1L << LocalVar) | (1L << Jump) | (1L << Call) | (1L << Return) | (1L << Do) | (1L << If) | (1L << While) | (1L << Break) | (1L << Repeat) | (1L << For) | (1L << CommandSay) | (1L << CommandShow) | (1L << CommandScene) | (1L << CommandHide) | (1L << CommandMenu) | (1L << VariableKey) | (1L << Name))) != 0)) {
+				{
+				setState(326); ((CommandMenuOptionContext)_localctx).OptionBlock = block();
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -1958,19 +2002,19 @@ public class MtsParser extends Parser {
 		ExprStmtContext _localctx = new ExprStmtContext(_ctx, getState());
 		enterRule(_localctx, 32, RULE_exprStmt);
 		try {
-			setState(330);
-			switch ( getInterpreter().adaptivePredict(_input,42,_ctx) ) {
+			setState(331);
+			switch ( getInterpreter().adaptivePredict(_input,43,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(328); callExpr();
+				setState(329); callExpr();
 				}
 				break;
 
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(329); assignmentExpr();
+				setState(330); assignmentExpr();
 				}
 				break;
 			}
@@ -1987,6 +2031,7 @@ public class MtsParser extends Parser {
 	}
 
 	public static class ReturnStmtContext extends ParserRuleContext {
+		public ExprContext ReturnExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -2008,16 +2053,16 @@ public class MtsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(332); match(Return);
-			setState(334);
+			setState(333); match(Return);
+			setState(335);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Null) | (1L << Boolean) | (1L << LocalVar) | (1L << ExprBraceOpen) | (1L << TableBraceOpen) | (1L << MinusOp) | (1L << UnaryNotOp) | (1L << UnarySizeOp) | (1L << String) | (1L << VariableKey) | (1L << Name) | (1L << Number))) != 0)) {
 				{
-				setState(333); expr(0);
+				setState(334); ((ReturnStmtContext)_localctx).ReturnExpr = expr(0);
 				}
 			}
 
-			setState(336); match(StmtCloser);
+			setState(337); match(StmtCloser);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2035,6 +2080,7 @@ public class MtsParser extends Parser {
 		public Token Identifier;
 		public VariableExprContext variableExpr;
 		public List<VariableExprContext> Params = new ArrayList<VariableExprContext>();
+		public BlockContext FunctionBlock;
 		public VariableExprContext variableExpr(int i) {
 			return getRuleContext(VariableExprContext.class,i);
 		}
@@ -2063,43 +2109,43 @@ public class MtsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(338); match(Function);
-			setState(339); ((FuncDeclContext)_localctx).Identifier = match(Name);
-			setState(340); match(ExprBraceOpen);
-			setState(349);
+			setState(339); match(Function);
+			setState(340); ((FuncDeclContext)_localctx).Identifier = match(Name);
+			setState(341); match(ExprBraceOpen);
+			setState(350);
 			_la = _input.LA(1);
 			if (_la==VariableKey) {
 				{
-				setState(341); ((FuncDeclContext)_localctx).variableExpr = variableExpr();
+				setState(342); ((FuncDeclContext)_localctx).variableExpr = variableExpr();
 				((FuncDeclContext)_localctx).Params.add(((FuncDeclContext)_localctx).variableExpr);
-				setState(346);
+				setState(347);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==Separator) {
 					{
 					{
-					setState(342); match(Separator);
-					setState(343); ((FuncDeclContext)_localctx).variableExpr = variableExpr();
+					setState(343); match(Separator);
+					setState(344); ((FuncDeclContext)_localctx).variableExpr = variableExpr();
 					((FuncDeclContext)_localctx).Params.add(((FuncDeclContext)_localctx).variableExpr);
 					}
 					}
-					setState(348);
+					setState(349);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
 			}
 
-			setState(351); match(ExprBraceClose);
-			setState(353);
+			setState(352); match(ExprBraceClose);
+			setState(354);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << StmtCloser) | (1L << LocalVar) | (1L << Jump) | (1L << Call) | (1L << Return) | (1L << Do) | (1L << If) | (1L << While) | (1L << Break) | (1L << Repeat) | (1L << For) | (1L << CommandSay) | (1L << CommandShow) | (1L << CommandScene) | (1L << CommandHide) | (1L << CommandMenu) | (1L << VariableKey) | (1L << Name))) != 0)) {
 				{
-				setState(352); block();
+				setState(353); ((FuncDeclContext)_localctx).FunctionBlock = block();
 				}
 			}
 
-			setState(355); match(End);
+			setState(356); match(End);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2115,6 +2161,7 @@ public class MtsParser extends Parser {
 
 	public static class LabelDeclContext extends ParserRuleContext {
 		public Token Identifier;
+		public BlockContext LabelBlock;
 		public TerminalNode Name() { return getToken(MtsParser.Name, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
@@ -2137,17 +2184,17 @@ public class MtsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(357); match(Label);
-			setState(358); ((LabelDeclContext)_localctx).Identifier = match(Name);
-			setState(360);
+			setState(358); match(Label);
+			setState(359); ((LabelDeclContext)_localctx).Identifier = match(Name);
+			setState(361);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << StmtCloser) | (1L << LocalVar) | (1L << Jump) | (1L << Call) | (1L << Return) | (1L << Do) | (1L << If) | (1L << While) | (1L << Break) | (1L << Repeat) | (1L << For) | (1L << CommandSay) | (1L << CommandShow) | (1L << CommandScene) | (1L << CommandHide) | (1L << CommandMenu) | (1L << VariableKey) | (1L << Name))) != 0)) {
 				{
-				setState(359); block();
+				setState(360); ((LabelDeclContext)_localctx).LabelBlock = block();
 				}
 			}
 
-			setState(362); match(End);
+			setState(363); match(End);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2162,6 +2209,8 @@ public class MtsParser extends Parser {
 	}
 
 	public static class ForLoopInitializerContext extends ParserRuleContext {
+		public VariableExprContext VariableName;
+		public ExprContext VariableExpr;
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -2185,9 +2234,9 @@ public class MtsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(364); variableExpr();
-			setState(365); match(AssignOp);
-			setState(366); expr(0);
+			setState(365); ((ForLoopInitializerContext)_localctx).VariableName = variableExpr();
+			setState(366); match(AssignOp);
+			setState(367); ((ForLoopInitializerContext)_localctx).VariableExpr = expr(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2225,7 +2274,7 @@ public class MtsParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3A\u0173\4\2\t\2\4"+
+		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3A\u0174\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\3\2\5\2.\n\2\3\2\3\2\7\2\62\n"+
@@ -2249,29 +2298,29 @@ public class MtsParser extends Parser {
 		"\n\20\3\20\3\20\3\20\3\20\5\20\u012a\n\20\3\20\3\20\3\20\3\20\5\20\u0130"+
 		"\n\20\3\20\3\20\3\20\3\20\3\20\5\20\u0137\n\20\3\20\3\20\3\20\5\20\u013c"+
 		"\n\20\3\20\6\20\u013f\n\20\r\20\16\20\u0140\3\20\3\20\5\20\u0145\n\20"+
-		"\3\21\3\21\3\21\3\21\3\22\3\22\5\22\u014d\n\22\3\23\3\23\5\23\u0151\n"+
-		"\23\3\23\3\23\3\24\3\24\3\24\3\24\3\24\3\24\7\24\u015b\n\24\f\24\16\24"+
-		"\u015e\13\24\5\24\u0160\n\24\3\24\3\24\5\24\u0164\n\24\3\24\3\24\3\25"+
-		"\3\25\3\25\5\25\u016b\n\25\3\25\3\25\3\26\3\26\3\26\3\26\3\26\2\27\2\4"+
-		"\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*\2\6\3\2+-\3\2/\61\4\2++..\3"+
-		"\2\638\u01a6\2-\3\2\2\2\4:\3\2\2\2\6\u0093\3\2\2\2\b\u00a1\3\2\2\2\n\u00be"+
-		"\3\2\2\2\f\u00c0\3\2\2\2\16\u00db\3\2\2\2\20\u00dd\3\2\2\2\22\u00ed\3"+
-		"\2\2\2\24\u00f1\3\2\2\2\26\u00f8\3\2\2\2\30\u00fa\3\2\2\2\32\u0106\3\2"+
-		"\2\2\34\u0108\3\2\2\2\36\u0144\3\2\2\2 \u0146\3\2\2\2\"\u014c\3\2\2\2"+
-		"$\u014e\3\2\2\2&\u0154\3\2\2\2(\u0167\3\2\2\2*\u016e\3\2\2\2,.\5\4\3\2"+
-		"-,\3\2\2\2-.\3\2\2\2.\63\3\2\2\2/\62\5(\25\2\60\62\5&\24\2\61/\3\2\2\2"+
-		"\61\60\3\2\2\2\62\65\3\2\2\2\63\61\3\2\2\2\63\64\3\2\2\2\64\66\3\2\2\2"+
-		"\65\63\3\2\2\2\66\67\7\2\2\3\67\3\3\2\2\28;\5\6\4\29;\5$\23\2:8\3\2\2"+
-		"\2:9\3\2\2\2;<\3\2\2\2<:\3\2\2\2<=\3\2\2\2=\5\3\2\2\2>\u0094\7\26\2\2"+
-		"?@\7\f\2\2@\u0094\7@\2\2AB\7\r\2\2B\u0094\7@\2\2CE\7\20\2\2DF\5\4\3\2"+
-		"ED\3\2\2\2EF\3\2\2\2FG\3\2\2\2G\u0094\7\17\2\2HI\7\25\2\2IJ\5\b\5\2JL"+
-		"\7\20\2\2KM\5\4\3\2LK\3\2\2\2LM\3\2\2\2MN\3\2\2\2NO\7\17\2\2O\u0094\3"+
-		"\2\2\2PQ\7\31\2\2QR\5*\26\2RS\7\3\2\2SV\5\b\5\2TU\7\3\2\2UW\5\b\5\2VT"+
-		"\3\2\2\2VW\3\2\2\2WX\3\2\2\2XY\7\20\2\2Yg\3\2\2\2Z[\7\31\2\2[\\\7#\2\2"+
-		"\\]\5*\26\2]^\7\3\2\2^a\5\b\5\2_`\7\3\2\2`b\5\b\5\2a_\3\2\2\2ab\3\2\2"+
-		"\2bc\3\2\2\2cd\7$\2\2de\7\20\2\2eg\3\2\2\2fP\3\2\2\2fZ\3\2\2\2gi\3\2\2"+
-		"\2hj\5\4\3\2ih\3\2\2\2ij\3\2\2\2jk\3\2\2\2kl\7\17\2\2l\u0094\3\2\2\2m"+
-		"o\7\27\2\2np\5\4\3\2on\3\2\2\2op\3\2\2\2pq\3\2\2\2qr\7\30\2\2rs\5\b\5"+
+		"\3\21\3\21\3\21\5\21\u014a\n\21\3\22\3\22\5\22\u014e\n\22\3\23\3\23\5"+
+		"\23\u0152\n\23\3\23\3\23\3\24\3\24\3\24\3\24\3\24\3\24\7\24\u015c\n\24"+
+		"\f\24\16\24\u015f\13\24\5\24\u0161\n\24\3\24\3\24\5\24\u0165\n\24\3\24"+
+		"\3\24\3\25\3\25\3\25\5\25\u016c\n\25\3\25\3\25\3\26\3\26\3\26\3\26\3\26"+
+		"\2\27\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*\2\6\3\2+-\3\2/\61"+
+		"\4\2++..\3\2\638\u01a8\2-\3\2\2\2\4:\3\2\2\2\6\u0093\3\2\2\2\b\u00a1\3"+
+		"\2\2\2\n\u00be\3\2\2\2\f\u00c0\3\2\2\2\16\u00db\3\2\2\2\20\u00dd\3\2\2"+
+		"\2\22\u00ed\3\2\2\2\24\u00f1\3\2\2\2\26\u00f8\3\2\2\2\30\u00fa\3\2\2\2"+
+		"\32\u0106\3\2\2\2\34\u0108\3\2\2\2\36\u0144\3\2\2\2 \u0146\3\2\2\2\"\u014d"+
+		"\3\2\2\2$\u014f\3\2\2\2&\u0155\3\2\2\2(\u0168\3\2\2\2*\u016f\3\2\2\2,"+
+		".\5\4\3\2-,\3\2\2\2-.\3\2\2\2.\63\3\2\2\2/\62\5(\25\2\60\62\5&\24\2\61"+
+		"/\3\2\2\2\61\60\3\2\2\2\62\65\3\2\2\2\63\61\3\2\2\2\63\64\3\2\2\2\64\66"+
+		"\3\2\2\2\65\63\3\2\2\2\66\67\7\2\2\3\67\3\3\2\2\28;\5\6\4\29;\5$\23\2"+
+		":8\3\2\2\2:9\3\2\2\2;<\3\2\2\2<:\3\2\2\2<=\3\2\2\2=\5\3\2\2\2>\u0094\7"+
+		"\26\2\2?@\7\f\2\2@\u0094\7@\2\2AB\7\r\2\2B\u0094\7@\2\2CE\7\20\2\2DF\5"+
+		"\4\3\2ED\3\2\2\2EF\3\2\2\2FG\3\2\2\2G\u0094\7\17\2\2HI\7\25\2\2IJ\5\b"+
+		"\5\2JL\7\20\2\2KM\5\4\3\2LK\3\2\2\2LM\3\2\2\2MN\3\2\2\2NO\7\17\2\2O\u0094"+
+		"\3\2\2\2PQ\7\31\2\2QR\5*\26\2RS\7\3\2\2SV\5\b\5\2TU\7\3\2\2UW\5\b\5\2"+
+		"VT\3\2\2\2VW\3\2\2\2WX\3\2\2\2XY\7\20\2\2Yg\3\2\2\2Z[\7\31\2\2[\\\7#\2"+
+		"\2\\]\5*\26\2]^\7\3\2\2^a\5\b\5\2_`\7\3\2\2`b\5\b\5\2a_\3\2\2\2ab\3\2"+
+		"\2\2bc\3\2\2\2cd\7$\2\2de\7\20\2\2eg\3\2\2\2fP\3\2\2\2fZ\3\2\2\2gi\3\2"+
+		"\2\2hj\5\4\3\2ih\3\2\2\2ij\3\2\2\2jk\3\2\2\2kl\7\17\2\2l\u0094\3\2\2\2"+
+		"mo\7\27\2\2np\5\4\3\2on\3\2\2\2op\3\2\2\2pq\3\2\2\2qr\7\30\2\2rs\5\b\5"+
 		"\2st\7\3\2\2t\u0094\3\2\2\2uv\7\21\2\2vw\5\b\5\2wy\7\22\2\2xz\5\4\3\2"+
 		"yx\3\2\2\2yz\3\2\2\2z\u0083\3\2\2\2{|\7\23\2\2|}\5\b\5\2}\177\7\22\2\2"+
 		"~\u0080\5\4\3\2\177~\3\2\2\2\177\u0080\3\2\2\2\u0080\u0082\3\2\2\2\u0081"+
@@ -2344,24 +2393,25 @@ public class MtsParser extends Parser {
 		"\u013d\3\2\2\2\u013f\u0140\3\2\2\2\u0140\u013e\3\2\2\2\u0140\u0141\3\2"+
 		"\2\2\u0141\u0142\3\2\2\2\u0142\u0143\7\17\2\2\u0143\u0145\3\2\2\2\u0144"+
 		"\u0115\3\2\2\2\u0144\u011c\3\2\2\2\u0144\u012d\3\2\2\2\u0144\u0134\3\2"+
-		"\2\2\u0144\u0139\3\2\2\2\u0145\37\3\2\2\2\u0146\u0147\7!\2\2\u0147\u0148"+
-		"\5\b\5\2\u0148\u0149\5\4\3\2\u0149!\3\2\2\2\u014a\u014d\5\26\f\2\u014b"+
-		"\u014d\5\22\n\2\u014c\u014a\3\2\2\2\u014c\u014b\3\2\2\2\u014d#\3\2\2\2"+
-		"\u014e\u0150\7\16\2\2\u014f\u0151\5\b\5\2\u0150\u014f\3\2\2\2\u0150\u0151"+
-		"\3\2\2\2\u0151\u0152\3\2\2\2\u0152\u0153\7\3\2\2\u0153%\3\2\2\2\u0154"+
-		"\u0155\7\n\2\2\u0155\u0156\7@\2\2\u0156\u015f\7#\2\2\u0157\u015c\5\20"+
-		"\t\2\u0158\u0159\7\"\2\2\u0159\u015b\5\20\t\2\u015a\u0158\3\2\2\2\u015b"+
-		"\u015e\3\2\2\2\u015c\u015a\3\2\2\2\u015c\u015d\3\2\2\2\u015d\u0160\3\2"+
-		"\2\2\u015e\u015c\3\2\2\2\u015f\u0157\3\2\2\2\u015f\u0160\3\2\2\2\u0160"+
-		"\u0161\3\2\2\2\u0161\u0163\7$\2\2\u0162\u0164\5\4\3\2\u0163\u0162\3\2"+
-		"\2\2\u0163\u0164\3\2\2\2\u0164\u0165\3\2\2\2\u0165\u0166\7\17\2\2\u0166"+
-		"\'\3\2\2\2\u0167\u0168\7\13\2\2\u0168\u016a\7@\2\2\u0169\u016b\5\4\3\2"+
-		"\u016a\u0169\3\2\2\2\u016a\u016b\3\2\2\2\u016b\u016c\3\2\2\2\u016c\u016d"+
-		"\7\17\2\2\u016d)\3\2\2\2\u016e\u016f\5\20\t\2\u016f\u0170\7;\2\2\u0170"+
-		"\u0171\5\b\5\2\u0171+\3\2\2\2\62-\61\63:<ELVafioy\177\u0083\u0088\u008a"+
-		"\u0093\u00a1\u00b5\u00b7\u00be\u00c6\u00ca\u00cc\u00db\u00ed\u00f1\u00f8"+
-		"\u00fe\u0106\u010e\u0111\u0117\u011e\u0123\u0129\u012f\u0136\u013b\u0140"+
-		"\u0144\u014c\u0150\u015c\u015f\u0163\u016a";
+		"\2\2\u0144\u0139\3\2\2\2\u0145\37\3\2\2\2\u0146\u0147\7!\2\2\u0147\u0149"+
+		"\5\b\5\2\u0148\u014a\5\4\3\2\u0149\u0148\3\2\2\2\u0149\u014a\3\2\2\2\u014a"+
+		"!\3\2\2\2\u014b\u014e\5\26\f\2\u014c\u014e\5\22\n\2\u014d\u014b\3\2\2"+
+		"\2\u014d\u014c\3\2\2\2\u014e#\3\2\2\2\u014f\u0151\7\16\2\2\u0150\u0152"+
+		"\5\b\5\2\u0151\u0150\3\2\2\2\u0151\u0152\3\2\2\2\u0152\u0153\3\2\2\2\u0153"+
+		"\u0154\7\3\2\2\u0154%\3\2\2\2\u0155\u0156\7\n\2\2\u0156\u0157\7@\2\2\u0157"+
+		"\u0160\7#\2\2\u0158\u015d\5\20\t\2\u0159\u015a\7\"\2\2\u015a\u015c\5\20"+
+		"\t\2\u015b\u0159\3\2\2\2\u015c\u015f\3\2\2\2\u015d\u015b\3\2\2\2\u015d"+
+		"\u015e\3\2\2\2\u015e\u0161\3\2\2\2\u015f\u015d\3\2\2\2\u0160\u0158\3\2"+
+		"\2\2\u0160\u0161\3\2\2\2\u0161\u0162\3\2\2\2\u0162\u0164\7$\2\2\u0163"+
+		"\u0165\5\4\3\2\u0164\u0163\3\2\2\2\u0164\u0165\3\2\2\2\u0165\u0166\3\2"+
+		"\2\2\u0166\u0167\7\17\2\2\u0167\'\3\2\2\2\u0168\u0169\7\13\2\2\u0169\u016b"+
+		"\7@\2\2\u016a\u016c\5\4\3\2\u016b\u016a\3\2\2\2\u016b\u016c\3\2\2\2\u016c"+
+		"\u016d\3\2\2\2\u016d\u016e\7\17\2\2\u016e)\3\2\2\2\u016f\u0170\5\20\t"+
+		"\2\u0170\u0171\7;\2\2\u0171\u0172\5\b\5\2\u0172+\3\2\2\2\63-\61\63:<E"+
+		"LVafioy\177\u0083\u0088\u008a\u0093\u00a1\u00b5\u00b7\u00be\u00c6\u00ca"+
+		"\u00cc\u00db\u00ed\u00f1\u00f8\u00fe\u0106\u010e\u0111\u0117\u011e\u0123"+
+		"\u0129\u012f\u0136\u013b\u0140\u0144\u0149\u014d\u0151\u015d\u0160\u0164"+
+		"\u016b";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {

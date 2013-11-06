@@ -111,21 +111,21 @@ stmt  : 'break'
       | 'call' Identifier=Name
         # Call
       | 'do' 
-            block?
+            Block=block?
         'end'
         # DoBlock
-      | 'while' expr 'do' 
-            block?
+      | 'while' Condition=expr 'do' 
+            LoopBlock=block?
         'end'
         # WhileBlock
       | ( ( 'for' Initializer=forLoopInitializer ';' Condition=expr ( ';' Step=expr )? 'do' )
         | ( 'for' '(' Initializer=forLoopInitializer ';' Condition=expr ( ';' Step=expr )? ')' 'do' ) )
-            block?
+            LoopBlock=block?
         'end'
         # NumericFor
       | 'repeat' 
-            block?
-        'until' expr ';'
+            LoopBlock=block?
+        'until' Condition=expr ';'
         # RepeatBlock
       | ( 'if' Condition+=expr 'then' 
               ThenBlock+=block? )
@@ -143,7 +143,7 @@ stmt  : 'break'
         # BlankStatement
       ;
 
-expr : Operator=( '-' | 'not' | '#' ) expr
+expr : Operator=( '-' | 'not' | '#' ) Right=expr
        # UnaryExpr
      | Left=expr Operator=( '*' | '/' | '%' ) Right=expr
        # BinaryExpr
@@ -181,23 +181,23 @@ literalExpr : Literal=Number
               # NullLiteral
             ;
 
-tableCtorExpr : '{' ( fieldDefExpr ( ',' fieldDefExpr )* ','? )? '}' ;
+tableCtorExpr : '{' ( FieldExprs+=fieldDefExpr ( ',' FieldExprs+=fieldDefExpr )* ','? )? '}' ;
 
-fieldDefExpr : '[' expr ']' '=' expr
+fieldDefExpr : '[' VariableNameExpr=expr ']' '=' VariableExpr=expr
                # ExpressionField
-             | variableExpr '=' expr
+             | VariableName=variableExpr '=' VariableExpr=expr
                # NamedField
-             | expr
+             | VariableExpr=expr
                # IndexedField
              ;
 
 variableExpr : VariableKey Identifier=Name ;
 
-assignmentExpr : tableExpr '=' expr
+assignmentExpr : TableExpr=tableExpr '=' VariableExpr=expr
                  # TableAssignment
-               | 'local' variableExpr '=' expr
+               | 'local' VariableName=variableExpr '=' VariableExpr=expr
                  # LocalVariableAssignment
-               | variableExpr '=' expr
+               | VariableName=variableExpr '=' VariableExpr=expr
                  # VariableAssignment
                ;
 
@@ -207,19 +207,19 @@ accessExpr : tableExpr
              # VariableAccess
            ;
 
-callExpr : Identifier=Name funcArgs
+callExpr : Identifier=Name FunctionArgs=funcArgs
            # FunctionCall
-         | tableExpr funcArgs
+         | TableExpr=tableExpr FunctionArgs=funcArgs
            # TableCall
          ;
 
-tableExpr : variableExpr Fields+=tableFieldAccess+ ;
+tableExpr : ParentTableExpr=variableExpr FieldExprs+=tableFieldAccess+ ;
 
 tableFieldAccess : '.' Key=Name
-                 | '[' expr ']'
+                 | '[' KeyExpr=expr ']'
                  ;
 
-funcArgs : '(' ( expr ( ',' expr )* )? ')' ;
+funcArgs : '(' ( ArgumentExprs+=expr ( ',' ArgumentExprs+=expr )* )? ')' ;
 
 commandStmt : 'say' Character=expr? Text=expr ';'
               # CommandSay
@@ -233,27 +233,29 @@ commandStmt : 'say' Character=expr? Text=expr ';'
             | 'hide' Group=expr? ';'
               # CommandHide
             | 'menu' Caption=expr? 
-                  commandMenuOption+
+                  Options+=commandMenuOption+
               'end'
               # CommandMenu
             ;
 
-commandMenuOption : 'option' expr block ;
+commandMenuOption : 'option' OptionTextExpr=expr 
+                        OptionBlock=block? 
+                  ;
 
 exprStmt : callExpr
          | assignmentExpr
          ;
 
-returnStmt : 'return' expr? ';' ;
+returnStmt : 'return' ReturnExpr=expr? ';' ;
 
 funcDecl : 'function' Identifier=Name '(' ( Params+=variableExpr ( ',' Params+=variableExpr )* )? ')' 
-               block? 
+               FunctionBlock=block? 
            'end' 
          ;
 
 labelDecl : 'label' Identifier=Name 
-               block?
+               LabelBlock=block?
             'end' 
           ;
 
-forLoopInitializer : variableExpr '=' expr ;
+forLoopInitializer : VariableName=variableExpr '=' VariableExpr=expr ;

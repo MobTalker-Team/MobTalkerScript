@@ -33,7 +33,6 @@ import mobtalkerscript.mts.v1.parser.MtsParser.NumericForContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.RepeatBlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ReturnStmtContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.StringLiteralContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.TableAccessContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableAssignmentContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableCallContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableCtorExprContext;
@@ -47,6 +46,7 @@ import mobtalkerscript.mts.v1.parser.MtsParser.WhileBlockContext;
 import mobtalkerscript.util.logging.*;
 
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
 
 import com.google.common.collect.*;
 
@@ -115,12 +115,20 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         _curLine = line;
     }
     
-    // ========================================
-    
     @Override
-    public Void visitBlock(BlockContext ctx)
+    public Void visit(ParseTree tree)
     {
-        visitChildren(ctx);
+        if (tree == null)
+        {
+            return null;
+        }
+        
+        if (tree instanceof ParserRuleContext)
+        {
+            checkLineNumber((ParserRuleContext) tree);
+        }
+        
+        super.visit(tree);
         
         return null;
     }
@@ -133,8 +141,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitLabelDecl(LabelDeclContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String funcName = ctx.Identifier.getText();
         InstrLabel label = new InstrLabel(funcName);
         
@@ -143,7 +149,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         
         _locals.clear();
         
-        visitChildren(ctx);
+        visit(ctx.LabelBlock);
         
         _locals.clear();
         
@@ -155,8 +161,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitFuncDecl(FuncDeclContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String funcName = ctx.Identifier.getText();
         int argCount = ctx.Params.size();
         
@@ -173,12 +177,10 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
             
             _locals.add(argName);
             
-            checkLineNumber(paramCtx);
-            
             addInstr(new InstrStoreL(argName));
         }
         
-        visit(ctx.block());
+        visit(ctx.FunctionBlock);
         
         _locals.clear();
         
@@ -190,9 +192,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitReturnStmt(ReturnStmtContext ctx)
     {
-        visitChildren(ctx);
-        
-        checkLineNumber(ctx);
+        visit(ctx.ReturnExpr);
         
         addInstr(new InstrReturn());
         
@@ -202,8 +202,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitJump(JumpContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String labelName = ctx.Target.getText();
         
         addInstr(new InstrLoad(labelName));
@@ -215,8 +213,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitCall(CallContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String funcName = ctx.Identifier.getText();
         
         addInstr(new InstrLoad(funcName));
@@ -231,8 +227,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitStringLiteral(StringLiteralContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String literal = ctx.Literal.getText();
         addInstr(new InstrPush(literal.substring(1, literal.length() - 1)));
         
@@ -242,8 +236,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitNumberLiteral(NumberLiteralContext ctx)
     {
-        checkLineNumber(ctx);
-        
         int literal = Integer.parseInt(ctx.Literal.getText());
         addInstr(new InstrPush(literal));
         
@@ -253,8 +245,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitBooleanLiteral(BooleanLiteralContext ctx)
     {
-        checkLineNumber(ctx);
-        
         boolean literal = Boolean.parseBoolean(ctx.Literal.getText());
         addInstr(new InstrPush(literal));
         
@@ -264,8 +254,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitNullLiteral(NullLiteralContext ctx)
     {
-        checkLineNumber(ctx);
-        
         addInstr(new InstrPush(MislValue.NIL));
         
         return null;
@@ -277,8 +265,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitBinaryExpr(BinaryExprContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String op = ctx.Operator.getText();
         
         if ("+".equals(op))
@@ -378,7 +364,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitUnaryExpr(UnaryExprContext ctx)
     {
-        visitChildren(ctx);
+        visit(ctx.Right);
         
         String op = ctx.Operator.getText();
         
@@ -395,16 +381,12 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
             throw new ScriptParserException("Unknown binary operator: %s", op);
         }
         
-        checkLineNumber(ctx);
-        
         return null;
     }
     
     @Override
     public Void visitLogicalExpr(LogicalExprContext ctx)
     {
-        checkLineNumber(ctx);
-        
         InstrLabel cont = new InstrLabel("continue");
         
         String op = ctx.Operator.getText();
@@ -433,11 +415,9 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitVariableAssignment(VariableAssignmentContext ctx)
     {
-        checkLineNumber(ctx);
+        visit(ctx.VariableExpr);
         
-        visit(ctx.expr());
-        
-        String varName = ctx.variableExpr().Identifier.getText();
+        String varName = ctx.VariableName.Identifier.getText();
         
         if (_locals.contains(varName))
         {
@@ -454,8 +434,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitLocalVariableAssignment(LocalVariableAssignmentContext ctx)
     {
-        checkLineNumber(ctx);
-        
         visit(ctx.expr());
         
         String varName = ctx.variableExpr().Identifier.getText();
@@ -470,8 +448,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitVariableAccess(VariableAccessContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String varName = ctx.variableExpr().Identifier.getText();
         
         addInstr(new InstrLoad(varName));
@@ -485,12 +461,10 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitFunctionCall(FunctionCallContext ctx)
     {
-        checkLineNumber(ctx);
-        
-        visitChildren(ctx.funcArgs());
+        visitChildren(ctx.FunctionArgs);
         
         boolean shouldReturnValue = ctx.getParent() instanceof ExprContext;
-        List<ExprContext> exprListCtx = ctx.funcArgs().expr();
+        List<ExprContext> exprListCtx = ctx.FunctionArgs.ArgumentExprs;
         
         String funcName = ctx.Identifier.getText();
         int argCount = exprListCtx.size();
@@ -505,17 +479,15 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitTableCall(TableCallContext ctx)
     {
-        checkLineNumber(ctx);
-        
-        visitChildren(ctx.funcArgs());
+        visitChildren(ctx.FunctionArgs);
         
         boolean shouldReturnValue = ctx.getParent() instanceof ExprContext;
-        List<ExprContext> exprListCtx = ctx.funcArgs().expr();
+        List<ExprContext> exprListCtx = ctx.FunctionArgs.ArgumentExprs;
         
         int argCount = exprListCtx.size();
         int retCount = shouldReturnValue ? 1 : 0;
         
-        visit(ctx.tableExpr());
+        visit(ctx.TableExpr);
         addInstr(new InstrCall(argCount, retCount));
         
         return null;
@@ -527,10 +499,8 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitTableCtorExpr(TableCtorExprContext ctx)
     {
-        checkLineNumber(ctx);
-        
         int i = 1;
-        for (FieldDefExprContext fieldDef : ctx.fieldDefExpr())
+        for (FieldDefExprContext fieldDef : ctx.FieldExprs)
         {
             if (fieldDef instanceof IndexedFieldContext)
             {
@@ -541,7 +511,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
             visit(fieldDef);
         }
         
-        int tSize = ctx.fieldDefExpr().size();
+        int tSize = ctx.FieldExprs.size();
         
         addInstr(new InstrCreateT(tSize));
         
@@ -551,8 +521,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitNamedField(NamedFieldContext ctx)
     {
-        checkLineNumber(ctx);
-        
         String key = ctx.variableExpr().Identifier.getText();
         
         addInstr(new InstrPush(key));
@@ -564,13 +532,11 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitTableExpr(TableExprContext ctx)
     {
-        checkLineNumber(ctx);
-        
-        String parentVar = ctx.variableExpr().Identifier.getText();
+        String parentVar = ctx.ParentTableExpr.Identifier.getText();
         
         addInstr(new InstrLoad(parentVar));
         
-        for (TableFieldAccessContext fieldCtx : ctx.Fields)
+        for (TableFieldAccessContext fieldCtx : ctx.FieldExprs)
         {
             visit(fieldCtx);
             
@@ -581,18 +547,8 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     }
     
     @Override
-    public Void visitTableAccess(TableAccessContext ctx)
-    {
-        visit(ctx.tableExpr());
-        
-        return null;
-    }
-    
-    @Override
     public Void visitTableAssignment(TableAssignmentContext parentCtx)
     {
-        checkLineNumber(parentCtx);
-        
         TableExprContext ctx = parentCtx.tableExpr();
         
         String parentVar = ctx.variableExpr().Identifier.getText();
@@ -600,10 +556,10 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         addInstr(new InstrLoad(parentVar));
         
         // Visit all field access nodes except the last.
-        int limit = ctx.Fields.size() - 1;
+        int limit = ctx.FieldExprs.size() - 1;
         for (int i = 0; i <= limit; i++)
         {
-            TableFieldAccessContext fieldCtx = ctx.Fields.get(i);
+            TableFieldAccessContext fieldCtx = ctx.FieldExprs.get(i);
             
             visit(fieldCtx);
             
@@ -623,8 +579,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitTableFieldAccess(TableFieldAccessContext ctx)
     {
-        checkLineNumber(ctx);
-        
         if (ctx.Key == null)
         {
             visit(ctx.expr());
@@ -645,8 +599,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitIfElseBlock(IfElseBlockContext ctx)
     {
-        checkLineNumber(ctx);
-        
         InstrLabel cont = new InstrLabel("continue");
         
         singleIfElse(ctx, cont);
@@ -704,19 +656,17 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitWhileBlock(WhileBlockContext ctx)
     {
-        checkLineNumber(ctx);
-        
         addInstr(new InstrPushScope());
         
         InstrLabel loop = new InstrLabel("while");
         addInstr(loop);
         
-        visit(ctx.expr());
+        visit(ctx.Condition);
         
         InstrLabel cont = new InstrLabel("continue");
         addInstr(new InstrJumpIfNot(cont));
         
-        visit(ctx.block());
+        visit(ctx.LoopBlock);
         
         addInstr(new InstrJump(loop, false, false));
         addInstr(cont);
@@ -729,15 +679,13 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitRepeatBlock(RepeatBlockContext ctx)
     {
-        checkLineNumber(ctx);
-        
         addInstr(new InstrPushScope());
         
         InstrLabel loop = new InstrLabel("repeat");
         addInstr(loop);
         
-        visit(ctx.block());
-        visit(ctx.expr());
+        visit(ctx.LoopBlock);
+        visit(ctx.Condition);
         
         addInstr(new InstrNot());
         addInstr(new InstrJumpIfNot(loop));
@@ -750,8 +698,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitNumericFor(NumericForContext ctx)
     {
-        checkLineNumber(ctx);
-        
         addInstr(new InstrPushScope());
         
         visit(ctx.Initializer.expr());
@@ -791,9 +737,8 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandSay(CommandSayContext ctx)
     {
-        visitChildren(ctx);
-        
-        checkLineNumber(ctx);
+        visit(ctx.Character);
+        visit(ctx.Text);
         
         int argCount = ctx.Character == null ? 1 : 2;
         
@@ -807,8 +752,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandShow(CommandShowContext ctx)
     {
-        checkLineNumber(ctx);
-        
         int argCount = 2;
         
         if (ctx.Group != null)
@@ -844,8 +787,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandScene(CommandSceneContext ctx)
     {
-        checkLineNumber(ctx);
-        
         int argCount = 2;
         
         if (ctx.Group != null)
@@ -868,8 +809,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandHide(CommandHideContext ctx)
     {
-        checkLineNumber(ctx);
-        
         visit(ctx.Group);
         
         addInstr(new InstrLoad("HideTexture"));
@@ -884,18 +823,16 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         List<ExprContext> optionExprs = Lists.newArrayList();
         List<BlockContext> optionBlocks = Lists.newArrayList();
         
-        for (CommandMenuOptionContext optionCtx : ctx.commandMenuOption())
+        for (CommandMenuOptionContext optionCtx : ctx.Options)
         {
-            optionExprs.add(optionCtx.expr());
-            optionBlocks.add(optionCtx.block());
+            optionExprs.add(optionCtx.OptionTextExpr);
+            optionBlocks.add(optionCtx.OptionBlock);
         }
         
         for (ExprContext optionExpr : optionExprs)
         {
             visit(optionExpr);
         }
-        
-        checkLineNumber(ctx);
         
         addInstr(new InstrLoad("DisplayChoice"));
         addInstr(new InstrCall(optionExprs.size(), 0));

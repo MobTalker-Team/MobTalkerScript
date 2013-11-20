@@ -10,13 +10,13 @@ public class Queue<T>
         return new Queue<T>();
     }
     
-    public static <T> Queue<T> newQueue(Collection<T> c)
+    public static <T> Queue<T> newQueue( Collection<T> c )
     {
-        Queue<T> q = new Queue<T>(c.size());
+        Queue<T> q = new Queue<T>( c.size() );
         
-        for (T o : c)
+        for ( T o : c )
         {
-            q.offer(o);
+            q.offer( o );
         }
         
         return q;
@@ -32,11 +32,11 @@ public class Queue<T>
     
     public Queue()
     {
-        this(10);
+        this( 10 );
     }
     
-    @SuppressWarnings("unchecked")
-    public Queue(int size)
+    @SuppressWarnings( "unchecked" )
+    public Queue( int size )
     {
         _array = (T[]) new Object[size];
         _head = 0;
@@ -45,9 +45,9 @@ public class Queue<T>
     
     // ========================================
     
-    private int incrIndex(int i)
+    private int incrIndex( int i )
     {
-        if (++i == _array.length)
+        if ( ++i == _array.length )
         {
             i = 0;
         }
@@ -57,30 +57,30 @@ public class Queue<T>
     
     // ========================================
     
-    public void offer(T o)
+    public void offer( T o )
     {
-        _tail = incrIndex(_tail);
+        _tail = incrIndex( _tail );
         
-        if (_tail == _head)
+        if ( _tail == _head )
         {
             int newSize = _array.length * 2;
             
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings( "unchecked" )
             T[] newArr = (T[]) new Object[newSize];
             
-            if (_head <= _tail)
+            if ( _head <= _tail )
             {
                 int len = _tail - _head;
                 
-                if (len == 0)
+                if ( len == 0 )
                 {
-                    System.arraycopy(_array, _head, newArr, 0, _array.length);
+                    System.arraycopy( _array, _head, newArr, 0, _array.length );
                     _head = 0;
                     _tail = _array.length;
                 }
                 else
                 {
-                    System.arraycopy(_array, _head, newArr, 0, len);
+                    System.arraycopy( _array, _head, newArr, 0, len );
                     _head = 0;
                     _tail = len - 1;
                 }
@@ -90,11 +90,11 @@ public class Queue<T>
                 int len1 = _array.length - _head;
                 int len2 = _tail + 1;
                 
-                System.arraycopy(_array, _head, newArr, 0, len1);
-                System.arraycopy(_array, 0, newArr, len1, len2);
+                System.arraycopy( _array, _head, newArr, 0, len1 );
+                System.arraycopy( _array, 0, newArr, len1, len2 );
                 
                 _head = 0;
-                _tail = (len1 + len2) - 1;
+                _tail = ( len1 + len2 ) - 1;
             }
             
             _array = newArr;
@@ -105,21 +105,21 @@ public class Queue<T>
     
     public T poll()
     {
-        if (isEmpty())
+        if ( isEmpty() )
         {
-            throw new NoSuchElementException("Queue is empty");
+            throw new NoSuchElementException( "Queue is empty" );
         }
         
-        _head = incrIndex(_head);
+        _head = incrIndex( _head );
         
         return _array[_head];
     }
     
     public T peek()
     {
-        if (isEmpty())
+        if ( isEmpty() )
         {
-            throw new NoSuchElementException("Queue is empty");
+            throw new NoSuchElementException( "Queue is empty" );
         }
         
         return _array[_head];

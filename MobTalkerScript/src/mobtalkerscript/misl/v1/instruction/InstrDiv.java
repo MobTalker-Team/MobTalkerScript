@@ -4,11 +4,10 @@ import mobtalkerscript.misl.v1.value.*;
 
 public class InstrDiv extends AbstractNumberBinaryOperator
 {
-    
     @Override
-    protected MislNumber calculate(MislNumber a, MislNumber b)
+    protected MislNumber calculate( MislNumber a, MislNumber b )
     {
-        return MislNumber.div(a, b);
+        return MislNumber.div( a, b );
     }
     
     // ========================================
@@ -16,7 +15,6 @@ public class InstrDiv extends AbstractNumberBinaryOperator
     @Override
     public String toString()
     {
-        return "div";
+        return "DIV";
     }
-    
 }

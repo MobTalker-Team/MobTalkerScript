@@ -6,14 +6,16 @@ import mobtalkerscript.util.*;
 public class InstrPushScope extends MislInstruction
 {
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {
         context.enterBlockScope();
     }
     
+    // ========================================
+    
     @Override
     public String toString()
     {
-        return "push_scope";
+        return "SCOPE_PUSH";
     }
 }

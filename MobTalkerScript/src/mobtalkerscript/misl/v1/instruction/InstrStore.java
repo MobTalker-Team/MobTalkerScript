@@ -1,18 +1,16 @@
 package mobtalkerscript.misl.v1.instruction;
 
-import mobtalkerscript.*;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.util.*;
 
 public class InstrStore extends AbstractStackInstruction
 {
-    
     private final String _varName;
     
     // ========================================
     
-    public InstrStore(String varName)
+    public InstrStore( String varName )
     {
         _varName = varName;
     }
@@ -20,18 +18,16 @@ public class InstrStore extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislValue value = stack.pop();
         
-        if (value == null)
+        if ( value == null )
         {
-            throw new ScriptEngineException("Command stack was empty");
+            throw new ScriptEngineException( "Stack was empty" );
         }
         
-        IBindings env = context.getScriptEnvironment();
-        
-        env.set(_varName, value);
+        context.setExistingValue( _varName, value );
     }
     
     // ========================================
@@ -39,6 +35,6 @@ public class InstrStore extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "store " + _varName;
+        return String.format( "%1$-10s %2$s", "STORE", _varName );
     }
 }

@@ -3,7 +3,7 @@ package mobtalkerscript.misl.v1.value;
 import java.util.Map.Entry;
 import java.util.*;
 
-import mobtalkerscript.*;
+import mobtalkerscript.misl.v1.*;
 
 import com.google.common.collect.*;
 
@@ -29,96 +29,96 @@ public class MislTable extends MislValue
      * 
      * @param initialCapacity Currently ignored.
      */
-    public MislTable(int initialCapacity)
+    public MislTable( int initialCapacity )
     {
         _table = Maps.newTreeMap();
     }
     
     // ========================================
     
-    public MislValue set(MislValue key, MislValue value)
+    public MislValue set( MislValue key, MislValue value )
     {
-        if (_readonly)
+        if ( _readonly )
         {
-            throw new ScriptRuntimeException("%s is readonly", toString());
+            throw new ScriptRuntimeException( "%s is readonly", toString() );
         }
         
-        if (!(key.isNumber() || key.isString()))
+        if ( !( key.isNumber() || key.isString() ) )
         {
-            throw new ScriptRuntimeException("Can only use numbers and strings as keys, got %s",
-                                             key.getTypeName());
+            throw new ScriptRuntimeException( "Can only use numbers and strings as keys, got %s",
+                                              key.getTypeName() );
         }
         
         MislValue removed;
         
-        if (value.isNil())
+        if ( value.isNil() )
         {
-            removed = _table.remove(key);
+            removed = _table.remove( key );
         }
         else
         {
-            removed = _table.put(key, value);
+            removed = _table.put( key, value );
         }
         
         return removed;
     }
     
-    public MislValue set(String key, MislValue value)
+    public MislValue set( String key, MislValue value )
     {
-        return set(valueOf(key), value);
+        return set( valueOf( key ), value );
     }
     
-    public MislValue remove(MislValue key)
+    public MislValue remove( MislValue key )
     {
-        return set(key, NIL);
+        return set( key, NIL );
     }
     
     public MislValue remove()
     {
-        return remove(_table.lastKey());
+        return remove( _table.lastKey() );
     }
     
-    public MislValue get(MislValue key)
+    public MislValue get( MislValue key )
     {
-        if (!(key.isNumber() || key.isString()))
+        if ( !( key.isNumber() || key.isString() ) )
         {
-            throw new ScriptRuntimeException("Can only use numbers and strings as keys, got %s",
-                                             key.getTypeName());
+            throw new ScriptRuntimeException( "Can only use numbers and strings as keys, got %s",
+                                              key.getTypeName() );
         }
         
-        MislValue result = _table.get(key);
+        MislValue result = _table.get( key );
         return result == null ? NIL : result;
     }
     
-    public MislValue get(String key)
+    public MislValue get( String key )
     {
-        return get(valueOf(key));
+        return get( valueOf( key ) );
     }
     
     public MislNumber getSize()
     {
-        return valueOf(_table.size());
+        return valueOf( _table.size() );
     }
     
     public MislNumber getNextIndex()
     {
-        MislValue highestNum = _table.lowerKey(MislNumber.MAX_VALUE);
+        MislValue highestNum = _table.lowerKey( MislNumber.MAX_VALUE );
         
-        if ((highestNum == null) || !highestNum.isNumber())
+        if ( ( highestNum == null ) || !highestNum.isNumber() )
         {
-            return valueOf(1.0D);
+            return valueOf( 1.0D );
         }
         else
         {
             MislNumber nextIndex = highestNum.asNumber().incr();
-            return valueOf(Math.floor(nextIndex.toJava()));
+            return valueOf( Math.floor( nextIndex.toJava() ) );
         }
     }
     
-    public MislValue getRandomElement(Random rnd)
+    public MislValue getRandomElement( Random rnd )
     {
         Object[] values = _table.values().toArray();
-        Object value = values[rnd.nextInt(values.length)];
+        Object value = values[rnd.nextInt( values.length )];
         
         return (MislValue) value;
     }
@@ -130,9 +130,9 @@ public class MislTable extends MislValue
         return _table.keySet();
     }
     
-    public Entry<MislValue, MislValue> getEntryAfter(MislValue key)
+    public Entry<MislValue, MislValue> getEntryAfter( MislValue key )
     {
-        return _table.higherEntry(key);
+        return key.isNil() ? _table.firstEntry() : _table.higherEntry( key );
     }
     
     public Set<Entry<MislValue, MislValue>> getEntries()
@@ -147,7 +147,7 @@ public class MislTable extends MislValue
         return _readonly;
     }
     
-    public void setReadonly(boolean readonly)
+    public void setReadonly( boolean readonly )
     {
         _readonly = readonly;
     }
@@ -165,7 +165,7 @@ public class MislTable extends MislValue
     @Override
     public MislString toMtsString()
     {
-        return valueOf(toString());
+        return valueOf( toString() );
     }
     
     // ========================================
@@ -183,28 +183,22 @@ public class MislTable extends MislValue
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        return valueOf(this == x);
+        return valueOf( this == x );
     }
     
     // ========================================
     
     public SortedMap<MislValue, MislValue> toJava()
     {
-        return Maps.newTreeMap(_table);
+        return Maps.newTreeMap( _table );
     }
     
     @Override
     public String toString()
     {
-        return "table#" + Integer.toHexString(hashCode());
-    }
-    
-    @Override
-    public boolean equals(Object obj)
-    {
-        return this == obj;
+        return "table#" + Integer.toHexString( hashCode() );
     }
     
     @Override

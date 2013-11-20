@@ -23,7 +23,7 @@ public class SimpleBindings implements IBindings
         _parent = null;
     }
     
-    public SimpleBindings(IBindings parent)
+    public SimpleBindings( IBindings parent )
     {
         _parent = parent;
     }
@@ -43,29 +43,29 @@ public class SimpleBindings implements IBindings
     }
     
     @Override
-    public boolean contains(String key)
+    public boolean contains( String key, boolean recursive )
     {
-        boolean result = _bindings.containsKey(key);
+        boolean result = _bindings.containsKey( key );
         
-        if (!result && (_parent != null))
+        if ( recursive && !result && ( _parent != null ) )
         {
-            result = _parent.contains(key);
+            result = _parent.contains( key, true );
         }
         
         return result;
     }
     
     @Override
-    public MislValue get(String key)
+    public MislValue get( String key )
     {
         
-        if (_bindings.containsKey(key))
+        if ( _bindings.containsKey( key ) )
         {
-            return _bindings.get(key);
+            return _bindings.get( key );
         }
-        else if ((_parent != null) && _parent.contains(key))
+        else if ( _parent != null )
         {
-            return _parent.get(key);
+            return _parent.get( key );
         }
         else
         {
@@ -74,17 +74,17 @@ public class SimpleBindings implements IBindings
     }
     
     @Override
-    public MislValue set(String key, MislValue value)
+    public MislValue set( String key, MislValue value )
     {
         MislValue result;
         
-        if (_bindings.containsKey(key))
+        if ( _bindings.containsKey( key ) )
         {
-            result = _bindings.put(key, value);
+            result = _bindings.put( key, value );
         }
         else
         {
-            _bindings.put(key, value);
+            _bindings.put( key, value );
             result = _defaultValue;
         }
         
@@ -92,16 +92,16 @@ public class SimpleBindings implements IBindings
     }
     
     @Override
-    public void copyTo(IBindings target)
+    public void copyTo( IBindings target )
     {
-        if (this == target)
+        if ( this == target )
         {
             return;
         }
         
-        for (Map.Entry<String, MislValue> binding : _bindings.entrySet())
+        for ( Map.Entry<String, MislValue> binding : _bindings.entrySet() )
         {
-            target.set(binding.getKey(), binding.getValue());
+            target.set( binding.getKey(), binding.getValue() );
         }
     }
     

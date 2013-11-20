@@ -6,15 +6,16 @@ import mobtalkerscript.util.*;
 public class InstrPopScope extends MislInstruction
 {
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {
         context.leaveBlockScope();
     }
     
+    // ========================================
+    
     @Override
     public String toString()
     {
-        return "pop_scope";
+        return "SCOPE_POP";
     }
-    
 }

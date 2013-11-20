@@ -2,14 +2,15 @@ package mobtalkerscript.mts.v1.parser;
 
 import java.util.*;
 
-import mobtalkerscript.*;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.instruction.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.mts.v1.parser.MtsParser.BinaryExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.BlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.BooleanLiteralContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.BreakStmtContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CallContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandHideContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandMenuContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandMenuOptionContext;
@@ -17,22 +18,28 @@ import mobtalkerscript.mts.v1.parser.MtsParser.CommandSayContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandSceneContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CommandShowContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ExprContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.ExpressionKeyedAccessContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.ExpressionKeyedFieldDefContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.FieldDefExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.FuncDeclContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.FunctionCallContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.GenericForContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.IdentifierKeyedAccessContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.IdentifierKeyedFieldDefContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.IfElseBlockContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.IndexedFieldContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.JumpContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LabelDeclContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.LocalVariableAssignmentContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.ListFieldDefContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.LocalFieldDefinitionContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.LogicalExprContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.NamedFieldContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.LoopBlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.NullLiteralContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.NumberLiteralContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.NumericForContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.RepeatBlockContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ReturnStmtContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.StringLiteralContext;
+import mobtalkerscript.mts.v1.parser.MtsParser.TableAccessContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableAssignmentContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableCallContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.TableCtorExprContext;
@@ -41,7 +48,6 @@ import mobtalkerscript.mts.v1.parser.MtsParser.TableFieldAccessContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.UnaryExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.VariableAccessContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.VariableAssignmentContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.VariableExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.WhileBlockContext;
 import mobtalkerscript.util.logging.*;
 
@@ -54,23 +60,20 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
 {
     private final ArrayList<MislInstruction> _instructionList;
     private final MislInstructionList _instructions;
-    private final IBindings _bindings;
+    private final IBindings _local;
+    
+    private InstrLabel _curBreakTarget;
     
     // ========================================
     
-    public MtsToMislCompiler(MtsParser parser)
+    public MtsToMislCompiler()
     {
-        _instructionList = Lists.newArrayListWithExpectedSize(100);
+        _instructionList = Lists.newArrayListWithExpectedSize( 100 );
         _instructions = new MislInstructionList();
-        _bindings = new SimpleBindings();
+        _local = new SimpleBindings();
     }
     
     // ========================================
-    
-    public MislInstructionList getInstructions()
-    {
-        return _instructions;
-    }
     
     public List<MislInstruction> getInstructionsAsList()
     {
@@ -79,56 +82,85 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     
     public IBindings getBindings()
     {
-        return _bindings;
+        return _local;
     }
     
     // ========================================
     
-    private void addInstr(MislInstruction instr)
+    private void addInstr( MislInstruction instr )
     {
-        _instructionList.add(instr);
-        _instructions.add(instr);
+        _instructions.add( instr );
+        _instructionList.add( instr );
         
-        MTSLog.info("Added instr %s", instr.toString());
+        MTSLog.finest( "[Compiler] %s", instr.toString() );
     }
     
     // ========================================
     
-    private int _curLine;
+    private String _curSourceName;
+    private int _curSourceLine;
     
-    private void checkLineNumber(ParserRuleContext ctx)
+    private void checkSourcePosition( ParserRuleContext ctx )
     {
-        checkLineNumber(ctx.start);
+        checkSourcePosition( ctx.start );
     }
     
-    private void checkLineNumber(Token token)
+    private void checkSourcePosition( Token token )
     {
-        int line = token.getLine();
+        String sourceName = token.getTokenSource().getSourceName();
+        int sourceLine = token.getLine();
         
-        if (_curLine == line)
+        if ( Objects.equals( _curSourceName, sourceName ) && ( _curSourceLine == sourceLine ) )
         {
             return;
         }
         
-        addInstr(new InstrLine(_curLine));
+        _curSourceName = sourceName;
+        _curSourceLine = sourceLine;
         
-        _curLine = line;
+        addInstr( new InstrLine( sourceName, sourceLine ) );
     }
     
     @Override
-    public Void visit(ParseTree tree)
+    public Void visit( ParseTree tree )
     {
-        if (tree == null)
+        if ( tree == null )
         {
             return null;
         }
         
-        if (tree instanceof ParserRuleContext)
+        if ( ( tree instanceof ParserRuleContext ) && !( tree instanceof ChunkContext ) )
         {
-            checkLineNumber((ParserRuleContext) tree);
+            checkSourcePosition( (ParserRuleContext) tree );
         }
         
-        super.visit(tree);
+        super.visit( tree );
+        
+        return null;
+    }
+    
+    public Void visit( List<? extends ParseTree> ctxs )
+    {
+        for ( ParseTree ctx : ctxs )
+        {
+            visit( ctx );
+        }
+        
+        return null;
+    }
+    
+    // ========================================
+    // chunk
+    
+    @Override
+    public Void visitChunk( ChunkContext ctx )
+    {
+        MTSLog.fine( "[Compiler] Begin chunk" );
+        
+        visit( ctx.labelDecl() );
+        visit( ctx.funcDecl() );
+        
+        MTSLog.fine( "[Compiler] End chunk" );
         
         return null;
     }
@@ -136,87 +168,77 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // ========================================
     // Label
     
-    private Set<String> _locals = Sets.newHashSet();
-    
     @Override
-    public Void visitLabelDecl(LabelDeclContext ctx)
+    public Void visitLabelDecl( LabelDeclContext ctx )
     {
-        String funcName = ctx.Identifier.getText();
-        InstrLabel label = new InstrLabel(funcName);
+        String funcName = ctx.LabelName.getText();
         
-        addInstr(label);
-        _bindings.set(funcName, new MislFunction(label, 0));
+        InstrLabel label = new InstrLabel( funcName );
+        addInstr( label );
         
-        _locals.clear();
+        _local.set( funcName, new MislFunction( label, 0 ) );
         
-        visit(ctx.LabelBlock);
+        visitChildren( ctx.Block );
         
-        _locals.clear();
-        
-        addInstr(new InstrReturn());
+        addInstr( new InstrReturn( 0 ) );
         
         return null;
     }
     
     @Override
-    public Void visitFuncDecl(FuncDeclContext ctx)
+    public Void visitFuncDecl( FuncDeclContext ctx )
     {
-        String funcName = ctx.Identifier.getText();
-        int argCount = ctx.Params.size();
+        String funcName = ctx.FunctionName.getText();
+        int argCount = ctx.Parameters.size();
         
-        InstrLabel label = new InstrLabel(funcName);
+        InstrLabel label = new InstrLabel( funcName );
+        addInstr( label );
         
-        addInstr(label);
-        _bindings.set(funcName, new MislFunction(label, argCount));
-        
-        _locals.clear();
-        
-        for (VariableExprContext paramCtx : ctx.Params)
+        for ( Token paramName : ctx.Parameters )
         {
-            String argName = paramCtx.Identifier.getText();
-            
-            _locals.add(argName);
-            
-            addInstr(new InstrStoreL(argName));
+            String argName = paramName.getText();
+            addInstr( new InstrStoreL( argName ) );
         }
         
-        visit(ctx.FunctionBlock);
+        visit( ctx.Block );
         
-        _locals.clear();
+        addInstr( new InstrReturn( 0 ) );
         
-        addInstr(new InstrReturn());
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitReturnStmt(ReturnStmtContext ctx)
-    {
-        visit(ctx.ReturnExpr);
-        
-        addInstr(new InstrReturn());
+        _local.set( funcName, new MislFunction( label, argCount ) );
         
         return null;
     }
     
     @Override
-    public Void visitJump(JumpContext ctx)
+    public Void visitReturnStmt( ReturnStmtContext ctx )
     {
-        String labelName = ctx.Target.getText();
+        visit( ctx.ReturnExpr );
         
-        addInstr(new InstrLoad(labelName));
-        addInstr(new InstrJumpF());
+        int returnCount = ctx.ReturnExpr != null ? 1 : 0;
+        
+        addInstr( new InstrReturn( returnCount ) );
         
         return null;
     }
     
     @Override
-    public Void visitCall(CallContext ctx)
+    public Void visitJump( JumpContext ctx )
     {
-        String funcName = ctx.Identifier.getText();
+        String labelName = ctx.LabelName.getText();
         
-        addInstr(new InstrLoad(funcName));
-        addInstr(new InstrCall(0, 0));
+        addInstr( new InstrLoad( labelName ) );
+        addInstr( new InstrJumpF() );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCall( CallContext ctx )
+    {
+        String funcName = ctx.FunctionName.getText();
+        
+        addInstr( new InstrLoad( funcName ) );
+        addInstr( new InstrCall( 0, 0 ) );
         
         return null;
     }
@@ -225,36 +247,36 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // Literal
     
     @Override
-    public Void visitStringLiteral(StringLiteralContext ctx)
+    public Void visitStringLiteral( StringLiteralContext ctx )
     {
         String literal = ctx.Literal.getText();
-        addInstr(new InstrPush(literal.substring(1, literal.length() - 1)));
+        addInstr( new InstrPush( literal.substring( 1, literal.length() - 1 ) ) );
         
         return null;
     }
     
     @Override
-    public Void visitNumberLiteral(NumberLiteralContext ctx)
+    public Void visitNumberLiteral( NumberLiteralContext ctx )
     {
-        int literal = Integer.parseInt(ctx.Literal.getText());
-        addInstr(new InstrPush(literal));
+        int literal = Integer.parseInt( ctx.Literal.getText() );
+        addInstr( new InstrPush( literal ) );
         
         return null;
     }
     
     @Override
-    public Void visitBooleanLiteral(BooleanLiteralContext ctx)
+    public Void visitBooleanLiteral( BooleanLiteralContext ctx )
     {
-        boolean literal = Boolean.parseBoolean(ctx.Literal.getText());
-        addInstr(new InstrPush(literal));
+        boolean literal = Boolean.parseBoolean( ctx.Literal.getText() );
+        addInstr( new InstrPush( literal ) );
         
         return null;
     }
     
     @Override
-    public Void visitNullLiteral(NullLiteralContext ctx)
+    public Void visitNullLiteral( NullLiteralContext ctx )
     {
-        addInstr(new InstrPush(MislValue.NIL));
+        addInstr( new InstrPush( MislValue.NIL ) );
         
         return null;
     }
@@ -263,148 +285,148 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // Operators
     
     @Override
-    public Void visitBinaryExpr(BinaryExprContext ctx)
+    public Void visitBinaryExpr( BinaryExprContext ctx )
     {
         String op = ctx.Operator.getText();
         
-        if ("+".equals(op))
+        if ( "+".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrAdd());
+            addInstr( new InstrAdd() );
             
         }
-        else if ("-".equals(op))
+        else if ( "-".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrSub());
+            addInstr( new InstrSub() );
         }
-        else if ("*".equals(op))
+        else if ( "*".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrMul());
+            addInstr( new InstrMul() );
         }
-        else if ("/".equals(op))
+        else if ( "/".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrDiv());
+            addInstr( new InstrDiv() );
         }
-        else if ("%".equals(op))
+        else if ( "%".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrMod());
+            addInstr( new InstrMod() );
         }
-        else if ("<".equals(op))
+        else if ( "<".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrLessThen());
+            addInstr( new InstrLessThen() );
         }
-        else if ("<=".equals(op))
+        else if ( "<=".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrLessThenEqual());
+            addInstr( new InstrLessThenEqual() );
         }
-        else if (">".equals(op))
+        else if ( ">".equals( op ) )
         {
-            visit(ctx.Right);
-            visit(ctx.Left);
+            visit( ctx.Right );
+            visit( ctx.Left );
             
-            addInstr(new InstrLessThen());
+            addInstr( new InstrLessThen() );
         }
-        else if (">=".equals(op))
+        else if ( ">=".equals( op ) )
         {
-            visit(ctx.Right);
-            visit(ctx.Left);
+            visit( ctx.Right );
+            visit( ctx.Left );
             
-            addInstr(new InstrLessThenEqual());
+            addInstr( new InstrLessThenEqual() );
         }
-        else if ("==".equals(op))
+        else if ( "==".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrEqual());
+            addInstr( new InstrCompare() );
         }
-        else if ("!=".equals(op))
+        else if ( "!=".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrEqual());
-            addInstr(new InstrNot());
+            addInstr( new InstrCompare() );
+            addInstr( new InstrNot() );
         }
-        else if ("..".equals(op))
+        else if ( "..".equals( op ) )
         {
-            visit(ctx.Left);
-            visit(ctx.Right);
+            visit( ctx.Left );
+            visit( ctx.Right );
             
-            addInstr(new InstrConcat());
+            addInstr( new InstrConcat() );
         }
         else
         {
-            throw new ScriptParserException("Unknown binary operator: %s", op);
+            throw new ScriptParserException( "Unknown binary operator: %s", op );
         }
         
         return null;
     }
     
     @Override
-    public Void visitUnaryExpr(UnaryExprContext ctx)
+    public Void visitUnaryExpr( UnaryExprContext ctx )
     {
-        visit(ctx.Right);
+        visit( ctx.Right );
         
         String op = ctx.Operator.getText();
         
-        if ("not".equals(op))
+        if ( "not".equals( op ) )
         {
-            addInstr(new InstrNot());
+            addInstr( new InstrNot() );
         }
-        else if ("-".equals(op))
+        else if ( "-".equals( op ) )
         {
-            addInstr(new InstrNeg());
+            addInstr( new InstrNeg() );
         }
         else
         {
-            throw new ScriptParserException("Unknown binary operator: %s", op);
+            throw new ScriptParserException( "Unknown binary operator: %s", op );
         }
         
         return null;
     }
     
     @Override
-    public Void visitLogicalExpr(LogicalExprContext ctx)
+    public Void visitLogicalExpr( LogicalExprContext ctx )
     {
-        InstrLabel cont = new InstrLabel("continue");
+        InstrLabel cont = new InstrLabel( "continue" );
         
         String op = ctx.Operator.getText();
         
-        visit(ctx.Left);
+        visit( ctx.Left );
         
-        if ("and".equals(op))
+        if ( "and".equals( op ) )
         {
-            addInstr(new InstrAnd(cont));
+            addInstr( new InstrAnd( cont ) );
         }
-        else if ("or".equals(op))
+        else if ( "or".equals( op ) )
         {
-            addInstr(new InstrOr(cont));
+            addInstr( new InstrOr( cont ) );
         }
         
-        visit(ctx.Right);
+        visit( ctx.Right );
         
-        addInstr(cont);
+        addInstr( cont );
         
         return null;
     }
@@ -412,45 +434,42 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // ========================================
     // Variables
     
+//    private MtsSyntaxError generateSyntaxError(Token token, String msg)
+//    {
+//        String source = token.getTokenSource().getSourceName();
+//        int line = token.getLine();
+//        int col = token.getStartIndex();
+//        
+//        return new MtsSyntaxError(source, line, col, msg);
+//    }
+    
     @Override
-    public Void visitVariableAssignment(VariableAssignmentContext ctx)
+    public Void visitVariableAssignment( VariableAssignmentContext ctx )
     {
-        visit(ctx.VariableExpr);
+        visit( ctx.ValueExpr );
         
-        String varName = ctx.VariableName.Identifier.getText();
-        
-        if (_locals.contains(varName))
-        {
-            addInstr(new InstrStoreL(varName));
-        }
-        else
-        {
-            addInstr(new InstrStore(varName));
-        }
+        String varName = ctx.VariableName.getText();
+        addInstr( new InstrStore( varName ) );
         
         return null;
     }
     
     @Override
-    public Void visitLocalVariableAssignment(LocalVariableAssignmentContext ctx)
+    public Void visitLocalFieldDefinition( LocalFieldDefinitionContext ctx )
     {
-        visit(ctx.expr());
+        visit( ctx.ValueExpr );
         
-        String varName = ctx.variableExpr().Identifier.getText();
-        
-        addInstr(new InstrStoreL(varName));
-        
-        _locals.add(varName);
+        String varName = ctx.VariableName.getText();
+        addInstr( new InstrStoreL( varName ) );
         
         return null;
     }
     
     @Override
-    public Void visitVariableAccess(VariableAccessContext ctx)
+    public Void visitVariableAccess( VariableAccessContext ctx )
     {
-        String varName = ctx.variableExpr().Identifier.getText();
-        
-        addInstr(new InstrLoad(varName));
+        String varName = ctx.VariableName.getText();
+        addInstr( new InstrLoad( varName ) );
         
         return null;
     }
@@ -459,36 +478,35 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // Calls
     
     @Override
-    public Void visitFunctionCall(FunctionCallContext ctx)
+    public Void visitFunctionCall( FunctionCallContext ctx )
     {
-        visitChildren(ctx.FunctionArgs);
-        
         boolean shouldReturnValue = ctx.getParent() instanceof ExprContext;
-        List<ExprContext> exprListCtx = ctx.FunctionArgs.ArgumentExprs;
         
-        String funcName = ctx.Identifier.getText();
-        int argCount = exprListCtx.size();
+        String funcName = ctx.FunctionName.getText();
+        int argCount = ctx.ArgumentExprs.size();
         int retCount = shouldReturnValue ? 1 : 0;
         
-        addInstr(new InstrLoad(funcName));
-        addInstr(new InstrCall(argCount, retCount));
+        visit( ctx.ArgumentExprs );
+        
+        addInstr( new InstrLoad( funcName ) );
+        addInstr( new InstrCall( argCount, retCount ) );
         
         return null;
     }
     
     @Override
-    public Void visitTableCall(TableCallContext ctx)
+    public Void visitTableCall( TableCallContext ctx )
     {
-        visitChildren(ctx.FunctionArgs);
-        
         boolean shouldReturnValue = ctx.getParent() instanceof ExprContext;
-        List<ExprContext> exprListCtx = ctx.FunctionArgs.ArgumentExprs;
         
-        int argCount = exprListCtx.size();
+        int argCount = ctx.ArgumentExprs.size();
         int retCount = shouldReturnValue ? 1 : 0;
         
-        visit(ctx.TableExpr);
-        addInstr(new InstrCall(argCount, retCount));
+        visit( ctx.ArgumentExprs );
+        visit( ctx.FunctionExpr );
+        
+        addInstr( new InstrLoadT() );
+        addInstr( new InstrCall( argCount, retCount ) );
         
         return null;
     }
@@ -497,98 +515,113 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // Tables
     
     @Override
-    public Void visitTableCtorExpr(TableCtorExprContext ctx)
+    public Void visitTableCtorExpr( TableCtorExprContext ctx )
     {
-        int i = 1;
-        for (FieldDefExprContext fieldDef : ctx.FieldExprs)
-        {
-            if (fieldDef instanceof IndexedFieldContext)
-            {
-                addInstr(new InstrPush(i));
-                i++;
-            }
-            
-            visit(fieldDef);
-        }
-        
         int tSize = ctx.FieldExprs.size();
+        addInstr( new InstrCreateT( tSize ) );
         
-        addInstr(new InstrCreateT(tSize));
+        List<ListFieldDefContext> listExprs = Lists.newArrayList();
         
-        return null;
-    }
-    
-    @Override
-    public Void visitNamedField(NamedFieldContext ctx)
-    {
-        String key = ctx.variableExpr().Identifier.getText();
-        
-        addInstr(new InstrPush(key));
-        visit(ctx.expr());
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitTableExpr(TableExprContext ctx)
-    {
-        String parentVar = ctx.ParentTableExpr.Identifier.getText();
-        
-        addInstr(new InstrLoad(parentVar));
-        
-        for (TableFieldAccessContext fieldCtx : ctx.FieldExprs)
+        // Sort field definitions
+        for ( FieldDefExprContext fieldDef : ctx.FieldExprs )
         {
-            visit(fieldCtx);
-            
-            addInstr(new InstrLoadT());
-        }
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitTableAssignment(TableAssignmentContext parentCtx)
-    {
-        TableExprContext ctx = parentCtx.tableExpr();
-        
-        String parentVar = ctx.variableExpr().Identifier.getText();
-        
-        addInstr(new InstrLoad(parentVar));
-        
-        // Visit all field access nodes except the last.
-        int limit = ctx.FieldExprs.size() - 1;
-        for (int i = 0; i <= limit; i++)
-        {
-            TableFieldAccessContext fieldCtx = ctx.FieldExprs.get(i);
-            
-            visit(fieldCtx);
-            
-            if (i < limit)
+            if ( fieldDef instanceof ListFieldDefContext )
             {
-                addInstr(new InstrLoadT());
+                listExprs.add( (ListFieldDefContext) fieldDef );
+            }
+            else
+            {
+                visit( fieldDef );
             }
         }
         
-        visit(parentCtx.expr());
-        
-        addInstr(new InstrStoreT());
+        // Store list values
+        if ( !listExprs.isEmpty() )
+        {
+            for ( ListFieldDefContext fieldDef : listExprs )
+            {
+                addInstr( new InstrDup() );
+                visit( fieldDef.ValueExpr );
+                addInstr( new InstrStoreTL() );
+            }
+        }
         
         return null;
     }
     
     @Override
-    public Void visitTableFieldAccess(TableFieldAccessContext ctx)
+    public Void visitIdentifierKeyedFieldDef( IdentifierKeyedFieldDefContext ctx )
     {
-        if (ctx.Key == null)
+        String key = ctx.Key.getText();
+        
+        addInstr( new InstrDup() );
+        addInstr( new InstrLoad( key ) );
+        visit( ctx.ValueExpr );
+        addInstr( new InstrStoreT() );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitExpressionKeyedFieldDef( ExpressionKeyedFieldDefContext ctx )
+    {
+        addInstr( new InstrDup() );
+        visit( ctx.KeyExpr );
+        visit( ctx.ValueExpr );
+        addInstr( new InstrStoreT() );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitTableExpr( TableExprContext ctx )
+    {
+        String parentVar = ctx.ParentVariable.getText();
+        addInstr( new InstrLoad( parentVar ) );
+        
+        for ( TableFieldAccessContext fieldAccessCtx : ctx.FieldAccesses )
         {
-            visit(ctx.expr());
+            visit( fieldAccessCtx );
+            addInstr( new InstrLoadT() );
         }
-        else
-        {
-            String key = ctx.Key.getText();
-            
-            addInstr(new InstrPush(key));
-        }
+        
+        visit( ctx.LastFieldAccess );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitTableAccess( TableAccessContext ctx )
+    {
+        visit( ctx.TableFieldExpr );
+        addInstr( new InstrLoadT() );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitTableAssignment( TableAssignmentContext ctx )
+    {
+        visit( ctx.TableFieldExpr );
+        visit( ctx.ValueExpr );
+        addInstr( new InstrStoreT() );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitIdentifierKeyedAccess( IdentifierKeyedAccessContext ctx )
+    {
+        String fieldName = ctx.Key.getText();
+        addInstr( new InstrPush( fieldName ) );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitExpressionKeyedAccess( ExpressionKeyedAccessContext ctx )
+    {
+        visit( ctx.KeyExpr );
         
         return null;
     }
@@ -597,136 +630,214 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // Blocks
     
     @Override
-    public Void visitIfElseBlock(IfElseBlockContext ctx)
+    public Void visitBlock( BlockContext ctx )
     {
-        InstrLabel cont = new InstrLabel("continue");
-        
-        singleIfElse(ctx, cont);
-        
-        if (ctx.Condition.size() > 1)
-        {
-            multiIfElse(ctx, cont);
-        }
-        
-        if (ctx.ElseBlock != null)
-        {
-            visit(ctx.ElseBlock);
-        }
-        
-        addInstr(cont);
-        
-        return null;
+        return visitBlock( ctx, true );
     }
     
-    private void singleIfElse(IfElseBlockContext ctx, InstrLabel cont)
+    public Void visitBlock( BlockContext ctx, boolean newScope )
     {
-        InstrLabel elze = new InstrLabel("else");
-        
-        ExprContext ifCond = ctx.Condition.get(0);
-        visit(ifCond);
-        
-        addInstr(new InstrJumpIfNot(elze));
-        
-        BlockContext thenBlock = ctx.ThenBlock.get(0);
-        visit(thenBlock);
-        
-        addInstr(new InstrJump(cont, false, false));
-        addInstr(elze);
-    }
-    
-    private void multiIfElse(IfElseBlockContext ctx, InstrLabel cont)
-    {
-        for (int i = 1; i < ctx.Condition.size(); i++)
+        if ( newScope )
         {
-            InstrLabel elze = new InstrLabel("elseif");
-            
-            ExprContext ifCond = ctx.Condition.get(i);
-            visit(ifCond);
-            
-            addInstr(new InstrJumpIfNot(elze));
-            
-            BlockContext thenBlock = ctx.ThenBlock.get(i);
-            visit(thenBlock);
-            
-            addInstr(new InstrJump(cont, false, false));
-            addInstr(elze);
+            addInstr( new InstrPushScope() );
         }
-    }
-    
-    @Override
-    public Void visitWhileBlock(WhileBlockContext ctx)
-    {
-        addInstr(new InstrPushScope());
         
-        InstrLabel loop = new InstrLabel("while");
-        addInstr(loop);
+        super.visitBlock( ctx );
         
-        visit(ctx.Condition);
-        
-        InstrLabel cont = new InstrLabel("continue");
-        addInstr(new InstrJumpIfNot(cont));
-        
-        visit(ctx.LoopBlock);
-        
-        addInstr(new InstrJump(loop, false, false));
-        addInstr(cont);
-        
-        addInstr(new InstrPopScope());
+        if ( newScope )
+        {
+            addInstr( new InstrPopScope() );
+        }
         
         return null;
     }
     
     @Override
-    public Void visitRepeatBlock(RepeatBlockContext ctx)
+    public Void visitLoopBlock( LoopBlockContext ctx )
     {
-        addInstr(new InstrPushScope());
-        
-        InstrLabel loop = new InstrLabel("repeat");
-        addInstr(loop);
-        
-        visit(ctx.LoopBlock);
-        visit(ctx.Condition);
-        
-        addInstr(new InstrNot());
-        addInstr(new InstrJumpIfNot(loop));
-        
-        addInstr(new InstrPopScope());
+        super.visitLoopBlock( ctx );
         
         return null;
     }
     
     @Override
-    public Void visitNumericFor(NumericForContext ctx)
+    public Void visitIfElseBlock( IfElseBlockContext ctx )
     {
-        addInstr(new InstrPushScope());
+        InstrLabel cont = new InstrLabel( "continue" );
         
-        visit(ctx.Initializer.expr());
-        String loopVarName = ctx.Initializer.variableExpr().getText();
-        addInstr(new InstrStoreL(loopVarName));
+        singleIfElse( ctx, cont );
         
-        InstrLabel loop = new InstrLabel("for");
-        addInstr(loop);
-        
-        visit(ctx.Condition);
-        
-        InstrLabel cont = new InstrLabel("continue");
-        addInstr(new InstrJumpIfNot(cont));
-        
-        visit(ctx.block());
-        
-        if (ctx.Step != null)
+        if ( ctx.Condition.size() > 1 )
         {
-            visit(ctx.Step);
+            multiIfElse( ctx, cont );
+        }
+        
+        if ( ctx.ElseBlock != null )
+        {
+            visit( ctx.ElseBlock );
+        }
+        
+        addInstr( cont );
+        
+        return null;
+    }
+    
+    private void singleIfElse( IfElseBlockContext ctx, InstrLabel cont )
+    {
+        InstrLabel elze = new InstrLabel( "else" );
+        
+        ExprContext ifCond = ctx.Condition.get( 0 );
+        visit( ifCond );
+        
+        addInstr( new InstrJumpIfNot( elze ) );
+        
+        BlockContext thenBlock = ctx.ThenBlock.get( 0 );
+        visit( thenBlock );
+        
+        addInstr( new InstrJump( cont, false, false ) );
+        addInstr( elze );
+    }
+    
+    private void multiIfElse( IfElseBlockContext ctx, InstrLabel cont )
+    {
+        for ( int i = 1; i < ctx.Condition.size(); i++ )
+        {
+            InstrLabel elze = new InstrLabel( "elseif" );
+            
+            ExprContext ifCond = ctx.Condition.get( i );
+            visit( ifCond );
+            
+            addInstr( new InstrJumpIfNot( elze ) );
+            
+            BlockContext thenBlock = ctx.ThenBlock.get( i );
+            visit( thenBlock );
+            
+            addInstr( new InstrJump( cont, false, false ) );
+            addInstr( elze );
+        }
+    }
+    
+    @Override
+    public Void visitWhileBlock( WhileBlockContext ctx )
+    {
+        InstrLabel loop = new InstrLabel( "while" );
+        addInstr( loop );
+        
+        visit( ctx.Condition );
+        
+        InstrLabel cont = new InstrLabel( "continue" );
+        addInstr( new InstrJumpIfNot( cont ) );
+        
+        addInstr( new InstrPushScope() );
+        _curBreakTarget = cont;
+        visit( ctx.LoopBlock );
+        _curBreakTarget = null;
+        addInstr( new InstrPopScope() );
+        
+        addInstr( new InstrJump( loop, false, false ) );
+        addInstr( cont );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitRepeatBlock( RepeatBlockContext ctx )
+    {
+        InstrLabel loop = new InstrLabel( "repeat" );
+        addInstr( loop );
+        
+        InstrLabel cont = new InstrLabel( "continue" );
+        
+        addInstr( new InstrPushScope() );
+        _curBreakTarget = cont;
+        visit( ctx.LoopBlock );
+        _curBreakTarget = null;
+        addInstr( new InstrPopScope() );
+        
+        visit( ctx.Condition );
+        
+        addInstr( new InstrNot() );
+        addInstr( new InstrJumpIfNot( loop ) );
+        addInstr( cont );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitNumericFor( NumericForContext ctx )
+    {
+        String loopVarName = ctx.Control.LoopVariable.getText();
+        
+        visit( ctx.Control.ValueExpr );
+        
+        InstrLabel loop = new InstrLabel( "nfor" );
+        addInstr( loop );
+        
+        addInstr( new InstrPushScope() );
+        addInstr( new InstrStoreL( loopVarName ) );
+        
+        visit( ctx.Control.Condition );
+        
+        InstrLabel cont = new InstrLabel( "continue" );
+        addInstr( new InstrJumpIfNot( cont ) );
+        
+        _curBreakTarget = cont;
+        visit( ctx.LoopBlock );
+        _curBreakTarget = null;
+        
+        if ( ctx.Control.UpdateExpr == null )
+        {
+            addInstr( new InstrLoad( loopVarName ) );
+            addInstr( new InstrPush( 1 ) );
+            addInstr( new InstrAdd() );
         }
         else
         {
-            addInstr(new InstrIncr(loopVarName));
+            visit( ctx.Control.UpdateExpr );
         }
         
-        addInstr(new InstrJump(loop, false, false));
-        addInstr(cont);
+        addInstr( new InstrPopScope() );
         
-        addInstr(new InstrPopScope());
+        addInstr( new InstrJump( loop, false, false ) );
+        addInstr( cont );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitGenericFor( GenericForContext ctx )
+    {
+        String keyVarName = ctx.Control.KeyVariable.getText();
+        String valVarName = ctx.Control.ValueVariable.getText();
+        
+        visit( ctx.Control.TableExpr );
+        addInstr( new InstrPush( MislValue.NIL ) );
+        
+        InstrLabel loop = new InstrLabel( "gfor" );
+        addInstr( loop );
+        
+        InstrLabel cont = new InstrLabel( "continue" );
+        addInstr( new InstrNext( cont ) );
+        
+        addInstr( new InstrPushScope() );
+        addInstr( new InstrStoreL( valVarName ) );
+        addInstr( new InstrStoreL( keyVarName ) );
+        _curBreakTarget = cont;
+        visit( ctx.LoopBlock );
+        _curBreakTarget = null;
+        addInstr( new InstrPopScope() );
+        
+        addInstr( new InstrJump( loop, false, false ) );
+        addInstr( cont );
+        addInstr( new InstrPop() );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitBreakStmt( BreakStmtContext ctx )
+    {
+        addInstr( new InstrJump( _curBreakTarget, false, true ) );
         
         return null;
     }
@@ -735,132 +846,132 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // Commands
     
     @Override
-    public Void visitCommandSay(CommandSayContext ctx)
+    public Void visitCommandSay( CommandSayContext ctx )
     {
-        visit(ctx.Character);
-        visit(ctx.Text);
+        visit( ctx.Character );
+        visit( ctx.Text );
         
         int argCount = ctx.Character == null ? 1 : 2;
         
-        addInstr(new InstrLoad("DisplayText"));
-        addInstr(new InstrCall(argCount, 0));
-        addInstr(new InstrAwait());
+        addInstr( new InstrLoad( "DisplayText" ) );
+        addInstr( new InstrCall( argCount, 0 ) );
+        addInstr( new InstrYield() );
         
         return null;
     }
     
     @Override
-    public Void visitCommandShow(CommandShowContext ctx)
+    public Void visitCommandShow( CommandShowContext ctx )
     {
         int argCount = 2;
         
-        if (ctx.Group != null)
+        if ( ctx.Group != null )
         {
-            visit(ctx.Group);
+            visit( ctx.Group );
         }
         else
         {
-            addInstr(new InstrPush(MislValue.NIL));
+            addInstr( new InstrPush( MislValue.NIL ) );
         }
         
-        visit(ctx.Path);
+        visit( ctx.Path );
         
-        if (ctx.Pos != null)
+        if ( ctx.Pos != null )
         {
             argCount += 1;
-            visit(ctx.Pos);
+            visit( ctx.Pos );
         }
         
-        if ((ctx.XOffset != null) && (ctx.YOffset != null))
+        if ( ( ctx.XOffset != null ) && ( ctx.YOffset != null ) )
         {
             argCount += 2;
-            visit(ctx.XOffset);
-            visit(ctx.YOffset);
+            visit( ctx.XOffset );
+            visit( ctx.YOffset );
         }
         
-        addInstr(new InstrLoad("ShowTexture"));
-        addInstr(new InstrCall(argCount, 0));
+        addInstr( new InstrLoad( "ShowTexture" ) );
+        addInstr( new InstrCall( argCount, 0 ) );
         
         return null;
     }
     
     @Override
-    public Void visitCommandScene(CommandSceneContext ctx)
+    public Void visitCommandScene( CommandSceneContext ctx )
     {
         int argCount = 2;
         
-        if (ctx.Group != null)
+        if ( ctx.Group != null )
         {
-            visit(ctx.Group);
+            visit( ctx.Group );
         }
         else
         {
-            addInstr(new InstrPush(MislValue.NIL));
+            addInstr( new InstrPush( MislValue.NIL ) );
         }
         
-        visit(ctx.Path);
+        visit( ctx.Path );
         
-        addInstr(new InstrLoad("ShowScene"));
-        addInstr(new InstrCall(argCount, 0));
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitCommandHide(CommandHideContext ctx)
-    {
-        visit(ctx.Group);
-        
-        addInstr(new InstrLoad("HideTexture"));
-        addInstr(new InstrCall(1, 0));
+        addInstr( new InstrLoad( "ShowScene" ) );
+        addInstr( new InstrCall( argCount, 0 ) );
         
         return null;
     }
     
     @Override
-    public Void visitCommandMenu(CommandMenuContext ctx)
+    public Void visitCommandHide( CommandHideContext ctx )
     {
-        List<ExprContext> optionExprs = Lists.newArrayList();
+        visit( ctx.Group );
+        
+        addInstr( new InstrLoad( "HideTexture" ) );
+        addInstr( new InstrCall( 1, 0 ) );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCommandMenu( CommandMenuContext ctx )
+    {
+        List<ExprContext> optionCaptionExprs = Lists.newArrayList();
         List<BlockContext> optionBlocks = Lists.newArrayList();
         
-        for (CommandMenuOptionContext optionCtx : ctx.Options)
+        for ( CommandMenuOptionContext optionCtx : ctx.Options )
         {
-            optionExprs.add(optionCtx.OptionTextExpr);
-            optionBlocks.add(optionCtx.OptionBlock);
+            optionCaptionExprs.add( optionCtx.CaptionExpr );
+            optionBlocks.add( optionCtx.Block );
         }
         
-        for (ExprContext optionExpr : optionExprs)
+        for ( ExprContext optionExpr : optionCaptionExprs )
         {
-            visit(optionExpr);
+            visit( optionExpr );
         }
         
-        addInstr(new InstrLoad("DisplayChoice"));
-        addInstr(new InstrCall(optionExprs.size(), 0));
-        addInstr(new InstrAwait());
+        addInstr( new InstrLoad( "DisplayChoice" ) );
+        addInstr( new InstrCall( optionCaptionExprs.size(), 0 ) );
+        addInstr( new InstrYield() );
         
-        InstrLabel cont = new InstrLabel("continue");
+        InstrLabel cont = new InstrLabel( "continue" );
         
-        for (int i = 0; i < optionBlocks.size(); i++)
+        for ( int i = 0; i < optionBlocks.size(); i++ )
         {
-            InstrLabel elze = new InstrLabel("else");
+            InstrLabel elze = new InstrLabel( "else" );
             
-            addInstr(new InstrDup());
-            addInstr(new InstrPush(i));
-            addInstr(new InstrEqual());
-            addInstr(new InstrJumpIfNot(elze));
+            addInstr( new InstrDup() );
+            addInstr( new InstrPush( i ) );
+            addInstr( new InstrCompare() );
+            addInstr( new InstrJumpIfNot( elze ) );
             
-            addInstr(new InstrPop());
-            visit(optionBlocks.get(i));
-            addInstr(new InstrJump(cont, false, false));
+            addInstr( new InstrPop() );
+            visit( optionBlocks.get( i ) );
+            addInstr( new InstrJump( cont, false, false ) );
             
-            addInstr(elze);
+            addInstr( elze );
         }
         
-        addInstr(new InstrPop());
-        addInstr(new InstrPush("AssertionError"));
-        addInstr(new InstrError());
+        addInstr( new InstrPop() );
+        addInstr( new InstrPush( "AssertionError" ) );
+        addInstr( new InstrError() );
         
-        addInstr(cont);
+        addInstr( cont );
         
         return null;
     }

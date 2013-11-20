@@ -5,18 +5,17 @@ import mobtalkerscript.util.*;
 
 public class InstrJump extends MislInstruction
 {
-    
     private final InstrLabel _label;
     private final boolean _popFrame;
     private final boolean _popScope;
     
     // ========================================
     
-    public InstrJump(InstrLabel label, boolean popFrame, boolean popScope)
+    public InstrJump( InstrLabel label, boolean popFrame, boolean popScope )
     {
-        if (label == null)
+        if ( label == null )
         {
-            throw new NullPointerException("label");
+            throw new NullPointerException( "label" );
         }
         
         _label = label;
@@ -35,17 +34,16 @@ public class InstrJump extends MislInstruction
     // ========================================
     
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {
-        if (_popFrame)
+        if ( _popFrame )
         {
             frameStack.pop();
         }
         
-        if (_popScope)
+        if ( _popScope )
         {
-            context.leaveFunctionScope();
-            context.enterFunctionScope();
+            context.leaveBlockScope();
         }
     }
     
@@ -54,7 +52,6 @@ public class InstrJump extends MislInstruction
     @Override
     public String toString()
     {
-        return "jump " + _label.getName();
+        return String.format( "%1$-10s %2$s", "JUMP", _label.getName() );
     }
-    
 }

@@ -9,7 +9,7 @@ public class MislNil extends MislValue
     
     MislNil()
     {
-        stringValue = MislValue.valueOf("nil");
+        stringValue = MislValue.valueOf( "nil" );
     }
     
     // ========================================
@@ -35,9 +35,9 @@ public class MislNil extends MislValue
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        return valueOf(x.isNil());
+        return valueOf( x.isNil() );
     }
     
     // ========================================

@@ -8,16 +8,16 @@ public class InstrDup extends AbstractStackInstruction
 {
     
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislValue value = stack.peek();
-        stack.push(value);
+        stack.push( value );
     }
     
     @Override
     public String toString()
     {
-        return "dup";
+        return "DUP";
     }
     
 }

@@ -6,9 +6,9 @@ public class InstrConcat extends AbstractBinaryOperator
 {
     
     @Override
-    protected MislValue getResult(MislValue a, MislValue b)
+    protected MislValue getResult( MislValue a, MislValue b )
     {
-        return MislString.concat(a.toMtsString(), b.toMtsString());
+        return MislString.concat( a.toMtsString(), b.toMtsString() );
     }
     
     // ========================================
@@ -16,7 +16,7 @@ public class InstrConcat extends AbstractBinaryOperator
     @Override
     public String toString()
     {
-        return "concat";
+        return "CONCAT";
     }
     
 }

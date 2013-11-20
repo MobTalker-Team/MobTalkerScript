@@ -1,6 +1,5 @@
 package mobtalkerscript.misl.v1.instruction;
 
-import mobtalkerscript.*;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.util.*;
@@ -14,21 +13,24 @@ abstract class AbstractStackInstruction extends MislInstruction
 {
     
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame curFrame = frameStack.peek();
         Stack<MislValue> curStack = curFrame.getStack();
         
         try
         {
-            doExecute(curStack, context);
+            doExecute( curStack, context );
         }
-        catch (ScriptRuntimeException ex)
+        catch ( ScriptRuntimeException ex )
         {
-            throw new ScriptRuntimeException(ex.getMessage() + " (at line: %s)", curFrame.getCurrentLine());
+            throw new ScriptRuntimeException( "%s (at %s:%s)",
+                                              ex.getMessage(),
+                                              curFrame.getSourceName(),
+                                              curFrame.getSourceLine() );
         }
     }
     
-    protected abstract void doExecute(Stack<MislValue> stack, ScriptContext context);
+    protected abstract void doExecute( Stack<MislValue> stack, ScriptContext context );
     
 }

@@ -1,6 +1,6 @@
 package mobtalkerscript.misl.v1.value;
 
-import mobtalkerscript.*;
+import mobtalkerscript.misl.v1.*;
 
 public class MislNumber extends MislValue
 {
@@ -8,30 +8,30 @@ public class MislNumber extends MislValue
     private static final double _max = Integer.MAX_VALUE;
     private static final double _min = Integer.MIN_VALUE;
     
-    public static final MislNumber MAX_VALUE = valueOf(_max);
-    public static final MislNumber MIN_VALUE = valueOf(_min);
+    public static final MislNumber MAX_VALUE = valueOf( _max );
+    public static final MislNumber MIN_VALUE = valueOf( _min );
     
-    public static final MislNumber ZERO = valueOf(0);
-    public static final MislNumber ONE = valueOf(1);
+    public static final MislNumber ZERO = valueOf( 0 );
+    public static final MislNumber ONE = valueOf( 1 );
     
     // ========================================
     
-    public static MislValue parse(MislString mtsStr)
+    public static MislValue parse( MislString mtsStr )
     {
         String s = mtsStr.toJava();
         
         try
         {
-            double d = Double.parseDouble(s);
-            return valueOf(d);
+            double d = Double.parseDouble( s );
+            return valueOf( d );
         }
-        catch (NumberFormatException ex)
+        catch ( NumberFormatException ex )
         {
             return NIL;
         }
     }
     
-    public static MislValue parse(MislBoolean mtsBool)
+    public static MislValue parse( MislBoolean mtsBool )
     {
         boolean b = mtsBool.toJava();
         return b ? ONE : ZERO;
@@ -43,11 +43,11 @@ public class MislNumber extends MislValue
     
     // ========================================
     
-    MislNumber(double value)
+    MislNumber( double value )
     {
-        if ((value < _min) || (_max < value))
+        if ( ( value < _min ) || ( _max < value ) )
         {
-            throw new ScriptRuntimeException("Number is out of 2^31 range: %s", value);
+            throw new ScriptRuntimeException( "Number is out of 2^31 range: %s", value );
         }
         
         _value = value;
@@ -55,44 +55,44 @@ public class MislNumber extends MislValue
     
     // ========================================
     
-    public static MislNumber add(MislNumber x, MislNumber y)
+    public static MislNumber add( MislNumber x, MislNumber y )
     {
-        return valueOf(x._value + y._value);
+        return valueOf( x._value + y._value );
     }
     
-    public static MislNumber sub(MislNumber x, MislNumber y)
+    public static MislNumber sub( MislNumber x, MislNumber y )
     {
-        return valueOf(x._value - y._value);
+        return valueOf( x._value - y._value );
     }
     
-    public static MislNumber mul(MislNumber x, MislNumber y)
+    public static MislNumber mul( MislNumber x, MislNumber y )
     {
-        return valueOf(x._value * y._value);
+        return valueOf( x._value * y._value );
     }
     
-    public static MislNumber div(MislNumber x, MislNumber y)
+    public static MislNumber div( MislNumber x, MislNumber y )
     {
-        return valueOf(x._value / y._value);
+        return valueOf( x._value / y._value );
     }
     
-    public static MislNumber mod(MislNumber x, MislNumber y)
+    public static MislNumber mod( MislNumber x, MislNumber y )
     {
-        return valueOf(x._value % y._value);
+        return valueOf( x._value % y._value );
     }
     
     public MislNumber neg()
     {
-        return valueOf(-_value);
+        return valueOf( -_value );
     }
     
     public MislNumber incr()
     {
-        return valueOf(_value + 1.0D);
+        return valueOf( _value + 1.0D );
     }
     
     public MislNumber decr()
     {
-        return valueOf(_value - 1.0D);
+        return valueOf( _value - 1.0D );
     }
     
     // ========================================
@@ -109,13 +109,13 @@ public class MislNumber extends MislValue
      */
     public MislNumber asIntegerValue()
     {
-        if (isInteger())
+        if ( isInteger() )
         {
             return this;
         }
         else
         {
-            return new MislNumber(Math.floor(_value));
+            return new MislNumber( Math.floor( _value ) );
         }
     }
     
@@ -125,7 +125,7 @@ public class MislNumber extends MislValue
     @Override
     public MislString toMtsString()
     {
-        return valueOf(toString());
+        return valueOf( toString() );
     }
     
     // ========================================
@@ -142,18 +142,18 @@ public class MislNumber extends MislValue
      */
     public boolean isInteger()
     {
-        return !Double.isInfinite(_value) //
-               && !Double.isNaN(_value)
-               && (_value == Math.floor(_value));
+        return !Double.isInfinite( _value ) //
+               && !Double.isNaN( _value )
+               && ( _value == Math.floor( _value ) );
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        if (x.isNumber())
+        if ( x.isNumber() )
         {
             MislNumber other = x.asNumber();
-            return valueOf(_value == other._value);
+            return valueOf( _value == other._value );
         }
         else
         {
@@ -178,31 +178,31 @@ public class MislNumber extends MislValue
     @Override
     public String toString()
     {
-        if (isInteger())
+        if ( isInteger() )
         {
-            return Integer.toString((int) _value);
+            return Integer.toString( (int) _value );
         }
         else
         {
-            return Double.toString(_value);
+            return Double.toString( _value );
         }
     }
     
     @Override
     public int hashCode()
     {
-        return Double.valueOf(_value).hashCode();
+        return Double.valueOf( _value ).hashCode();
     }
     
     @Override
-    public boolean equals(Object obj)
+    public boolean equals( Object obj )
     {
-        if (this == obj)
+        if ( this == obj )
         {
             return true;
         }
         
-        if (obj instanceof MislNumber)
+        if ( obj instanceof MislNumber )
         {
             MislNumber other = (MislNumber) obj;
             return _value == other._value;
@@ -217,15 +217,15 @@ public class MislNumber extends MislValue
     // Comparable
     
     @Override
-    public int compareTo(MislValue o)
+    public int compareTo( MislValue o )
     {
-        if (!o.isNumber())
+        if ( !o.isNumber() )
         {
             return 1;
         }
         
         MislNumber n = o.asNumber();
-        return (int) Math.signum(_value - n._value);
+        return (int) Math.signum( _value - n._value );
     }
     
 }

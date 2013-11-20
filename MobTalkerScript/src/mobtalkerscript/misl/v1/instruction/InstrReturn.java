@@ -6,36 +6,51 @@ import mobtalkerscript.util.*;
 
 public class InstrReturn extends MislInstruction
 {
+    private final int _returnCount;
     
-    public InstrReturn()
-    {}
+    // ========================================
+    
+    public InstrReturn( int returnCount )
+    {
+        _returnCount = returnCount;
+    }
     
     // ========================================
     
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame oldFrame = frameStack.pop();
         
         _next = oldFrame.getReturnPointer();
         
-        if (!frameStack.isEmpty())
+        if ( !frameStack.isEmpty() )
         {
             MislFrame curFrame = frameStack.peek();
-            
-            curFrame.setCurrentLine(oldFrame.getCurrentLine());
             
             Stack<MislValue> oldStack = oldFrame.getStack();
             Stack<MislValue> curStack = curFrame.getStack();
             
-            // Quite useless, since we only allow one return value
-            for (int i = 0; i < oldFrame.getReturnCount(); i++)
+            for ( int i = 0; i < _returnCount; i++ )
             {
-                MislValue returnValue = oldStack.isEmpty() ? MislValue.NIL : oldStack.pop();
-                curStack.push(returnValue);
+                MislValue value = oldStack.pop();
+                
+                if ( i < oldFrame.getReturnCount() )
+                {
+                    curStack.push( value );
+                }
             }
             
-            // Leftovers will be discarded with the stack.
+            if ( !oldStack.isEmpty() )
+            {
+                throw new ScriptEngineException( "Stack was not emptied: %s", oldStack );
+            }
+            
+            int missingCount = oldFrame.getReturnCount() - _returnCount;
+            for ( int i = 0; i < missingCount; i++ )
+            {
+                curStack.push( MislValue.NIL );
+            }
         }
         
         context.leaveFunctionScope();
@@ -46,7 +61,6 @@ public class InstrReturn extends MislInstruction
     @Override
     public String toString()
     {
-        return "return";
+        return String.format( "%1$-10s %2$s", "RETURN", _returnCount );
     }
-    
 }

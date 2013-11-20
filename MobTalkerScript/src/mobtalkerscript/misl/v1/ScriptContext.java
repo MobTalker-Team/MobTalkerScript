@@ -18,13 +18,13 @@ public class ScriptContext
         _scopes = Stack.newStack();
     }
     
-    public ScriptContext(IBindings globals)
+    public ScriptContext( IBindings globals )
     {
         _globalEnv = globals;
-        _scriptEnv = new SimpleBindings(_globalEnv);
+        _scriptEnv = new SimpleBindings( _globalEnv );
     }
     
-    public ScriptContext(IBindings globals, IBindings locals)
+    public ScriptContext( IBindings globals, IBindings locals )
     {
         _globalEnv = globals;
         _scriptEnv = locals;
@@ -46,7 +46,7 @@ public class ScriptContext
     
     public IBindings getCurrentScope()
     {
-        if (_scopes.isEmpty())
+        if ( _scopes.isEmpty() )
         {
             return _scriptEnv;
         }
@@ -56,34 +56,34 @@ public class ScriptContext
         }
     }
     
-    private void pushScope(IBindings parent)
+    private void pushScope( IBindings parent )
     {
-        _scopes.push(new SimpleBindings(parent));
+        _scopes.push( new SimpleBindings( parent ) );
     }
     
     public void enterFunctionScope()
     {
-        if (MTSLog.isFinestEnabled())
+        if ( MTSLog.isFinestEnabled() )
         {
-            MTSLog.finest("[Engine] Entering new function scope");
+            MTSLog.finest( "[Engine] Entering new function scope" );
         }
         
-        pushScope(_scriptEnv);
+        pushScope( _scriptEnv );
     }
     
     public void leaveFunctionScope()
     {
-        if (_scopes.isEmpty())
+        if ( _scopes.isEmpty() )
         {
-            throw new IllegalStateException("No Scopes to leave");
+            throw new IllegalStateException( "No Scopes to leave" );
         }
         
-        if (MTSLog.isFinestEnabled())
+        if ( MTSLog.isFinestEnabled() )
         {
-            MTSLog.finest("[Engine] Leaving function scope");
+            MTSLog.finest( "[Engine] Leaving function scope" );
         }
         
-        while (getCurrentScope().getParent() != _scriptEnv)
+        while ( getCurrentScope().getParent() != _scriptEnv )
         {
             leaveBlockScope();
         }
@@ -93,25 +93,25 @@ public class ScriptContext
     
     public void enterBlockScope()
     {
-        if (MTSLog.isFinestEnabled())
+        if ( MTSLog.isFinestEnabled() )
         {
-            MTSLog.finest("[Engine] Entering new block scope");
+            MTSLog.finest( "[Engine] Entering new block scope" );
         }
-        pushScope(getCurrentScope());
+        pushScope( getCurrentScope() );
     }
     
     public void leaveBlockScope()
     {
-        if (MTSLog.isFinestEnabled())
+        if ( MTSLog.isFinestEnabled() )
         {
-            MTSLog.finest("[Engine] Leaving block scope");
+            MTSLog.finest( "[Engine] Leaving block scope" );
         }
         _scopes.pop();
     }
     
     public void leaveAllScopes()
     {
-        while (!_scopes.isEmpty())
+        while ( !_scopes.isEmpty() )
         {
             leaveFunctionScope();
         }
@@ -125,18 +125,9 @@ public class ScriptContext
      * @param key The key of the binding.
      * @return The value of the binding, or {@link MislNil} if no such bindings exits in any scope.
      */
-    public MislValue getValue(String key)
+    public MislValue getValue( String key )
     {
-        IBindings scope = getCurrentScope();
-        
-        if (scope.contains(key))
-        {
-            return scope.get(key);
-        }
-        else
-        {
-            return MislValue.NIL;
-        }
+        return getCurrentScope().get( key );
     }
     
     /**
@@ -146,9 +137,28 @@ public class ScriptContext
      * @param value
      * @return
      */
-    public MislValue setValue(String key, MislValue value)
+    public MislValue setValue( String key, MislValue value )
     {
-        return getCurrentScope().set(key, value);
+        return getCurrentScope().set( key, value );
+    }
+    
+    /**
+     * Searches all scopes for an existing key to store in, defaulting to the script scope if the key is not found.
+     */
+    public MislValue setExistingValue( String key, MislValue value )
+    {
+        IBindings env = getCurrentScope();
+        while ( !env.contains( key, false ) && ( env != _scriptEnv ) )
+        {
+            env = env.getParent();
+            
+            if ( env == null )
+            {
+                throw new AssertionError();
+            }
+        }
+        
+        return env.set( key, value );
     }
     
 }

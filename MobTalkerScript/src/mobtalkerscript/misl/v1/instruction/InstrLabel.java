@@ -5,12 +5,11 @@ import mobtalkerscript.util.*;
 
 public class InstrLabel extends MislInstruction
 {
-    
     private final String _name;
     
     // ========================================
     
-    public InstrLabel(String name)
+    public InstrLabel( String name )
     {
         _name = name;
     }
@@ -18,7 +17,7 @@ public class InstrLabel extends MislInstruction
     // ========================================
     
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {}
     
     // ========================================
@@ -33,7 +32,6 @@ public class InstrLabel extends MislInstruction
     @Override
     public String toString()
     {
-        return "label " + _name;
+        return String.format( "%1$-10s %2$s", "LABEL", _name );
     }
-    
 }

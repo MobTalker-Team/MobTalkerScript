@@ -1,7 +1,6 @@
 package mobtalkerscript.misl.v1;
 
 import static mobtalkerscript.misl.v1.ScriptEngineState.*;
-import mobtalkerscript.*;
 import mobtalkerscript.misl.v1.instruction.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.util.*;
@@ -23,10 +22,10 @@ public class MislEngine
     
     // ========================================
     
-    public MislEngine(ScriptContext context)
+    public MislEngine( ScriptContext context )
     {
         _frameStack = Stack.newStack();
-        _frameStack.push(new MislFrame(null, 0, -1));
+        _frameStack.push( new MislFrame( null, 0 ) );
         
         _instructionQueue = Queue.newQueue();
         
@@ -59,61 +58,54 @@ public class MislEngine
         
         try
         {
-            while ((_state != STOPPED) && !_instructionQueue.isEmpty())
+            while ( ( _state != STOPPED ) && !_instructionQueue.isEmpty() )
             {
                 MislInstruction instr = _instructionQueue.poll();
                 
-                if (MTSLog.isFineEnabled())
-                {
-                    MTSLog.fine("[Engine] Executing %s", instr.toString());
-                }
+                MTSLog.fine( "[Engine] Executing %s", instr.toString() );
+                MTSLog.finer( "[Engine] Stack: %s", _frameStack.peek().getStack().toString() );
                 
-                instr.execute(_frameStack, _context);
-                
-                if (MTSLog.isFinestEnabled())
-                {
-                    MTSLog.finest("[Engine] Stack: %s", _frameStack.peek().getStack().toString());
-                }
+                instr.execute( _frameStack, _context );
                 
                 MislInstruction next = instr.getNext();
                 
-                if (next != null)
+                if ( next != null )
                 {
-                    _instructionQueue.offer(next);
+                    _instructionQueue.offer( next );
                 }
                 
-                if (instr.pausesExecution())
+                if ( instr.pausesExecution() )
                 {
                     _state = PAUSED;
                     return;
                 }
             }
             
-            if (_frameStack.count() > 1)
+            if ( _frameStack.count() > 1 )
             {
-                throw new ScriptEngineException("Unclean exit: Frame stack still contains %s frames!",
-                                                _frameStack.count() - 1);
+                throw new ScriptEngineException( "Unclean exit: Frame stack still contains %s frames!",
+                                                 _frameStack.count() - 1 );
             }
             
-            if (_context.getCurrentScope() != _context.getScriptEnvironment())
+            if ( _context.getCurrentScope() != _context.getScriptEnvironment() )
             {
-                throw new ScriptEngineException("Unclean exit: Current scope is not the script scope!");
+                throw new ScriptEngineException( "Unclean exit: Current scope is not the script scope!" );
             }
         }
-        catch (ScriptRuntimeException ex)
+        catch ( ScriptRuntimeException ex )
         {
             _state = ERROR;
             throw ex;
         }
-        catch (ScriptEngineException ex)
+        catch ( ScriptEngineException ex )
         {
             _state = ERROR;
             throw ex;
         }
-        catch (Exception ex)
+        catch ( Exception ex )
         {
             _state = ERROR;
-            throw new ScriptEngineException("Something happend while running the engine", ex);
+            throw new ScriptEngineException( "Something happend while running the engine", ex );
         }
         
         _state = STOPPED;
@@ -121,16 +113,16 @@ public class MislEngine
 //        stop();
     }
     
-    protected void pushValues(MislValue... args)
+    protected void pushValues( MislValue... args )
     {
-        if ((args != null) && (args.length > 0))
+        if ( ( args != null ) && ( args.length > 0 ) )
         {
             MislFrame frame = _frameStack.peek();
             Stack<MislValue> stack = frame.getStack();
             
-            for (int i = 0; i < args.length; i++)
+            for ( int i = 0; i < args.length; i++ )
             {
-                stack.push(args[i]);
+                stack.push( args[i] );
             }
         }
     }
@@ -140,41 +132,41 @@ public class MislEngine
      * 
      * @param args The value to push onto the stack.
      */
-    public void resume(MislValue... args)
+    public void resume( MislValue... args )
     {
-        if (!isPaused())
+        if ( !isPaused() )
         {
-            throw new ScriptEngineException("Cannot resume an engine that is not paused! State was: %s",
-                                            _state.toString());
+            throw new ScriptEngineException( "Cannot resume an engine that is not paused! State was: %s",
+                                             _state.toString() );
         }
         
-        pushValues(args);
+        pushValues( args );
         
         run();
     }
     
-    public MislValue[] call(String function, int returnCount, MislValue... args)
+    public MislValue[] call( String function, int returnCount, MislValue... args )
     {
-        if (_state != STOPPED)
+        if ( _state != STOPPED )
         {
-            throw new ScriptEngineException("Engine must terminate before calling a function! State was: %s).",
-                                            _state.toString());
+            throw new ScriptEngineException( "Engine must terminate before calling a function! State was: %s).",
+                                             _state.toString() );
         }
         
-        pushValues(args);
+        pushValues( args );
         
-        _instructionQueue.offer(new InstrLoad(function));
-        _instructionQueue.offer(new InstrCall(args.length, returnCount));
+        _instructionQueue.offer( new InstrLoad( function ) );
+        _instructionQueue.offer( new InstrCall( args.length, returnCount ) );
         
         run();
         
-        if (returnCount > 0)
+        if ( returnCount > 0 )
         {
             MislValue[] returnVals = new MislValue[returnCount];
             
             Stack<MislValue> stack = _frameStack.peek().getStack();
             
-            for (int i = returnVals.length - 1; i >= 0; i--)
+            for ( int i = returnVals.length - 1; i >= 0; i-- )
             {
                 returnVals[i] = stack.pop();
             }
@@ -189,7 +181,7 @@ public class MislEngine
     
     public void stop()
     {
-        if (_state == STOPPED)
+        if ( _state == STOPPED )
         {
             return;
         }
@@ -198,7 +190,7 @@ public class MislEngine
         _frameStack.clear();
         _context.leaveAllScopes();
         
-        _frameStack.push(new MislFrame(null, 0, -1));
+        _frameStack.push( new MislFrame( null, 0 ) );
         
         _state = STOPPED;
     }

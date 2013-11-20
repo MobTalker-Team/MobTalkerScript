@@ -14,7 +14,6 @@ import mobtalkerscript.util.*;
  */
 public abstract class MislInstruction
 {
-    
     protected MislInstruction _prev;
     protected MislInstruction _next;
     
@@ -32,19 +31,19 @@ public abstract class MislInstruction
     
     // ========================================
     
-    /* package */void setPrev(MislInstruction prev)
+    /* package */void setPrev( MislInstruction prev )
     {
         _prev = prev;
     }
     
-    /* package */void setNext(MislInstruction next)
+    /* package */void setNext( MislInstruction next )
     {
         _next = next;
     }
     
     // ========================================
     
-    public abstract void execute(Stack<MislFrame> frameStack, ScriptContext context);
+    public abstract void execute( Stack<MislFrame> frameStack, ScriptContext context );
     
     // ========================================
     

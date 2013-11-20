@@ -10,17 +10,17 @@ public class MislFrame
     private MislInstruction _retPointer;
     private int _retCount;
     
-    private int _curLine;
+    private String _sourceName;
+    private int _sourceLine;
     
     // ========================================
     
-    public MislFrame(MislInstruction retPointer, int retCount, int line)
+    public MislFrame( MislInstruction returnPointer, int returnCount )
     {
         _stack = Stack.newStack();
         
-        _retPointer = retPointer;
-        _retCount = retCount;
-        _curLine = line;
+        _retPointer = returnPointer;
+        _retCount = returnCount;
     }
     
     // ========================================
@@ -42,25 +42,31 @@ public class MislFrame
         return _retCount;
     }
     
-    public int getCurrentLine()
+    public String getSourceName()
     {
-        return _curLine;
+        return _sourceName;
+    }
+    
+    public int getSourceLine()
+    {
+        return _sourceLine;
     }
     
     // ========================================
     
-    public void setRetPointer(MislInstruction retPointer)
+    public void setReturnPointer( MislInstruction retPointer )
     {
         _retPointer = retPointer;
     }
     
-    public void setRetCount(int retCount)
+    public void setReturnCount( int retCount )
     {
         _retCount = retCount;
     }
     
-    public void setCurrentLine(int line)
+    public void setSource( String name, int line )
     {
-        _curLine = line;
+        _sourceName = name;
+        _sourceLine = line;
     }
 }

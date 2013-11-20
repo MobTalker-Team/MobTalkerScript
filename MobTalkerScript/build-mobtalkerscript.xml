@@ -8,8 +8,8 @@
 	<property name="bin" value="../../bin/${ant.project.name}" />
 
 	<property name="version.major" value="1" />
-	<property name="version.minor" value="0" />
-	<property name="version.build" value="18" />
+	<property name="version.minor" value="1" />
+	<property name="version.build" value="0" />
 
 	<path id="classpath">
 		<pathelement location="${MobTalker2.libraries.location}/Antlr4-Custom.jar" />

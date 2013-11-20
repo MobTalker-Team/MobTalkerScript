@@ -2,13 +2,13 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.value.*;
 
-public class InstrNotEqual extends AbstractBinaryOperator
+public class InstrCompare extends AbstractBinaryOperator
 {
     
     @Override
-    protected MislValue getResult(MislValue a, MislValue b)
+    protected MislValue getResult( MislValue a, MislValue b )
     {
-        return a.equal(b).not();
+        return a.equal( b );
     }
     
     // ========================================
@@ -16,7 +16,6 @@ public class InstrNotEqual extends AbstractBinaryOperator
     @Override
     public String toString()
     {
-        return "neq";
+        return "COMPARE";
     }
-    
 }

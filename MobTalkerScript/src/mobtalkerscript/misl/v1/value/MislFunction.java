@@ -1,6 +1,6 @@
 package mobtalkerscript.misl.v1.value;
 
-import mobtalkerscript.*;
+import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.instruction.*;
 
 /**
@@ -20,11 +20,11 @@ public class MislFunction extends MislValue
     
     // ========================================
     
-    public MislFunction(InstrLabel instruction, int argCount)
+    public MislFunction( InstrLabel instruction, int argCount )
     {
-        if (instruction == null)
+        if ( instruction == null )
         {
-            throw new NullPointerException("instruction");
+            throw new NullPointerException( "instruction" );
         }
         
         _instruction = instruction;
@@ -56,7 +56,7 @@ public class MislFunction extends MislValue
     @Override
     public MislString toMtsString()
     {
-        throw new ScriptRuntimeException("Cannot convert a function to a string");
+        throw new ScriptRuntimeException( "Cannot convert a function to a string" );
     }
     
     // ========================================
@@ -74,9 +74,9 @@ public class MislFunction extends MislValue
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        return valueOf(equals(x));
+        return valueOf( equals( x ) );
     }
     
     // ========================================
@@ -84,11 +84,11 @@ public class MislFunction extends MislValue
     @Override
     public String toString()
     {
-        return "func#" + Integer.toHexString(hashCode());
+        return "func#" + Integer.toHexString( hashCode() );
     }
     
     @Override
-    public int compareTo(MislValue o)
+    public int compareTo( MislValue o )
     {
         return hashCode() - o.hashCode();
     }

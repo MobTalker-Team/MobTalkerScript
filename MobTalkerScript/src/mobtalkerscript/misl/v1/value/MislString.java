@@ -3,14 +3,14 @@ package mobtalkerscript.misl.v1.value;
 public class MislString extends MislValue
 {
     
-    public static MislString concat(MislValue... values)
+    public static MislString concat( MislValue... values )
     {
         StringBuilder sb = new StringBuilder();
-        for (MislValue value : values)
+        for ( MislValue value : values )
         {
-            sb.append(value.toMtsString().toJava());
+            sb.append( value.toMtsString().toJava() );
         }
-        return valueOf(sb.toString());
+        return valueOf( sb.toString() );
     }
     
     // ========================================
@@ -19,21 +19,21 @@ public class MislString extends MislValue
     
     // ========================================
     
-    MislString(String value)
+    MislString( String value )
     {
         _value = value;
     }
     
     // ========================================
     
-    public MislString concat(MislValue x)
+    public MislString concat( MislValue x )
     {
-        return valueOf(_value.concat(x.toMtsString().toJava()));
+        return valueOf( _value.concat( x.toMtsString().toJava() ) );
     }
     
     public MislNumber getLength()
     {
-        return valueOf(_value.length());
+        return valueOf( _value.length() );
     }
     
     // ========================================
@@ -67,9 +67,9 @@ public class MislString extends MislValue
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        return x.isString() ? valueOf(_value.equals(x.asString().toJava())) : FALSE;
+        return x.isString() ? valueOf( _value.equals( x.asString().toJava() ) ) : FALSE;
     }
     
     // ========================================
@@ -92,30 +92,30 @@ public class MislString extends MislValue
     }
     
     @Override
-    public boolean equals(Object obj)
+    public boolean equals( Object obj )
     {
-        if (obj instanceof MislString)
+        if ( obj instanceof MislString )
         {
-            return ((MislString) obj).toJava().equals(_value);
+            return ( (MislString) obj ).toJava().equals( _value );
         }
         
         return false;
     }
     
     @Override
-    public int compareTo(MislValue o)
+    public int compareTo( MislValue o )
     {
-        if (o.isNumber())
+        if ( o.isNumber() )
         {
             return -1;
         }
-        else if (!o.isString())
+        else if ( !o.isString() )
         {
             return 1;
         }
         
         MislString str = o.asString();
-        return _value.compareTo(str._value);
+        return _value.compareTo( str._value );
     }
     
 }

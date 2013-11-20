@@ -4,11 +4,10 @@ import mobtalkerscript.misl.v1.value.*;
 
 public class InstrAdd extends AbstractNumberBinaryOperator
 {
-    
     @Override
-    protected MislNumber calculate(MislNumber a, MislNumber b)
+    protected MislNumber calculate( MislNumber a, MislNumber b )
     {
-        return MislNumber.add(a, b);
+        return MislNumber.add( a, b );
     }
     
     // ========================================
@@ -16,6 +15,6 @@ public class InstrAdd extends AbstractNumberBinaryOperator
     @Override
     public String toString()
     {
-        return "add";
+        return "ADD";
     }
 }

@@ -2,7 +2,6 @@ package mobtalkerscript.misl.v1.instruction;
 
 import java.util.*;
 
-import mobtalkerscript.*;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.util.Stack;
@@ -18,7 +17,7 @@ public class InstrCall extends MislInstruction
     
     // ========================================
     
-    public InstrCall(int argCount, int retCount)
+    public InstrCall( int argCount, int retCount )
     {
         _argCount = argCount;
         _retCount = retCount;
@@ -35,87 +34,113 @@ public class InstrCall extends MislInstruction
     // ========================================
     
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame curFrame = frameStack.peek();
         Stack<MislValue> curStack = curFrame.getStack();
         
         MislValue top = curStack.pop();
         
-        if (top.isNativeFunction())
+        doCall( top, frameStack, context );
+    }
+    
+    protected void doCall( MislValue value, Stack<MislFrame> frameStack, ScriptContext context )
+    {
+        MislFrame curFrame = frameStack.peek();
+        Stack<MislValue> curStack = curFrame.getStack();
+        
+        if ( value.isNativeFunction() )
         {
-            MislNativeFunction f = top.asNativeFunction();
+            MislNativeFunction f = value.asNativeFunction();
             try
             {
-                executeNativeFunction(f, curStack, context);
+                executeNativeFunction( f, curStack, context );
             }
-            catch (ScriptRuntimeException ex)
+            catch ( ScriptRuntimeException ex )
             {
-                throw new ScriptRuntimeException(ex.getMessage() + " (at line: %s)",
-                                                 curFrame.getCurrentLine());
+                throw new ScriptRuntimeException( "%s (at %s:%s)",
+                                                  ex.getMessage(),
+                                                  curFrame.getSourceName(),
+                                                  curFrame.getSourceLine() );
             }
         }
-        else if (top.isFunction())
+        else if ( value.isFunction() )
         {
-            MislFunction f = top.asFunction();
-            executeScriptedFunction(f, frameStack, context);
+            MislFunction f = value.asFunction();
+            executeScriptedFunction( f, frameStack, context );
         }
         else
         {
-            throw new ScriptRuntimeException("expected function, got %s (at line: %s)",
-                                             top.getTypeName(),
-                                             curFrame.getCurrentLine());
+            throw new ScriptRuntimeException( "expected function, got %s (at %s:%s)",
+                                              value.getTypeName(),
+                                              curFrame.getSourceName(),
+                                              curFrame.getSourceLine() );
         }
     }
     
-    private void executeScriptedFunction(MislFunction f, Stack<MislFrame> frameStack, ScriptContext context)
+    private void executeScriptedFunction( MislFunction f, Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame oldFrame = frameStack.peek();
         Stack<MislValue> oldStack = oldFrame.getStack();
         
-        MislFrame newFrame = new MislFrame(_next, _retCount, oldFrame.getCurrentLine());
+        MislFrame newFrame = new MislFrame( _next, _retCount );
         Stack<MislValue> newStack = newFrame.getStack();
         
-        int paramCount = Math.max(f.getArgCount(), _argCount);
-        for (int i = 0; i < paramCount; i++)
+        int paramCount = Math.max( f.getArgCount(), _argCount );
+        for ( int i = 0; i < paramCount; i++ )
         {
             MislValue param = oldStack.isEmpty() ? MislValue.NIL : oldStack.pop();
-            newStack.push(param);
+            newStack.push( param );
         }
         
-        if (MTSLog.isFinerEnabled())
-        {
-            MTSLog.finer("Call stack: %s", newStack.toString());
-        }
+        MTSLog.finer( "[Engine] Call stack: %s", newStack.toString() );
         
-        frameStack.push(newFrame);
+        frameStack.push( newFrame );
         
         context.enterFunctionScope();
         
         _jumpPointer = f.getInstruction();
     }
     
-    private void executeNativeFunction(MislNativeFunction f, Stack<MislValue> stack, ScriptContext context)
+    private void executeNativeFunction( MislNativeFunction f, Stack<MislValue> stack, ScriptContext context )
     {
         MislValue[] args = new MislValue[_argCount];
         
-        for (int i = _argCount - 1; i >= 0; i--)
+        for ( int i = _argCount - 1; i >= 0; i-- )
         {
             args[i] = stack.pop();
         }
         
-        if (MTSLog.isFinerEnabled())
-        {
-            MTSLog.finer("Call stack: %s", Arrays.toString(args));
-        }
+        MTSLog.finer( "[Engine] Call stack: %s", Arrays.toString( args ) );
         
         IBindings env = context.getCurrentScope();
         
-        MislValue result = f.call(env, args);
+        MislValue result = f.call( env, args );
         
-        if (_retCount > 0)
+        if ( result == null )
         {
-            stack.push(result == null ? MislValue.NIL : result);
+            for ( int i = 0; i < _retCount; i++ )
+            {
+                stack.push( MislValue.NIL );
+            }
+        }
+        else if ( result.isArray() )
+        {
+            MislArray arr = result.asArray();
+            
+            for ( int i = 0; i < _retCount; i++ )
+            {
+                stack.push( arr.get( i ) );
+            }
+        }
+        else
+        {
+            stack.push( result );
+            
+            for ( int i = 1; i < _retCount; i++ )
+            {
+                stack.push( MislValue.NIL );
+            }
         }
         
         _jumpPointer = _next;
@@ -126,6 +151,6 @@ public class InstrCall extends MislInstruction
     @Override
     public String toString()
     {
-        return "call " + _argCount + " " + _retCount;
+        return String.format( "%1$-10s %2$s", "CALL", _argCount + " " + _retCount );
     }
 }

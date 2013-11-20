@@ -7,19 +7,18 @@ import mobtalkerscript.util.*;
 
 public class InstrNot extends AbstractStackInstruction
 {
-    
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislValue a = stack.pop();
         
-        if ((a == FALSE) || (a == NIL))
+        if ( MislBoolean.isTrue( a ) )
         {
-            stack.push(TRUE);
+            stack.push( FALSE );
         }
         else
         {
-            stack.push(FALSE);
+            stack.push( TRUE );
         }
     }
     
@@ -28,7 +27,6 @@ public class InstrNot extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "not";
+        return "NOT";
     }
-    
 }

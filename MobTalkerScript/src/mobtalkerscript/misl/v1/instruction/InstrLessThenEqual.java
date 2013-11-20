@@ -1,25 +1,24 @@
 package mobtalkerscript.misl.v1.instruction;
 
 import static mobtalkerscript.misl.v1.value.MislValue.*;
-import mobtalkerscript.*;
+import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 
 public class InstrLessThenEqual extends AbstractBinaryOperator
 {
-    
     @Override
-    protected MislValue getResult(MislValue a, MislValue b)
+    protected MislValue getResult( MislValue a, MislValue b )
     {
-        if (!(a.isNumber() || a.isString()))
+        if ( !( a.isNumber() || a.isString() ) )
         {
-            throw new ScriptRuntimeException("can only compare numbers and strings, got %s", a.getTypeName());
+            throw new ScriptRuntimeException( "can only compare numbers and strings, got %s", a.getTypeName() );
         }
-        if (!(b.isNumber() || b.isString()))
+        if ( !( b.isNumber() || b.isString() ) )
         {
-            throw new ScriptRuntimeException("can only compare numbers and strings, got %s", a.getTypeName());
+            throw new ScriptRuntimeException( "can only compare numbers and strings, got %s", a.getTypeName() );
         }
         
-        return valueOf(a.compareTo(b) <= 0);
+        return valueOf( a.compareTo( b ) <= 0 );
     }
     
     // ========================================
@@ -27,7 +26,6 @@ public class InstrLessThenEqual extends AbstractBinaryOperator
     @Override
     public String toString()
     {
-        return "lte";
+        return "LTE";
     }
-    
 }

@@ -20,7 +20,7 @@ public class MislScript
     
     // ========================================
     
-    public MislScript(String version, long timestamp, List<MislInstruction> instrs, IBindings bindings)
+    public MislScript( String version, long timestamp, List<MislInstruction> instrs, IBindings bindings )
     {
         _version = version;
         _timestamp = timestamp;
@@ -52,15 +52,15 @@ public class MislScript
     
     // ========================================
     
-    public void saveToFile(Path path, Charset charset, OpenOption... options) throws IOException
+    public void saveToFile( Path path, Charset charset, OpenOption... options ) throws IOException
     {
-        List<String> lines = Lists.newArrayListWithCapacity(_instrs.size());
+        List<String> lines = Lists.newArrayListWithCapacity( _instrs.size() );
         
-        for (MislInstruction instr : _instrs)
+        for ( MislInstruction instr : _instrs )
         {
-            lines.add(instr.toString());
+            lines.add( instr.toString() );
         }
         
-        Files.write(path, lines, charset, options);
+        Files.write( path, lines, charset, options );
     }
 }

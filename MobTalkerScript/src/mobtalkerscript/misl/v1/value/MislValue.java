@@ -179,6 +179,16 @@ public abstract class MislValue implements Comparable<MislValue>
     // ========================================
     
     /**
+     * Simply returns this value if it is not nil, otherwise throws an exception with the given message
+     */
+    public MislValue checkNotNil( String msg, Object... args )
+    {
+        return this;
+    }
+    
+    // ========================================
+    
+    /**
      * Equivalent to a Java typecast to {@link MislBoolean}.
      */
     public MislBoolean asBoolean()

@@ -10,70 +10,9 @@ public class MislTableLib implements IMislLibrary
     public void loadInto( IBindings env )
     {
         MislTable t = new MislTable( 3 );
-        t.set( "Insert", new Insert() );
-        t.set( "Remove", new Remove() );
         t.set( "Random", new Random() );
         
         env.set( "table", t );
-    }
-    
-    // ========================================
-    
-    private static final class Insert extends MislVarArgFunction
-    {
-        @Override
-        public MislValue call( IBindings env, MislValue... args )
-        {
-            if ( args.length < 2 )
-            {
-                throw new ScriptRuntimeException( "Expected at least 2 arguments, got %s", args.length );
-            }
-            
-            MislTable table = args[0].asTable();
-            MislValue where;
-            MislValue what;
-            
-            if ( args.length == 2 )
-            {
-                where = table.getNextIndex();
-                what = args[1];
-            }
-            else
-            {
-                where = args[1];
-                what = args[2];
-            }
-            
-            return table.set( where, what );
-        }
-    }
-    
-    // ========================================
-    
-    private static final class Remove extends MislVarArgFunction
-    {
-        @Override
-        public MislValue call( IBindings env, MislValue... args )
-        {
-            if ( args.length < 1 )
-            {
-                throw new ScriptRuntimeException( "Expected at least 1 argument" );
-            }
-            
-            MislTable table = args[0].asTable();
-            MislValue removed;
-            
-            if ( args.length == 1 )
-            {
-                removed = table.remove();
-            }
-            else
-            {
-                removed = table.remove( args[1] );
-            }
-            
-            return removed;
-        }
     }
     
     // ========================================

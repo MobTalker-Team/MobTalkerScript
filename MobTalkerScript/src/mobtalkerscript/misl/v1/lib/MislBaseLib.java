@@ -38,14 +38,16 @@ public class MislBaseLib implements IMislLibrary
     
     // ========================================
     
-    private static final class Assert extends MislOneArgFunction
+    private static final class Assert extends MislTwoArgFunction
     {
         @Override
-        public MislValue call( IBindings env, MislValue arg1 )
+        public MislValue call( IBindings env, MislValue arg1, MislValue arg2 )
         {
             if ( ( arg1 == FALSE ) || ( arg1 == NIL ) )
             {
-                throw new ScriptRuntimeException( "Assertion error" );
+                String msg = arg2.isNil() ? "Assertion error" : arg2.toMtsString().toJava();
+                
+                throw new ScriptRuntimeException( msg );
             }
             
             return null;

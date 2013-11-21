@@ -25,10 +25,11 @@ public interface IBindings
      * Checks if an binding for the given key exists.
      * 
      * @param key The key of the binding to check.
-     * @param recursive If the parent bindings should be included in the search.
      * @return <code>true</code> if a binding for the given key exists, <code>false</code> otherwise.
      */
-    boolean contains( String key, boolean recursive );
+    boolean contains( String key );
+    
+    boolean containsRecursive( String key );
     
     /**
      * Returns the value of an binding.

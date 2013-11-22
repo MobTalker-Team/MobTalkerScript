@@ -13,8 +13,8 @@ public class MislMathLib implements IMislLibrary
     {
         MislTable math = new MislTable( 20 );
         
-        math.set( "pi", MislValue.valueOf( Math.PI ) );
-        math.set( "e", MislValue.valueOf( Math.E ) );
+        math.set( "PI", MislValue.valueOf( Math.PI ) );
+        math.set( "E", MislValue.valueOf( Math.E ) );
         
         math.set( "Abs", new Abs() );
         math.set( "Ceil", new Ceil() );
@@ -36,8 +36,6 @@ public class MislMathLib implements IMislLibrary
         math.set( "TanH", new TanH() );
         math.set( "ToDegrees", new ToDegrees() );
         math.set( "ToRadians", new ToRadians() );
-        
-        math.setReadonly( true );
         
         env.set( "math", math );
     }

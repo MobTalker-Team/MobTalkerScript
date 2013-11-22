@@ -11,12 +11,6 @@ import mobtalkerscript.mts.v1.parser.MtsParser.BooleanLiteralContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.BreakStmtContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.CallContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ChunkContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.CommandHideContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.CommandMenuContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.CommandMenuOptionContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.CommandSayContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.CommandSceneContext;
-import mobtalkerscript.mts.v1.parser.MtsParser.CommandShowContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ExprContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ExpressionKeyedAccessContext;
 import mobtalkerscript.mts.v1.parser.MtsParser.ExpressionKeyedFieldDefContext;
@@ -87,7 +81,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     
     // ========================================
     
-    private void addInstr( MislInstruction instr )
+    public void addInstr( MislInstruction instr )
     {
         _instructions.add( instr );
         _instructionList.add( instr );
@@ -838,140 +832,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     public Void visitBreakStmt( BreakStmtContext ctx )
     {
         addInstr( new InstrJump( _curBreakTarget, false, true ) );
-        
-        return null;
-    }
-    
-    // ========================================
-    // Commands
-    
-    @Override
-    public Void visitCommandSay( CommandSayContext ctx )
-    {
-        visit( ctx.Character );
-        visit( ctx.Text );
-        
-        int argCount = ctx.Character == null ? 1 : 2;
-        
-        addInstr( new InstrLoad( "DisplayText" ) );
-        addInstr( new InstrCall( argCount, 0 ) );
-        addInstr( new InstrYield() );
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitCommandShow( CommandShowContext ctx )
-    {
-        int argCount = 2;
-        
-        if ( ctx.Group != null )
-        {
-            visit( ctx.Group );
-        }
-        else
-        {
-            addInstr( new InstrPush( MislValue.NIL ) );
-        }
-        
-        visit( ctx.Path );
-        
-        if ( ctx.Pos != null )
-        {
-            argCount += 1;
-            visit( ctx.Pos );
-        }
-        
-        if ( ( ctx.XOffset != null ) && ( ctx.YOffset != null ) )
-        {
-            argCount += 2;
-            visit( ctx.XOffset );
-            visit( ctx.YOffset );
-        }
-        
-        addInstr( new InstrLoad( "ShowTexture" ) );
-        addInstr( new InstrCall( argCount, 0 ) );
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitCommandScene( CommandSceneContext ctx )
-    {
-        int argCount = 2;
-        
-        if ( ctx.Group != null )
-        {
-            visit( ctx.Group );
-        }
-        else
-        {
-            addInstr( new InstrPush( MislValue.NIL ) );
-        }
-        
-        visit( ctx.Path );
-        
-        addInstr( new InstrLoad( "ShowScene" ) );
-        addInstr( new InstrCall( argCount, 0 ) );
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitCommandHide( CommandHideContext ctx )
-    {
-        visit( ctx.Group );
-        
-        addInstr( new InstrLoad( "HideTexture" ) );
-        addInstr( new InstrCall( 1, 0 ) );
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitCommandMenu( CommandMenuContext ctx )
-    {
-        List<ExprContext> optionCaptionExprs = Lists.newArrayList();
-        List<BlockContext> optionBlocks = Lists.newArrayList();
-        
-        for ( CommandMenuOptionContext optionCtx : ctx.Options )
-        {
-            optionCaptionExprs.add( optionCtx.CaptionExpr );
-            optionBlocks.add( optionCtx.Block );
-        }
-        
-        for ( ExprContext optionExpr : optionCaptionExprs )
-        {
-            visit( optionExpr );
-        }
-        
-        addInstr( new InstrLoad( "DisplayChoice" ) );
-        addInstr( new InstrCall( optionCaptionExprs.size(), 0 ) );
-        addInstr( new InstrYield() );
-        
-        InstrLabel cont = new InstrLabel( "continue" );
-        
-        for ( int i = 0; i < optionBlocks.size(); i++ )
-        {
-            InstrLabel elze = new InstrLabel( "else" );
-            
-            addInstr( new InstrDup() );
-            addInstr( new InstrPush( i ) );
-            addInstr( new InstrCompare() );
-            addInstr( new InstrJumpIfNot( elze ) );
-            
-            addInstr( new InstrPop() );
-            visit( optionBlocks.get( i ) );
-            addInstr( new InstrJump( cont, false, false ) );
-            
-            addInstr( elze );
-        }
-        
-        addInstr( new InstrPop() );
-        addInstr( new InstrPush( "AssertionError" ) );
-        addInstr( new InstrError() );
-        
-        addInstr( cont );
         
         return null;
     }

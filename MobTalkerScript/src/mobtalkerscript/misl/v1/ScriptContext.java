@@ -148,7 +148,7 @@ public class ScriptContext
     public MislValue setExistingValue( String key, MislValue value )
     {
         IBindings env = getCurrentScope();
-        while ( !env.contains( key, false ) && ( env != _scriptEnv ) )
+        while ( !env.contains( key ) && ( env != _scriptEnv ) )
         {
             env = env.getParent();
             

@@ -11,7 +11,7 @@ public class InstrCall extends MislInstruction
 {
     
     private final int _argCount;
-    private final int _retCount;
+    private final int _returnCount;
     
     private MislInstruction _jumpPointer;
     
@@ -20,7 +20,7 @@ public class InstrCall extends MislInstruction
     public InstrCall( int argCount, int retCount )
     {
         _argCount = argCount;
-        _retCount = retCount;
+        _returnCount = retCount;
     }
     
     // ========================================
@@ -83,7 +83,7 @@ public class InstrCall extends MislInstruction
         MislFrame oldFrame = frameStack.peek();
         Stack<MislValue> oldStack = oldFrame.getStack();
         
-        MislFrame newFrame = new MislFrame( _next, _retCount );
+        MislFrame newFrame = new MislFrame( _next, _returnCount );
         Stack<MislValue> newStack = newFrame.getStack();
         
         int paramCount = Math.max( f.getArgCount(), _argCount );
@@ -119,7 +119,7 @@ public class InstrCall extends MislInstruction
         
         if ( result == null )
         {
-            for ( int i = 0; i < _retCount; i++ )
+            for ( int i = 0; i < _returnCount; i++ )
             {
                 stack.push( MislValue.NIL );
             }
@@ -128,16 +128,16 @@ public class InstrCall extends MislInstruction
         {
             MislArray arr = result.asArray();
             
-            for ( int i = 0; i < _retCount; i++ )
+            for ( int i = 0; i < _returnCount; i++ )
             {
                 stack.push( arr.get( i ) );
             }
         }
-        else
+        else if ( _returnCount > 0 )
         {
             stack.push( result );
             
-            for ( int i = 1; i < _retCount; i++ )
+            for ( int i = 1; i < _returnCount; i++ )
             {
                 stack.push( MislValue.NIL );
             }
@@ -151,6 +151,6 @@ public class InstrCall extends MislInstruction
     @Override
     public String toString()
     {
-        return String.format( "%1$-10s %2$s", "CALL", _argCount + " " + _retCount );
+        return String.format( "%1$-10s %2$s", "CALL", _argCount + " " + _returnCount );
     }
 }

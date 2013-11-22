@@ -43,16 +43,15 @@ public class SimpleBindings implements IBindings
     }
     
     @Override
-    public boolean contains( String key, boolean recursive )
+    public boolean containsRecursive( String key )
     {
-        boolean result = _bindings.containsKey( key );
-        
-        if ( recursive && !result && ( _parent != null ) )
-        {
-            result = _parent.contains( key, true );
-        }
-        
-        return result;
+        return contains( key ) || _parent.containsRecursive( key );
+    }
+    
+    @Override
+    public boolean contains( String key )
+    {
+        return _bindings.containsKey( key );
     }
     
     @Override

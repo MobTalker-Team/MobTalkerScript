@@ -16,7 +16,7 @@ public class Stack<T>
     
     // ========================================
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public Stack()
     {
         _array = (T[]) new Object[5];
@@ -25,21 +25,21 @@ public class Stack<T>
     
     // ========================================
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     private void checkArraySize()
     {
-        if (_array.length <= _top)
+        if ( _array.length <= _top )
         {
             int newSize = _array.length * 2;
             
             T[] newArr = (T[]) new Object[newSize];
             
-            System.arraycopy(_array, 0, newArr, 0, _array.length);
+            System.arraycopy( _array, 0, newArr, 0, _array.length );
             _array = newArr;
         }
     }
     
-    public void push(T o)
+    public void push( T o )
     {
         _top++;
         
@@ -50,9 +50,9 @@ public class Stack<T>
     
     public T pop()
     {
-        if (isEmpty())
+        if ( isEmpty() )
         {
-            throw new NoSuchElementException("Stack is empty");
+            throw new NoSuchElementException( "Stack is empty" );
         }
         
         return _array[_top--];
@@ -60,9 +60,9 @@ public class Stack<T>
     
     public T peek()
     {
-        if (isEmpty())
+        if ( isEmpty() )
         {
-            throw new NoSuchElementException("Stack is empty");
+            throw new NoSuchElementException( "Stack is empty" );
         }
         
         return _array[_top];
@@ -88,24 +88,24 @@ public class Stack<T>
     @Override
     public String toString()
     {
-        StringBuilder s = new StringBuilder("Stack [Count=");
-        s.append(count()).append("; ");
+        StringBuilder s = new StringBuilder( "Stack [Count=" );
+        s.append( count() ).append( "; " );
         
-        if (count() > 1)
+        if ( count() > 1 )
         {
-            for (int i = _top; i > 0; i--)
+            for ( int i = _top; i > 0; i-- )
             {
                 T e = _array[i];
-                s.append(e).append(",");
+                s.append( e ).append( "," );
             }
         }
         
-        if (count() > 0)
+        if ( count() > 0 )
         {
-            s.append(_array[0]);
+            s.append( _array[0] );
         }
         
-        s.append("]");
+        s.append( "]" );
         
         return s.toString();
     }

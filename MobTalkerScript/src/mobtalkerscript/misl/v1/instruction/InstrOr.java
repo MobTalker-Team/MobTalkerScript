@@ -35,20 +35,18 @@
 //}
 package mobtalkerscript.misl.v1.instruction;
 
-import static mobtalkerscript.misl.v1.value.MislValue.*;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.util.*;
 
 public class InstrOr extends AbstractStackInstruction
 {
-    
     private MislInstruction _b;
     private MislInstruction _cont;
     
     // ========================================
     
-    public InstrOr(MislInstruction cont)
+    public InstrOr( MislInstruction cont )
     {
         _cont = cont;
     }
@@ -56,20 +54,20 @@ public class InstrOr extends AbstractStackInstruction
     // ========================================
     
     @Override
-    void setNext(MislInstruction next)
+    void setNext( MislInstruction next )
     {
-        super.setNext(next);
+        super.setNext( next );
         _b = next;
     }
     
     // ========================================
     
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislValue value = stack.peek();
         
-        if ((value != FALSE) && (value != NIL))
+        if ( MislBoolean.isTrue( value ) )
         {
             _next = _cont;
         }
@@ -85,7 +83,6 @@ public class InstrOr extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "or";
+        return "OR";
     }
-    
 }

@@ -5,8 +5,8 @@ import mobtalkerscript.misl.v1.*;
 public abstract class MislVarArgFunction extends MislNativeFunction
 {
     @Override
-    public MislValue call(IBindings env)
+    public MislValue call( IBindings env )
     {
-        return call(env, EMPTY_ARGS);
+        return call( env, EMPTY_ARGS );
     }
 }

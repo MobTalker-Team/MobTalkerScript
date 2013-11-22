@@ -4,21 +4,23 @@ import mobtalkerscript.misl.v1.*;
 
 public class InstrLine extends AbstractFrameInstruction
 {
+    private final String _name;
     private final int _line;
     
     // ========================================
     
-    public InstrLine(int line)
+    public InstrLine( String name, int line )
     {
+        _name = name;
         _line = line;
     }
     
     // ========================================
     
     @Override
-    protected void doExecute(MislFrame frame, ScriptContext context)
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        frame.setCurrentLine(_line);
+        frame.setSource( _name, _line );
     }
     
     // ========================================
@@ -26,6 +28,6 @@ public class InstrLine extends AbstractFrameInstruction
     @Override
     public String toString()
     {
-        return "line " + _line;
+        return String.format( "%1$-10s %2$s", "LINE", _name + ":" + _line );
     }
 }

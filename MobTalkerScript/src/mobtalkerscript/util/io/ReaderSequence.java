@@ -13,9 +13,9 @@ public class ReaderSequence extends Reader
     
     // ========================================
     
-    public ReaderSequence(Iterable<? extends Reader> readers)
+    public ReaderSequence( Iterable<? extends Reader> readers )
     {
-        _readers = Lists.newLinkedList(readers);
+        _readers = Lists.newLinkedList( readers );
     }
     
     // ========================================
@@ -26,25 +26,25 @@ public class ReaderSequence extends Reader
      * Reads all readers in sequence.
      */
     @Override
-    @SuppressWarnings("resource")
-    public int read(char[] cbuf, int off, int len) throws IOException
+    @SuppressWarnings( "resource" )
+    public int read( char[] cbuf, int off, int len ) throws IOException
     {
-        if (_readers.isEmpty())
+        if ( _readers.isEmpty() )
         {
             return -1;
         }
         
         int readTotal = 0;
         
-        while (!_readers.isEmpty() && (readTotal < len))
+        while ( !_readers.isEmpty() && ( readTotal < len ) )
         {
             Reader reader = _readers.getFirst();
             
-            int read = reader.read(cbuf, off, len);
+            int read = reader.read( cbuf, off, len );
             
-            if (read == -1)
+            if ( read == -1 )
             {
-                Closeables.close(reader, true);
+                Closeables.close( reader, true );
                 _readers.removeFirst();
             }
             else
@@ -66,9 +66,9 @@ public class ReaderSequence extends Reader
     @Override
     public void close() throws IOException
     {
-        while (!_readers.isEmpty())
+        while ( !_readers.isEmpty() )
         {
-            Closeables.close(_readers.removeFirst(), true);
+            Closeables.close( _readers.removeFirst(), true );
         }
     }
     

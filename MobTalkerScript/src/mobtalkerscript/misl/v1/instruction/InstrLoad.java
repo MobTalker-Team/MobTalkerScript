@@ -6,25 +6,23 @@ import mobtalkerscript.util.*;
 
 public class InstrLoad extends AbstractStackInstruction
 {
-    private final String _var;
+    private final String _varName;
     
     // ========================================
     
-    public InstrLoad(String var)
+    public InstrLoad( String var )
     {
-        _var = var;
+        _varName = var;
     }
     
     // ========================================
     
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
-        IBindings env = context.getCurrentScope();
+        MislValue value = context.getValue( _varName );
         
-        MislValue value = env.get(_var);
-        
-        stack.push(value);
+        stack.push( value );
     }
     
     // ========================================
@@ -32,6 +30,6 @@ public class InstrLoad extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "load " + _var;
+        return String.format( "%1$-10s %2$s", "LOAD", _varName );
     }
 }

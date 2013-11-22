@@ -3,11 +3,10 @@ package mobtalkerscript.misl.v1.instruction;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.util.*;
 
-public class InstrAwait extends MislInstruction
+public class InstrYield extends MislInstruction
 {
-    
     @Override
-    public void execute(Stack<MislFrame> frameStack, ScriptContext context)
+    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {}
     
     // ========================================
@@ -23,7 +22,6 @@ public class InstrAwait extends MislInstruction
     @Override
     public String toString()
     {
-        return "await";
+        return "YIELD";
     }
-    
 }

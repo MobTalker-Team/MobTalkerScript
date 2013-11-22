@@ -5,6 +5,6 @@ import mobtalkerscript.misl.v1.*;
 public interface IMislLibrary
 {
     
-    void loadInto(IBindings env);
+    void loadInto( IBindings env );
     
 }

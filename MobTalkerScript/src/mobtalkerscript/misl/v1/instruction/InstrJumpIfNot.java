@@ -1,19 +1,17 @@
 package mobtalkerscript.misl.v1.instruction;
 
-import static mobtalkerscript.misl.v1.value.MislValue.*;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 import mobtalkerscript.util.*;
 
 public class InstrJumpIfNot extends AbstractStackInstruction
 {
-    
     private MislInstruction _if;
-    private final MislInstruction _else;
+    private final InstrLabel _else;
     
     // ========================================
     
-    public InstrJumpIfNot(MislInstruction nextElse)
+    public InstrJumpIfNot( InstrLabel nextElse )
     {
         _else = nextElse;
     }
@@ -21,26 +19,26 @@ public class InstrJumpIfNot extends AbstractStackInstruction
     // ========================================
     
     @Override
-    void setNext(MislInstruction next)
+    void setNext( MislInstruction next )
     {
-        super.setNext(next);
+        super.setNext( next );
         _if = next;
     }
     
     // ========================================
     
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislValue condition = stack.pop();
         
-        if ((condition == FALSE) || (condition == NIL))
+        if ( MislBoolean.isTrue( condition ) )
         {
-            _next = _else;
+            _next = _if;
         }
         else
         {
-            _next = _if;
+            _next = _else;
         }
     }
     
@@ -49,7 +47,6 @@ public class InstrJumpIfNot extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "jmpn";
+        return String.format( "%1$-10s %2$s", "JUMP_IFN", _else.getName() );
     }
-    
 }

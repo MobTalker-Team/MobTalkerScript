@@ -24,14 +24,14 @@ public abstract class MislObject extends MislValue
     @Override
     public MislString toMtsString()
     {
-        return MislValue.valueOf(toString());
+        return MislValue.valueOf( toString() );
     }
     
     // ========================================
     
-    public abstract MislValue get(MislValue key);
+    public abstract MislValue get( MislValue key );
     
-    public abstract void set(MislValue key, MislValue value);
+    public abstract void set( MislValue key, MislValue value );
     
     // ========================================
     

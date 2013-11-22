@@ -15,47 +15,47 @@ import com.google.common.collect.*;
 public class MtsParseTreeCleaner extends MtsBaseVisitor<Void>
 {
     
-    private static final Set<String> _cleanableTokens = Sets.newHashSet("(",
-                                                                        ")",
-                                                                        "[",
-                                                                        "]",
-                                                                        "{",
-                                                                        "}",
-                                                                        ".",
-                                                                        ",",
-                                                                        "=",
-                                                                        "$",
-                                                                        "<EOF>",
-                                                                        "end",
-                                                                        "label",
-                                                                        "return",
-                                                                        "option");
+    private static final Set<String> _cleanableTokens = Sets.newHashSet( "(",
+                                                                         ")",
+                                                                         "[",
+                                                                         "]",
+                                                                         "{",
+                                                                         "}",
+                                                                         ".",
+                                                                         ",",
+                                                                         "=",
+                                                                         "$",
+                                                                         "<EOF>",
+                                                                         "end",
+                                                                         "label",
+                                                                         "return",
+                                                                         "option" );
     
     @Override
-    public Void visit(ParseTree tree)
+    public Void visit( ParseTree tree )
     {
         ParserRuleContext ctx = (ParserRuleContext) tree;
         
-        for (int i = 0; i < tree.getChildCount(); i++)
+        for ( int i = 0; i < tree.getChildCount(); i++ )
         {
-            ParseTree child = tree.getChild(i);
+            ParseTree child = tree.getChild( i );
             
-            if (child instanceof TerminalNode)
+            if ( child instanceof TerminalNode )
             {
                 TerminalNode node = (TerminalNode) child;
                 
-                if (_cleanableTokens.contains(node.getText()))
+                if ( _cleanableTokens.contains( node.getText() ) )
                 {
-                    ctx.children.remove(i);
+                    ctx.children.remove( i );
                     i--;
                 }
             }
             else
             {
-                visit(child);
+                visit( child );
             }
         }
         
-        return super.visit(tree);
+        return super.visit( tree );
     }
 }

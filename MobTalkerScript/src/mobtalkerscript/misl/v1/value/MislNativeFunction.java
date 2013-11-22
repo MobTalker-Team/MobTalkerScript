@@ -1,6 +1,5 @@
 package mobtalkerscript.misl.v1.value;
 
-import mobtalkerscript.*;
 import mobtalkerscript.misl.v1.*;
 
 /**
@@ -18,14 +17,14 @@ public abstract class MislNativeFunction extends MislValue
     // ========================================
     
     /**
-     * Calls this function. If the return value is not <code>null</code>, it will be pushed onto the stack.
+     * Calls this function. If the return value is not <code>null</code> its contents will be pushed onto the stack.
      */
-    public abstract MislValue call(IBindings env);
+    public abstract MislValue call( IBindings env );
     
     /**
-     * Calls this function. If the return value is not <code>null</code>, it will be pushed onto the stack.
+     * Calls this function. If the return value is not <code>null</code> its contents will be pushed onto the stack.
      */
-    public abstract MislValue call(IBindings env, MislValue... args);
+    public abstract MislValue call( IBindings env, MislValue... args );
     
     /**
      * Indicates if this function pauses the engine.
@@ -52,7 +51,7 @@ public abstract class MislNativeFunction extends MislValue
     @Override
     public MislString toMtsString()
     {
-        throw new ScriptRuntimeException("Cannot convert a native function to a string!");
+        throw new ScriptRuntimeException( "Cannot convert a native function to a string!" );
     }
     
     // ========================================
@@ -70,9 +69,9 @@ public abstract class MislNativeFunction extends MislValue
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        return valueOf(equals(x));
+        return valueOf( equals( x ) );
     }
     
     // ========================================
@@ -80,11 +79,11 @@ public abstract class MislNativeFunction extends MislValue
     @Override
     public String toString()
     {
-        return "func#" + Integer.toHexString(hashCode());
+        return "func#" + Integer.toHexString( hashCode() );
     }
     
     @Override
-    public int compareTo(MislValue o)
+    public int compareTo( MislValue o )
     {
         return hashCode() - o.hashCode();
     }

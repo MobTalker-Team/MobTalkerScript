@@ -9,11 +9,11 @@ import mobtalkerscript.misl.v1.value.*;
     {}
     
     @Override
-    protected final MislValue getResult(MislValue a, MislValue b)
+    protected final MislValue getResult( MislValue a, MislValue b )
     {
-        return calculate(a.asNumber(), b.asNumber());
+        return calculate( a.asNumber(), b.asNumber() );
     }
     
-    protected abstract MislNumber calculate(MislNumber a, MislNumber b);
+    protected abstract MislNumber calculate( MislNumber a, MislNumber b );
     
 }

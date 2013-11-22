@@ -8,16 +8,16 @@ import mobtalkerscript.util.*;
 {
     
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislValue b = stack.pop();
         MislValue a = stack.pop();
         
-        MislValue result = getResult(a, b);
+        MislValue result = getResult( a, b );
         
-        stack.push(result);
+        stack.push( result );
     }
     
-    protected abstract MislValue getResult(MislValue a, MislValue b);
+    protected abstract MislValue getResult( MislValue a, MislValue b );
     
 }

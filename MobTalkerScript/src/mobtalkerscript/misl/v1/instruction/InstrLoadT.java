@@ -6,16 +6,15 @@ import mobtalkerscript.util.*;
 
 public class InstrLoadT extends AbstractStackInstruction
 {
-    
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislValue key = stack.pop();
         MislTable table = stack.pop().asTable();
         
-        MislValue value = table.get(key);
+        MislValue value = table.get( key );
         
-        stack.push(value);
+        stack.push( value );
     }
     
     // ========================================
@@ -23,7 +22,6 @@ public class InstrLoadT extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "load_t";
+        return "LOAD_T";
     }
-    
 }

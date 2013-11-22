@@ -3,16 +3,21 @@ package mobtalkerscript.misl.v1.value;
 public class MislBoolean extends MislValue
 {
     
-    public static MislBoolean parse(MislString s)
+    public static MislBoolean parse( MislString s )
     {
-        boolean b = Boolean.parseBoolean(s.toJava());
-        return valueOf(b);
+        boolean b = Boolean.parseBoolean( s.toJava() );
+        return valueOf( b );
     }
     
-    public static MislBoolean parse(MislNumber n)
+    public static MislBoolean parse( MislNumber n )
     {
         int i = (int) n.toJava();
-        return valueOf(i != 0);
+        return valueOf( i != 0 );
+    }
+    
+    public static boolean isTrue( MislValue v )
+    {
+        return ( v != FALSE ) && ( v != NIL );
     }
     
     // ========================================
@@ -25,30 +30,30 @@ public class MislBoolean extends MislValue
     
     // ========================================
     
-    MislBoolean(boolean value)
+    MislBoolean( boolean value )
     {
         _value = value;
-        _obj = Boolean.valueOf(value);
+        _obj = Boolean.valueOf( value );
         
-        _string = Boolean.toString(value);
-        _stringValue = valueOf(_string);
+        _string = Boolean.toString( value );
+        _stringValue = valueOf( _string );
     }
     
     // ========================================
     
-    public static MislBoolean or(MislBoolean x, MislBoolean y)
+    public static MislBoolean or( MislBoolean x, MislBoolean y )
     {
-        return valueOf(x._value || y._value);
+        return valueOf( x._value || y._value );
     }
     
-    public static MislBoolean and(MislBoolean x, MislBoolean y)
+    public static MislBoolean and( MislBoolean x, MislBoolean y )
     {
-        return valueOf(x._value && y._value);
+        return valueOf( x._value && y._value );
     }
     
     public MislBoolean not()
     {
-        return valueOf(!_value);
+        return valueOf( !_value );
     }
     
     // ========================================
@@ -82,9 +87,9 @@ public class MislBoolean extends MislValue
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        return valueOf(this == x);
+        return valueOf( this == x );
     }
     
     // ========================================
@@ -107,7 +112,7 @@ public class MislBoolean extends MislValue
     }
     
     @Override
-    public boolean equals(Object o)
+    public boolean equals( Object o )
     {
         // Since we can rely on the fact that there are exactly one object for true and false,
         // we just have to check the references.

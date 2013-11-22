@@ -27,7 +27,9 @@ public interface IBindings
      * @param key The key of the binding to check.
      * @return <code>true</code> if a binding for the given key exists, <code>false</code> otherwise.
      */
-    boolean contains(String key);
+    boolean contains( String key );
+    
+    boolean containsRecursive( String key );
     
     /**
      * Returns the value of an binding.
@@ -35,7 +37,7 @@ public interface IBindings
      * @param key The key of the binding.
      * @return The value of the binding, or {@link #getDefault()} if the binding does not exist.
      */
-    MislValue get(String key);
+    MislValue get( String key );
     
     /**
      * Sets the value of an binding.
@@ -44,11 +46,11 @@ public interface IBindings
      * @param value The new value for the binding.
      * @return The previous value of the binding.
      */
-    MislValue set(String key, MislValue value);
+    MislValue set( String key, MislValue value );
     
     /**
      * Copies this bindings into to specified bindings.
      */
-    void copyTo(IBindings target);
+    void copyTo( IBindings target );
     
 }

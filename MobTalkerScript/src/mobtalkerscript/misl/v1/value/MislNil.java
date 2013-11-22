@@ -1,5 +1,7 @@
 package mobtalkerscript.misl.v1.value;
 
+import mobtalkerscript.misl.v1.*;
+
 public class MislNil extends MislValue
 {
     
@@ -9,7 +11,7 @@ public class MislNil extends MislValue
     
     MislNil()
     {
-        stringValue = MislValue.valueOf("nil");
+        stringValue = MislValue.valueOf( "nil" );
     }
     
     // ========================================
@@ -21,6 +23,12 @@ public class MislNil extends MislValue
     }
     
     // ========================================
+    
+    @Override
+    public MislValue checkNotNil( String msg, Object... args )
+    {
+        throw new ScriptRuntimeException( msg, args );
+    }
     
     @Override
     public boolean isNil()
@@ -35,9 +43,9 @@ public class MislNil extends MislValue
     }
     
     @Override
-    public MislBoolean equal(MislValue x)
+    public MislBoolean equal( MislValue x )
     {
-        return valueOf(x.isNil());
+        return valueOf( x.isNil() );
     }
     
     // ========================================

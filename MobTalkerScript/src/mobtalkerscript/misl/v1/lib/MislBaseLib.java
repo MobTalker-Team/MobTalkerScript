@@ -1,6 +1,7 @@
 package mobtalkerscript.misl.v1.lib;
 
-import mobtalkerscript.*;
+import java.util.Map.Entry;
+
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 
@@ -9,36 +10,44 @@ public class MislBaseLib implements IMislLibrary
     
     private static final Assert Assert = new Assert();
     private static final Print Print = new Print();
+    
     private static final TypeOf TypeOf = new TypeOf();
     private static final SizeOf SizeOf = new SizeOf();
+    
     private static final ToBoolean ToBoolean = new ToBoolean();
     private static final ToNumber ToNumber = new ToNumber();
     private static final ToString ToString = new ToString();
     
+    private static final Next Next = new Next();
+    
     @Override
-    public void loadInto(IBindings env)
+    public void loadInto( IBindings env )
     {
-        env.set("Assert", Assert);
-        env.set("Print", Print);
+        env.set( "Assert", Assert );
+        env.set( "Print", Print );
         
-        env.set("TypeOf", TypeOf);
-        env.set("SizeOf", SizeOf);
+        env.set( "TypeOf", TypeOf );
+        env.set( "SizeOf", SizeOf );
         
-        env.set("ToBoolean", ToBoolean);
-        env.set("ToNumber", ToNumber);
-        env.set("ToString", ToString);
+        env.set( "ToBoolean", ToBoolean );
+        env.set( "ToNumber", ToNumber );
+        env.set( "ToString", ToString );
+        
+        env.set( "Next", Next );
     }
     
     // ========================================
     
-    private static final class Assert extends MislOneArgFunction
+    private static final class Assert extends MislTwoArgFunction
     {
         @Override
-        public MislValue call(IBindings env, MislValue arg1)
+        public MislValue call( IBindings env, MislValue arg1, MislValue arg2 )
         {
-            if ((arg1 == FALSE) || (arg1 == NIL))
+            if ( ( arg1 == FALSE ) || ( arg1 == NIL ) )
             {
-                throw new ScriptRuntimeException("Assertion error");
+                String msg = arg2.isNil() ? "Assertion error" : arg2.toMtsString().toJava();
+                
+                throw new ScriptRuntimeException( msg );
             }
             
             return null;
@@ -48,12 +57,12 @@ public class MislBaseLib implements IMislLibrary
     private static final class Print extends MislVarArgFunction
     {
         @Override
-        public MislValue call(IBindings env, MislValue... args)
+        public MislValue call( IBindings env, MislValue... args )
         {
-            if ((args != null) && (args.length > 0))
+            if ( ( args != null ) && ( args.length > 0 ) )
             {
-                MislString str = MislString.concat(args);
-                System.out.println(str.toJava());
+                MislString str = MislString.concat( args );
+                System.out.println( str.toJava() );
             }
             else
             {
@@ -69,29 +78,29 @@ public class MislBaseLib implements IMislLibrary
     private static final class TypeOf extends MislOneArgFunction
     {
         @Override
-        public MislValue call(IBindings env, MislValue arg1)
+        public MislValue call( IBindings env, MislValue arg1 )
         {
             String name = arg1.getTypeName();
-            return valueOf(name);
+            return valueOf( name );
         }
     }
     
     private static final class SizeOf extends MislOneArgFunction
     {
         @Override
-        public MislValue call(IBindings env, MislValue arg1)
+        public MislValue call( IBindings env, MislValue arg1 )
         {
-            if (arg1.isTable())
+            if ( arg1.isTable() )
             {
                 return arg1.asTable().getSize();
             }
-            else if (arg1.isString())
+            else if ( arg1.isString() )
             {
                 return arg1.asString().getLength();
             }
             else
             {
-                throw new ScriptRuntimeException("Expected String or Table, got %s", arg1.getTypeName());
+                throw new ScriptRuntimeException( "Expected String or Table, got %s", arg1.getTypeName() );
             }
         }
     }
@@ -101,19 +110,19 @@ public class MislBaseLib implements IMislLibrary
     private static final class ToBoolean extends MislOneArgFunction
     {
         @Override
-        public MislValue call(IBindings env, MislValue arg1)
+        public MislValue call( IBindings env, MislValue arg1 )
         {
-            if (arg1.isBoolean())
+            if ( arg1.isBoolean() )
             {
                 return arg1;
             }
-            else if (arg1.isNumber())
+            else if ( arg1.isNumber() )
             {
-                return MislBoolean.parse(arg1.asNumber());
+                return MislBoolean.parse( arg1.asNumber() );
             }
-            else if (arg1.isString())
+            else if ( arg1.isString() )
             {
-                return MislBoolean.parse(arg1.asString());
+                return MislBoolean.parse( arg1.asString() );
             }
             else
             {
@@ -122,24 +131,22 @@ public class MislBaseLib implements IMislLibrary
         }
     }
     
-    // ========================================
-    
     private static final class ToNumber extends MislOneArgFunction
     {
         @Override
-        public MislValue call(IBindings env, MislValue arg1)
+        public MislValue call( IBindings env, MislValue arg1 )
         {
-            if (arg1.isNumber())
+            if ( arg1.isNumber() )
             {
                 return arg1;
             }
-            else if (arg1.isBoolean())
+            else if ( arg1.isBoolean() )
             {
-                return MislNumber.parse(arg1.asBoolean());
+                return MislNumber.parse( arg1.asBoolean() );
             }
-            else if (arg1.isString())
+            else if ( arg1.isString() )
             {
-                return MislNumber.parse(arg1.asString());
+                return MislNumber.parse( arg1.asString() );
             }
             else
             {
@@ -148,14 +155,12 @@ public class MislBaseLib implements IMislLibrary
         }
     }
     
-    // ========================================
-    
     private static final class ToString extends MislOneArgFunction
     {
         @Override
-        public MislValue call(IBindings env, MislValue arg1)
+        public MislValue call( IBindings env, MislValue arg1 )
         {
-            if (arg1.isString())
+            if ( arg1.isString() )
             {
                 return arg1;
             }
@@ -166,4 +171,25 @@ public class MislBaseLib implements IMislLibrary
         }
     }
     
+    // ========================================
+    
+    private static final class Next extends MislTwoArgFunction
+    {
+        @Override
+        public MislValue call( IBindings env, MislValue arg1, MislValue arg2 )
+        {
+            MislTable t = arg1.asTable();
+            
+            Entry<MislValue, MislValue> next = t.getEntryAfter( arg2 );
+            
+            if ( next == null )
+            {
+                return null;
+            }
+            else
+            {
+                return next.getKey();
+            }
+        }
+    }
 }

@@ -1,236 +1,310 @@
-
 grammar Mts;
 
 /* Lexer Rules */
 
-StmtCloser : ';' ;
-Newline : '\r'? '\n' -> skip ;
+WS              : [ \t\r\n\u000C]+ -> skip ;
 
-Comment : '//' .*? '\r'? '\n' -> skip ;
+LOCAL           : 'local' ;
 
-Whitespace : [ \t]+ -> skip ;
+FUNCTION        : 'function' ;
+LABEL           : 'label' ;
+JUMP            : 'jump' ;
+CALL            : 'call' ;
+RETURN          : 'return' ;
+END             : 'end' ;
+DO              : 'do' ;
 
-Null : 'nil' ;
-Boolean : 'true' | 'false' ;
+IF              : 'if' ;
+THEN            : 'then' ;
+ELSEIF          : 'else if' ;
+ELSE            : 'else' ;
 
-LocalVar : 'local' ;
+WHILE           : 'while' ;
+BREAK           : 'break' ;
+REPEAT          : 'repeat' ;
+UNTIL           : 'until' ;
+FOR             : 'for' ;
+IN              : 'in' ;
 
-Function : 'function' ;
-Label : 'label' ;
+CMD_SAY         : 'say' ;
+CMD_SHOW        : 'show' ;
+CMD_AT          : 'at' ;
+CMD_OFFSET      : 'offset' ;
+CMD_SCENE       : 'scene' ;
+CMD_HIDE        : 'hide' ;
+CMD_MENU        : 'menu' ;
+CMD_OPTION      : 'option' ;
 
-Jump : 'jump' ;
-Call : 'call' ;
+VARIABLE_KEY    : '$' ;
 
-Return : 'return' ;
+LPAREN          : '(' ;
+RPAREN          : ')' ;
+LBRACE          : '{' ;
+RBRACE          : '}' ;
+LBRACK          : '[' ;
+RBRACK          : ']' ;
+SEMI            : ';' ;
+COMMA           : ',' ;
+DOT             : '.' ;
 
-End : 'end' ;
-Do : 'do' ;
+ASSIGN          : '=' ;
+GT              : '>' ;
+LT              : '<' ;
+NOT             : 'not' ;
+//QUESTION        : '?' ;
+//COLON           : ':' ;
+EQUAL           : '==' ;
+LE              : '<=' ;
+GE              : '>=' ;
+NOTEQUAL        : '!=' ;
+AND             : 'and' ;
+OR              : 'or' ;
+//INC             : '++' ;
+//DEC             : '--' ;
+ADD             : '+' ;
+SUB             : '-' ;
+MUL             : '*' ;
+DIV             : '/' ;
+MOD             : '%' ;
+CONCAT          : '..' ;
 
-If : 'if' ;
-Then : 'then' ;
-ElseIf : 'else if' ;
-Else : 'else' ;
+//ADD_ASSIGN      : '+=' ;
+//SUB_ASSIGN      : '-=' ;
+//MUL_ASSIGN      : '*=' ;
+//DIV_ASSIGN      : '/=' ;
+//AND_ASSIGN      : '&=' ;
+//OR_ASSIGN       : '|=' ;
+//MOD_ASSIGN      : '%=' ;
 
-While : 'while' ;
-Break : 'break' ;
+LineComment
+    : '//' ~[\r\n]* -> skip
+    ;
 
-Repeat : 'repeat' ;
-Until : 'until' ;
+BlockComment
+    : '/*' .*? '*/' -> skip
+    ;
 
-CommandSay : 'say' ;
+NullLiteral     
+    : 'nil' 
+    ;
 
-CommandShow : 'show' ;
-CommandShowAt : 'at' ;
-CommandShowOffset : 'offset' ;
+BooleanLiteral
+    : 'true' | 'false' 
+    ;
 
-CommandScene : 'scene' ;
+StringLiteral 
+    : '"' StringCharacter* '"'
+    ;
 
-CommandHide : 'hide' ;
+fragment StringCharacter
+    : ~( '\\' | '"' )
+    ;
 
-CommandMenu : 'menu' ;
-CommandMenuOption : 'option' ;
+Identifier
+    : [_a-zA-Z]+ [_a-zA-Z0-9]*
+    ;
 
-Separator : ',' ;
+NumberLiteral
+    : Digit+ ( '.' Digit+ )?
+    ;
 
-ExprBraceOpen : '(' ;
-ExprBraceClose : ')' ;
-
-FieldBraceOpen : '[' ;
-FieldBraceClose : ']' ;
-
-TableBraceOpen : '{' ;
-TableBraceClose : '}' ;
-
-IncrOp : '++' ;
-DecrOp : '--' ;
-
-MinusOp : '-' ;
-
-UnaryNotOp : 'not' ;
-UnarySizeOp : '#' ;
-
-BinaryPlusOp : '+' ;
-BinaryMultiplyOp : '*' ;
-BinaryDivideOp : '/' ;
-BinaryModuloOp : '%' ;
-BinaryConcatOp : '..' ;
-BinaryLowerThenOp : '<' ;
-BinaryLowerThenOrEqualOP : '<=' ;
-BinaryGreaterThenOp : '>' ;
-BinaryGreaterThenOrEqualOp : '>=' ;
-BinaryEqualOp : '==' ;
-BinaryNotEqualOp : '!=' ;
-BinaryAndOp : 'and' ;
-BinaryOrOp : 'or' ;
-
-AssignOp : '=' ;
-TableAssocOp : '=>' ;
-
-TableAccessOp : '.' ;
-
-String : '"' ~( '\\' | '"' )* '"' ;
-
-VariableKey : '$' ;
-
-Name: [_a-zA-Z]+ [_a-zA-Z0-9]* ;
-
-Number : Digit+ ( '.' Digit+ )? ;
-
-fragment Digit : [0-9] ;
+fragment Digit
+    : [0-9]
+    ;
 
 /* Parser Rules */
-script : block? ( labelDecl | funcDecl )* EOF ;
+chunk 
+    : ( /*block |*/ labelDecl | funcDecl )* EOF 
+    ;
 
-block : stmt* ( returnStmt )? ;
+block 
+    : ( stmt | returnStmt )+ 
+    ;
 
-stmt  : 'break'
-        # Break
-      | 'jump' Target=Name
-        # Jump
-      | 'call' Identifier=Name
-        # Call
-      | 'do' block 'end'
-        # DoBlock
-      | 'while' expr 'do' block 'end'
-        # WhileBlock
-      | 'repeat' block 'until' expr ';'
-        # RepeatBlock
-      | ( 'if' Condition+=expr 'then' ThenBlock+=block )
-        ( 'else if' Condition+=expr 'then' ThenBlock+=block )+
-        ( 'else' ElseBlock=block )?
-        'end'
-        # IfElseBlock
-      | 'if' Condition+=expr 'then' ThenBlock+=block 'else' ElseBlock=block 'end'
-        # IfElseBlock
-      | 'if' Condition+=expr 'then' ThenBlock+=block 'end'
-        # IfElseBlock
-      | commandStmt
-        # Command
-      | exprStmt ';'
-        # Statement
-      | ';'
-        # BlankStatement
-      ;
+loopBlock 
+    : ( stmt | returnStmt | breakStmt )+ 
+    ;
 
-expr : Operator=( '-' | 'not' | '#' ) expr
-       # UnaryExpr
-     | Left=expr Operator=( '*' | '/' | '%' ) Right=expr
-       # BinaryExpr
-     | Left=expr Operator=( '+' | '-'  ) Right=expr
-       # BinaryExpr
-     | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
-       # BinaryExpr
-     | Left=expr Operator='and' Right=expr
-       # LogicalExpr
-     | Left=expr Operator='or' Right=expr
-       # LogicalExpr
-     | Left=expr Operator='..' Right=expr
-       # BinaryExpr
-     | literalExpr
+stmt
+    : 'jump' LabelName=Identifier
+      # Jump
+    | 'call' FunctionName=Identifier
+      # Call
+    | 'do' 
+        Block=block?
+      'end'
+      # DoBlock
+    | 'while' Condition=expr 'do' 
+        LoopBlock=loopBlock?
+      'end'
+      # WhileBlock
+    | 'for' Control=numericForControl 'do'
+        LoopBlock=loopBlock?
+      'end'
+      # NumericFor
+    | 'for' Control=genericForControl 'do'
+        LoopBlock=loopBlock?
+      'end'
+      # GenericFor
+    | 'repeat' 
+        LoopBlock=loopBlock?
+      'until' Condition=expr ';'
+      # RepeatBlock
+    | ( 'if' Condition+=expr 'then' 
+        ThenBlock+=block? )
+      ( 'else if' Condition+=expr 'then' 
+        ThenBlock+=block? )*
+      ( 'else' 
+        ElseBlock=block? )?
+      'end'
+      # IfElseBlock
+    | commandStmt
+      # Command
+    | exprStmt ';'
+      # Statement
+    | ';'
+      # BlankStatement
+    ;
+
+expr 
+    : Operator=( '-' | 'not' ) Right=expr
+      # UnaryExpr
+    | Left=expr Operator=( '*' | '/' | '%' ) Right=expr
+      # BinaryExpr
+    | Left=expr Operator=( '+' | '-'  ) Right=expr
+      # BinaryExpr
+    | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
+      # BinaryExpr
+    | Left=expr Operator='and' Right=expr
+      # LogicalExpr
+    | Left=expr Operator='or' Right=expr
+      # LogicalExpr
+    | Left=expr Operator='..'<assoc=right> Right=expr
+      # BinaryExpr
+    | literalExpr
        # Literal
-     | tableCtorExpr
-       # SimpleExpr
-     | assignmentExpr
-       # SimpleExpr
-     | accessExpr
-       # SimpleExpr
-     | callExpr
-       # SimpleExpr
-     | '(' expr ')'
-       # SimpleExpr
-     ;
+    | tableCtorExpr
+      # SimpleExpr
+    | assignmentExpr
+      # SimpleExpr
+    | accessExpr
+      # SimpleExpr
+    | callExpr
+      # SimpleExpr
+    | '(' expr ')'
+      # SimpleExpr
+    ;
 
-literalExpr : Literal=Number
-            | Literal=Boolean
-            | Literal=String
-            | Null
-            ;
+literalExpr 
+    : Literal=NumberLiteral
+      # NumberLiteral
+    | Literal=BooleanLiteral
+      # BooleanLiteral
+    | Literal=StringLiteral
+      # StringLiteral
+    | NullLiteral
+      # NullLiteral
+    ;
 
-tableCtorExpr : '{' ( fieldDefExpr ( ',' fieldDefExpr )* ','? )? '}' ;
+numericForControl
+    : '$' LoopVariable=Identifier '=' ValueExpr=expr ',' Condition=expr ( ',' UpdateExpr=expr )?
+    ;
 
-fieldDefExpr : '[' expr ']' '=' expr
-               # ExpressionField
-             | variableExpr '=' expr
-               # NamedField
-             | expr
-               # IndexedField
-             ;
+genericForControl
+    : '$' KeyVariable=Identifier ',' '$' ValueVariable=Identifier 'in' TableExpr=expr
+    ;
 
-variableExpr : VariableKey Identifier=Name ;
+tableCtorExpr
+    : '{' ( FieldExprs+=fieldDefExpr ( ',' FieldExprs+=fieldDefExpr )* ','? )? '}'
+    ;
 
-assignmentExpr : tableExpr '=' expr
-                 # TableAssignment
-               | variableExpr '=' literalExpr
-                 # ConstantAssignment
-               | 'local' variableExpr '=' expr
-                 # LocalVariableAssignment
-               | variableExpr '=' expr
-                 # VariableAssignment
-               ;
+fieldDefExpr 
+    : ValueExpr=expr
+      # ListFieldDef
+    | Key=Identifier '=' ValueExpr=expr
+      # IdentifierKeyedFieldDef
+    | '[' KeyExpr=expr ']' '=' ValueExpr=expr
+      # ExpressionKeyedFieldDef
+    ;    
 
-accessExpr : tableExpr
-             # TableAccess
-           | variableExpr
-             # VariableAccess
-           ;
+assignmentExpr 
+    : TableFieldExpr=tableExpr '=' ValueExpr=expr
+      # TableAssignment
+    | '$' VariableName=Identifier '=' ValueExpr=expr
+      # VariableAssignment
+    | 'local' '$' VariableName=Identifier ( '=' ValueExpr=expr )?
+      # LocalFieldDefinition
+    ;
 
-callExpr : Identifier=Name funcArgs
-           # FunctionCall
-         | tableExpr funcArgs
-           # TableCall
-         ;
+accessExpr 
+    : TableFieldExpr=tableExpr
+      # TableAccess
+    | '$' VariableName=Identifier
+      # VariableAccess
+    ;
 
-tableExpr : variableExpr Fields+=tableFieldAccess+ ;
+callExpr 
+    : FunctionName=Identifier '(' ( ArgumentExprs+=expr ( ',' ArgumentExprs+=expr )* )? ')'
+      # FunctionCall
+    | FunctionExpr=tableExpr '(' ( ArgumentExprs+=expr ( ',' ArgumentExprs+=expr )* )? ')'
+      # TableCall
+    ;
 
-tableFieldAccess : '.' Key=Name
-                 | '[' expr ']'
-                 ;
+tableExpr 
+    : '$' ParentVariable=Identifier FieldAccesses+=tableFieldAccess* LastFieldAccess=tableFieldAccess 
+    ;
 
-funcArgs : '(' ( expr ( ',' expr )* )? ')' ;
+tableFieldAccess 
+    : '.' Key=Identifier
+      # IdentifierKeyedAccess
+    | '[' KeyExpr=expr ']'
+      # ExpressionKeyedAccess
+    ;
 
-commandStmt : 'say' Character=expr? Text=expr ';'
-              # CommandSay
-            | 'show' Group=expr? Path=expr 
-              ( 'at' Pos=expr )? 
-              ( 'offset' XOffset=expr YOffset=expr )?
-              ';'
-              # CommandShow
-            | 'scene' Group=expr? Path=expr ';'
-              # CommandScene
-            | 'hide' Group=expr? ';'
-              # CommandHide
-            | 'menu' Caption=expr? commandMenuOption+ 'end'
-              # CommandMenu
-            ;
+commandStmt 
+    : 'say' Character=expr? Text=expr ';'
+      # CommandSay
+    | 'show' Group=expr? Path=expr 
+      ( 'at' Pos=expr )?
+      ( 'offset' XOffset=expr YOffset=expr )?
+      ';'
+      # CommandShow
+    | 'scene' Group=expr? Path=expr ';'
+      # CommandScene
+    | 'hide' Group=expr? ';'
+      # CommandHide
+    | 'menu' Caption=expr? 
+        Options+=commandMenuOption+             
+      'end'
+      # CommandMenu
+    ;
 
-commandMenuOption : 'option' expr block ;
+commandMenuOption 
+    : 'option' CaptionExpr=expr 
+        Block=block? 
+    ;
 
-exprStmt : callExpr
-         | assignmentExpr
-         ;
+exprStmt 
+    : callExpr
+    | assignmentExpr
+    ;
 
-returnStmt : 'return' expr? ';' ;
+returnStmt 
+    : 'return' ReturnExpr=expr? ';'
+    ;
 
-funcDecl : 'function' Identifier=Name '(' ( Params+=variableExpr ( ',' Params+=variableExpr )* )? ')' block? 'end' ;
+breakStmt
+    : 'break' ';'
+    ;
 
-labelDecl : 'label' Identifier=Name block 'end' ;
+funcDecl 
+    : /*'local'?*/ 'function' FunctionName=Identifier '(' ( '$' Parameters+=Identifier ( ',' '$' Parameters+=Identifier )* )? ')' 
+        Block=block? 
+      'end' 
+    ;
+
+labelDecl 
+    : /*'local'?*/ 'label' LabelName=Identifier
+        Block=block?
+      'end' 
+    ;

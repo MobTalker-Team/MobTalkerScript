@@ -5,26 +5,26 @@ import mobtalkerscript.misl.v1.*;
 public abstract class MislThreeArgFunction extends MislTwoArgFunction
 {
     @Override
-    public MislValue call(IBindings env, MislValue... args)
+    public MislValue call( IBindings env, MislValue... args )
     {
-        switch (args.length)
+        switch ( args.length )
         {
             case 1:
-                return call(env, args[0]);
+                return call( env, args[0] );
             case 2:
-                return call(env, args[0], args[1]);
+                return call( env, args[0], args[1] );
             case 3:
-                return call(env, args[0], args[1], args[2]);
+                return call( env, args[0], args[1], args[2] );
             default:
-                return call(env);
+                return call( env );
         }
     }
     
     @Override
-    public MislValue call(IBindings env, MislValue arg1, MislValue arg2)
+    public MislValue call( IBindings env, MislValue arg1, MislValue arg2 )
     {
-        return call(env, arg1, arg2, NIL);
+        return call( env, arg1, arg2, NIL );
     }
     
-    public abstract MislValue call(IBindings env, MislValue arg1, MislValue arg2, MislValue arg3);
+    public abstract MislValue call( IBindings env, MislValue arg1, MislValue arg2, MislValue arg3 );
 }

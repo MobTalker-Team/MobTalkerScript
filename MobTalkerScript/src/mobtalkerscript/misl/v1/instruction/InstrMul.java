@@ -4,11 +4,10 @@ import mobtalkerscript.misl.v1.value.*;
 
 public class InstrMul extends AbstractNumberBinaryOperator
 {
-    
     @Override
-    protected MislNumber calculate(MislNumber a, MislNumber b)
+    protected MislNumber calculate( MislNumber a, MislNumber b )
     {
-        return MislNumber.mul(a, b);
+        return MislNumber.mul( a, b );
     }
     
     // ========================================
@@ -16,7 +15,6 @@ public class InstrMul extends AbstractNumberBinaryOperator
     @Override
     public String toString()
     {
-        return "mul";
+        return "MUL";
     }
-    
 }

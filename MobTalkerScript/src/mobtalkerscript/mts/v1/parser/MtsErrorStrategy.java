@@ -6,10 +6,10 @@ public class MtsErrorStrategy extends BailErrorStrategy
 {
     
     @Override
-    public Token recoverInline(Parser recognizer) throws RecognitionException
+    public Token recoverInline( Parser recognizer ) throws RecognitionException
     {
-        InputMismatchException ex = new InputMismatchException(recognizer);
-        for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent())
+        InputMismatchException ex = new InputMismatchException( recognizer );
+        for ( ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent() )
         {
             context.exception = ex;
         }

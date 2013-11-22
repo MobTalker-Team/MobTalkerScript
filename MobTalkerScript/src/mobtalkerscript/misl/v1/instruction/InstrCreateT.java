@@ -11,7 +11,7 @@ public class InstrCreateT extends AbstractStackInstruction
     
     // ========================================
     
-    public InstrCreateT(int size)
+    public InstrCreateT( int size )
     {
         _size = size;
     }
@@ -19,19 +19,10 @@ public class InstrCreateT extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
-        MislTable table = new MislTable(_size);
-        
-        for (int i = 0; i < _size; i++)
-        {
-            MislValue value = stack.pop();
-            MislValue key = stack.pop();
-            
-            table.set(key, value);
-        }
-        
-        stack.push(table);
+        MislTable table = new MislTable( _size );
+        stack.push( table );
     }
     
     // ========================================
@@ -39,7 +30,7 @@ public class InstrCreateT extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "create_t " + _size;
+        return String.format( "%1$-10s %2$s", "CREATE_T", _size );
     }
     
 }

@@ -6,15 +6,14 @@ import mobtalkerscript.util.*;
 
 public class InstrNeg extends AbstractStackInstruction
 {
-    
     @Override
-    protected void doExecute(Stack<MislValue> stack, ScriptContext context)
+    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
     {
         MislNumber value = stack.pop().asNumber();
         
         MislNumber negated = value.neg();
         
-        stack.push(negated);
+        stack.push( negated );
     }
     
     // ========================================
@@ -22,7 +21,6 @@ public class InstrNeg extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "neg";
+        return "NEG";
     }
-    
 }

@@ -1,6 +1,7 @@
 package mobtalkerscript.mts.v1.parser;
 
 import java.util.*;
+import java.util.regex.*;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.instruction.*;
@@ -50,29 +51,19 @@ import org.antlr.v4.runtime.tree.*;
 
 import com.google.common.collect.*;
 
-public class MtsToMislCompiler extends MtsBaseVisitor<Void>
+public class MtsToMislCompiler extends AbstractMtsToMislCompiler
 {
-    private final ArrayList<MislInstruction> _instructionList;
-    private final MislInstructionList _instructions;
     private final IBindings _local;
     
     private InstrLabel _curBreakTarget;
     
     // ========================================
     
-    public MtsToMislCompiler()
     {
-        _instructionList = Lists.newArrayListWithExpectedSize( 100 );
-        _instructions = new MislInstructionList();
         _local = new SimpleBindings();
     }
     
     // ========================================
-    
-    public List<MislInstruction> getInstructionsAsList()
-    {
-        return _instructionList;
-    }
     
     public IBindings getBindings()
     {
@@ -80,19 +71,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     }
     
     // ========================================
-    
-    public void addInstr( MislInstruction instr )
-    {
-        _instructions.add( instr );
-        _instructionList.add( instr );
-        
-        MTSLog.finest( "[Compiler] %s", instr.toString() );
-    }
-    
-    // ========================================
-    
-    private String _curSourceName;
-    private int _curSourceLine;
     
     private void checkSourcePosition( ParserRuleContext ctx )
     {
@@ -104,16 +82,13 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         String sourceName = token.getTokenSource().getSourceName();
         int sourceLine = token.getLine();
         
-        if ( Objects.equals( _curSourceName, sourceName ) && ( _curSourceLine == sourceLine ) )
+        if ( setSourcePosition( sourceName, sourceLine ) )
         {
-            return;
+            addInstr( new InstrLine( sourceName, sourceLine ) );
         }
-        
-        _curSourceName = sourceName;
-        _curSourceLine = sourceLine;
-        
-        addInstr( new InstrLine( sourceName, sourceLine ) );
     }
+    
+    // ========================================
     
     @Override
     public Void visit( ParseTree tree )
@@ -244,9 +219,51 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     public Void visitStringLiteral( StringLiteralContext ctx )
     {
         String literal = ctx.Literal.getText();
-        addInstr( new InstrPush( literal.substring( 1, literal.length() - 1 ) ) );
+        literal = literal.substring( 1, literal.length() - 1 );
+        
+        visitInterpolatedString( literal );
         
         return null;
+    }
+    
+    private static final Pattern _ipStrVarPattern = Pattern.compile( "\\$([_a-zA-Z]+[_a-zA-Z0-9]*)" );
+    
+    private void visitInterpolatedString( String str )
+    {
+        Matcher matcher = _ipStrVarPattern.matcher( str );
+        int start = 0;
+        int parts = 0;
+        
+        while ( matcher.find() )
+        {
+            if ( matcher.start() > 0 )
+            {
+                // Split string
+                String subStr = str.substring( start, matcher.start() );
+                addInstr( new InstrPush( subStr ) );
+                
+                parts++;
+            }
+            
+            // Load variable
+            String varName = matcher.group( 1 );
+            addInstr( new InstrLoad( varName ) );
+            
+            parts++;
+            
+            start = matcher.end();
+        }
+        
+        if ( start < str.length() )
+        {
+            String subStr = str.substring( start );
+            addInstr( new InstrPush( subStr ) );
+        }
+        
+        for ( int i = 1; i < parts; i++ )
+        {
+            addInstr( new InstrConcat() );
+        }
     }
     
     @Override

@@ -260,9 +260,9 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
             addInstr( new InstrPush( subStr ) );
         }
         
-        for ( int i = 1; i < parts; i++ )
+        if ( parts > 1 )
         {
-            addInstr( new InstrConcat() );
+            addInstr( new InstrConcat( parts ) );
         }
     }
     
@@ -384,7 +384,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
             visit( ctx.Left );
             visit( ctx.Right );
             
-            addInstr( new InstrConcat() );
+            addInstr( new InstrConcat( 2 ) );
         }
         else
         {

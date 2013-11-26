@@ -57,6 +57,8 @@ public abstract class MislValue implements Comparable<MislValue>
     
     // ========================================
     
+    public static final MislString EMPTY_STRING = new MislString( "" );
+    
     public static MislString valueOf( String value )
     {
         if ( value == null )

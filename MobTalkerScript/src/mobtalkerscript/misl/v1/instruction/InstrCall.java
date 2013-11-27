@@ -12,6 +12,7 @@ public class InstrCall extends MislInstruction
     
     private final int _argCount;
     private final int _returnCount;
+    private final boolean _isTailCall;
     
     private MislInstruction _jumpPointer;
     
@@ -21,6 +22,14 @@ public class InstrCall extends MislInstruction
     {
         _argCount = argCount;
         _returnCount = retCount;
+        _isTailCall = false;
+    }
+    
+    public InstrCall( int argCount, int retCount, boolean isTailCall )
+    {
+        _argCount = argCount;
+        _returnCount = retCount;
+        _isTailCall = isTailCall;
     }
     
     // ========================================
@@ -78,24 +87,57 @@ public class InstrCall extends MislInstruction
         }
     }
     
+    /**
+     * Transfer arguments between two different stacks
+     * [ A < B < C ] -> [ C < B < A ]
+     */
+    private static void transferArguments( int count, Stack<MislValue> sourceStack, Stack<MislValue> targetStack )
+    {   
+        if ( count > 0 ) {
+            for ( int i = 0; i < count; i++ )
+            {
+                targetStack.push( sourceStack.pop() );
+            }
+        }
+    }
+    
+    private static void pushMissingArguments( int count, Stack<MislValue> stack ) {
+        for ( int i = 0; i < count; i++ )
+        {
+            targetStack.push( MislValue.NIL );
+        }
+    }
+    
     private void executeScriptedFunction( MislFunction f, Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame oldFrame = frameStack.peek();
         Stack<MislValue> oldStack = oldFrame.getStack();
         
-        MislFrame newFrame = new MislFrame( _next, _returnCount );
-        Stack<MislValue> newStack = newFrame.getStack();
-        
-        int paramCount = Math.max( f.getArgCount(), _argCount );
-        for ( int i = 0; i < paramCount; i++ )
+        if ( _isTailCall ) 
         {
-            MislValue param = oldStack.isEmpty() ? MislValue.NIL : oldStack.pop();
-            newStack.push( param );
+            if ( _argCount > 0 ) 
+            {
+                oldStack.swap( _argCount );
+            }
+            
+            pushMissingArguments( f.getParamCount() - _argCount, oldStack ); 
+            
+            context.leaveFunctionScope();
+        
+            MTSLog.finer( "[Engine] TailCall stack: %s", oldStack );
         }
-        
-        MTSLog.finer( "[Engine] Call stack: %s", newStack.toString() );
-        
-        frameStack.push( newFrame );
+        else 
+        {
+            MislFrame newFrame = new MislFrame( _next, _returnCount );
+            Stack<MislValue> newStack = newFrame.getStack();
+            
+            transferArguments( Math.min( _argCount, f.getParamCount() ), oldStack, newStack );
+            pushMissingArguments( f.getParamCount() - _argCount, newStack ); 
+            
+            frameStack.push( newFrame );
+            
+            MTSLog.finer( "[Engine] Call stack: %s", newStack );
+        }
         
         context.enterFunctionScope();
         
@@ -151,6 +193,8 @@ public class InstrCall extends MislInstruction
     @Override
     public String toString()
     {
-        return String.format( "%1$-10s %2$s", "CALL", _argCount + " " + _returnCount );
+        return _isTailCall 
+               ? String.format( "%1$-10s %2$s", "TAILCALL", _argCount )
+               : String.format( "%1$-10s %2$s", "CALL", _argCount + " " + _returnCount );
     }
 }

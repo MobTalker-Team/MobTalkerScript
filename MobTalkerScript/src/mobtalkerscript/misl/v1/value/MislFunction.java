@@ -38,7 +38,7 @@ public class MislFunction extends MislValue
         return _instruction;
     }
     
-    public int getArgCount()
+    public int getParamCount()
     {
         return _argCount;
     }

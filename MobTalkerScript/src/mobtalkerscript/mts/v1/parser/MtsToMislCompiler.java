@@ -226,7 +226,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         return null;
     }
     
-    private static final Pattern _ipStrVarPattern = Pattern.compile( "\\$([_a-zA-Z]+[_a-zA-Z0-9]*)" );
+    private static final Pattern _ipStrVarPattern = Pattern.compile( "(?<!\\\\)\\$([_a-zA-Z]+[_a-zA-Z0-9]*)" );
     
     private void visitInterpolatedString( String str )
     {

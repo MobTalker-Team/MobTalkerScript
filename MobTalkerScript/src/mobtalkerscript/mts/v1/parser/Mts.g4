@@ -94,12 +94,11 @@ BooleanLiteral
 
 StringLiteral 
     : '"' ( EscapeSequence | ~('\\'|'"') )* '"' 
-    | '\'' ( EscapeSequence | ~('\''|'\\') )* '\''
     ;
     
 fragment EscapeSequence
-	: '\\' [$tn"'\\]
-	;
+    : '\\' [$n"\\]
+    ;
 
 Identifier
     : [_a-zA-Z]+ [_a-zA-Z0-9]*

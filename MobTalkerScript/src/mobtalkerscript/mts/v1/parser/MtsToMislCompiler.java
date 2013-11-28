@@ -269,7 +269,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
     @Override
     public Void visitNumberLiteral( NumberLiteralContext ctx )
     {
-        int literal = Integer.parseInt( ctx.Literal.getText() );
+        double literal = Double.parseDouble( ctx.Literal.getText() );
         addInstr( new InstrPush( literal ) );
         
         return null;

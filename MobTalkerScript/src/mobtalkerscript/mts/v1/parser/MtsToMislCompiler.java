@@ -503,7 +503,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         addInstr( new InstrLoad( funcName ) );
         if ( isTailCall )
         {
-            addInstr( new InstrJumpF() );
+            addInstr( new InstrTailCall( argCount, retCount ) );
         }
         else
         {

@@ -122,6 +122,10 @@ public class Stack<T>
      */
     public void swap( int count )
     {
+        if ( count < 2 )
+        {
+            throw new IllegalArgumentException( "Must swap at least 2 elements" );
+        }
         if ( count > count() )
         {
             throw new IllegalArgumentException( "Tried to swap more elements than there are on the stack" );

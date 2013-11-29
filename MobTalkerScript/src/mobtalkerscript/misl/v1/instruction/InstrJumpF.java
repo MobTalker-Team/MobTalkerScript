@@ -2,9 +2,8 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrJumpF extends MislInstruction
+public class InstrJumpF extends AbstractMislInstruction
 {
     @Override
     void setNext( MislInstruction next )
@@ -13,18 +12,15 @@ public class InstrJumpF extends MislInstruction
     // ========================================
     
     @Override
-    public void execute( Stack<MislFrame> frameStack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislFrame frame = frameStack.peek();
-        Stack<MislValue> stack = frame.getStack();
-        MislValue top = stack.pop();
+        MislValue top = frame.pop();
         
         if ( top.isNativeFunction() )
         {
-            MislNativeFunction f = top.asNativeFunction();
             try
             {
-                f.call( context.getCurrentScope() );
+                top.asNativeFunction().call( context.getCurrentScope() );
             }
             catch ( ScriptRuntimeException ex )
             {
@@ -39,9 +35,7 @@ public class InstrJumpF extends MislInstruction
             context.leaveFunctionScope();
             context.enterFunctionScope();
             
-            MislFunction f = top.asFunction();
-            
-            MislInstruction instr = f.getInstruction();
+            MislInstruction instr = top.asFunction().getInstruction();
             _next = instr;
         }
         else

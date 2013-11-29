@@ -1,19 +1,13 @@
 package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
-import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrNeg extends AbstractStackInstruction
+public class InstrNeg extends AbstractMislInstruction
 {
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislNumber value = stack.pop().asNumber();
-        
-        MislNumber negated = value.neg();
-        
-        stack.push( negated );
+        frame.push( frame.pop().asNumber().neg() );
     }
     
     // ========================================

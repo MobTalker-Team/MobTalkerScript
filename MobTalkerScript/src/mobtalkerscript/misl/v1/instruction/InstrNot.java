@@ -3,22 +3,19 @@ package mobtalkerscript.misl.v1.instruction;
 import static mobtalkerscript.misl.v1.value.MislValue.*;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrNot extends AbstractStackInstruction
+public class InstrNot extends AbstractMislInstruction
 {
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislValue a = stack.pop();
-        
-        if ( MislBoolean.isTrue( a ) )
+        if ( MislBoolean.isTrue( frame.pop() ) )
         {
-            stack.push( FALSE );
+            frame.push( FALSE );
         }
         else
         {
-            stack.push( TRUE );
+            frame.push( TRUE );
         }
     }
     

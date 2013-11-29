@@ -1,45 +1,9 @@
-// package mobtalker.script.misl.v1.instruction;
-//
-//import static mobtalker.script.misl.v1.value.MislValue.*;
-//import mobtalker.script.misl.v1.value.*;
-//
-//public class InstrOr extends AbstractBinaryOperator
-//{
-//    
-//    @Override
-//    protected MislValue getResult(MislValue a, MislValue b)
-//    {
-//        return (a != FALSE) && (a != NIL) ? a : b;
-//    }
-//    
-//    private boolean test(boolean a, boolean b)
-//    {
-//        if (a && b)
-//        {
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
-//    }
-//    
-//    // ========================================
-//    
-//    @Override
-//    public String toString()
-//    {
-//        return "or";
-//    }
-//    
-//}
 package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrOr extends AbstractStackInstruction
+public class InstrOr extends AbstractMislInstruction
 {
     private MislInstruction _b;
     private MislInstruction _cont;
@@ -63,18 +27,16 @@ public class InstrOr extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislValue value = stack.peek();
-        
-        if ( MislBoolean.isTrue( value ) )
+        if ( MislBoolean.isTrue( frame.peek() ) )
         {
             _next = _cont;
         }
         else
         {
             _next = _b;
-            stack.pop();
+            frame.pop();
         }
     }
     

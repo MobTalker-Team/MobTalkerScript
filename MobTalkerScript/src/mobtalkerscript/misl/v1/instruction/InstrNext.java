@@ -4,7 +4,6 @@ import java.util.Map.Entry;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.Stack;
 
 /**
  * Implements the "next" iterator function for generic for-loops.
@@ -18,7 +17,7 @@ import mobtalkerscript.util.Stack;
  * [ t, k ] -> [ t ] | [ t, k, k, v ]
  * </pre>
  */
-public class InstrNext extends AbstractStackInstruction
+public class InstrNext extends AbstractMislInstruction
 {
     private MislInstruction _notNull;
     private final InstrLabel _cont;
@@ -42,10 +41,10 @@ public class InstrNext extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislValue ctrl = stack.pop();
-        MislTable t = stack.peek().asTable();
+        MislValue ctrl = frame.pop();
+        MislTable t = frame.peek().asTable();
         
         Entry<MislValue, MislValue> next = t.getEntryAfter( ctrl );
         
@@ -56,9 +55,9 @@ public class InstrNext extends AbstractStackInstruction
         else
         {
             _next = _notNull;
-            stack.push( next.getKey() );
-            stack.push( next.getKey() );
-            stack.push( next.getValue() );
+            frame.push( next.getKey() );
+            frame.push( next.getKey() );
+            frame.push( next.getValue() );
         }
     }
     

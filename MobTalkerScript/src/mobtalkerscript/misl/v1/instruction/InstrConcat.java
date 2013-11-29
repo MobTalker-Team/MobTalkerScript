@@ -2,9 +2,8 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrConcat extends AbstractStackInstruction
+public class InstrConcat extends AbstractMislInstruction
 {
     private final int _count;
     
@@ -18,16 +17,26 @@ public class InstrConcat extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislString[] strs = new MislString[_count];
-        
-        for ( int i = ( _count - 1 ); i >= 0; i-- )
+        if ( _count == 2 )
         {
-            strs[i] = stack.pop().toMtsString();
+            MislString a = frame.pop().toMtsString();
+            MislString b = frame.pop().toMtsString();
+            
+            frame.push( b.concat( a ) );
         }
-        
-        stack.push( MislString.concat( strs ) );
+        else if ( _count > 2 )
+        {
+            MislString[] strs = new MislString[_count];
+            
+            for ( int i = ( _count - 1 ); i >= 0; i-- )
+            {
+                strs[i] = frame.pop().toMtsString();
+            }
+            
+            frame.push( MislString.concat( strs ) );
+        }
     }
     
     // ========================================

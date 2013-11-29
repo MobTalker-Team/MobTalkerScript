@@ -28,28 +28,25 @@ public class InstrReturn extends MislInstruction
         {
             MislFrame curFrame = frameStack.peek();
             
-            Stack<MislValue> oldStack = oldFrame.getStack();
-            Stack<MislValue> curStack = curFrame.getStack();
-            
             for ( int i = 0; i < _returnCount; i++ )
             {
-                MislValue value = oldStack.pop();
+                MislValue value = oldFrame.pop();
                 
                 if ( i < oldFrame.getReturnCount() )
                 {
-                    curStack.push( value );
+                    curFrame.push( value );
                 }
             }
             
-            if ( !oldStack.isEmpty() )
+            if ( !oldFrame.isEmpty() )
             {
-                throw new ScriptEngineException( "Stack was not emptied: %s", oldStack );
+                throw new ScriptEngineException( "Stack was not emptied: %s", oldFrame );
             }
             
             int missingCount = oldFrame.getReturnCount() - _returnCount;
             for ( int i = 0; i < missingCount; i++ )
             {
-                curStack.push( MislValue.NIL );
+                curFrame.push( MislValue.NIL );
             }
         }
         

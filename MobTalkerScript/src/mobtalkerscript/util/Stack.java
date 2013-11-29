@@ -2,7 +2,7 @@ package mobtalkerscript.util;
 
 import java.util.*;
 
-public class Stack<T>
+public final class Stack<T>
 {
     public static <T> Stack<T> newStack()
     {

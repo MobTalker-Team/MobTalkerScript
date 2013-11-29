@@ -2,16 +2,15 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrStoreT extends AbstractStackInstruction
+public class InstrStoreT extends AbstractMislInstruction
 {
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislValue value = stack.pop();
-        MislValue key = stack.pop();
-        MislTable table = stack.pop().asTable();
+        MislValue value = frame.pop();
+        MislValue key = frame.pop();
+        MislTable table = frame.pop().asTable();
         
         table.set( key, value );
     }

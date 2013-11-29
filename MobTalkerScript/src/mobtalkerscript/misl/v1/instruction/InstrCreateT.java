@@ -2,9 +2,8 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrCreateT extends AbstractStackInstruction
+public class InstrCreateT extends AbstractMislInstruction
 {
     
     private final int _size;
@@ -19,10 +18,10 @@ public class InstrCreateT extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
         MislTable table = new MislTable( _size );
-        stack.push( table );
+        frame.push( table );
     }
     
     // ========================================

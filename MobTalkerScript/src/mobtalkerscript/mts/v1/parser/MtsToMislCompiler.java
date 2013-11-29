@@ -148,7 +148,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         
         _local.set( funcName, new MislFunction( label, 0 ) );
         
-        visitChildren( ctx.Block );
+        visit( ctx.Block );
         
         addInstr( new InstrReturn( 0 ) );
         
@@ -504,11 +504,19 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         String funcName = ctx.FunctionName.getText();
         int argCount = ctx.ArgumentExprs.size();
         int retCount = shouldReturnValue ? 1 : 0;
+        boolean isTailCall = ctx.getParent().getParent() instanceof ReturnStmtContext;
         
         visit( ctx.ArgumentExprs );
         
         addInstr( new InstrLoad( funcName ) );
-        addInstr( new InstrCall( argCount, retCount ) );
+        if ( isTailCall )
+        {
+            addInstr( new InstrTailCall( argCount, retCount ) );
+        }
+        else
+        {
+            addInstr( new InstrCall( argCount, retCount ) );
+        }
         
         return null;
     }
@@ -649,29 +657,6 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
     // Blocks
     
     @Override
-    public Void visitBlock( BlockContext ctx )
-    {
-        return visitBlock( ctx, true );
-    }
-    
-    public Void visitBlock( BlockContext ctx, boolean newScope )
-    {
-        if ( newScope )
-        {
-            addInstr( new InstrPushScope() );
-        }
-        
-        super.visitBlock( ctx );
-        
-        if ( newScope )
-        {
-            addInstr( new InstrPopScope() );
-        }
-        
-        return null;
-    }
-    
-    @Override
     public Void visitLoopBlock( LoopBlockContext ctx )
     {
         super.visitLoopBlock( ctx );
@@ -693,7 +678,9 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         
         if ( ctx.ElseBlock != null )
         {
+            addInstr( new InstrPushScope() );
             visit( ctx.ElseBlock );
+            addInstr( new InstrPopScope() );
         }
         
         addInstr( cont );
@@ -711,7 +698,9 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         addInstr( new InstrJumpIfNot( elze ) );
         
         BlockContext thenBlock = ctx.ThenBlock.get( 0 );
+        addInstr( new InstrPushScope() );
         visit( thenBlock );
+        addInstr( new InstrPopScope() );
         
         addInstr( new InstrJump( cont, false, false ) );
         addInstr( elze );
@@ -724,12 +713,16 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
             InstrLabel elze = new InstrLabel( "elseif" );
             
             ExprContext ifCond = ctx.Condition.get( i );
+            addInstr( new InstrPushScope() );
             visit( ifCond );
+            addInstr( new InstrPopScope() );
             
             addInstr( new InstrJumpIfNot( elze ) );
             
             BlockContext thenBlock = ctx.ThenBlock.get( i );
+            addInstr( new InstrPushScope() );
             visit( thenBlock );
+            addInstr( new InstrPopScope() );
             
             addInstr( new InstrJump( cont, false, false ) );
             addInstr( elze );

@@ -18,13 +18,10 @@ public class InstrCall extends AbstractInstrCall
     protected void executeScriptedFunction( MislFunction f, Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame oldFrame = frameStack.peek();
-        Stack<MislValue> oldStack = oldFrame.getStack();
-        
         MislFrame newFrame = new MislFrame( _next, _returnCount );
-        Stack<MislValue> newStack = newFrame.getStack();
         
-        transferArguments( Math.min( _argCount, f.getParamCount() ), oldStack, newStack );
-        pushMissingArguments( f.getParamCount() - _argCount, newStack );
+        transferArguments( Math.min( _argCount, f.getParamCount() ), oldFrame, newFrame );
+        pushMissingArguments( f.getParamCount() - _argCount, newFrame );
         
         frameStack.push( newFrame );
         

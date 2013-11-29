@@ -37,16 +37,13 @@ public abstract class AbstractInstrCall extends MislInstruction
     public void execute( Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame curFrame = frameStack.peek();
-        Stack<MislValue> curStack = curFrame.getStack();
-        
-        MislValue top = curStack.pop();
+        MislValue top = curFrame.pop();
         
         if ( top.isNativeFunction() )
         {
-            MislNativeFunction f = top.asNativeFunction();
             try
             {
-                executeNativeFunction( f, curStack, context );
+                executeNativeFunction( top.asNativeFunction(), curFrame, context );
             }
             catch ( ScriptRuntimeException ex )
             {
@@ -58,8 +55,7 @@ public abstract class AbstractInstrCall extends MislInstruction
         }
         else if ( top.isFunction() )
         {
-            MislFunction f = top.asFunction();
-            executeScriptedFunction( f, frameStack, context );
+            executeScriptedFunction( top.asFunction(), frameStack, context );
         }
         else
         {
@@ -76,13 +72,13 @@ public abstract class AbstractInstrCall extends MislInstruction
                                                      Stack<MislFrame> frameStack,
                                                      ScriptContext context );
     
-    protected void executeNativeFunction( MislNativeFunction f, Stack<MislValue> stack, ScriptContext context )
+    protected void executeNativeFunction( MislNativeFunction f, MislFrame frame, ScriptContext context )
     {
         MislValue[] args = new MislValue[_argCount];
         
         for ( int i = _argCount - 1; i >= 0; i-- )
         {
-            args[i] = stack.pop();
+            args[i] = frame.pop();
         }
         
         MTSLog.finer( "[Engine] Call stack: %s", Arrays.toString( args ) );
@@ -91,7 +87,7 @@ public abstract class AbstractInstrCall extends MislInstruction
         
         if ( result == null )
         {
-            pushMissingArguments( _returnCount, stack );
+            pushMissingArguments( _returnCount, frame );
         }
         else if ( result.isArray() )
         {
@@ -99,14 +95,14 @@ public abstract class AbstractInstrCall extends MislInstruction
             
             for ( int i = 0; i < _returnCount; i++ )
             {
-                stack.push( arr.get( i ) );
+                frame.push( arr.get( i ) );
             }
         }
         else if ( _returnCount > 0 )
         {
-            stack.push( result );
+            frame.push( result );
             
-            pushMissingArguments( _returnCount - 1, stack );
+            pushMissingArguments( _returnCount - 1, frame );
         }
         
         _jumpPointer = _next;
@@ -118,24 +114,22 @@ public abstract class AbstractInstrCall extends MislInstruction
      * Transfer arguments between two different stacks
      * [ A < B < C ] -> [ C < B < A ]
      */
-    protected static void transferArguments( int count,
-                                             Stack<MislValue> sourceStack,
-                                             Stack<MislValue> targetStack )
+    protected static void transferArguments( int count, MislFrame sourceFrame, MislFrame targetFrame )
     {
         if ( count > 0 )
         {
             for ( int i = 0; i < count; i++ )
             {
-                targetStack.push( sourceStack.pop() );
+                targetFrame.push( sourceFrame.pop() );
             }
         }
     }
     
-    protected static void pushMissingArguments( int count, Stack<MislValue> stack )
+    protected static void pushMissingArguments( int count, MislFrame frame )
     {
         for ( int i = 0; i < count; i++ )
         {
-            stack.push( MislValue.NIL );
+            frame.push( MislValue.NIL );
         }
     }
 }

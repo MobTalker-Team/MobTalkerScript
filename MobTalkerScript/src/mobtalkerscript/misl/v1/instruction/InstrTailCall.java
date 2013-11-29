@@ -17,14 +17,13 @@ public class InstrTailCall extends AbstractInstrCall
     protected void executeScriptedFunction( MislFunction f, Stack<MislFrame> frameStack, ScriptContext context )
     {
         MislFrame curFrame = frameStack.peek();
-        Stack<MislValue> curStack = curFrame.getStack();
         
-        if ( _argCount > 0 )
-        {
-            curStack.swap( _argCount );
-        }
+//        if ( _argCount > 0 )
+//        {
+//            curStack.swap( _argCount );
+//        }
         
-        pushMissingArguments( f.getParamCount() - _argCount, curStack );
+        pushMissingArguments( f.getParamCount() - _argCount, curFrame );
         
         context.leaveFunctionScope();
         context.enterFunctionScope();

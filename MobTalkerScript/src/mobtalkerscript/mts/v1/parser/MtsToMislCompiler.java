@@ -506,6 +506,11 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         int retCount = shouldReturnValue ? 1 : 0;
         boolean isTailCall = ctx.getParent().getParent() instanceof ReturnStmtContext;
         
+        if ( isTailCall )
+        {
+            Collections.reverse( ctx.ArgumentExprs );
+        }
+        
         visit( ctx.ArgumentExprs );
         
         addInstr( new InstrLoad( funcName ) );

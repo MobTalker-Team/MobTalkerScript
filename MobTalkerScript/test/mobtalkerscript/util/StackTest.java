@@ -168,4 +168,79 @@ public class StackTest
         assertEquals( 0, _stack.count() );
     }
     
+    @Test
+    public void testSwapEven()
+    {
+        Object a = new Object();
+        Object b = new Object();
+        Object c = new Object();
+        Object d = new Object();
+        Object e = new Object();
+        
+        // [ A < B < C < D < E ]
+        _stack.push( a );
+        _stack.push( b );
+        _stack.push( c );
+        _stack.push( d );
+        _stack.push( e );
+        
+        assertSame( e, _stack.peek() );
+        
+        // [ A < B < C < E < D ]
+        _stack.swap( 2 );
+        
+        assertSame( d, _stack.peek() );
+        
+        // [ A < D < E < C < B ]
+        _stack.swap( 4 );
+        
+        assertSame( b, _stack.peek() );
+        
+        // [ A < D < E < C ]
+        _stack.pop();
+        
+        assertSame( c, _stack.peek() );
+        
+        // [ C < E < D < A ]
+        _stack.swap( 4 );
+        
+        assertSame( a, _stack.pop() );
+        assertSame( d, _stack.pop() );
+        assertSame( e, _stack.pop() );
+        assertSame( c, _stack.pop() );
+    }
+    
+    @Test
+    public void testSwapUneven()
+    {
+        Object a = new Object();
+        Object b = new Object();
+        Object c = new Object();
+        Object d = new Object();
+        Object e = new Object();
+        
+        // [ A < B < C < D < E ]
+        _stack.push( a );
+        _stack.push( b );
+        _stack.push( c );
+        _stack.push( d );
+        _stack.push( e );
+        
+        assertSame( e, _stack.peek() );
+        
+        // [ A < B < E < D < C ]
+        _stack.swap( 3 );
+        
+        assertSame( c, _stack.peek() );
+        
+        // [ C < D < E < B < A ]
+        _stack.swap( 5 );
+        
+        assertSame( a, _stack.pop() );
+        assertSame( b, _stack.pop() );
+        assertSame( e, _stack.pop() );
+        assertSame( d, _stack.pop() );
+        assertSame( c, _stack.pop() );
+    }
+    
 }

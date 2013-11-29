@@ -35,6 +35,6 @@ public class InstrConcat extends AbstractStackInstruction
     @Override
     public String toString()
     {
-        return "CONCAT " + _count;
+        return String.format( "%1$-10s %2$s", "CONCAT", _count );
     }
 }

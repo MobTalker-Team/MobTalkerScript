@@ -93,11 +93,11 @@ BooleanLiteral
     ;
 
 StringLiteral 
-    : '"' StringCharacter* '"'
+    : '"' ( EscapeSequence | ~('\\'|'"') )* '"' 
     ;
-
-fragment StringCharacter
-    : ~( '\\' | '"' )
+    
+fragment EscapeSequence
+    : '\\' [$n"\\]
     ;
 
 Identifier

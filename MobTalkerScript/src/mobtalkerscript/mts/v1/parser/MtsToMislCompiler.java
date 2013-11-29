@@ -48,6 +48,7 @@ import mobtalkerscript.util.logging.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+import org.apache.commons.lang3.*;
 
 import com.google.common.collect.*;
 
@@ -226,7 +227,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         return null;
     }
     
-    private static final Pattern _ipStrVarPattern = Pattern.compile( "\\$([_a-zA-Z]+[_a-zA-Z0-9]*)" );
+    private static final Pattern _ipStrVarPattern = Pattern.compile( "(?<!\\\\)\\$([_a-zA-Z]+[_a-zA-Z0-9]*)" );
     
     private void visitInterpolatedString( String str )
     {
@@ -239,7 +240,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
             if ( matcher.start() > 0 )
             {
                 // Split string
-                String subStr = str.substring( start, matcher.start() );
+                String subStr = unescapeStringLiteral( str.substring( start, matcher.start() ) );
                 addInstr( new InstrPush( subStr ) );
                 
                 parts++;
@@ -256,7 +257,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         
         if ( start < str.length() )
         {
-            String subStr = str.substring( start );
+            String subStr = unescapeStringLiteral( str.substring( start ) );
             addInstr( new InstrPush( subStr ) );
         }
         
@@ -266,10 +267,17 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         }
     }
     
+    private static String unescapeStringLiteral( String str )
+    {
+        return StringUtils.replaceEachRepeatedly( str, //
+                                                  new String[] { "\\\\", "\\\"", "\\$" },
+                                                  new String[] { "\\", "\"", "$" } );
+    }
+    
     @Override
     public Void visitNumberLiteral( NumberLiteralContext ctx )
     {
-        int literal = Integer.parseInt( ctx.Literal.getText() );
+        double literal = Double.parseDouble( ctx.Literal.getText() );
         addInstr( new InstrPush( literal ) );
         
         return null;

@@ -1,7 +1,6 @@
 package mobtalkerscript.mts.v1.parser;
 
 import java.util.*;
-import java.util.regex.*;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.instruction.*;
@@ -48,7 +47,6 @@ import mobtalkerscript.util.logging.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-import org.apache.commons.lang3.*;
 
 import com.google.common.collect.*;
 
@@ -222,56 +220,9 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         String literal = ctx.Literal.getText();
         literal = literal.substring( 1, literal.length() - 1 );
         
-        visitInterpolatedString( literal );
+        StringInterpolation.interpolateString( this, literal );
         
         return null;
-    }
-    
-    private static final Pattern _ipStrVarPattern = Pattern.compile( "(?<!\\\\)\\$([_a-zA-Z]+[_a-zA-Z0-9]*)" );
-    
-    private void visitInterpolatedString( String str )
-    {
-        Matcher matcher = _ipStrVarPattern.matcher( str );
-        int start = 0;
-        int parts = 0;
-        
-        while ( matcher.find() )
-        {
-            if ( matcher.start() > 0 )
-            {
-                // Split string
-                String subStr = unescapeStringLiteral( str.substring( start, matcher.start() ) );
-                addInstr( new InstrPush( subStr ) );
-                
-                parts++;
-            }
-            
-            // Load variable
-            String varName = matcher.group( 1 );
-            addInstr( new InstrLoad( varName ) );
-            
-            parts++;
-            
-            start = matcher.end();
-        }
-        
-        if ( start < str.length() )
-        {
-            String subStr = unescapeStringLiteral( str.substring( start ) );
-            addInstr( new InstrPush( subStr ) );
-        }
-        
-        if ( parts > 1 )
-        {
-            addInstr( new InstrConcat( parts ) );
-        }
-    }
-    
-    private static String unescapeStringLiteral( String str )
-    {
-        return StringUtils.replaceEachRepeatedly( str, //
-                                                  new String[] { "\\\\", "\\\"", "\\$" },
-                                                  new String[] { "\\", "\"", "$" } );
     }
     
     @Override

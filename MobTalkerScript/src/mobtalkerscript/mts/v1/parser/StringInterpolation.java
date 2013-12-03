@@ -3,6 +3,7 @@ package mobtalkerscript.mts.v1.parser;
 import java.util.regex.*;
 
 import mobtalkerscript.misl.v1.instruction.*;
+import mobtalkerscript.misl.v1.value.*;
 
 import org.apache.commons.lang3.*;
 
@@ -14,6 +15,12 @@ public class StringInterpolation
     
     public static void interpolateString( MtsToMislCompiler compiler, String str )
     {
+        if ( str.isEmpty() )
+        {
+            compiler.addInstr( new InstrPush( MislString.EMPTY_STRING ) );
+            return;
+        }
+        
         Matcher matcher = _pattern.matcher( str );
         int start = 0;
         int parts = 0;

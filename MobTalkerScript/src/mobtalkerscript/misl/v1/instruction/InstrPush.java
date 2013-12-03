@@ -2,9 +2,8 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrPush extends AbstractStackInstruction
+public class InstrPush extends AbstractMislInstruction
 {
     private final MislValue _value;
     
@@ -38,9 +37,9 @@ public class InstrPush extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        stack.push( _value );
+        frame.push( _value );
     }
     
     // ========================================

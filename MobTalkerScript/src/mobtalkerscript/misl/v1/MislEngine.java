@@ -63,7 +63,6 @@ public class MislEngine
                 MislInstruction instr = _instructionQueue.poll();
                 
                 MTSLog.fine( "[Engine] Executing %s", instr.toString() );
-                MTSLog.finer( "[Engine] Stack: %s", _frameStack.peek().getStack().toString() );
                 
                 instr.execute( _frameStack, _context );
                 
@@ -118,11 +117,10 @@ public class MislEngine
         if ( ( args != null ) && ( args.length > 0 ) )
         {
             MislFrame frame = _frameStack.peek();
-            Stack<MislValue> stack = frame.getStack();
             
             for ( int i = 0; i < args.length; i++ )
             {
-                stack.push( args[i] );
+                frame.push( args[i] );
             }
         }
     }
@@ -164,11 +162,11 @@ public class MislEngine
         {
             MislValue[] returnVals = new MislValue[returnCount];
             
-            Stack<MislValue> stack = _frameStack.peek().getStack();
+            MislFrame frame = _frameStack.peek();
             
             for ( int i = returnVals.length - 1; i >= 0; i-- )
             {
-                returnVals[i] = stack.pop();
+                returnVals[i] = frame.pop();
             }
             
             return returnVals;

@@ -8,7 +8,7 @@ import mobtalkerscript.util.*;
  * 
  * @author Chimaine
  */
-public abstract class AbstractFrameInstruction extends MislInstruction
+public abstract class AbstractMislInstruction extends MislInstruction
 {
     
     @Override

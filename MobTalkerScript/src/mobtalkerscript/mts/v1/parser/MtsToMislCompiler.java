@@ -50,29 +50,19 @@ import org.antlr.v4.runtime.tree.*;
 
 import com.google.common.collect.*;
 
-public class MtsToMislCompiler extends MtsBaseVisitor<Void>
+public class MtsToMislCompiler extends AbstractMtsToMislCompiler
 {
-    private final ArrayList<MislInstruction> _instructionList;
-    private final MislInstructionList _instructions;
     private final IBindings _local;
     
     private InstrLabel _curBreakTarget;
     
     // ========================================
     
-    public MtsToMislCompiler()
     {
-        _instructionList = Lists.newArrayListWithExpectedSize( 100 );
-        _instructions = new MislInstructionList();
         _local = new SimpleBindings();
     }
     
     // ========================================
-    
-    public List<MislInstruction> getInstructionsAsList()
-    {
-        return _instructionList;
-    }
     
     public IBindings getBindings()
     {
@@ -80,19 +70,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     }
     
     // ========================================
-    
-    public void addInstr( MislInstruction instr )
-    {
-        _instructions.add( instr );
-        _instructionList.add( instr );
-        
-        MTSLog.finest( "[Compiler] %s", instr.toString() );
-    }
-    
-    // ========================================
-    
-    private String _curSourceName;
-    private int _curSourceLine;
     
     private void checkSourcePosition( ParserRuleContext ctx )
     {
@@ -104,16 +81,13 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         String sourceName = token.getTokenSource().getSourceName();
         int sourceLine = token.getLine();
         
-        if ( Objects.equals( _curSourceName, sourceName ) && ( _curSourceLine == sourceLine ) )
+        if ( setSourcePosition( sourceName, sourceLine ) )
         {
-            return;
+            addInstr( new InstrLine( sourceName, sourceLine ) );
         }
-        
-        _curSourceName = sourceName;
-        _curSourceLine = sourceLine;
-        
-        addInstr( new InstrLine( sourceName, sourceLine ) );
     }
+    
+    // ========================================
     
     @Override
     public Void visit( ParseTree tree )
@@ -172,7 +146,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         
         _local.set( funcName, new MislFunction( label, 0 ) );
         
-        visitChildren( ctx.Block );
+        visit( ctx.Block );
         
         addInstr( new InstrReturn( 0 ) );
         
@@ -244,7 +218,9 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     public Void visitStringLiteral( StringLiteralContext ctx )
     {
         String literal = ctx.Literal.getText();
-        addInstr( new InstrPush( literal.substring( 1, literal.length() - 1 ) ) );
+        literal = literal.substring( 1, literal.length() - 1 );
+        
+        StringInterpolation.interpolateString( this, literal );
         
         return null;
     }
@@ -252,7 +228,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     @Override
     public Void visitNumberLiteral( NumberLiteralContext ctx )
     {
-        int literal = Integer.parseInt( ctx.Literal.getText() );
+        double literal = Double.parseDouble( ctx.Literal.getText() );
         addInstr( new InstrPush( literal ) );
         
         return null;
@@ -367,7 +343,7 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
             visit( ctx.Left );
             visit( ctx.Right );
             
-            addInstr( new InstrConcat() );
+            addInstr( new InstrConcat( 2 ) );
         }
         else
         {
@@ -479,11 +455,24 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         String funcName = ctx.FunctionName.getText();
         int argCount = ctx.ArgumentExprs.size();
         int retCount = shouldReturnValue ? 1 : 0;
+        boolean isTailCall = ctx.getParent().getParent() instanceof ReturnStmtContext;
+        
+        if ( isTailCall )
+        {
+            Collections.reverse( ctx.ArgumentExprs );
+        }
         
         visit( ctx.ArgumentExprs );
         
         addInstr( new InstrLoad( funcName ) );
-        addInstr( new InstrCall( argCount, retCount ) );
+        if ( isTailCall )
+        {
+            addInstr( new InstrTailCall( argCount, retCount ) );
+        }
+        else
+        {
+            addInstr( new InstrCall( argCount, retCount ) );
+        }
         
         return null;
     }
@@ -624,29 +613,6 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
     // Blocks
     
     @Override
-    public Void visitBlock( BlockContext ctx )
-    {
-        return visitBlock( ctx, true );
-    }
-    
-    public Void visitBlock( BlockContext ctx, boolean newScope )
-    {
-        if ( newScope )
-        {
-            addInstr( new InstrPushScope() );
-        }
-        
-        super.visitBlock( ctx );
-        
-        if ( newScope )
-        {
-            addInstr( new InstrPopScope() );
-        }
-        
-        return null;
-    }
-    
-    @Override
     public Void visitLoopBlock( LoopBlockContext ctx )
     {
         super.visitLoopBlock( ctx );
@@ -668,7 +634,9 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         
         if ( ctx.ElseBlock != null )
         {
+            addInstr( new InstrPushScope() );
             visit( ctx.ElseBlock );
+            addInstr( new InstrPopScope() );
         }
         
         addInstr( cont );
@@ -686,7 +654,9 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
         addInstr( new InstrJumpIfNot( elze ) );
         
         BlockContext thenBlock = ctx.ThenBlock.get( 0 );
+        addInstr( new InstrPushScope() );
         visit( thenBlock );
+        addInstr( new InstrPopScope() );
         
         addInstr( new InstrJump( cont, false, false ) );
         addInstr( elze );
@@ -699,12 +669,16 @@ public class MtsToMislCompiler extends MtsBaseVisitor<Void>
             InstrLabel elze = new InstrLabel( "elseif" );
             
             ExprContext ifCond = ctx.Condition.get( i );
+            addInstr( new InstrPushScope() );
             visit( ifCond );
+            addInstr( new InstrPopScope() );
             
             addInstr( new InstrJumpIfNot( elze ) );
             
             BlockContext thenBlock = ctx.ThenBlock.get( i );
+            addInstr( new InstrPushScope() );
             visit( thenBlock );
+            addInstr( new InstrPopScope() );
             
             addInstr( new InstrJump( cont, false, false ) );
             addInstr( elze );

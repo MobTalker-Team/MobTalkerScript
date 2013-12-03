@@ -5,12 +5,27 @@ public class MislString extends MislValue
     
     public static MislString concat( MislValue... values )
     {
-        StringBuilder sb = new StringBuilder();
-        for ( MislValue value : values )
+        if ( ( values == null ) || ( values.length == 0 ) )
         {
-            sb.append( value.toMtsString().toJava() );
+            return EMPTY_STRING;
         }
-        return valueOf( sb.toString() );
+        else if ( values.length == 1 )
+        {
+            return values[0].toMtsString();
+        }
+        else if ( values.length > 2 )
+        {
+            StringBuilder sb = new StringBuilder();
+            for ( MislValue value : values )
+            {
+                sb.append( value.toMtsString().toJava() );
+            }
+            return valueOf( sb.toString() );
+        }
+        else
+        {
+            return values[0].toMtsString().concat( values[1] );
+        }
     }
     
     // ========================================

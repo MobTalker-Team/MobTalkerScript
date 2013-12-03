@@ -2,7 +2,7 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 
-public class InstrLine extends AbstractFrameInstruction
+public class InstrLine extends AbstractMislInstruction
 {
     private final String _name;
     private final int _line;

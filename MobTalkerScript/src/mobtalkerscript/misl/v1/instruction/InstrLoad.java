@@ -1,10 +1,8 @@
 package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
-import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrLoad extends AbstractStackInstruction
+public class InstrLoad extends AbstractMislInstruction
 {
     private final String _varName;
     
@@ -18,11 +16,9 @@ public class InstrLoad extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislValue value = context.getValue( _varName );
-        
-        stack.push( value );
+        frame.push( context.getValue( _varName ) );
     }
     
     // ========================================

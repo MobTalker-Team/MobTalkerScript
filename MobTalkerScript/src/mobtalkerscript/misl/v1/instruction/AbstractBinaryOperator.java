@@ -2,20 +2,19 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-/* package */abstract class AbstractBinaryOperator extends AbstractStackInstruction
+/* package */abstract class AbstractBinaryOperator extends AbstractMislInstruction
 {
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected final void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislValue b = stack.pop();
-        MislValue a = stack.pop();
+        MislValue b = frame.pop();
+        MislValue a = frame.pop();
         
         MislValue result = getResult( a, b );
         
-        stack.push( result );
+        frame.push( result );
     }
     
     protected abstract MislValue getResult( MislValue a, MislValue b );

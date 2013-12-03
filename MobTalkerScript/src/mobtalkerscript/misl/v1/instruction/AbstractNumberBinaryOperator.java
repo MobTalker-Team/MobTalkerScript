@@ -5,9 +5,6 @@ import mobtalkerscript.misl.v1.value.*;
 /* package */abstract class AbstractNumberBinaryOperator extends AbstractBinaryOperator
 {
     
-    public AbstractNumberBinaryOperator()
-    {}
-    
     @Override
     protected final MislValue getResult( MislValue a, MislValue b )
     {

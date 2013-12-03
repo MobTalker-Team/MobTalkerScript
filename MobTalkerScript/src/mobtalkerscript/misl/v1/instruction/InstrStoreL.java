@@ -2,9 +2,8 @@ package mobtalkerscript.misl.v1.instruction;
 
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
-public class InstrStoreL extends AbstractStackInstruction
+public class InstrStoreL extends AbstractMislInstruction
 {
     private final String _varName;
     
@@ -18,13 +17,13 @@ public class InstrStoreL extends AbstractStackInstruction
     // ========================================
     
     @Override
-    protected void doExecute( Stack<MislValue> stack, ScriptContext context )
+    protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislValue value = stack.pop();
+        MislValue value = frame.pop();
         
         if ( value == null )
         {
-            throw new ScriptEngineException( "Command stack was empty" );
+            throw new ScriptEngineException( "Stack was empty" );
         }
         
         context.setValue( _varName, value );

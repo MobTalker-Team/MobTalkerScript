@@ -7,7 +7,7 @@
 	<property name="bin" value="${basedir}/bin" />
 
 	<property name="version.major" value="1" />
-	<property name="version.minor" value="1" />
+	<property name="version.minor" value="2" />
 	<property name="version.patch" value="0" />
 
 	<path id="classpath">

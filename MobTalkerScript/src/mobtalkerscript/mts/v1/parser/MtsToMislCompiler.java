@@ -538,7 +538,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         String key = ctx.Key.getText();
         
         addInstr( new InstrDup() );
-        addInstr( new InstrLoad( key ) );
+        addInstr( new InstrPush( key ) );
         visit( ctx.ValueExpr );
         addInstr( new InstrStoreT() );
         

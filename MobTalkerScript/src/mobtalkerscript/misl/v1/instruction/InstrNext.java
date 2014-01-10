@@ -1,9 +1,8 @@
 package mobtalkerscript.misl.v1.instruction;
 
-import java.util.Map.Entry;
-
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
+import mobtalkerscript.misl.v1.value.MislTable.Entry;
 
 /**
  * Implements the "next" iterator function for generic for-loops.
@@ -46,7 +45,7 @@ public class InstrNext extends AbstractMislInstruction
         MislValue ctrl = frame.pop();
         MislTable t = frame.peek().asTable();
         
-        Entry<MislValue, MislValue> next = t.getEntryAfter( ctrl );
+        Entry next = t.getEntryAfter( ctrl );
         
         if ( next == null )
         {

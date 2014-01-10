@@ -12,7 +12,7 @@ public class InstrStoreT extends AbstractMislInstruction
         MislValue key = frame.pop();
         MislTable table = frame.pop().asTable();
         
-        table.set( key, value );
+        table.setRaw( key, value );
     }
     
     // ========================================

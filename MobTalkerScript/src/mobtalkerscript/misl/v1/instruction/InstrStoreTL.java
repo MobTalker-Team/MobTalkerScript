@@ -10,7 +10,7 @@ public class InstrStoreTL extends AbstractMislInstruction
     {
         MislValue v = frame.pop();
         MislTable t = frame.pop().asTable();
-        t.set( t.getNextIndex(), v );
+        t.add( v );
     }
     
     @Override

@@ -3,6 +3,8 @@ package mobtalkerscript.misl.v1.value;
 import static mobtalkerscript.misl.v1.value.MislValue.*;
 import static org.junit.Assert.*;
 
+import java.util.*;
+
 import org.junit.*;
 
 public class MislTableTest
@@ -13,37 +15,64 @@ public class MislTableTest
     @Before
     public void before()
     {
-        _table = new MislTable( 10 );
-    }
-    
-    @Test
-    public void testIsValidArrayKey()
-    {
-        assertFalse( MislTable.isValidArrayKey( TRUE ) );
-        assertFalse( MislTable.isValidArrayKey( FALSE ) );
-        assertFalse( MislTable.isValidArrayKey( NIL ) );
-        
-        assertFalse( MislTable.isValidArrayKey( valueOf( 0.1 ) ) );
-        assertFalse( MislTable.isValidArrayKey( valueOf( 1.34 ) ) );
-        
-        assertFalse( MislTable.isValidArrayKey( valueOf( -1 ) ) );
-        assertFalse( MislTable.isValidArrayKey( valueOf( Integer.MIN_VALUE ) ) );
-        
-        assertTrue( MislTable.isValidArrayKey( valueOf( 0 ) ) );
-        assertTrue( MislTable.isValidArrayKey( valueOf( 1 ) ) );
-        assertTrue( MislTable.isValidArrayKey( valueOf( Integer.MAX_VALUE ) ) );
+        _table = new MislTable( 0, 0 );
     }
     
     @Test
     public void testCount()
     {
-        fail( "Not yet implemented" );
+        assertEquals( 0, _table.count() );
+        
+        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        assertEquals( 1, _table.count() );
+        
+        _table.setRaw( valueOf( 3 ), valueOf( "b" ) );
+        assertEquals( 2, _table.count() );
+        
+        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
+        assertEquals( 3, _table.count() );
+        
+        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        assertEquals( 4, _table.count() );
+        
+        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        assertEquals( 5, _table.count() );
+        
+        _table.setRaw( valueOf( 1 ), NIL );
+        assertEquals( 4, _table.count() );
+        
+        _table.setRaw( valueOf( 0.1 ), NIL );
+        assertEquals( 3, _table.count() );
     }
     
     @Test
     public void testListSize()
     {
-        fail( "Not yet implemented" );
+        assertEquals( 0, _table.listSize() );
+        
+        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        assertEquals( 0, _table.listSize() );
+        
+        _table.setRaw( valueOf( 1 ), valueOf( "a" ) );
+        assertEquals( 1, _table.listSize() );
+        
+        _table.setRaw( valueOf( 3 ), valueOf( "b" ) );
+        assertEquals( 1, _table.listSize() );
+        
+        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
+        assertEquals( 1, _table.listSize() );
+        
+        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        assertEquals( 1, _table.listSize() );
+        
+        _table.setRaw( valueOf( 2 ), valueOf( "c" ) );
+        assertEquals( 3, _table.listSize() );
+        
+        _table.setRaw( valueOf( 2 ), NIL );
+        assertEquals( 1, _table.listSize() );
+        
+        _table.setRaw( valueOf( 0.1 ), NIL );
+        assertEquals( 1, _table.listSize() );
     }
     
     @Test
@@ -51,41 +80,182 @@ public class MislTableTest
     {
         assertTrue( _table.isEmpty() );
         
-//        _table.rawset( valueOf( "x" ), valueOf( 1 ) );
-//        
-//        assertFalse( _table.isEmpty() );
+        _table.setRaw( valueOf( "x" ), valueOf( 1 ) );
+        
+        assertFalse( _table.isEmpty() );
     }
     
     @Test
     public void testContainsKey()
     {
-        fail( "Not yet implemented" );
+        assertFalse( _table.containsKey( valueOf( 2 ) ) );
+        assertFalse( _table.containsKey( valueOf( "foo" ) ) );
+        assertFalse( _table.containsKey( valueOf( 0.1 ) ) );
+        
+        _table.setRaw( valueOf( 1 ), valueOf( "a" ) );
+        _table.setRaw( valueOf( 3 ), valueOf( "b" ) );
+        _table.setRaw( valueOf( 2 ), valueOf( "c" ) );
+        
+        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
+        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        
+        assertTrue( _table.containsKey( valueOf( 2 ) ) );
+        assertTrue( _table.containsKey( valueOf( "foo" ) ) );
+        assertTrue( _table.containsKey( valueOf( 0.1 ) ) );
     }
     
     @Test
     public void testGetFirstEntry()
     {
-        fail( "Not yet implemented" );
+        assertNull( _table.getFirstEntry() );
+        
+        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        assertEquals( valueOf( "e" ), _table.getFirstEntry().value );
+        
+        _table.setRaw( valueOf( 1 ), valueOf( "a" ) );
+        assertEquals( valueOf( "a" ), _table.getFirstEntry().value );
+        
+        _table.setRaw( valueOf( 0 ), valueOf( "d" ) );
+        assertEquals( valueOf( "a" ), _table.getFirstEntry().value );
+        
+        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
+        assertEquals( valueOf( "a" ), _table.getFirstEntry().value );
+        
+        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        assertEquals( valueOf( "c" ), _table.getFirstEntry().value );
+        
+        _table.remove( valueOf( 1 ) );
+        assertEquals( valueOf( "b" ), _table.getFirstEntry().value );
     }
     
     @Test
     public void testGetEntryAfter()
     {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testRawget()
-    {
-        fail( "Not yet implemented" );
+        assertNull( _table.getEntryAfter( NIL ) );
+        
+        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        assertEquals( valueOf( 0 ), _table.getEntryAfter( NIL ).key );
+        assertNull( _table.getEntryAfter( valueOf( 0 ) ) );
+        
+        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
+        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        _table.setRaw( valueOf( 0 ), valueOf( "e" ) );
+        
+        assertEquals( valueOf( 1 ), _table.getEntryAfter( NIL ).key );
+        assertEquals( valueOf( 2 ), _table.getEntryAfter( valueOf( 1 ) ).key );
+        assertNotNull( _table.getEntryAfter( valueOf( 2 ) ) );
+        
+        _table.setRaw( valueOf( 0.1 ), valueOf( "e" ) );
+        _table.setRaw( valueOf( "foo" ), valueOf( "f" ) );
+        _table.setRaw( valueOf( "foo" ), valueOf( "g" ) );
+        
+        assertEquals( valueOf( 1 ), _table.getEntryAfter( NIL ).key );
+        assertEquals( valueOf( 2 ), _table.getEntryAfter( valueOf( 1 ) ).key );
+        assertNotNull( _table.getEntryAfter( valueOf( 2 ) ) );
     }
     
     @Test
     public void testRawset()
     {
-        _table.rawset( valueOf( 0 ), valueOf( "a" ) );
-        _table.rawset( valueOf( 2 ), valueOf( "b" ) );
-        _table.rawset( valueOf( 1 ), valueOf( "c" ) );
+        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
+        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        _table.setRaw( valueOf( 0 ), valueOf( "e" ) );
+        
+        _table.setRaw( valueOf( 0.1 ), valueOf( "e" ) );
+        _table.setRaw( valueOf( "foo" ), valueOf( "f" ) );
+        _table.setRaw( valueOf( "foo" ), valueOf( "g" ) );
+        
+        assertEquals( valueOf( "e" ), _table.getRaw( valueOf( 0 ) ) );
+        assertEquals( valueOf( "g" ), _table.getRaw( valueOf( "foo" ) ) );
     }
     
+    @Test
+    public void testRawget()
+    {
+        assertEquals( NIL, _table.getRaw( valueOf( 2 ) ) );
+        assertEquals( NIL, _table.getRaw( valueOf( "foo" ) ) );
+        assertEquals( NIL, _table.getRaw( valueOf( 0.1 ) ) );
+        
+        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
+        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        
+        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
+        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        
+        assertEquals( valueOf( "b" ), _table.getRaw( valueOf( 2 ) ) );
+        assertEquals( valueOf( "e" ), _table.getRaw( valueOf( "foo" ) ) );
+        assertEquals( valueOf( "d" ), _table.getRaw( valueOf( 0.1 ) ) );
+    }
+    
+    @Test
+    public void testPerformance()
+    {
+        for ( int i = -0xFFFFF; i < 0x1FFFFF; i++ )
+        {
+            valueOf( i );
+        }
+        
+        long start, elapsed, best;
+        
+        best = Long.MAX_VALUE;
+        for ( int run = 0; run < 10; run++ )
+        {
+            HashMap<MislValue, MislValue> map = new HashMap<MislValue, MislValue>();
+            
+            start = System.nanoTime();
+            for ( int i = 2; i < 0x1FFFFF; i++ )
+            {
+                map.put( valueOf( i ), valueOf( i ) );
+            }
+            elapsed = System.nanoTime() - start;
+            best = elapsed < best ? elapsed : best;
+        }
+        System.out.println( "HashMap 1st runs: " + ( best / ( 1000 * 1000 ) ) + "ms" );
+        
+        best = Long.MAX_VALUE;
+        for ( int run = 0; run < 10; run++ )
+        {
+            MislTable table = new MislTable( 8, 8 );
+            start = System.nanoTime();
+            for ( int i = 2; i < 0x1FFFFF; i++ )
+            {
+                table.setRaw( valueOf( i ), valueOf( i ) );
+            }
+            elapsed = System.nanoTime() - start;
+            best = elapsed < best ? elapsed : best;
+        }
+        System.out.println( "Table 1st runs: " + ( best / ( 1000 * 1000 ) ) + "ms" );
+        
+        // 2nd runs
+        best = Long.MAX_VALUE;
+        for ( int run = 0; run < 10; run++ )
+        {
+            HashMap<MislValue, MislValue> map = new HashMap<MislValue, MislValue>();
+            
+            start = System.nanoTime();
+            for ( int i = -0xFFFFF; i < 0xFFFFF; i++ )
+            {
+                map.put( valueOf( i ), valueOf( i ) );
+            }
+            elapsed = System.nanoTime() - start;
+            best = elapsed < best ? elapsed : best;
+        }
+        System.out.println( "HashMap 2st runs: " + ( best / ( 1000 * 1000 ) ) + "ms" );
+        
+        best = Long.MAX_VALUE;
+        for ( int run = 0; run < 10; run++ )
+        {
+            MislTable table = new MislTable( 8, 8 );
+            start = System.nanoTime();
+            for ( int i = -0xFFFFF; i < 0xFFFFF; i++ )
+            {
+                table.setRaw( valueOf( i ), valueOf( i ) );
+            }
+            elapsed = System.nanoTime() - start;
+            best = elapsed < best ? elapsed : best;
+        }
+        System.out.println( "Table 2st runs: " + ( best / ( 1000 * 1000 ) ) + "ms" );
+    }
 }

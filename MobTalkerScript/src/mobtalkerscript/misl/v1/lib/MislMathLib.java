@@ -11,31 +11,31 @@ public class MislMathLib implements IMislLibrary
     @Override
     public void loadInto( IBindings env )
     {
-        MislTable math = new MislTable( 20 );
+        MislTable math = new MislTable( 0, 20 );
         
-        math.set( "PI", MislValue.valueOf( Math.PI ) );
-        math.set( "E", MislValue.valueOf( Math.E ) );
+        math.setRaw( "PI", MislValue.valueOf( Math.PI ) );
+        math.setRaw( "E", MislValue.valueOf( Math.E ) );
         
-        math.set( "Abs", new Abs() );
-        math.set( "Ceil", new Ceil() );
-        math.set( "Cos", new Cos() );
-        math.set( "CosH", new CosH() );
-        math.set( "Floor", new Floor() );
-        math.set( "Log", new Log() );
-        math.set( "Log10", new Log10() );
-        math.set( "Max", new Max() );
-        math.set( "Min", new Min() );
-        math.set( "Pow", new Pow() );
-        math.set( "Random", new Random() );
-        math.set( "Round", new Round() );
-        math.set( "Sin", new Sin() );
-        math.set( "SinH", new SinH() );
-        math.set( "Sign", new Sign() );
-        math.set( "Sqrt", new Sqrt() );
-        math.set( "Tan", new Tan() );
-        math.set( "TanH", new TanH() );
-        math.set( "ToDegrees", new ToDegrees() );
-        math.set( "ToRadians", new ToRadians() );
+        math.setRaw( "Abs", new Abs() );
+        math.setRaw( "Ceil", new Ceil() );
+        math.setRaw( "Cos", new Cos() );
+        math.setRaw( "CosH", new CosH() );
+        math.setRaw( "Floor", new Floor() );
+        math.setRaw( "Log", new Log() );
+        math.setRaw( "Log10", new Log10() );
+        math.setRaw( "Max", new Max() );
+        math.setRaw( "Min", new Min() );
+        math.setRaw( "Pow", new Pow() );
+        math.setRaw( "Random", new Random() );
+        math.setRaw( "Round", new Round() );
+        math.setRaw( "Sin", new Sin() );
+        math.setRaw( "SinH", new SinH() );
+        math.setRaw( "Sign", new Sign() );
+        math.setRaw( "Sqrt", new Sqrt() );
+        math.setRaw( "Tan", new Tan() );
+        math.setRaw( "TanH", new TanH() );
+        math.setRaw( "ToDegrees", new ToDegrees() );
+        math.setRaw( "ToRadians", new ToRadians() );
         
         env.set( "math", math );
     }

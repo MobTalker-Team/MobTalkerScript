@@ -20,7 +20,8 @@ public class InstrCreateT extends AbstractMislInstruction
     @Override
     protected void doExecute( MislFrame frame, ScriptContext context )
     {
-        MislTable table = new MislTable( _size );
+        // TODO Size
+        MislTable table = new MislTable();
         frame.push( table );
     }
     

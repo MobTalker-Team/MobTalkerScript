@@ -16,5 +16,11 @@ public abstract class MislOneArgFunction extends MislVarArgFunction
         }
     }
     
+    @Override
+    public MislValue call( IBindings env )
+    {
+        return call( env, NIL );
+    }
+    
     public abstract MislValue call( IBindings env, MislValue arg1 );
 }

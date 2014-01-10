@@ -1,7 +1,5 @@
 package mobtalkerscript.misl.v1.lib;
 
-import java.util.Map.Entry;
-
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 
@@ -19,6 +17,8 @@ public class MislBaseLib implements IMislLibrary
     private static final ToString ToString = new ToString();
     
     private static final Next Next = new Next();
+    private static final RawGet RawGet = new RawGet();
+    private static final RawSet RawSet = new RawSet();
     
     @Override
     public void loadInto( IBindings env )
@@ -34,6 +34,8 @@ public class MislBaseLib implements IMislLibrary
         env.set( "ToString", ToString );
         
         env.set( "Next", Next );
+        env.set( "RawGet", RawGet );
+        env.set( "RawSet", RawSet );
     }
     
     // ========================================
@@ -92,7 +94,7 @@ public class MislBaseLib implements IMislLibrary
         {
             if ( arg1.isTable() )
             {
-                return arg1.asTable().getSize();
+                return valueOf( arg1.asTable().listSize() );
             }
             else if ( arg1.isString() )
             {
@@ -178,9 +180,7 @@ public class MislBaseLib implements IMislLibrary
         @Override
         public MislValue call( IBindings env, MislValue arg1, MislValue arg2 )
         {
-            MislTable t = arg1.asTable();
-            
-            Entry<MislValue, MislValue> next = t.getEntryAfter( arg2 );
+            MislTable.Entry next = arg1.asTable().getEntryAfter( arg2 );
             
             if ( next == null )
             {
@@ -192,4 +192,23 @@ public class MislBaseLib implements IMislLibrary
             }
         }
     }
+    
+    private static final class RawGet extends MislTwoArgFunction
+    {
+        @Override
+        public MislValue call( IBindings env, MislValue arg1, MislValue arg2 )
+        {
+            return arg1.asTable().getRaw( arg2 );
+        }
+    }
+    
+    private static final class RawSet extends MislThreeArgFunction
+    {
+        @Override
+        public MislValue call( IBindings env, MislValue arg1, MislValue arg2, MislValue arg3 )
+        {
+            return arg1.asTable().setRaw( arg2, arg3 );
+        }
+    }
+    
 }

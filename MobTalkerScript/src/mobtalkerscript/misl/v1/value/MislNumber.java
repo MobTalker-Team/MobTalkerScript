@@ -1,5 +1,6 @@
 package mobtalkerscript.misl.v1.value;
 
+import static com.google.common.base.Preconditions.*;
 import mobtalkerscript.misl.v1.*;
 
 public class MislNumber extends MislValue
@@ -10,9 +11,6 @@ public class MislNumber extends MislValue
     
     public static final MislNumber MAX_VALUE = valueOf( _max );
     public static final MislNumber MIN_VALUE = valueOf( _min );
-    
-    public static final MislNumber ZERO = valueOf( 0 );
-    public static final MislNumber ONE = valueOf( 1 );
     
     // ========================================
     
@@ -45,10 +43,11 @@ public class MislNumber extends MislValue
     
     MislNumber( double value )
     {
-        if ( ( value < _min ) || ( _max < value ) )
-        {
-            throw new ScriptRuntimeException( "Number is out of 2^31 range: %s", value );
-        }
+        checkArgument( !Double.isNaN( value ), "NaN" );
+        checkArgument( !Double.isInfinite( value ), "Value is infinite" );
+        
+        if ( ( value < _min ) || ( _max < value ) ) { throw new ScriptRuntimeException( "Number is out of 2^31 range: %s",
+                                                                                        value ); }
         
         _value = value;
     }
@@ -137,14 +136,21 @@ public class MislNumber extends MislValue
         return true;
     }
     
-    /**
-     * Checks if this number represents an integer.
-     */
+    @Override
     public boolean isInteger()
     {
-        return !Double.isInfinite( _value ) //
-               && !Double.isNaN( _value )
-               && ( _value == Math.floor( _value ) );
+        return _value == (long) _value;
+    }
+    
+    @Override
+    public boolean isDecimal()
+    {
+        return _value != (long) _value;
+    }
+    
+    public boolean isPositive()
+    {
+        return 0.0D < _value;
     }
     
     @Override
@@ -197,10 +203,7 @@ public class MislNumber extends MislValue
     @Override
     public boolean equals( Object obj )
     {
-        if ( this == obj )
-        {
-            return true;
-        }
+        if ( this == obj ) { return true; }
         
         if ( obj instanceof MislNumber )
         {
@@ -219,10 +222,7 @@ public class MislNumber extends MislValue
     @Override
     public int compareTo( MislValue o )
     {
-        if ( !o.isNumber() )
-        {
-            return 1;
-        }
+        if ( !o.isNumber() ) { return 1; }
         
         MislNumber n = o.asNumber();
         return (int) Math.signum( _value - n._value );

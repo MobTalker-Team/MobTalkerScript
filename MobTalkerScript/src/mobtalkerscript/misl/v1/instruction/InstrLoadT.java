@@ -11,7 +11,7 @@ public class InstrLoadT extends AbstractMislInstruction
         MislValue key = frame.pop();
         MislTable table = frame.pop().asTable();
         
-        frame.push( table.get( key ) );
+        frame.push( table.getRaw( key ) );
     }
     
     // ========================================

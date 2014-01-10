@@ -26,6 +26,12 @@ public abstract class MislValue implements Comparable<MislValue>
     
     public static final MislNil NIL = new MislNil();
     
+    public static void checkNotNil( MislValue value, String msg, Object... args )
+    {
+        if ( value.isNil() )
+            throw new ScriptRuntimeException( msg, args );
+    }
+    
     // ========================================
     
     public static final MislBoolean TRUE = new MislBoolean( true );
@@ -38,16 +44,15 @@ public abstract class MislValue implements Comparable<MislValue>
     
     // ========================================
     
+    public static final MislNumber ZERO = valueOf( 0 );
+    public static final MislNumber ONE = valueOf( 1 );
+    
     public static MislNumber valueOf( int value )
     {
         if ( ( 0 <= value ) && ( value < _integerCache.length ) )
-        {
             return _integerCache[value];
-        }
         else
-        {
             return new MislNumber( value );
-        }
     }
     
     public static MislNumber valueOf( double value )
@@ -62,9 +67,10 @@ public abstract class MislValue implements Comparable<MislValue>
     public static MislString valueOf( String value )
     {
         if ( value == null )
-        {
             throw new IllegalArgumentException( "value cannot be null" );
-        }
+        
+        if ( value.length() > 255 )
+            return new MislString( value );
         
         MislString result = _stringCache.get( value );
         
@@ -118,6 +124,22 @@ public abstract class MislValue implements Comparable<MislValue>
     }
     
     /**
+     * Checks if this value is a {@link MislNumber} and an integer.
+     */
+    public boolean isInteger()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MislNumber} and a decimal.
+     */
+    public boolean isDecimal()
+    {
+        return false;
+    }
+    
+    /**
      * Checks if this value is a {@link MislString}.
      */
     public boolean isString()
@@ -137,14 +159,6 @@ public abstract class MislValue implements Comparable<MislValue>
      * Checks if this value is a {@link MislObject}.
      */
     public boolean isObject()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MislVariable}.
-     */
-    public boolean isVariable()
     {
         return false;
     }
@@ -176,16 +190,6 @@ public abstract class MislValue implements Comparable<MislValue>
     public boolean isArray()
     {
         return false;
-    }
-    
-    // ========================================
-    
-    /**
-     * Simply returns this value if it is not nil, otherwise throws an exception with the given message
-     */
-    public MislValue checkNotNil( String msg, Object... args )
-    {
-        return this;
     }
     
     // ========================================

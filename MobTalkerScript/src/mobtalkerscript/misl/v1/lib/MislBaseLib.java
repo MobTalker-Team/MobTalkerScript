@@ -3,7 +3,7 @@ package mobtalkerscript.misl.v1.lib;
 import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.misl.v1.value.*;
 
-public class MislBaseLib implements IMislLibrary
+public class MislBaseLib extends MislLibrary
 {
     
     private static final Assert Assert = new Assert();
@@ -21,7 +21,7 @@ public class MislBaseLib implements IMislLibrary
     private static final RawSet RawSet = new RawSet();
     
     @Override
-    public void loadInto( IBindings env )
+    public MislValue bind( MislString name, MislValue env )
     {
         env.set( "Assert", Assert );
         env.set( "Print", Print );
@@ -36,6 +36,8 @@ public class MislBaseLib implements IMislLibrary
         env.set( "Next", Next );
         env.set( "RawGet", RawGet );
         env.set( "RawSet", RawSet );
+        
+        return env;
     }
     
     // ========================================
@@ -47,7 +49,7 @@ public class MislBaseLib implements IMislLibrary
         {
             if ( ( arg1 == FALSE ) || ( arg1 == NIL ) )
             {
-                String msg = arg2.isNil() ? "Assertion error" : arg2.toMtsString().toJava();
+                String msg = arg2.isNil() ? "Assertion error" : arg2.toStringMts().toJava();
                 
                 throw new ScriptRuntimeException( msg );
             }
@@ -56,10 +58,10 @@ public class MislBaseLib implements IMislLibrary
         }
     }
     
-    private static final class Print extends MislVarArgFunction
+    private static final class Print extends MislFunction
     {
         @Override
-        public MislValue call( IBindings env, MislValue... args )
+        public MislValue call( MislValue... args )
         {
             if ( ( args != null ) && ( args.length > 0 ) )
             {
@@ -168,7 +170,7 @@ public class MislBaseLib implements IMislLibrary
             }
             else
             {
-                return arg1.toMtsString();
+                return arg1.toStringMts();
             }
         }
     }

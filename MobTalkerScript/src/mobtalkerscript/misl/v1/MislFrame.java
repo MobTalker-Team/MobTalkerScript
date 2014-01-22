@@ -1,91 +1,156 @@
 package mobtalkerscript.misl.v1;
 
-import mobtalkerscript.misl.v1.instruction.*;
+import java.util.*;
+
+import mobtalkerscript.misl.v1.instructionV2.*;
 import mobtalkerscript.misl.v1.value.*;
-import mobtalkerscript.util.*;
 
 public final class MislFrame
 {
-    private final Stack<MislValue> _stack;
+    private final List<MislInstruction> _instructions;
+    private int _ip;
     
-    private MislInstruction _retPointer;
-    private int _retCount;
+    private final MislValue[] _stack;
+    private int _top;
     
-    private String _sourceName;
-    private int _sourceLine;
+    private final MislValue[] _locals;
+    private final List<MislValue> _constants;
+    private final List<External> _externals;
     
     // ========================================
     
-    public MislFrame( MislInstruction returnPointer, int returnCount )
+    public MislFrame( List<MislInstruction> instructions,
+                      int nStack,
+                      int nLocals,
+                      MislValue[] args,
+                      List<MislValue> constants,
+                      List<External> externals )
     {
-        _stack = Stack.newStack();
+        _instructions = instructions;
         
-        _retPointer = returnPointer;
-        _retCount = returnCount;
+        _stack = new MislValue[nStack];
+        _top = 0;
+        
+        MislValue[] locals = new MislValue[nLocals];
+        for ( int i = args.length; i < nLocals; i++ )
+        {
+            locals[i] = MislValue.NIL;
+        }
+        
+        System.arraycopy( args, 0, locals, 0, args.length );
+        _locals = locals;
+        
+        _constants = constants;
+        _externals = externals;
     }
     
     // ========================================
     
-    public MislInstruction getReturnPointer()
+    public int getInstructionPointer()
     {
-        return _retPointer;
+        return _ip;
     }
     
-    public void setReturnPointer( MislInstruction retPointer )
+    public void setInstructionPointer( int offset )
     {
-        _retPointer = retPointer;
+        _ip += offset;
     }
     
-    // ========================================
-    
-    public int getReturnCount()
+    public void exit()
     {
-        return _retCount;
-    }
-    
-    public void setReturnCount( int retCount )
-    {
-        _retCount = retCount;
+        _ip = -1;
     }
     
     // ========================================
     
-    public String getSourceName()
+    public MislValue run()
     {
-        return _sourceName;
+        _ip = -1;
+        
+        while ( ++_ip > 0 )
+        {
+            _instructions.get( _ip ).execute( this );
+        }
+        
+        return pop();
     }
     
-    public int getSourceLine()
+    // ========================================
+    
+    public MislValue getLocal( int i )
     {
-        return _sourceLine;
+        return _locals[i];
     }
     
-    public void setSource( String name, int line )
+    public void setLocal( int i, MislValue value )
     {
-        _sourceName = name;
-        _sourceLine = line;
+        _locals[i] = value;
     }
     
     // ========================================
     
     public void push( MislValue o )
     {
-        _stack.push( o );
+        if ( _top++ == _stack.length )
+        {
+            _top--;
+            throw new ScriptEngineException( "stack overflow" );
+        }
+        
+        _stack[_top] = o;
+    }
+    
+    public void pushLocal( int i )
+    {
+        push( _locals[i] );
+    }
+    
+    public void pushConstant( int i )
+    {
+        push( _constants.get( i ) );
+    }
+    
+    public void pushExternal( int i )
+    {
+        push( _externals.get( i ).get() );
     }
     
     public MislValue pop()
     {
-        return _stack.pop();
+        if ( stackIsEmpty() )
+            throw new ScriptEngineException( "stack underflow" );
+        
+        return _stack[_top--];
+    }
+    
+    public void storeLocal( int i )
+    {
+        _locals[i] = pop();
+    }
+    
+    public void storeExternal( int i )
+    {
+        _externals.get( i ).set( pop() );
     }
     
     public MislValue peek()
     {
-        return _stack.peek();
+        if ( stackIsEmpty() )
+            throw new ScriptEngineException( "stack is empty" );
+        
+        return _stack[_top];
     }
     
-    public boolean isEmpty()
+    // ========================================
+    
+    public int stackCount()
     {
-        return _stack.isEmpty();
+        return _top + 1;
+    }
+    
+    public boolean stackIsEmpty()
+    {
+        return _top == _stack.length;
     }
     
 }

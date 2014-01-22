@@ -1,6 +1,5 @@
 package mobtalkerscript.misl.v1.value;
 
-
 public class MislNil extends MislValue
 {
     
@@ -16,7 +15,7 @@ public class MislNil extends MislValue
     // ========================================
     
     @Override
-    public MislString toMtsString()
+    public MislString toStringMts()
     {
         return stringValue;
     }
@@ -32,11 +31,11 @@ public class MislNil extends MislValue
     @Override
     public String getTypeName()
     {
-        return "nil";
+        return TYPENAME_NIL;
     }
     
     @Override
-    public MislBoolean equal( MislValue x )
+    public MislBoolean equalsMts( MislValue x )
     {
         return valueOf( x.isNil() );
     }

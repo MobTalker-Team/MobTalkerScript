@@ -59,7 +59,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
     // ========================================
     
     {
-        _local = new SimpleBindings();
+        _local = new Bindings();
     }
     
     // ========================================

@@ -8,7 +8,7 @@ public class InstrCompare extends AbstractBinaryOperator
     @Override
     protected MislValue getResult( MislValue a, MislValue b )
     {
-        return a.equal( b );
+        return a.equalsMts( b );
     }
     
     // ========================================

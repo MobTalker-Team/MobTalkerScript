@@ -1,37 +1,32 @@
 package mobtalkerscript.misl.v1.value;
 
-public abstract class MislObject extends MislValue
+public abstract class MislObject<T> extends MislValue
 {
-    
-//    private final Object _value;
-//    
-//    // ========================================
-//    
-//    MtsObject(Object value) {
-//        _value = value;
-//    }
+    protected final T _value;
+    protected MislTable _metatable;
     
     // ========================================
     
-    @Override
-    public MislObject asObject() throws ClassCastException
+    protected MislObject( T value )
     {
-        return this;
+        _value = value;
     }
     
     // ========================================
     
     @Override
-    public MislString toMtsString()
+    public boolean hasMetaTag( MislString tag )
+    {
+        return ( _metatable != null ) && _metatable.containsKey( tag );
+    }
+    
+    // ========================================
+    
+    @Override
+    public MislString toStringMts()
     {
         return MislValue.valueOf( toString() );
     }
-    
-    // ========================================
-    
-    public abstract MislValue get( MislValue key );
-    
-    public abstract void set( MislValue key, MislValue value );
     
     // ========================================
     
@@ -42,43 +37,46 @@ public abstract class MislObject extends MislValue
     }
     
     @Override
-    public String getTypeName()
+    public MislObject<T> asObject() throws ClassCastException
     {
-        return "userdata";
+        return this;
     }
     
-//    @Override
-//    public MtsBoolean equal(MtsValue x) {
-//        return x.isObject() ? valueOf(x.asObject().equals(_value)) : FALSE;
-//    }
+    @Override
+    public String getTypeName()
+    {
+        return TYPENAME_JOBJECT;
+    }
+    
+    @Override
+    public MislBoolean equalsMts( MislValue x )
+    {
+        return x.isObject() ? valueOf( x.asObject().equals( _value ) ) : FALSE;
+    }
     
     // ========================================
     
-//    @SuppressWarnings("unchecked")
-    public <T> T toJavaValue() throws ClassCastException
+    public T toJava() throws ClassCastException
     {
-        throw new UnsupportedOperationException();
-    };
-    
-    @Override
-    public String toString()
-    {
-        return "userdata"; // #" + _value.toString();
+        return _value;
     }
     
-//    @Override
-//    public int hashCode() {
-//        return _value.hashCode();
-//    }
+    @Override
+    public int hashCode()
+    {
+        return _value.hashCode();
+    }
     
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (obj instanceof MtsObject) {
-//            Object other = ((MtsObject) obj).toJavaValue();
-//            return other.equals(_value);
-//        }
-//        
-//        return false;
-//    }
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj instanceof MislObject )
+        {
+            Object other = ( (MislObject<?>) obj ).toJava();
+            return _value == other;
+        }
+        
+        return false;
+    }
     
 }

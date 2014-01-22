@@ -9,6 +9,11 @@ public final class Stack<T>
         return new Stack<T>();
     }
     
+    public static <T> Stack<T> newStack( int size )
+    {
+        return new Stack<T>( size );
+    }
+    
     // ========================================
     
     private T[] _array;
@@ -16,10 +21,15 @@ public final class Stack<T>
     
     // ========================================
     
-    @SuppressWarnings( "unchecked" )
     public Stack()
     {
-        _array = (T[]) new Object[5];
+        this( 8 );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public Stack( int size )
+    {
+        _array = (T[]) new Object[size];
         _top = -1;
     }
     
@@ -30,7 +40,7 @@ public final class Stack<T>
     {
         if ( _array.length <= _top )
         {
-            int newSize = _array.length * 2;
+            int newSize = _array.length << 1;
             
             T[] newArr = (T[]) new Object[newSize];
             
@@ -50,20 +60,14 @@ public final class Stack<T>
     
     public T pop()
     {
-        if ( isEmpty() )
-        {
-            throw new NoSuchElementException( "Stack is empty" );
-        }
+        if ( isEmpty() ) { throw new NoSuchElementException( "Stack is empty" ); }
         
         return _array[_top--];
     }
     
     public T peek()
     {
-        if ( isEmpty() )
-        {
-            throw new NoSuchElementException( "Stack is empty" );
-        }
+        if ( isEmpty() ) { throw new NoSuchElementException( "Stack is empty" ); }
         
         return _array[_top];
     }
@@ -122,14 +126,8 @@ public final class Stack<T>
      */
     public void swap( int count )
     {
-        if ( count < 2 )
-        {
-            throw new IllegalArgumentException( "Must swap at least 2 elements" );
-        }
-        if ( count > count() )
-        {
-            throw new IllegalArgumentException( "Tried to swap more elements than there are on the stack" );
-        }
+        if ( count < 2 ) { throw new IllegalArgumentException( "Must swap at least 2 elements" ); }
+        if ( count > count() ) { throw new IllegalArgumentException( "Tried to swap more elements than there are on the stack" ); }
         
         final int swaps = count / 2;
         final int start = ( _top + 1 ) - count;

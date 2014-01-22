@@ -21,6 +21,7 @@ public class MislArray extends MislValue
     /**
      * Returns the value at index <code>i</code> (zero based) or <code>nil</code>, if the index does not exist.
      */
+    @Override
     public MislValue get( int i )
     {
         return i < _values.length ? _values[i] : NIL;
@@ -45,38 +46,17 @@ public class MislArray extends MislValue
         return this;
     }
     
-    // ========================================
-    
-    @Override
-    public MislString toMtsString()
-    {
-        return valueOf( toString() );
-    }
-    
     @Override
     public String getTypeName()
     {
-        return "array";
-    }
-    
-    @Override
-    public MislBoolean equal( MislValue x )
-    {
-        return valueOf( this == x );
+        return TYPENAME_ARRAY;
     }
     
     // ========================================
-    
-    @Override
-    public String toString()
-    {
-        return "array#" + Integer.toHexString( hashCode() );
-    }
     
     @Override
     public int hashCode()
     {
         return _values.hashCode();
     }
-    
 }

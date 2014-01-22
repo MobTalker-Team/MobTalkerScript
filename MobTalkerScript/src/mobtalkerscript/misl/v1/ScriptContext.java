@@ -21,7 +21,7 @@ public class ScriptContext
     public ScriptContext( IBindings globals )
     {
         _globalEnv = globals;
-        _scriptEnv = new SimpleBindings( _globalEnv );
+        _scriptEnv = new Bindings( _globalEnv );
     }
     
     public ScriptContext( IBindings globals, IBindings locals )
@@ -46,7 +46,7 @@ public class ScriptContext
     
     public IBindings getCurrentScope()
     {
-        if ( _scopes.isEmpty() )
+        if ( _scopes.stackIsEmpty() )
         {
             return _scriptEnv;
         }
@@ -58,7 +58,7 @@ public class ScriptContext
     
     private void pushScope( IBindings parent )
     {
-        _scopes.push( new SimpleBindings( parent ) );
+        _scopes.push( new Bindings( parent ) );
     }
     
     public void enterFunctionScope()
@@ -73,7 +73,7 @@ public class ScriptContext
     
     public void leaveFunctionScope()
     {
-        if ( _scopes.isEmpty() )
+        if ( _scopes.stackIsEmpty() )
         {
             throw new IllegalStateException( "No Scopes to leave" );
         }
@@ -111,7 +111,7 @@ public class ScriptContext
     
     public void leaveAllScopes()
     {
-        while ( !_scopes.isEmpty() )
+        while ( !_scopes.stackIsEmpty() )
         {
             leaveFunctionScope();
         }

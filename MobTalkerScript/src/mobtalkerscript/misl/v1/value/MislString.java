@@ -11,20 +11,20 @@ public class MislString extends MislValue
         }
         else if ( values.length == 1 )
         {
-            return values[0].toMtsString();
+            return values[0].toStringMts();
         }
         else if ( values.length > 2 )
         {
             StringBuilder sb = new StringBuilder();
             for ( MislValue value : values )
             {
-                sb.append( value.toMtsString().toJava() );
+                sb.append( value.toStringMts().toJava() );
             }
             return valueOf( sb.toString() );
         }
         else
         {
-            return values[0].toMtsString().concat( values[1] );
+            return values[0].toStringMts().concat( values[1] );
         }
     }
     
@@ -43,28 +43,12 @@ public class MislString extends MislValue
     
     public MislString concat( MislValue x )
     {
-        return valueOf( _value.concat( x.toMtsString().toJava() ) );
+        return valueOf( _value.concat( x.toStringMts().toJava() ) );
     }
     
     public MislNumber getLength()
     {
         return valueOf( _value.length() );
-    }
-    
-    // ========================================
-    
-    @Override
-    public MislString asString()
-    {
-        return this;
-    }
-    
-    // ========================================
-    
-    @Override
-    public MislString toMtsString()
-    {
-        return this;
     }
     
     // ========================================
@@ -76,15 +60,15 @@ public class MislString extends MislValue
     }
     
     @Override
-    public String getTypeName()
+    public MislString asString()
     {
-        return "string";
+        return this;
     }
     
     @Override
-    public MislBoolean equal( MislValue x )
+    public String getTypeName()
     {
-        return x.isString() ? valueOf( _value.equals( x.asString().toJava() ) ) : FALSE;
+        return TYPENAME_STRING;
     }
     
     // ========================================
@@ -92,6 +76,12 @@ public class MislString extends MislValue
     public String toJava()
     {
         return _value;
+    }
+    
+    @Override
+    public MislString toStringMts()
+    {
+        return this;
     }
     
     @Override
@@ -109,28 +99,21 @@ public class MislString extends MislValue
     @Override
     public boolean equals( Object obj )
     {
-        if ( obj instanceof MislString )
-        {
-            return ( (MislString) obj ).toJava().equals( _value );
-        }
+        if ( obj == this )
+            return true;
+        if ( !( obj instanceof MislString ) )
+            return false;
         
-        return false;
+        return ( (MislString) obj ).toJava().equals( _value );
     }
     
     @Override
     public int compareTo( MislValue o )
     {
-        if ( o.isNumber() )
-        {
-            return -1;
-        }
-        else if ( !o.isString() )
-        {
-            return 1;
-        }
+        if ( !o.isString() )
+            return 0;
         
-        MislString str = o.asString();
-        return _value.compareTo( str._value );
+        return _value.compareTo( o.asString().toJava() );
     }
     
 }

@@ -46,8 +46,8 @@ public class MislNumber extends MislValue
         checkArgument( !Double.isNaN( value ), "NaN" );
         checkArgument( !Double.isInfinite( value ), "Value is infinite" );
         
-        if ( ( value < _min ) || ( _max < value ) ) { throw new ScriptRuntimeException( "Number is out of 2^31 range: %s",
-                                                                                        value ); }
+        if ( ( value < _min ) || ( _max < value ) )
+            throw new ScriptRuntimeException( "Number is out of 2^31 range: %s", value );
         
         _value = value;
     }
@@ -122,7 +122,7 @@ public class MislNumber extends MislValue
     // Conversion
     
     @Override
-    public MislString toMtsString()
+    public MislString toStringMts()
     {
         return valueOf( toString() );
     }
@@ -154,7 +154,7 @@ public class MislNumber extends MislValue
     }
     
     @Override
-    public MislBoolean equal( MislValue x )
+    public MislBoolean equalsMts( MislValue x )
     {
         if ( x.isNumber() )
         {
@@ -170,7 +170,7 @@ public class MislNumber extends MislValue
     @Override
     public String getTypeName()
     {
-        return "number";
+        return TYPENAME_NUMBER;
     }
     
     // ========================================
@@ -197,23 +197,25 @@ public class MislNumber extends MislValue
     @Override
     public int hashCode()
     {
-        return Double.valueOf( _value ).hashCode();
+        // This solution is taken from C# and at least avoids using the following
+        // Double.valueOf( _value ).hashCode();
+        // which is equivalent to
+        // Long.valueOf( Double.doubleToLongBits( _value ) ).hashCode();
+        
+        long bits = Double.doubleToLongBits( _value );
+        return ( (int) bits ) ^ ( (int) ( bits >> 32 ) );
     }
     
     @Override
     public boolean equals( Object obj )
     {
-        if ( this == obj ) { return true; }
+        if ( obj == this )
+            return true;
         
-        if ( obj instanceof MislNumber )
-        {
-            MislNumber other = (MislNumber) obj;
-            return _value == other._value;
-        }
-        else
-        {
+        if ( !( obj instanceof MislNumber ) )
             return false;
-        }
+        
+        return ( (MislNumber) obj ).toJava() == _value;
     }
     
     // ========================================
@@ -222,10 +224,10 @@ public class MislNumber extends MislValue
     @Override
     public int compareTo( MislValue o )
     {
-        if ( !o.isNumber() ) { return 1; }
+        if ( !o.isNumber() )
+            return 0;
         
-        MislNumber n = o.asNumber();
-        return (int) Math.signum( _value - n._value );
+        return (int) Math.signum( _value - o.asNumber().toJava() );
     }
     
 }

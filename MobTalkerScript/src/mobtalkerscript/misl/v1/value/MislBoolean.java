@@ -67,7 +67,7 @@ public class MislBoolean extends MislValue
     // ========================================
     
     @Override
-    public MislString toMtsString()
+    public MislString toStringMts()
     {
         return _stringValue;
     }
@@ -83,11 +83,11 @@ public class MislBoolean extends MislValue
     @Override
     public String getTypeName()
     {
-        return "boolean";
+        return TYPENAME_BOOLEAN;
     }
     
     @Override
-    public MislBoolean equal( MislValue x )
+    public MislBoolean equalsMts( MislValue x )
     {
         return valueOf( this == x );
     }

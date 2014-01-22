@@ -21,8 +21,8 @@ public class InstrConcat extends AbstractMislInstruction
     {
         if ( _count == 2 )
         {
-            MislString a = frame.pop().toMtsString();
-            MislString b = frame.pop().toMtsString();
+            MislString a = frame.pop().toStringMts();
+            MislString b = frame.pop().toStringMts();
             
             frame.push( b.concat( a ) );
         }
@@ -32,7 +32,7 @@ public class InstrConcat extends AbstractMislInstruction
             
             for ( int i = ( _count - 1 ); i >= 0; i-- )
             {
-                strs[i] = frame.pop().toMtsString();
+                strs[i] = frame.pop().toStringMts();
             }
             
             frame.push( MislString.concat( strs ) );

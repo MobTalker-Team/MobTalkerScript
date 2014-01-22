@@ -38,7 +38,7 @@ public class InstrReturn extends MislInstruction
                 }
             }
             
-            if ( !oldFrame.isEmpty() )
+            if ( !oldFrame.stackIsEmpty() )
             {
                 throw new ScriptEngineException( "Stack was not emptied: %s", oldFrame );
             }

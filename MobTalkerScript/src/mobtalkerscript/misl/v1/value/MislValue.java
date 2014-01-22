@@ -4,9 +4,10 @@ import java.util.*;
 
 import mobtalkerscript.misl.v1.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
-public abstract class MislValue implements Comparable<MislValue>
+public abstract class MislValue implements MislConstants, Comparable<MislValue>
 {
     
     private static final HashMap<String, MislString> _stringCache = Maps.newHashMapWithExpectedSize( 1000 );
@@ -16,7 +17,9 @@ public abstract class MislValue implements Comparable<MislValue>
     {
         _integerCache = new MislNumber[256];
         
-        for ( int i = 0; i < 256; i++ )
+        _integerCache[0] = ZERO;
+        _integerCache[1] = ONE;
+        for ( int i = 2; i < 256; i++ )
         {
             _integerCache[i] = new MislNumber( i );
         }
@@ -24,28 +27,12 @@ public abstract class MislValue implements Comparable<MislValue>
     
     // ========================================
     
-    public static final MislNil NIL = new MislNil();
-    
-    public static void checkNotNil( MislValue value, String msg, Object... args )
-    {
-        if ( value.isNil() )
-            throw new ScriptRuntimeException( msg, args );
-    }
-    
-    // ========================================
-    
-    public static final MislBoolean TRUE = new MislBoolean( true );
-    public static final MislBoolean FALSE = new MislBoolean( false );
-    
     public static MislBoolean valueOf( boolean value )
     {
         return value ? TRUE : FALSE;
     }
     
     // ========================================
-    
-    public static final MislNumber ZERO = valueOf( 0 );
-    public static final MislNumber ONE = valueOf( 1 );
     
     public static MislNumber valueOf( int value )
     {
@@ -62,13 +49,13 @@ public abstract class MislValue implements Comparable<MislValue>
     
     // ========================================
     
-    public static final MislString EMPTY_STRING = new MislString( "" );
-    
     public static MislString valueOf( String value )
     {
         if ( value == null )
             throw new IllegalArgumentException( "value cannot be null" );
         
+        if ( value.length() == 0 )
+            return EMPTY_STRING;
         if ( value.length() > 255 )
             return new MislString( value );
         
@@ -89,21 +76,6 @@ public abstract class MislValue implements Comparable<MislValue>
     {
         return new MislArray( values );
     }
-    
-    // ========================================
-    
-//    public static MtsObject valueOf(Object value) {
-//        if (value == null) {
-//            throw new IllegalArgumentException("value cannot be null");
-//        }
-//        
-//        return new MtsObject(value);
-//    }
-    
-    // ========================================
-    
-    protected MislValue()
-    {}
     
     // ========================================
     
@@ -164,17 +136,17 @@ public abstract class MislValue implements Comparable<MislValue>
     }
     
     /**
-     * Checks if this value is a {@link MislFunction}.
+     * Checks if this value is a {@link MislClosure}.
      */
-    public boolean isFunction()
+    public boolean isClosure()
     {
         return false;
     }
     
     /**
-     * Checks if this value is a {@link MislNativeFunction}.
+     * Checks if this value is a {@link MislFunction}.
      */
-    public boolean isNativeFunction()
+    public boolean isFunction()
     {
         return false;
     }
@@ -199,7 +171,7 @@ public abstract class MislValue implements Comparable<MislValue>
      */
     public MislBoolean asBoolean()
     {
-        throw new ScriptRuntimeException( "Expected boolean, got " + getTypeName() );
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_BOOLEAN + ", got " + getTypeName() );
     }
     
     /**
@@ -207,7 +179,7 @@ public abstract class MislValue implements Comparable<MislValue>
      */
     public MislNumber asNumber()
     {
-        throw new ScriptRuntimeException( "Expected number, got " + getTypeName() );
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_NUMBER + ", got " + getTypeName() );
     }
     
     /**
@@ -215,15 +187,23 @@ public abstract class MislValue implements Comparable<MislValue>
      */
     public MislString asString()
     {
-        throw new ScriptRuntimeException( "Expected string, got " + getTypeName() );
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_STRING + ", got " + getTypeName() );
     }
     
     /**
      * Equivalent to a Java typecast to {@link MislObject}.
      */
-    public MislObject asObject() throws ClassCastException
+    public MislObject<?> asObject() throws ClassCastException
     {
-        throw new ScriptRuntimeException( "Expected object, got " + getTypeName() );
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_JOBJECT + ", got " + getTypeName() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link MislClosure}.
+     */
+    public MislClosure asClosure()
+    {
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_FUNCTION + ", got " + getTypeName() );
     }
     
     /**
@@ -231,15 +211,7 @@ public abstract class MislValue implements Comparable<MislValue>
      */
     public MislFunction asFunction()
     {
-        throw new ScriptRuntimeException( "Expected function, got " + getTypeName() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MislNativeFunction}.
-     */
-    public MislNativeFunction asNativeFunction()
-    {
-        throw new ScriptRuntimeException( "Expected native function, got " + getTypeName() );
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_FUNCTION + ", got " + getTypeName() );
     }
     
     /**
@@ -247,7 +219,7 @@ public abstract class MislValue implements Comparable<MislValue>
      */
     public MislTable asTable()
     {
-        throw new ScriptRuntimeException( "Expected table, got " + getTypeName() );
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_TABLE + ", got " + getTypeName() );
     }
     
     /**
@@ -255,21 +227,65 @@ public abstract class MislValue implements Comparable<MislValue>
      */
     public MislArray asArray()
     {
-        throw new ScriptRuntimeException( "Expected array, got " + getTypeName() );
+        throw new ScriptRuntimeException( "Expected " + TYPENAME_ARRAY + ", got " + getTypeName() );
     }
     
     // ========================================
     
-    /**
-     * Resolves this value, if it is necessary (e.g. if it is a variable), or returns the value itself if
-     * no resolving is needed.
-     * 
-     * @param env The environment used to resolve the value.
-     * @return The resolved value.
-     */
-    public MislValue resolve( IBindings env )
+    public static final MislString METATAG_INDEX = valueOf( "__index" );
+    public static final MislString METATAG_NEWINDEX = valueOf( "__newindex" );
+    public static final MislString METATAG_CALL = valueOf( "__call" );
+    public static final MislString METATAG_EQUALS = valueOf( "__eq" );
+    
+    public MislTable getMetaTable()
     {
-        return this;
+        throw new ScriptRuntimeException( "attempt to get metatable from a %s value", getTypeName() );
+    }
+    
+    public MislValue setMetaTable( MislTable t )
+    {
+        throw new ScriptRuntimeException( "attempt to set metatable for a %s value", getTypeName() );
+    }
+    
+    public boolean hasMetaTag( MislString tag )
+    {
+        return false;
+    }
+    
+    // ========================================
+    
+    public MislValue get( MislValue key )
+    {
+        throw new ScriptRuntimeException( "attempt to index a %s value", getTypeName() );
+    }
+    
+    public MislValue get( String key )
+    {
+        return get( valueOf( key ) );
+    }
+    
+    /**
+     * Differs from {@link #get(MislValue)} in that it always returns <code>this</code> when <code>i</code> is <code>1</code>
+     * and no meta method has been set.
+     */
+    public MislValue get( int i )
+    {
+        return i == 1 ? this : NIL;
+    }
+    
+    public MislValue set( MislValue key, MislValue value )
+    {
+        throw new ScriptRuntimeException( "attempt to index a %s value", getTypeName() );
+    }
+    
+    public MislValue set( String key, MislValue value )
+    {
+        return set( valueOf( key ), value );
+    }
+    
+    public MislValue call( MislValue... args )
+    {
+        throw new ScriptRuntimeException( "attempt to call a %s value", getTypeName() );
     }
     
     // ========================================
@@ -281,7 +297,16 @@ public abstract class MislValue implements Comparable<MislValue>
      * 
      * @return The MtsString representation of this value.
      */
-    public abstract MislString toMtsString();
+    public MislString toStringMts()
+    {
+        return valueOf( toString() );
+    }
+    
+    @Override
+    public String toString()
+    {
+        return getTypeName() + ": " + formatHashCode( hashCode() );
+    }
     
     // ========================================
     
@@ -298,17 +323,81 @@ public abstract class MislValue implements Comparable<MislValue>
      * @param x The value to compare this value with.
      * @return {@link #TRUE} if both values are equal, {@link #FALSE} otherwise.
      */
-    public abstract MislBoolean equal( MislValue x );
+    public MislBoolean equalsMts( MislValue x )
+    {
+        return valueOf( equals( x ) );
+    }
     
     // ========================================
     
-    /**
-     * Numbers > Strings > ...
-     */
     @Override
     public int compareTo( MislValue o )
     {
         return 0;
+    }
+    
+    // ========================================
+    
+    public static void checkNotNil( MislValue value, String msg, Object... args )
+    {
+        if ( value.isNil() )
+            throw new ScriptRuntimeException( msg, args );
+    }
+    
+    public static void checkMislArgument( String functionName,
+                                          MislValue[] args,
+                                          int i,
+                                          Class<? extends MislValue> expected )
+    {
+        if ( args.length < i )
+        { //
+            throw new ScriptRuntimeException( "bad argument #%s to '%s' (expected %s, got no value)",
+                                              i,
+                                              functionName,
+                                              typeOf( expected ) );
+        }
+        else if ( !expected.isInstance( args[i] ) )
+        { //
+            throw new ScriptRuntimeException( "bad argument #%s to '%s' (expected %s, got %s)",
+                                              i,
+                                              functionName,
+                                              typeOf( expected ),
+                                              args[i].getTypeName() );
+        }
+    }
+    
+    // ========================================
+    
+    public static String formatHashCode( int hashCode )
+    {
+        return Strings.padStart( Integer.toHexString( hashCode ), 8, '0' );
+    }
+    
+    public static String typeOf( MislValue value )
+    {
+        return value.getTypeName();
+    }
+    
+    public static String typeOf( Class<? extends MislValue> clazz )
+    {
+        if ( clazz == MislNil.class )
+            return TYPENAME_NIL;
+        if ( clazz == MislNumber.class )
+            return TYPENAME_NUMBER;
+        if ( clazz == MislBoolean.class )
+            return TYPENAME_BOOLEAN;
+        if ( clazz == MislString.class )
+            return TYPENAME_STRING;
+        if ( clazz == MislTable.class )
+            return TYPENAME_TABLE;
+        if ( clazz == MislFunction.class )
+            return TYPENAME_FUNCTION;
+        if ( clazz == MislObject.class )
+            return TYPENAME_JOBJECT;
+        if ( MislFunction.class.isAssignableFrom( clazz ) )
+            return TYPENAME_FUNCTION;
+        
+        throw new ScriptEngineException( "Unknown type: " + clazz.getName() );
     }
     
 }

@@ -2,8 +2,6 @@ package mobtalkerscript.misl.v1.value;
 
 import static com.google.common.base.Preconditions.*;
 
-import com.google.common.base.*;
-
 /**
  * A table is at its core an associative array. Values are stored and retrieved by keys, that are either {@link MislNumber
  * numbers} or {@link MislString strings}.
@@ -109,6 +107,7 @@ public class MislTable extends MislValue
      * If no such mapping exists, a lookup is performed in the metatable of this table instead if it exists. Otherwise
      * {@link MislNil nil} is returned.
      */
+    @Override
     public MislValue get( MislValue key )
     {
         MislValue result = getRaw( key );
@@ -141,6 +140,7 @@ public class MislTable extends MislValue
     /**
      * Currently nothing else than calling {@link #setRaw(MislValue, MislValue) setRaw}.
      */
+    @Override
     public MislValue set( MislValue key, MislValue value )
     {
         // TODO Metatable
@@ -272,15 +272,7 @@ public class MislTable extends MislValue
     // ========================================
     
     @Override
-    public MislTable asTable()
-    {
-        return this;
-    }
-    
-    // ========================================
-    
-    @Override
-    public MislString toMtsString()
+    public MislString toStringMts()
     {
         return valueOf( toString() );
     }
@@ -294,24 +286,24 @@ public class MislTable extends MislValue
     }
     
     @Override
-    public String getTypeName()
+    public MislTable asTable()
     {
-        return "table";
+        return this;
     }
     
     @Override
-    public MislBoolean equal( MislValue x )
+    public String getTypeName()
+    {
+        return TYPENAME_TABLE;
+    }
+    
+    @Override
+    public MislBoolean equalsMts( MislValue x )
     {
         return valueOf( this == x );
     }
     
     // ========================================
-    
-    @Override
-    public String toString()
-    {
-        return "table#" + Strings.padStart( Integer.toHexString( hashCode() ), 8, '0' );
-    }
     
     @Override
     public int hashCode()

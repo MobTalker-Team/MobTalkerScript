@@ -317,10 +317,10 @@ import static mobtalkerscript.misl.v1.value.MislValue.*;
         if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
             return EMPTY_STRING;
         
-        StringBuilder s = new StringBuilder( _entries[from].toMtsString().toJava() );
+        StringBuilder s = new StringBuilder( _entries[from].toStringMts().toJava() );
         for ( int i = from + 1; i <= to; i++ )
         {
-            s.append( sep ).append( _entries[i].toMtsString().toJava() );
+            s.append( sep ).append( _entries[i].toStringMts().toJava() );
         }
         
         return valueOf( s.toString() );

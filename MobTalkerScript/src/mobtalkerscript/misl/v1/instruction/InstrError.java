@@ -8,7 +8,7 @@ public class InstrError extends AbstractMislInstruction
     protected void doExecute( MislFrame frame, ScriptContext context )
     {
         throw new ScriptRuntimeException( "%s (at %s:%s)",
-                                          frame.pop().toMtsString(),
+                                          frame.pop().toStringMts(),
                                           frame.getSourceName(),
                                           frame.getSourceLine() );
     }

@@ -1,26 +1,24 @@
 package mobtalkerscript.misl.v1.value;
 
-import mobtalkerscript.misl.v1.*;
-
-public abstract class MislOneArgFunction extends MislVarArgFunction
+public abstract class MislOneArgFunction extends MislZeroArgFunction
 {
     @Override
-    public MislValue call( IBindings env, MislValue... args )
+    public MislValue call( MislValue... args )
     {
         switch ( args.length )
         {
-            case 1:
-                return call( env, args[0] );
+            case 0:
+                return call();
             default:
-                return call( env );
+                return call( args[0] );
         }
     }
     
     @Override
-    public MislValue call( IBindings env )
+    public MislValue call()
     {
-        return call( env, NIL );
+        return call( NIL );
     }
     
-    public abstract MislValue call( IBindings env, MislValue arg1 );
+    public abstract MislValue call( MislValue arg1 );
 }

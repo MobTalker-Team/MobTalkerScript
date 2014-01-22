@@ -1,5 +1,7 @@
 package mobtalkerscript.misl.v1.value;
 
+import static com.google.common.base.Preconditions.*;
+
 import java.util.*;
 
 import mobtalkerscript.misl.v1.*;
@@ -19,10 +21,9 @@ public abstract class MislValue implements MislConstants, Comparable<MislValue>
         
         _integerCache[0] = ZERO;
         _integerCache[1] = ONE;
+        
         for ( int i = 2; i < 256; i++ )
-        {
             _integerCache[i] = new MislNumber( i );
-        }
     }
     
     // ========================================
@@ -36,7 +37,7 @@ public abstract class MislValue implements MislConstants, Comparable<MislValue>
     
     public static MislNumber valueOf( int value )
     {
-        if ( ( 0 <= value ) && ( value < _integerCache.length ) )
+        if ( ( 0 <= value ) && ( value < 256 ) )
             return _integerCache[value];
         else
             return new MislNumber( value );
@@ -49,14 +50,16 @@ public abstract class MislValue implements MislConstants, Comparable<MislValue>
     
     // ========================================
     
+    /**
+     * Caches strings that are shorter than 32 characters.
+     */
     public static MislString valueOf( String value )
     {
-        if ( value == null )
-            throw new IllegalArgumentException( "value cannot be null" );
+        checkNotNull( value );
         
         if ( value.length() == 0 )
             return EMPTY_STRING;
-        if ( value.length() > 255 )
+        if ( value.length() > 32 )
             return new MislString( value );
         
         MislString result = _stringCache.get( value );

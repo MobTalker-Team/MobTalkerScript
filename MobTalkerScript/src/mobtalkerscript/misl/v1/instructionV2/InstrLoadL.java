@@ -2,7 +2,7 @@ package mobtalkerscript.misl.v1.instructionV2;
 
 import mobtalkerscript.misl.v1.*;
 
-public final class InstrLoadL extends IndexedInstr
+public final class InstrLoadL extends MislIndexedInstruction
 {
     public InstrLoadL( int i )
     {

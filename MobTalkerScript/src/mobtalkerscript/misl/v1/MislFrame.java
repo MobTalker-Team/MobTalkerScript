@@ -7,7 +7,7 @@ import mobtalkerscript.misl.v1.value.*;
 
 public final class MislFrame
 {
-    private final List<MislInstruction> _instructions;
+    private final MislClosure _closure;
     private int _ip;
     
     private final MislValue[] _stack;
@@ -19,14 +19,12 @@ public final class MislFrame
     
     // ========================================
     
-    public MislFrame( List<MislInstruction> instructions,
-                      int nStack,
-                      int nLocals,
-                      MislValue[] args,
-                      List<MislValue> constants,
-                      List<External> externals )
+    public MislFrame( MislClosure closure, MislValue[] args, List<External> externals )
     {
-        _instructions = instructions;
+        _closure = closure;
+        
+        int nStack = closure.getPrototype().getMaxStackSize();
+        int nLocals = closure.getPrototype().getLocalCount();
         
         _stack = new MislValue[nStack];
         _top = 0;
@@ -40,11 +38,16 @@ public final class MislFrame
         System.arraycopy( args, 0, locals, 0, args.length );
         _locals = locals;
         
-        _constants = constants;
+        _constants = closure.getPrototype().getConstants();
         _externals = externals;
     }
     
     // ========================================
+    
+    public MislClosure getClosure()
+    {
+        return _closure;
+    }
     
     public int getInstructionPointer()
     {
@@ -65,11 +68,12 @@ public final class MislFrame
     
     public MislValue run()
     {
+        List<MislInstruction> instructions = _closure.getPrototype().getInstructions();
         _ip = -1;
         
         while ( ++_ip > 0 )
         {
-            _instructions.get( _ip ).execute( this );
+            instructions.get( _ip ).execute( this );
         }
         
         return pop();
@@ -85,6 +89,13 @@ public final class MislFrame
     public void setLocal( int i, MislValue value )
     {
         _locals[i] = value;
+    }
+    
+    // ========================================
+    
+    public External getExternal( int i )
+    {
+        return _externals.get( i );
     }
     
     // ========================================

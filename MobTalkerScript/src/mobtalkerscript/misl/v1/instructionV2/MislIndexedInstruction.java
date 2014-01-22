@@ -1,12 +1,12 @@
 package mobtalkerscript.misl.v1.instructionV2;
 
 
-/* package */abstract class IndexedInstr extends MislInstruction
+/* package */abstract class MislIndexedInstruction extends MislInstruction
 {
     
     protected int _index;
     
-    protected IndexedInstr( int i )
+    protected MislIndexedInstruction( int i )
     {
         _index = i;
     }

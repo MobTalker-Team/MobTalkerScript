@@ -34,14 +34,7 @@ public final class MislClosure extends MislFunction
     @Override
     public MislValue call( MislValue... args )
     {
-        MislFrame frame = new MislFrame( _prototype.getInstructions(),
-                                         _prototype.getMaxStackSize(),
-                                         _prototype.getLocalCount(),
-                                         args,
-                                         _prototype.getConstants(),
-                                         _externals );
-        
-        return frame.run();
+        return new MislFrame( this, args, _externals ).run();
     }
     
     // ========================================

@@ -7,6 +7,8 @@ import java.util.*;
 import mobtalkerscript.misl.v1.instructionV2.*;
 import mobtalkerscript.misl.v1.value.*;
 
+import com.google.common.collect.*;
+
 public class MislFunctionPrototype
 {
     private final List<MislInstruction> _instructions;
@@ -15,6 +17,8 @@ public class MislFunctionPrototype
     
     private final List<MislValue> _constants;
     private final List<ExternalDescription> _externals;
+    
+    private final List<MislFunctionPrototype> _nestedPrototypes;
     
     // Debug information
     private String _name;
@@ -44,6 +48,8 @@ public class MislFunctionPrototype
         
         _constants = constants;
         _externals = externals;
+        
+        _nestedPrototypes = Lists.newArrayList();
         
         _name = name;
         _sourceFile = sourceFile;
@@ -76,6 +82,18 @@ public class MislFunctionPrototype
     public List<ExternalDescription> getExternals()
     {
         return _externals;
+    }
+    
+    // ========================================
+    
+    public void addNestedPrototype( MislFunctionPrototype prototype )
+    {
+        _nestedPrototypes.add( prototype );
+    }
+    
+    public MislFunctionPrototype getNestedPrototype( int i )
+    {
+        return _nestedPrototypes.get( i );
     }
     
     // ========================================

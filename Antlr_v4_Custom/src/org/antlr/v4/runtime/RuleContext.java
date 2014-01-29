@@ -72,7 +72,7 @@ public class RuleContext implements RuleNode
     public RuleContext()
     {}
     
-    public RuleContext( RuleContext parent, int invokingState )
+    public RuleContext(RuleContext parent, int invokingState)
     {
         this.parent = parent;
         // if ( parent!=null ) System.out.println("invoke "+stateNumber+" from "+parent);
@@ -83,7 +83,7 @@ public class RuleContext implements RuleNode
     {
         int n = 0;
         RuleContext p = this;
-        while ( p != null )
+        while (p != null)
         {
             p = p.parent;
             n++;
@@ -136,12 +136,15 @@ public class RuleContext implements RuleNode
     @Override
     public String getText()
     {
-        if ( getChildCount() == 0 ) { return ""; }
+        if (getChildCount() == 0)
+        {
+            return "";
+        }
         
         StringBuilder builder = new StringBuilder();
-        for ( int i = 0; i < getChildCount(); i++ )
+        for (int i = 0; i < getChildCount(); i++)
         {
-            builder.append( getChild( i ).getText() );
+            builder.append(getChild(i).getText());
         }
         
         return builder.toString();
@@ -153,7 +156,7 @@ public class RuleContext implements RuleNode
     }
     
     @Override
-    public ParseTree getChild( int i )
+    public ParseTree getChild(int i)
     {
         return null;
     }
@@ -165,9 +168,9 @@ public class RuleContext implements RuleNode
     }
     
     @Override
-    public <T> T accept( ParseTreeVisitor<? extends T> visitor )
+    public <T> T accept(ParseTreeVisitor<? extends T> visitor)
     {
-        return visitor.visitChildren( this );
+        return visitor.visitChildren(this);
     }
     
     /**
@@ -176,82 +179,82 @@ public class RuleContext implements RuleNode
      * We have to know the recognizer so we can get rule names.
      */
     @Override
-    public String toStringTree( @Nullable Parser recog )
+    public String toStringTree(@Nullable Parser recog)
     {
-        return Trees.toStringTree( this, recog );
+        return Trees.toStringTree(this, recog);
     }
     
     /**
      * Print out a whole tree, not just a node, in LISP format
      * (root child1 .. childN). Print just a node if this is a leaf.
      */
-    public String toStringTree( @Nullable List<String> ruleNames )
+    public String toStringTree(@Nullable List<String> ruleNames)
     {
-        return Trees.toStringTree( this, ruleNames );
+        return Trees.toStringTree(this, ruleNames);
     }
     
     @Override
     public String toStringTree()
     {
-        return toStringTree( (List<String>) null );
+        return toStringTree((List<String>) null);
     }
     
     @Override
     public String toString()
     {
-        return toString( (List<String>) null, (RuleContext) null );
+        return toString((List<String>) null, (RuleContext) null);
     }
     
-    public final String toString( @Nullable Recognizer<?, ?> recog )
+    public final String toString(@Nullable Recognizer<?, ?> recog)
     {
-        return toString( recog, RuleContext.EMPTY );
+        return toString(recog, ParserRuleContext.EMPTY);
     }
     
-    public final String toString( @Nullable List<String> ruleNames )
+    public final String toString(@Nullable List<String> ruleNames)
     {
-        return toString( ruleNames, null );
+        return toString(ruleNames, null);
     }
     
     // recog null unless ParserRuleContext, in which case we use subclass toString(...)
-    public String toString( @Nullable Recognizer<?, ?> recog, @Nullable RuleContext stop )
+    public String toString(@Nullable Recognizer<?, ?> recog, @Nullable RuleContext stop)
     {
         String[] ruleNames = recog != null ? recog.getRuleNames() : null;
-        List<String> ruleNamesList = ruleNames != null ? Arrays.asList( ruleNames ) : null;
-        return toString( ruleNamesList, stop );
+        List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
+        return toString(ruleNamesList, stop);
     }
     
-    public String toString( @Nullable List<String> ruleNames, @Nullable RuleContext stop )
+    public String toString(@Nullable List<String> ruleNames, @Nullable RuleContext stop)
     {
         StringBuilder buf = new StringBuilder();
         RuleContext p = this;
-        buf.append( "[" );
-        while ( ( p != null ) && ( p != stop ) )
+        buf.append("[");
+        while ((p != null) && (p != stop))
         {
-            if ( ruleNames == null )
+            if (ruleNames == null)
             {
-                if ( !p.isEmpty() )
+                if (!p.isEmpty())
                 {
-                    buf.append( p.invokingState );
+                    buf.append(p.invokingState);
                 }
             }
             else
             {
                 int ruleIndex = p.getRuleIndex();
-                String ruleName = ( ruleIndex >= 0 ) && ( ruleIndex < ruleNames.size() )
-                        ? ruleNames.get( ruleIndex )
-                        : Integer.toString( ruleIndex );
-                buf.append( ruleName );
+                String ruleName = (ruleIndex >= 0) && (ruleIndex < ruleNames.size())
+                        ? ruleNames.get(ruleIndex)
+                        : Integer.toString(ruleIndex);
+                buf.append(ruleName);
             }
             
-            if ( ( p.parent != null ) && ( ( ruleNames != null ) || !p.parent.isEmpty() ) )
+            if ((p.parent != null) && ((ruleNames != null) || !p.parent.isEmpty()))
             {
-                buf.append( " " );
+                buf.append(" ");
             }
             
             p = p.parent;
         }
         
-        buf.append( "]" );
+        buf.append("]");
         return buf.toString();
     }
 }

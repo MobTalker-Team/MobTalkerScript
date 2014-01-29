@@ -28,62 +28,17 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.antlr.v4.runtime.tree;
+package org.antlr.v4.runtime.misc;
 
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Interval;
+public class Triple<A,B,C> {
+	public final A a;
+	public final B b;
+	public final C c;
 
-public class TerminalNodeImpl implements TerminalNode {
-	public Token symbol;
-	public ParseTree parent;
-
-	public TerminalNodeImpl(Token symbol) {	this.symbol = symbol;	}
-
-	@Override
-	public ParseTree getChild(int i) {return null;}
-
-	@Override
-	public Token getSymbol() {return symbol;}
-
-	@Override
-	public ParseTree getParent() { return parent; }
-
-	@Override
-	public Token getPayload() { return symbol; }
-
-	@Override
-	public Interval getSourceInterval() {
-		if ( symbol ==null ) return Interval.INVALID;
-
-		int tokenIndex = symbol.getTokenIndex();
-		return new Interval(tokenIndex, tokenIndex);
+	public Triple(A a, B b, C c) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
 	}
 
-	@Override
-	public int getChildCount() { return 0; }
-
-	@Override
-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-		return visitor.visitTerminal(this);
-	}
-
-	@Override
-	public String getText() { return symbol.getText(); }
-
-	@Override
-	public String toStringTree(Parser parser) {
-		return toString();
-	}
-
-	@Override
-	public String toString() {
-			if ( symbol.getType() == Token.EOF ) return "<EOF>";
-			return symbol.getText();
-	}
-
-	@Override
-	public String toStringTree() {
-		return toString();
-	}
 }

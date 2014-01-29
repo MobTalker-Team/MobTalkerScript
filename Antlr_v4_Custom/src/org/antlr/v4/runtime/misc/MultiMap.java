@@ -28,62 +28,29 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.antlr.v4.runtime.tree;
+package org.antlr.v4.runtime.misc;
 
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Interval;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
-public class TerminalNodeImpl implements TerminalNode {
-	public Token symbol;
-	public ParseTree parent;
-
-	public TerminalNodeImpl(Token symbol) {	this.symbol = symbol;	}
-
-	@Override
-	public ParseTree getChild(int i) {return null;}
-
-	@Override
-	public Token getSymbol() {return symbol;}
-
-	@Override
-	public ParseTree getParent() { return parent; }
-
-	@Override
-	public Token getPayload() { return symbol; }
-
-	@Override
-	public Interval getSourceInterval() {
-		if ( symbol ==null ) return Interval.INVALID;
-
-		int tokenIndex = symbol.getTokenIndex();
-		return new Interval(tokenIndex, tokenIndex);
+public class MultiMap<K, V> extends LinkedHashMap<K, List<V>> {
+	public void map(K key, V value) {
+		List<V> elementsForKey = get(key);
+		if ( elementsForKey==null ) {
+			elementsForKey = new ArrayList<V>();
+			super.put(key, elementsForKey);
+		}
+		elementsForKey.add(value);
 	}
 
-	@Override
-	public int getChildCount() { return 0; }
-
-	@Override
-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-		return visitor.visitTerminal(this);
-	}
-
-	@Override
-	public String getText() { return symbol.getText(); }
-
-	@Override
-	public String toStringTree(Parser parser) {
-		return toString();
-	}
-
-	@Override
-	public String toString() {
-			if ( symbol.getType() == Token.EOF ) return "<EOF>";
-			return symbol.getText();
-	}
-
-	@Override
-	public String toStringTree() {
-		return toString();
+	public List<Pair<K,V>> getPairs() {
+		List<Pair<K,V>> pairs = new ArrayList<Pair<K,V>>();
+		for (K key : keySet()) {
+			for (V value : get(key)) {
+				pairs.add(new Pair<K,V>(key, value));
+			}
+		}
+		return pairs;
 	}
 }

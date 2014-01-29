@@ -7,6 +7,7 @@ WS              : [ \t\r\n\u000C]+ -> skip ;
 LOCAL           : 'local' ;
 
 FUNCTION        : 'function' ;
+LABEL           : 'label' ;
 JUMP            : 'jump' ;
 CALL            : 'call' ;
 RETURN          : 'return' ;
@@ -29,8 +30,16 @@ CMD_SAY         : 'say' ;
 CMD_SHOW        : 'show' ;
 CMD_AT          : 'at' ;
 CMD_OFFSET      : 'offset' ;
+CMD_WITH        : 'with' ;
 CMD_SCENE       : 'scene' ;
+CMD_AS          : 'as' ;
 CMD_HIDE        : 'hide' ;
+CMD_MUSIC       : 'play music' ;
+CMD_SOUND       : 'play sound' ;
+CMD_STOP        : 'stop music' ;
+CMD_FADEOUT     : 'fadeout' ;
+CMD_FADEIN      : 'fadein' ;
+CMD_PAUSE       : 'pause' ;
 CMD_MENU        : 'menu' ;
 CMD_OPTION      : 'option' ;
 
@@ -66,7 +75,8 @@ MUL             : '*' ;
 DIV             : '/' ;
 MOD             : '%' ;
 POW             : '^' ;
-CONCAT          : '..' ;
+STR_CONCAT      : '..' ;
+TBL_APPEND      : '[]' ;
 
 ADD_ASSIGN      : '+=' ;
 SUB_ASSIGN      : '-=' ;
@@ -77,30 +87,30 @@ POW_ASSIGN      : '^=' ;
 CONCAT_ASSIGN   : '.=' ;
 
 LineComment
-    : '//' ~[\r\n]* -> skip
+    : '--' ~[\r\n]* -> channel( HIDDEN )
     ;
 
 BlockComment
-    : '/*' .*? '*/' -> skip
+    : '--[[' .*? ']]' -> channel( HIDDEN )
     ;
 
-NullLiteral     
-    : 'nil' 
+NullLiteral
+    : 'nil'
     ;
 
 BooleanLiteral
-    : 'true' | 'false' 
+    : 'true' | 'false'
     ;
 
-StringLiteral 
-    : '"' ( EscapeSequence | ~('\\'|'"') )* '"' 
+StringLiteral
+    : '"' ( EscapeSequence | ~('\\'|'"') )* '"'
     ;
-    
+
 fragment EscapeSequence
-    : '\\' [$n"\\]
+    : '\\' [$"\\]
     ;
 
-Identifier
+Name
     : [_a-zA-Z]+ [_a-zA-Z0-9]*
     ;
 
@@ -112,199 +122,241 @@ fragment Digit
     : [0-9]
     ;
 
+HexNumberLiteral
+    : '0' [xX] HexDigit+ ( '.' HexDigit+ )?
+    ;
+
+fragment HexDigit
+    : [0-9a-fA-F]
+    ;
+
+Label
+    : '::' Name '::'
+    ;
+
+// =============================================================================
+
 /* Parser Rules */
-chunk 
-    : ( /*block |*/ labelDecl | funcDecl )* EOF 
+chunk
+    : block EOF
     ;
 
-block 
-    : ( stmt | returnStmt )+ 
+funcDeclr
+    : 'function' funcName funcBody
+      # GlobalFunctionDeclr
+    | 'local' 'function' Name funcBody
+      # LocalFunctionDeclr
     ;
 
-loopBlock 
-    : ( stmt | returnStmt | breakStmt )+ 
+funcName
+    : Name ( '.' Name )* ( ':' Name )?
+    ;
+
+funcExpr
+    : 'function' funcBody
+    ;
+
+funcBody
+    : '(' paramList? ')' block 'end'
+    ;
+
+paramList
+    : nameList /*(',' '...')?*/
+    /*| '...'*/
+    ;
+
+nameList
+    : Name ( ',' Name )*
+    ;
+
+block
+    : stmt* returnStmt?
     ;
 
 stmt
-    : 'jump' LabelName=Identifier
-      # Jump
-    | 'call' FunctionName=Identifier
-      # Call
-    | 'do' 
-        Block=block?
-      'end'
+    : ';'
+      # BlankStmt
+    | assignment
+      # AssignmentStmt
+    | call ';'
+      # CallStmt
+    | command
+      # CommandStmt
+    | Label
+      # Label
+    | breakStmt
+      # Break
+    | returnStmt
+      # Return
+    | 'do' block 'end'
       # DoBlock
-    | 'while' Condition=expr 'do' 
-        LoopBlock=loopBlock?
-      'end'
-      # WhileBlock
-    | 'for' Control=numericForControl 'do'
-        LoopBlock=loopBlock?
-      'end'
-      # NumericFor
-    | 'for' Control=genericForControl 'do'
-        LoopBlock=loopBlock?
-      'end'
-      # GenericFor
-    | 'repeat' 
-        LoopBlock=loopBlock?
-      'until' Condition=expr ';'
-      # RepeatBlock
-    | ( 'if' Condition+=expr 'then' 
-        ThenBlock+=block? )
-      ( 'else if' Condition+=expr 'then' 
-        ThenBlock+=block? )*
-      ( 'else' 
-        ElseBlock=block? )?
-      'end'
-      # IfElseBlock
-    | commandStmt
-      # Command
-    | exprStmt ';'
-      # Statement
-    | ';'
-      # BlankStatement
+    | 'while' expr 'do' block 'end'
+      # WhileLoop
+    | 'repeat' block 'until' expr ';'
+      # RepeatLoop
+    | 'if' expr 'then' block elseIfBody* ( elseBody | 'end' )
+      # IfThenElse
+    | 'for' numericForControl 'do' block 'end'
+      # NumericForLoop
+    | 'for' genericForControl 'do' block 'end'
+      # GenericForLoop
     ;
 
-expr 
-    : Operator=( '-' | 'not' ) Right=expr
-      # UnaryExpr
-    | Left=expr Operator=( '*' | '/' | '%' | '^' ) Right=expr
-      # BinaryExpr
-    | Left=expr Operator=( '+' | '-'  ) Right=expr
-      # BinaryExpr
-    | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
-      # BinaryExpr
-    | Left=expr Operator='and' Right=expr
-      # LogicalExpr
-    | Left=expr Operator='or' Right=expr
-      # LogicalExpr
-    | Left=expr Operator='..'<assoc=right> Right=expr
-      # BinaryExpr
-    | literalExpr
-       # Literal
-    | tableCtorExpr
-      # SimpleExpr
-    | assignmentExpr
-      # SimpleExpr
-    | accessExpr
-      # SimpleExpr
-    | callExpr
-      # SimpleExpr
-    | '(' expr ')'
-      # SimpleExpr
+assignment
+    : assignmentTarget ( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) expr ';'
+      # OperatorAssignmentStmt
+    | assignmentTargetList '=' exprList ';'
+      # SimpleAssignmentStmt
+    | 'local' nameList ( '=' exprList )? ';'
+      # LocalVariableDeclr
     ;
 
-literalExpr 
-    : Literal=NumberLiteral
-      # NumberLiteral
-    | Literal=BooleanLiteral
-      # BooleanLiteral
-    | Literal=StringLiteral
-      # StringLiteral
-    | NullLiteral
-      # NullLiteral
+assignmentTarget
+    : Name
+      # SimpleAssignmentTarget
+    | Name fieldAccess ( fieldAccess | callArgs )* ( fieldAccess | appendExpr )
+      # NamePrefixedAssignmentTarget
+    | '(' expr ')' ( fieldAccess | callArgs )* ( fieldAccess | appendExpr )
+      # ExprPrefixedAssignmentTarget
+    ;
+
+expr
+    : '(' expr ')'
+      # SimpleExpr
+    | literal
+      # LiteralExpr
+    | funcExpr
+      # AnonymousFunctionDeclr
+    | varAccess
+      # SimpleExpr
+    | tableCtor
+      # SimpleExpr
+    | expr ( '++' | '--' )
+      # PostfixOpExpr
+    | ( '++' | '--' | '-' | 'not' ) expr
+      # PrefixOpExpr
+    | expr ( '*' | '/' | '%' | '^' ) expr
+      # BinaryOpExpr
+    | expr ( '+' | '-'  ) expr
+      # BinaryOpExpr
+    | expr ( '<=' | '>=' | '<' | '>' | '!=' | '==' ) expr
+      # LogicalOpExpr
+    | expr ( 'and' | 'or' ) expr
+      # LogicalOpExpr
+    | expr '..'<assoc=right> expr
+      # BinaryOpExpr
+    ;
+
+literal
+    : NullLiteral
+    | BooleanLiteral
+    | NumberLiteral
+    | HexNumberLiteral
+    | StringLiteral
+    ;
+
+varAccess
+    : Name ( fieldAccess | callArgs )*
+      # NameAccessExpr
+    | '(' expr ')' ( fieldAccess | callArgs )*
+      # ExprAccessExpr
+    ;
+
+callArgs
+    : ':' Name '(' exprList? ')'
+      # MethodCall
+    | '(' exprList? ')'
+      # FunctionCall
+    ;
+
+exprList
+    : expr ( ',' expr )*
+    ;
+
+fieldAccess
+    : '[' expr ']'
+      # ExprFieldAccess
+    | '.' Name
+      # NameFieldAccess
+    ;
+
+appendExpr
+    : '[]'
+    ;
+
+tableCtor
+    : '{' fieldList? '}'
+    ;
+
+fieldList
+    : field ( ',' field )* ','?
+    ;
+
+field
+    : '[' expr ']' '=' expr
+      # ExprKeyField
+    | Name '=' expr
+      # NameKeyField
+    | expr
+      # ListField
+    ;
+
+command
+    : 'jump' Name ';'
+      # JumpCommandStmt
+    | 'call' Name ';'
+      # CallCommandStmt
+    | 'say' expr? expr expr ';'
+      # SayCommandStmt
+    | 'show' expr+ ( 'at' expr )? ( 'offset' exprList )? ( 'with' exprList )? ';'
+      # ShowCommandStmt
+    | 'scene' expr+ ( 'as' expr ) ( 'with' exprList )? ';'
+      # SceneCommandStmt
+    | 'hide' expr ( 'with' exprList )? ';'
+      # HideCommandStmt
+    | 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+      # PlayMusicCommandStmt
+    | 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+      # PlaySoundCommandStmt
+    | 'stop music' ( 'fadeout' expr )? ';'
+      # StopMusicCommandStmt
+    | 'pause' expr?
+      # PauseCommandStmt
+    | 'menu' expr? ( 'option' expr block )+ 'end'
+      # MenuCommandStmt
+    ;
+
+call
+    : Name ( fieldAccess | callArgs )* callArgs
+      # NameCallExpr
+    | '(' expr ')' ( fieldAccess | callArgs )* callArgs
+      # ExprCallExpr
+    ;
+
+elseIfBody
+    : 'else if' expr 'then' block
+    ;
+
+elseBody
+    : 'else' block 'end'
     ;
 
 numericForControl
-    : '$' LoopVariable=Identifier '=' ValueExpr=expr ',' Condition=expr ( ',' UpdateExpr=expr )?
+    : Name '=' expr ',' expr ( ',' expr )?
     ;
 
 genericForControl
-    : '$' KeyVariable=Identifier ',' '$' ValueVariable=Identifier 'in' TableExpr=expr
+    : nameList 'in' exprList
     ;
 
-tableCtorExpr
-    : '{' ( FieldExprs+=fieldDefExpr ( ',' FieldExprs+=fieldDefExpr )* ','? )? '}'
+assignmentTargetList
+    : assignmentTarget ( ',' assignmentTarget )*
     ;
 
-fieldDefExpr 
-    : ValueExpr=expr
-      # ListFieldDef
-    | Key=Identifier '=' ValueExpr=expr
-      # IdentifierKeyedFieldDef
-    | '[' KeyExpr=expr ']' '=' ValueExpr=expr
-      # ExpressionKeyedFieldDef
-    ;    
-
-assignmentExpr 
-    : TableFieldExpr=tableExpr '=' ValueExpr=expr
-      # TableAssignment
-    | '$' VariableName=Identifier '=' ValueExpr=expr
-      # VariableAssignment
-    | 'local' '$' VariableName=Identifier ( '=' ValueExpr=expr )?
-      # LocalFieldDefinition
-    ;
-
-accessExpr 
-    : TableFieldExpr=tableExpr
-      # TableAccess
-    | '$' VariableName=Identifier
-      # VariableAccess
-    ;
-
-callExpr 
-    : FunctionName=Identifier '(' ( ArgumentExprs+=expr ( ',' ArgumentExprs+=expr )* )? ')'
-      # FunctionCall
-    | FunctionExpr=tableExpr '(' ( ArgumentExprs+=expr ( ',' ArgumentExprs+=expr )* )? ')'
-      # TableCall
-    ;
-
-tableExpr 
-    : '$' ParentVariable=Identifier FieldAccesses+=tableFieldAccess* LastFieldAccess=tableFieldAccess 
-    ;
-
-tableFieldAccess 
-    : '.' Key=Identifier
-      # IdentifierKeyedAccess
-    | '[' KeyExpr=expr ']'
-      # ExpressionKeyedAccess
-    ;
-
-commandStmt 
-    : 'say' Character=expr? Text=expr ';'
-      # CommandSay
-    | 'show' Group=expr? Path=expr 
-      ( 'at' Pos=expr )?
-      ( 'offset' XOffset=expr YOffset=expr )?
-      ';'
-      # CommandShow
-    | 'scene' Group=expr? Path=expr ';'
-      # CommandScene
-    | 'hide' Group=expr? ';'
-      # CommandHide
-    | 'menu' Caption=expr? 
-        Options+=commandMenuOption+             
-      'end'
-      # CommandMenu
-    ;
-
-commandMenuOption 
-    : 'option' CaptionExpr=expr 
-        Block=block? 
-    ;
-
-exprStmt 
-    : callExpr
-    | assignmentExpr
-    ;
-
-returnStmt 
-    : 'return' ReturnExpr=expr? ';'
+returnStmt
+    : 'return' exprList? ';'
     ;
 
 breakStmt
     : 'break' ';'
-    ;
-
-funcDecl 
-    : /*'local'?*/ 'function' FunctionName=Identifier '(' ( '$' Parameters+=Identifier ( ',' '$' Parameters+=Identifier )* )? ')' 
-        Block=block? 
-      'end' 
-    ;
-
-labelDecl 
-    : /*'local'?*/ 'label' LabelName=Identifier
-        Block=block?
-      'end' 
     ;

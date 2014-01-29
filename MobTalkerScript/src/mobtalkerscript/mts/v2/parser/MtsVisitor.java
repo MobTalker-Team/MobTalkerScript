@@ -1,5 +1,6 @@
-// Generated from C:\Users\Tobsen\Desktop\Minecraft\MobTalker2\MobTalkerScript\MobTalkerScript\src\mobtalkerscript\mts\v1\parser\Mts.g4 by ANTLR 4.1
+// Generated from C:\Users\Tobsen\Desktop\Minecraft\MobTalker2\MobTalkerScript\MobTalkerScript\src\mobtalkerscript\mts\v2\parser\Mts.g4 by ANTLR 4.x
 package mobtalkerscript.mts.v2.parser;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -7,357 +8,490 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  * This interface defines a complete generic visitor for a parse tree produced
  * by {@link MtsParser}.
  *
- * @param <T> The return type of the visit operation. Use {@link Void} for
+ * @param <Result> The return type of the visit operation. Use {@link Void} for
  * operations with no return type.
  */
-public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
+public interface MtsVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#chunk}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitChunk(@NotNull MtsParser.ChunkContext ctx);
+	Result visitChunk(@NotNull MtsParser.ChunkContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#NullLiteral}.
+	 * Visit a parse tree produced by {@link MtsParser#ExprCallExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNullLiteral(@NotNull MtsParser.NullLiteralContext ctx);
+	Result visitExprCallExpr(@NotNull MtsParser.ExprCallExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#BlankStatement}.
+	 * Visit a parse tree produced by {@link MtsParser#paramList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBlankStatement(@NotNull MtsParser.BlankStatementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#CommandSay}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCommandSay(@NotNull MtsParser.CommandSayContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#labelDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLabelDecl(@NotNull MtsParser.LabelDeclContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#ExpressionKeyedFieldDef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpressionKeyedFieldDef(@NotNull MtsParser.ExpressionKeyedFieldDefContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#Jump}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitJump(@NotNull MtsParser.JumpContext ctx);
+	Result visitParamList(@NotNull MtsParser.ParamListContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#returnStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitReturnStmt(@NotNull MtsParser.ReturnStmtContext ctx);
+	Result visitReturnStmt(@NotNull MtsParser.ReturnStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#TableAccess}.
+	 * Visit a parse tree produced by {@link MtsParser#elseBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTableAccess(@NotNull MtsParser.TableAccessContext ctx);
+	Result visitElseBody(@NotNull MtsParser.ElseBodyContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#IdentifierKeyedAccess}.
+	 * Visit a parse tree produced by {@link MtsParser#SayCommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdentifierKeyedAccess(@NotNull MtsParser.IdentifierKeyedAccessContext ctx);
+	Result visitSayCommandStmt(@NotNull MtsParser.SayCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#tableExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#funcExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTableExpr(@NotNull MtsParser.TableExprContext ctx);
+	Result visitFuncExpr(@NotNull MtsParser.FuncExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#VariableAssignment}.
+	 * Visit a parse tree produced by {@link MtsParser#AssignmentStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVariableAssignment(@NotNull MtsParser.VariableAssignmentContext ctx);
+	Result visitAssignmentStmt(@NotNull MtsParser.AssignmentStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#LogicalExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#NameAccessExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLogicalExpr(@NotNull MtsParser.LogicalExprContext ctx);
+	Result visitNameAccessExpr(@NotNull MtsParser.NameAccessExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#Literal}.
+	 * Visit a parse tree produced by {@link MtsParser#CommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteral(@NotNull MtsParser.LiteralContext ctx);
+	Result visitCommandStmt(@NotNull MtsParser.CommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#CommandShow}.
+	 * Visit a parse tree produced by {@link MtsParser#BinaryOpExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCommandShow(@NotNull MtsParser.CommandShowContext ctx);
+	Result visitBinaryOpExpr(@NotNull MtsParser.BinaryOpExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#CommandMenu}.
+	 * Visit a parse tree produced by {@link MtsParser#PostfixOpExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCommandMenu(@NotNull MtsParser.CommandMenuContext ctx);
+	Result visitPostfixOpExpr(@NotNull MtsParser.PostfixOpExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#Call}.
+	 * Visit a parse tree produced by {@link MtsParser#CallStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCall(@NotNull MtsParser.CallContext ctx);
+	Result visitCallStmt(@NotNull MtsParser.CallStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#UnaryExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#ExprAccessExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUnaryExpr(@NotNull MtsParser.UnaryExprContext ctx);
+	Result visitExprAccessExpr(@NotNull MtsParser.ExprAccessExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#funcDecl}.
+	 * Visit a parse tree produced by {@link MtsParser#BlankStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFuncDecl(@NotNull MtsParser.FuncDeclContext ctx);
+	Result visitBlankStmt(@NotNull MtsParser.BlankStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#PauseCommandStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitPauseCommandStmt(@NotNull MtsParser.PauseCommandStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#PrefixOpExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitPrefixOpExpr(@NotNull MtsParser.PrefixOpExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#FunctionCall}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctionCall(@NotNull MtsParser.FunctionCallContext ctx);
+	Result visitFunctionCall(@NotNull MtsParser.FunctionCallContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#TableCall}.
+	 * Visit a parse tree produced by {@link MtsParser#NameFieldAccess}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTableCall(@NotNull MtsParser.TableCallContext ctx);
+	Result visitNameFieldAccess(@NotNull MtsParser.NameFieldAccessContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#WhileBlock}.
+	 * Visit a parse tree produced by {@link MtsParser#ShowCommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitWhileBlock(@NotNull MtsParser.WhileBlockContext ctx);
+	Result visitShowCommandStmt(@NotNull MtsParser.ShowCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#IfElseBlock}.
+	 * Visit a parse tree produced by {@link MtsParser#IfThenElse}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIfElseBlock(@NotNull MtsParser.IfElseBlockContext ctx);
+	Result visitIfThenElse(@NotNull MtsParser.IfThenElseContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#Command}.
+	 * Visit a parse tree produced by {@link MtsParser#StopMusicCommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCommand(@NotNull MtsParser.CommandContext ctx);
+	Result visitStopMusicCommandStmt(@NotNull MtsParser.StopMusicCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#Statement}.
+	 * Visit a parse tree produced by {@link MtsParser#Return}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatement(@NotNull MtsParser.StatementContext ctx);
+	Result visitReturn(@NotNull MtsParser.ReturnContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#block}.
+	 * Visit a parse tree produced by {@link MtsParser#AnonymousFunctionDeclr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBlock(@NotNull MtsParser.BlockContext ctx);
+	Result visitAnonymousFunctionDeclr(@NotNull MtsParser.AnonymousFunctionDeclrContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#SimpleAssignmentStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitSimpleAssignmentStmt(@NotNull MtsParser.SimpleAssignmentStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#LocalFunctionDeclr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitLocalFunctionDeclr(@NotNull MtsParser.LocalFunctionDeclrContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#nameList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitNameList(@NotNull MtsParser.NameListContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#NamePrefixedAssignmentTarget}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitNamePrefixedAssignmentTarget(@NotNull MtsParser.NamePrefixedAssignmentTargetContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#ExprFieldAccess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitExprFieldAccess(@NotNull MtsParser.ExprFieldAccessContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#elseIfBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitElseIfBody(@NotNull MtsParser.ElseIfBodyContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#SimpleAssignmentTarget}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitSimpleAssignmentTarget(@NotNull MtsParser.SimpleAssignmentTargetContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#DoBlock}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDoBlock(@NotNull MtsParser.DoBlockContext ctx);
+	Result visitDoBlock(@NotNull MtsParser.DoBlockContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#NumberLiteral}.
+	 * Visit a parse tree produced by {@link MtsParser#block}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumberLiteral(@NotNull MtsParser.NumberLiteralContext ctx);
+	Result visitBlock(@NotNull MtsParser.BlockContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#loopBlock}.
+	 * Visit a parse tree produced by {@link MtsParser#tableCtor}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLoopBlock(@NotNull MtsParser.LoopBlockContext ctx);
+	Result visitTableCtor(@NotNull MtsParser.TableCtorContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#ListFieldDef}.
+	 * Visit a parse tree produced by {@link MtsParser#OperatorAssignmentStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitListFieldDef(@NotNull MtsParser.ListFieldDefContext ctx);
+	Result visitOperatorAssignmentStmt(@NotNull MtsParser.OperatorAssignmentStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#GenericFor}.
+	 * Visit a parse tree produced by {@link MtsParser#LogicalOpExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGenericFor(@NotNull MtsParser.GenericForContext ctx);
+	Result visitLogicalOpExpr(@NotNull MtsParser.LogicalOpExprContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#MethodCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitMethodCall(@NotNull MtsParser.MethodCallContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#breakStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBreakStmt(@NotNull MtsParser.BreakStmtContext ctx);
+	Result visitBreakStmt(@NotNull MtsParser.BreakStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#BinaryExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#appendExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBinaryExpr(@NotNull MtsParser.BinaryExprContext ctx);
+	Result visitAppendExpr(@NotNull MtsParser.AppendExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#tableCtorExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#ExprKeyField}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTableCtorExpr(@NotNull MtsParser.TableCtorExprContext ctx);
+	Result visitExprKeyField(@NotNull MtsParser.ExprKeyFieldContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#LocalFieldDefinition}.
+	 * Visit a parse tree produced by {@link MtsParser#RepeatLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLocalFieldDefinition(@NotNull MtsParser.LocalFieldDefinitionContext ctx);
+	Result visitRepeatLoop(@NotNull MtsParser.RepeatLoopContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#commandMenuOption}.
+	 * Visit a parse tree produced by {@link MtsParser#LiteralExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCommandMenuOption(@NotNull MtsParser.CommandMenuOptionContext ctx);
+	Result visitLiteralExpr(@NotNull MtsParser.LiteralExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#exprStmt}.
+	 * Visit a parse tree produced by {@link MtsParser#NameCallExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprStmt(@NotNull MtsParser.ExprStmtContext ctx);
+	Result visitNameCallExpr(@NotNull MtsParser.NameCallExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#IdentifierKeyedFieldDef}.
+	 * Visit a parse tree produced by {@link MtsParser#LocalVariableDeclr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdentifierKeyedFieldDef(@NotNull MtsParser.IdentifierKeyedFieldDefContext ctx);
+	Result visitLocalVariableDeclr(@NotNull MtsParser.LocalVariableDeclrContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#VariableAccess}.
+	 * Visit a parse tree produced by {@link MtsParser#NumericForLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVariableAccess(@NotNull MtsParser.VariableAccessContext ctx);
+	Result visitNumericForLoop(@NotNull MtsParser.NumericForLoopContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#StringLiteral}.
+	 * Visit a parse tree produced by {@link MtsParser#NameKeyField}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStringLiteral(@NotNull MtsParser.StringLiteralContext ctx);
+	Result visitNameKeyField(@NotNull MtsParser.NameKeyFieldContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#ExpressionKeyedAccess}.
+	 * Visit a parse tree produced by {@link MtsParser#exprList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpressionKeyedAccess(@NotNull MtsParser.ExpressionKeyedAccessContext ctx);
+	Result visitExprList(@NotNull MtsParser.ExprListContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#CommandScene}.
+	 * Visit a parse tree produced by {@link MtsParser#WhileLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCommandScene(@NotNull MtsParser.CommandSceneContext ctx);
+	Result visitWhileLoop(@NotNull MtsParser.WhileLoopContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#NumericFor}.
+	 * Visit a parse tree produced by {@link MtsParser#ExprPrefixedAssignmentTarget}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumericFor(@NotNull MtsParser.NumericForContext ctx);
+	Result visitExprPrefixedAssignmentTarget(@NotNull MtsParser.ExprPrefixedAssignmentTargetContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#fieldList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitFieldList(@NotNull MtsParser.FieldListContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#CallCommandStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitCallCommandStmt(@NotNull MtsParser.CallCommandStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#GenericForLoop}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#GlobalFunctionDeclr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitGlobalFunctionDeclr(@NotNull MtsParser.GlobalFunctionDeclrContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#funcName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitFuncName(@NotNull MtsParser.FuncNameContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#Break}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitBreak(@NotNull MtsParser.BreakContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#genericForControl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGenericForControl(@NotNull MtsParser.GenericForControlContext ctx);
+	Result visitGenericForControl(@NotNull MtsParser.GenericForControlContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#numericForControl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumericForControl(@NotNull MtsParser.NumericForControlContext ctx);
+	Result visitNumericForControl(@NotNull MtsParser.NumericForControlContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#TableAssignment}.
+	 * Visit a parse tree produced by {@link MtsParser#MenuCommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTableAssignment(@NotNull MtsParser.TableAssignmentContext ctx);
+	Result visitMenuCommandStmt(@NotNull MtsParser.MenuCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#RepeatBlock}.
+	 * Visit a parse tree produced by {@link MtsParser#PlayMusicCommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitRepeatBlock(@NotNull MtsParser.RepeatBlockContext ctx);
+	Result visitPlayMusicCommandStmt(@NotNull MtsParser.PlayMusicCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#CommandHide}.
+	 * Visit a parse tree produced by {@link MtsParser#JumpCommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCommandHide(@NotNull MtsParser.CommandHideContext ctx);
+	Result visitJumpCommandStmt(@NotNull MtsParser.JumpCommandStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#ListField}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitListField(@NotNull MtsParser.ListFieldContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#HideCommandStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitHideCommandStmt(@NotNull MtsParser.HideCommandStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#SimpleExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSimpleExpr(@NotNull MtsParser.SimpleExprContext ctx);
+	Result visitSimpleExpr(@NotNull MtsParser.SimpleExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#BooleanLiteral}.
+	 * Visit a parse tree produced by {@link MtsParser#PlaySoundCommandStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBooleanLiteral(@NotNull MtsParser.BooleanLiteralContext ctx);
+	Result visitPlaySoundCommandStmt(@NotNull MtsParser.PlaySoundCommandStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#Label}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitLabel(@NotNull MtsParser.LabelContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#SceneCommandStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitSceneCommandStmt(@NotNull MtsParser.SceneCommandStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#funcBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitFuncBody(@NotNull MtsParser.FuncBodyContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#assignmentTargetList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitAssignmentTargetList(@NotNull MtsParser.AssignmentTargetListContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#literal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	Result visitLiteral(@NotNull MtsParser.LiteralContext ctx);
 }

@@ -5,6 +5,12 @@ import mobtalkerscript.mts.v2.*;
 public abstract class MtsLibrary extends MtsFunction
 {
     @Override
+    public String getName()
+    {
+        return getClass().getSimpleName();
+    }
+    
+    @Override
     public final MtsValue call( MtsValue... args )
     {
         switch ( args.length )
@@ -18,4 +24,9 @@ public abstract class MtsLibrary extends MtsFunction
     }
     
     public abstract MtsValue bind( MtsString name, MtsValue env );
+    
+    protected void bindFunction( MtsValue env, MtsJavaFunction func )
+    {
+        env.set( func.getName(), func );
+    }
 }

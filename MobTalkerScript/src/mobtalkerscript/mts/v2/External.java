@@ -10,10 +10,22 @@ public class External
     
     // ========================================
     
+    /*
+     * Creates an open external, pointing to a local on the given frame.
+     */
     public External( int index, MtsFrame frame )
     {
         _index = index;
         _state = new StateOpen( index, frame );
+    }
+    
+    /**
+     * Creates an already closed external.
+     */
+    public External( MtsValue value )
+    {
+        _index = -1;
+        _state = new StateClosed( value );
     }
     
     // ========================================
@@ -37,6 +49,9 @@ public class External
     
     public void close()
     {
+        if ( _state instanceof StateClosed )
+            return;
+        
         _state = new StateClosed( get() );
     }
     

@@ -1,6 +1,10 @@
 package mobtalkerscript.mts.v2;
 
+import java.util.*;
+
 import mobtalkerscript.mts.v2.value.*;
+
+import com.google.common.collect.*;
 
 /**
  * Thrown when the execution of script code causes an exception.
@@ -18,39 +22,64 @@ public class ScriptRuntimeException extends RuntimeException
         return sArgs;
     }
     
-    public ScriptRuntimeException( String msg )
+    // ========================================
+    
+    private final int _level;
+    private final List<MtsStackTraceElement> _stackTrace;
+    
     {
-        super( msg );
+        _stackTrace = Lists.newArrayList();
     }
     
-    public ScriptRuntimeException( Exception parent )
+    // ========================================
+    
+    public ScriptRuntimeException( String msg )
     {
-        super( parent );
+        this( 0, msg );
+    }
+    
+    public ScriptRuntimeException( int level, String msg )
+    {
+        super( msg );
+        _level = level;
     }
     
     public ScriptRuntimeException( String msg, Object... args )
     {
-        super( String.format( msg, args ) );
+        this( 0, String.format( msg, args ) );
     }
     
-    public ScriptRuntimeException( String msg, Exception parent, Object... args )
+    public ScriptRuntimeException( int level, String msg, Object... args )
     {
-        super( String.format( msg, args ), parent );
+        this( level, String.format( msg, args ) );
     }
     
-    public ScriptRuntimeException( MtsValue msg )
+    // ========================================
+    
+    public int getLevel()
     {
-        super( msg.toStringMts().toJava() );
+        return _level;
     }
     
-    public ScriptRuntimeException( String msg, MtsValue... args )
+    public void addStackTraceElement( MtsStackTraceElement e )
     {
-        this( msg, convert( args ) );
+        _stackTrace.add( e );
     }
     
-    public ScriptRuntimeException( String msg, Exception parent, MtsValue... args )
+    public String createStackTrace()
     {
-        this( msg, parent, convert( args ) );
+        StringBuilder s = new StringBuilder();
+        
+        MtsStackTraceElement first = _stackTrace.get( _level );
+        
+        s.append( first.getLocation() ).append( ": " ).append( getMessage() ).append( "\n" );
+        
+        for ( int i = _level + 1; i < _stackTrace.size(); i++ )
+        {
+            s.append( _stackTrace.get( i ).toString() ).append( "\n" );
+        }
+        
+        return s.toString();
     }
     
 }

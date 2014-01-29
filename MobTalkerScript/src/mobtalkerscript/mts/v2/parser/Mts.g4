@@ -7,7 +7,6 @@ WS              : [ \t\r\n\u000C]+ -> skip ;
 LOCAL           : 'local' ;
 
 FUNCTION        : 'function' ;
-LABEL           : 'label' ;
 JUMP            : 'jump' ;
 CALL            : 'call' ;
 RETURN          : 'return' ;
@@ -35,7 +34,7 @@ CMD_HIDE        : 'hide' ;
 CMD_MENU        : 'menu' ;
 CMD_OPTION      : 'option' ;
 
-VARIABLE_KEY    : '$' ;
+LABEL_KEY       : '::' ;
 
 LPAREN          : '(' ;
 RPAREN          : ')' ;
@@ -52,29 +51,30 @@ GT              : '>' ;
 LT              : '<' ;
 NOT             : 'not' ;
 //QUESTION        : '?' ;
-//COLON           : ':' ;
+COLON           : ':' ;
 EQUAL           : '==' ;
 LE              : '<=' ;
 GE              : '>=' ;
 NOTEQUAL        : '!=' ;
 AND             : 'and' ;
 OR              : 'or' ;
-//INC             : '++' ;
-//DEC             : '--' ;
+INC             : '++' ;
+DEC             : '--' ;
 ADD             : '+' ;
 SUB             : '-' ;
 MUL             : '*' ;
 DIV             : '/' ;
 MOD             : '%' ;
+POW             : '^' ;
 CONCAT          : '..' ;
 
-//ADD_ASSIGN      : '+=' ;
-//SUB_ASSIGN      : '-=' ;
-//MUL_ASSIGN      : '*=' ;
-//DIV_ASSIGN      : '/=' ;
-//AND_ASSIGN      : '&=' ;
-//OR_ASSIGN       : '|=' ;
-//MOD_ASSIGN      : '%=' ;
+ADD_ASSIGN      : '+=' ;
+SUB_ASSIGN      : '-=' ;
+MUL_ASSIGN      : '*=' ;
+DIV_ASSIGN      : '/=' ;
+MOD_ASSIGN      : '%=' ;
+POW_ASSIGN      : '^=' ;
+CONCAT_ASSIGN   : '.=' ;
 
 LineComment
     : '//' ~[\r\n]* -> skip
@@ -169,7 +169,7 @@ stmt
 expr 
     : Operator=( '-' | 'not' ) Right=expr
       # UnaryExpr
-    | Left=expr Operator=( '*' | '/' | '%' ) Right=expr
+    | Left=expr Operator=( '*' | '/' | '%' | '^' ) Right=expr
       # BinaryExpr
     | Left=expr Operator=( '+' | '-'  ) Right=expr
       # BinaryExpr

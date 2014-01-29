@@ -9,12 +9,12 @@ import mobtalkerscript.mts.v2.instruction.*;
 
 public final class MtsClosure extends MtsFunction
 {
-    private final MislFunctionPrototype _prototype;
+    private final MtsFunctionPrototype _prototype;
     private final List<External> _externals;
     
     // ========================================
     
-    public MtsClosure( MislFunctionPrototype prototype, List<External> externals )
+    public MtsClosure( MtsFunctionPrototype prototype, List<External> externals )
     {
         checkNotNull( prototype );
         checkNotNull( externals );
@@ -25,7 +25,7 @@ public final class MtsClosure extends MtsFunction
     
     // ========================================
     
-    public MislFunctionPrototype getPrototype()
+    public MtsFunctionPrototype getPrototype()
     {
         return _prototype;
     }
@@ -35,10 +35,30 @@ public final class MtsClosure extends MtsFunction
     @Override
     public MtsValue call( MtsValue... args )
     {
-        return new MtsFrame( this, args, _externals ).run();
+        MtsFrame frame = new MtsFrame( this, args, _externals );
+        try
+        {
+            return frame.run();
+        }
+        catch ( ScriptRuntimeException ex )
+        {
+            String source = _prototype.getSourceFile();
+            int line = _prototype.getLineNumber( frame.getInstructionPointer() );
+            String name = _prototype.getName();
+            
+            ex.addStackTraceElement( new MtsStackTraceElement( source, line, name ) );
+            
+            throw ex;
+        }
     }
     
     // ========================================
+    
+    @Override
+    public String getName()
+    {
+        return _prototype.getName();
+    }
     
     @Override
     public final boolean isClosure()

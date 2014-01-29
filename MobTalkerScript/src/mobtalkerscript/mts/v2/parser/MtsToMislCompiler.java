@@ -622,7 +622,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         visit( thenBlock );
         addInstr( new InstrPopScope() );
         
-        addInstr( new InstrJump( cont, false, false ) );
+        addInstr( new MtsJumpInstruction( cont, false, false ) );
         addInstr( elze );
     }
     
@@ -644,7 +644,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
             visit( thenBlock );
             addInstr( new InstrPopScope() );
             
-            addInstr( new InstrJump( cont, false, false ) );
+            addInstr( new MtsJumpInstruction( cont, false, false ) );
             addInstr( elze );
         }
     }
@@ -666,7 +666,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         _curBreakTarget = null;
         addInstr( new InstrPopScope() );
         
-        addInstr( new InstrJump( loop, false, false ) );
+        addInstr( new MtsJumpInstruction( loop, false, false ) );
         addInstr( cont );
         
         return null;
@@ -730,7 +730,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         
         addInstr( new InstrPopScope() );
         
-        addInstr( new InstrJump( loop, false, false ) );
+        addInstr( new MtsJumpInstruction( loop, false, false ) );
         addInstr( cont );
         
         return null;
@@ -759,7 +759,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
         _curBreakTarget = null;
         addInstr( new InstrPopScope() );
         
-        addInstr( new InstrJump( loop, false, false ) );
+        addInstr( new MtsJumpInstruction( loop, false, false ) );
         addInstr( cont );
         addInstr( new InstrPop() );
         
@@ -769,7 +769,7 @@ public class MtsToMislCompiler extends AbstractMtsToMislCompiler
     @Override
     public Void visitBreakStmt( BreakStmtContext ctx )
     {
-        addInstr( new InstrJump( _curBreakTarget, false, true ) );
+        addInstr( new MtsJumpInstruction( _curBreakTarget, false, true ) );
         
         return null;
     }

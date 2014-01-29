@@ -19,14 +19,14 @@ public class InstrClosure extends MtsIndexedInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        MislFunctionPrototype prototype = frame.getClosure().getPrototype().getNestedPrototype( _index );
+        MtsFunctionPrototype prototype = frame.getClosure().getPrototype().getNestedPrototype( _index );
         List<External> externals = createExternals( frame, prototype );
         MtsClosure closure = new MtsClosure( prototype, externals );
         
         frame.push( closure );
     }
     
-    private List<External> createExternals( MtsFrame frame, MislFunctionPrototype prototype )
+    private List<External> createExternals( MtsFrame frame, MtsFunctionPrototype prototype )
     {
         List<ExternalDescription> descriptions = prototype.getExternals();
         ArrayList<External> externals = Lists.newArrayListWithCapacity( descriptions.size() );

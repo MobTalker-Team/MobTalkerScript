@@ -5,6 +5,10 @@ package mobtalkerscript.mts.v2.value;
  */
 public abstract class MtsFunction extends MtsValue
 {
+    public abstract String getName();
+    
+    // ========================================
+    
     @Override
     public boolean isFunction()
     {

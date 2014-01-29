@@ -1,36 +1,40 @@
 package mobtalkerscript.mts.v2.lib;
 
-import java.io.*;
-
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class MtsBaseLib extends MtsLibrary
+public final class MtsBaseLib extends MtsLibrary
 {
-    public PrintStream out;
+    private static final MtsJavaFunction Assert = new Assert();
+    private static final MtsJavaFunction Error = new Error();
+    private static final MtsJavaFunction INext = new INext();
+    private static final MtsJavaFunction Next = new Next();
+    private static final MtsJavaFunction RawGet = new RawGet();
+    private static final MtsJavaFunction RawSet = new RawSet();
+    private static final MtsJavaFunction ToNumber = new ToNumber();
+    private static final MtsJavaFunction ToString = new ToString();
+    private static final MtsJavaFunction TypeOf = new TypeOf();
     
     // ========================================
     
     @Override
     public MtsValue bind( MtsString name, MtsValue env )
     {
+        if ( !( env instanceof MtsGlobals ) )
+            throw new ScriptEngineException( "env for for base lib must be _G" );
+        
         env.set( "_G", env );
         
-        env.set( "assert", new Assert() );
-        env.set( "print", new Print() );
-        env.set( "error", new Error() );
-        
-        env.set( "typeof", new TypeOf() );
-        env.set( "sizeof", new SizeOf() );
-        
-        env.set( "next", new Next() );
-        env.set( "inext", new INext() );
-        
-        env.set( "getraw", new GetRaw() );
-        env.set( "setraw", new SetRaw() );
-        
-        env.set( "toNumber", new ToNumber() );
-        env.set( "toString", new ToString() );
+        bindFunction( env, Assert );
+        bindFunction( env, Error );
+        bindFunction( env, INext );
+        bindFunction( env, Next );
+        bindFunction( env, new Print( (MtsGlobals) env ) );
+        bindFunction( env, RawGet );
+        bindFunction( env, RawSet );
+        bindFunction( env, ToNumber );
+        bindFunction( env, ToString );
+        bindFunction( env, TypeOf );
         
         return env;
     }
@@ -40,7 +44,13 @@ public class MtsBaseLib extends MtsLibrary
     private static final class Assert extends MtsTwoArgFunction
     {
         @Override
-        public MtsValue call( MtsValue arg1, MtsValue arg2 )
+        public String getName()
+        {
+            return "assert";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
             if ( !MtsBoolean.isTrue( arg1 ) )
             {
@@ -52,65 +62,132 @@ public class MtsBaseLib extends MtsLibrary
         }
     }
     
-    private final class Print extends MtsFunction
+    private static final class Error extends MtsTwoArgFunction
     {
         @Override
-        public MtsValue call( MtsValue... args )
+        public String getName()
+        {
+            return "error";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            throw new ScriptRuntimeException( arg1.toStringMts().toJava() );
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        {
+            throw new ScriptRuntimeException( (int) arg2.asNumber().toJava(), arg1.toStringMts().toJava() );
+        }
+    }
+    
+    // ========================================
+    
+    private static final class INext extends MtsTwoArgFunction
+    {
+        @Override
+        public String getName()
+        {
+            return "inext";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        {
+            checkTable( arg1, 1 );
+            
+            MtsTable.Entry next = arg1.asTable().getINext( arg2.asNumber() );
+            return next == null ? NIL : next.getKey();
+        }
+    }
+    
+    private static final class Next extends MtsTwoArgFunction
+    {
+        @Override
+        public String getName()
+        {
+            return "next";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        {
+            checkTable( arg1, 1 );
+            
+            MtsTable.Entry next = arg1.asTable().getNext( arg2 );
+            return next == null ? NIL : next.getKey();
+        }
+    }
+    
+    // ========================================
+    
+    private final class Print extends MtsJavaFunction
+    {
+        private final MtsGlobals _G;
+        
+        public Print( MtsGlobals g )
+        {
+            _G = g;
+        }
+        
+        @Override
+        public String getName()
+        {
+            return "print";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue... args )
         {
             if ( args.length > 0 )
             {
                 MtsString str = MtsString.concat( args );
-                out.println( str.toJava() );
+                _G.out.println( str.toJava() );
             }
             else
             {
-                out.println();
+                _G.out.println();
             }
             
             return NIL;
         }
     }
     
-    private final class Error extends MtsOneArgFunction
-    {
-        @Override
-        public MtsValue call( MtsValue arg1 )
-        {
-            throw new ScriptRuntimeException( arg1 );
-        }
-    }
-    
     // ========================================
     
-    private static final class TypeOf extends MtsOneArgFunction
+    private static final class RawGet extends MtsTwoArgFunction
     {
         @Override
-        public MtsValue call( MtsValue arg1 )
+        public String getName()
         {
-            return valueOf( arg1.getTypeName() );
+            return "rawget";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        {
+            checkTable( arg1, 1 );
+            
+            return arg1.asTable().getRaw( arg2 );
         }
     }
     
-    private static final class SizeOf extends MtsOneArgFunction
+    private static final class RawSet extends MtsThreeArgFunction
     {
         @Override
-        public MtsValue call( MtsValue arg1 )
+        public String getName()
         {
-            if ( arg1.isTable() )
-            {
-                return valueOf( arg1.asTable().listSize() );
-            }
-            else if ( arg1.isString() )
-            {
-                return arg1.asString().getLength();
-            }
-            else
-            {
-                throw new ScriptRuntimeException( "bad argument #1 to 'sizeof' (%s or %s expected, got %s)",
-                                                  TYPENAME_TABLE,
-                                                  TYPENAME_STRING,
-                                                  arg1.getTypeName() );
-            }
+            return "rawset";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+        {
+            checkTable( arg1, 1 );
+            
+            return arg1.asTable().setRaw( arg2, arg3 );
         }
     }
     
@@ -119,7 +196,13 @@ public class MtsBaseLib extends MtsLibrary
     private static final class ToNumber extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( MtsValue arg1 )
+        public String getName()
+        {
+            return "toNumber";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
         {
             if ( arg1.isNumber() )
                 return arg1;
@@ -128,69 +211,39 @@ public class MtsBaseLib extends MtsLibrary
             if ( arg1.isBoolean() )
                 return MtsNumber.parse( arg1.asBoolean() );
             
-            return null;
+            return NIL;
         }
     }
     
     private static final class ToString extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( MtsValue arg1 )
+        public String getName()
         {
-            if ( arg1.isString() )
-                return arg1;
-            
+            return "toString";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
             return arg1.toStringMts();
         }
     }
     
     // ========================================
     
-    private static final class Next extends MtsTwoArgFunction
+    private static final class TypeOf extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( MtsValue arg1, MtsValue arg2 )
+        public String getName()
         {
-            checkTable( arg1, "next", 1 );
-            
-            MtsTable.Entry next = arg1.asTable().getNext( arg2 );
-            return next == null ? NIL : next.getKey();
+            return "typeof";
         }
-    }
-    
-    private static final class INext extends MtsTwoArgFunction
-    {
+        
         @Override
-        public MtsValue call( MtsValue arg1, MtsValue arg2 )
+        protected MtsValue invoke( MtsValue arg1 )
         {
-            checkTable( arg1, "inext", 1 );
-            
-            MtsTable.Entry next = arg1.asTable().getINext( arg2.asNumber() );
-            return next == null ? NIL : next.getKey();
-        }
-    }
-    
-    // ========================================
-    
-    private static final class GetRaw extends MtsTwoArgFunction
-    {
-        @Override
-        public MtsValue call( MtsValue arg1, MtsValue arg2 )
-        {
-            checkTable( arg1, "rawget", 1 );
-            
-            return arg1.asTable().getRaw( arg2 );
-        }
-    }
-    
-    private static final class SetRaw extends MtsThreeArgFunction
-    {
-        @Override
-        public MtsValue call( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
-        {
-            checkTable( arg1, "rawset", 1 );
-            
-            return arg1.asTable().setRaw( arg2, arg3 );
+            return valueOf( arg1.getType().getName() );
         }
     }
     

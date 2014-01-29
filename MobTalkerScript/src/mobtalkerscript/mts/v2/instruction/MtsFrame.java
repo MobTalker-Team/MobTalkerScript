@@ -57,7 +57,7 @@ public final class MtsFrame
     
     public void setInstructionPointer( int offset )
     {
-        _ip += offset;
+        _ip += offset - 1;
     }
     
     // ========================================

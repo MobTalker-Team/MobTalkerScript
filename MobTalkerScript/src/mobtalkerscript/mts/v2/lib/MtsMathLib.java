@@ -1,44 +1,67 @@
 package mobtalkerscript.mts.v2.lib;
 
-import mobtalkerscript.misl.v1.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class MtsMathLib implements IMislLibrary
+public final class MtsMathLib extends MtsLibrary
 {
+    private static final MtsNumber PI = valueOf( Math.PI );
+    private static final MtsNumber E = valueOf( Math.E );
+    
+    private static final MtsJavaFunction Abs = new Abs();
+    private static final MtsJavaFunction Ceil = new Ceil();
+    private static final MtsJavaFunction Cos = new Cos();
+    private static final MtsJavaFunction CosH = new CosH();
+    private static final MtsJavaFunction Floor = new Floor();
+    private static final MtsJavaFunction Log = new Log();
+    private static final MtsJavaFunction Log10 = new Log10();
+    private static final MtsJavaFunction Max = new Max();
+    private static final MtsJavaFunction Min = new Min();
+    private static final MtsJavaFunction Pow = new Pow();
+    private static final MtsJavaFunction Round = new Round();
+    private static final MtsJavaFunction Sin = new Sin();
+    private static final MtsJavaFunction SinH = new SinH();
+    private static final MtsJavaFunction Sign = new Sign();
+    private static final MtsJavaFunction Sqrt = new Sqrt();
+    private static final MtsJavaFunction Tan = new Tan();
+    private static final MtsJavaFunction TanH = new TanH();
+    private static final MtsJavaFunction ToDegrees = new ToDegrees();
+    private static final MtsJavaFunction ToRadians = new ToRadians();
     
     // ========================================
     
     @Override
-    public void loadInto( IBindings env )
+    public MtsValue bind( MtsString name, MtsValue env )
     {
         MtsTable math = new MtsTable( 0, 20 );
         
-        math.setRaw( "PI", MtsValue.valueOf( Math.PI ) );
-        math.setRaw( "E", MtsValue.valueOf( Math.E ) );
+        math.setRaw( "PI", PI );
+        math.setRaw( "E", E );
         
-        math.setRaw( "Abs", new Abs() );
-        math.setRaw( "Ceil", new Ceil() );
-        math.setRaw( "Cos", new Cos() );
-        math.setRaw( "CosH", new CosH() );
-        math.setRaw( "Floor", new Floor() );
-        math.setRaw( "Log", new Log() );
-        math.setRaw( "Log10", new Log10() );
-        math.setRaw( "Max", new Max() );
-        math.setRaw( "Min", new Min() );
-        math.setRaw( "Pow", new Pow() );
-        math.setRaw( "Random", new Random() );
-        math.setRaw( "Round", new Round() );
-        math.setRaw( "Sin", new Sin() );
-        math.setRaw( "SinH", new SinH() );
-        math.setRaw( "Sign", new Sign() );
-        math.setRaw( "Sqrt", new Sqrt() );
-        math.setRaw( "Tan", new Tan() );
-        math.setRaw( "TanH", new TanH() );
-        math.setRaw( "ToDegrees", new ToDegrees() );
-        math.setRaw( "ToRadians", new ToRadians() );
+        bindFunction( math, Abs );
+        bindFunction( math, Ceil );
+        bindFunction( math, Cos );
+        bindFunction( math, CosH );
+        bindFunction( math, Floor );
+        bindFunction( math, Log );
+        bindFunction( math, Log10 );
+        bindFunction( math, Max );
+        bindFunction( math, Min );
+        bindFunction( math, Pow );
+        bindFunction( math, new Random() );
+        bindFunction( math, Round );
+        bindFunction( math, Sin );
+        bindFunction( math, SinH );
+        bindFunction( math, Sign );
+        bindFunction( math, Sqrt );
+        bindFunction( math, Tan );
+        bindFunction( math, TanH );
+        bindFunction( math, ToDegrees );
+        bindFunction( math, ToRadians );
         
-        env.set( "math", math );
+        env.set( "Math", math );
+        
+        return NIL;
     }
     
     // ========================================
@@ -46,103 +69,135 @@ public class MtsMathLib implements IMislLibrary
     private static final class Abs extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Abs";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.abs( a );
-            
-            return valueOf( result );
+            return valueOf( Math.abs( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Ceil extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Ceil";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.ceil( a );
-            
-            return valueOf( result );
+            return valueOf( Math.ceil( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Cos extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Cos";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.cos( a );
-            
-            return valueOf( result );
+            return valueOf( Math.cos( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class CosH extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "CosH";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.cosh( a );
-            
-            return valueOf( result );
+            return valueOf( Math.cosh( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Floor extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Floor";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.floor( a );
-            
-            return valueOf( result );
+            return valueOf( Math.floor( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Log extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Log";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.log( a );
-            
-            return valueOf( result );
+            return valueOf( Math.log( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Log10 extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Log10";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.log10( a );
-            
-            return valueOf( result );
+            return valueOf( Math.log10( arg1.asNumber().toJava() ) );
         }
     }
     
-    private static final class Max extends MislVarArgFunction
+    private static final class Max extends MtsJavaFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue... args )
+        public String getName()
+        {
+            return "Max";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue... args )
         {
             if ( args.length < 1 )
-            {
-                throw new ScriptRuntimeException( "invalid argument count. usage: max(Number, ...)" );
-            }
+                throw new ScriptRuntimeException( "bad arguments to '%s' (got no value)", getName() );
             
             double result = args[0].asNumber().toJava();
             
@@ -156,15 +211,19 @@ public class MtsMathLib implements IMislLibrary
         }
     }
     
-    private static final class Min extends MislVarArgFunction
+    private static final class Min extends MtsJavaFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue... args )
+        public String getName()
+        {
+            return "Min";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue... args )
         {
             if ( args.length < 1 )
-            {
-                throw new ScriptRuntimeException( "invalid argument count. usage: min(Number, ...)" );
-            }
+                throw new ScriptRuntimeException( "bad arguments to '%s' (got no value)", getName() );
             
             double result = args[0].asNumber().toJava();
             
@@ -181,39 +240,51 @@ public class MtsMathLib implements IMislLibrary
     private static final class Pow extends MtsTwoArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1, MtsValue arg2 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
-            double b = arg2.asNumber().toJava();
+            return "Pow";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        {
+            checkNumber( arg1, 1 );
+            checkNumber( arg2, 2 );
             
-            double result = Math.pow( a, b );
-            
-            return valueOf( result );
+            return valueOf( Math.pow( arg1.asNumber().toJava(), arg2.asNumber().toJava() ) );
         }
     }
     
     private static final class Random extends MtsTwoArgFunction
     {
+        @Override
+        public String getName()
+        {
+            return "Random";
+        }
         
         private final java.util.Random _rnd = new java.util.Random();
         
         @Override
-        public MtsValue call( IBindings env )
+        protected MtsValue invoke()
         {
             return valueOf( _rnd.nextDouble() );
         }
         
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        protected MtsValue invoke( MtsValue arg1 )
         {
-            int a = (int) arg1.asNumber().toJava();
+            checkNumber( arg1, 1 );
             
-            return valueOf( _rnd.nextInt( a ) );
+            return valueOf( _rnd.nextInt( (int) arg1.asNumber().toJava() ) );
         }
         
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1, MtsValue arg2 )
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
+            checkNumber( arg1, 1 );
+            checkNumber( arg2, 2 );
+            
             int a = (int) arg1.asNumber().toJava();
             int b = (int) arg2.asNumber().toJava();
             
@@ -224,117 +295,153 @@ public class MtsMathLib implements IMislLibrary
     private static final class Round extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Round";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.round( a );
-            
-            return valueOf( result );
+            return valueOf( Math.round( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Sin extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Sin";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.sin( a );
-            
-            return valueOf( result );
+            return valueOf( Math.sin( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class SinH extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "SinH";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.sinh( a );
-            
-            return valueOf( result );
+            return valueOf( Math.sinh( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Sign extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Sign";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.signum( a );
-            
-            return valueOf( result );
+            return valueOf( Math.signum( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Sqrt extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Sqrt";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.sqrt( a );
-            
-            return valueOf( result );
+            return valueOf( Math.sqrt( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class Tan extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "Tan";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.tan( a );
-            
-            return valueOf( result );
+            return valueOf( Math.tan( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class TanH extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "TanH";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.tanh( a );
-            
-            return valueOf( result );
+            return valueOf( Math.tanh( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class ToDegrees extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "ToDegrees";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.toDegrees( a );
-            
-            return valueOf( result );
+            return valueOf( Math.toDegrees( arg1.asNumber().toJava() ) );
         }
     }
     
     private static final class ToRadians extends MtsOneArgFunction
     {
         @Override
-        public MtsValue call( IBindings env, MtsValue arg1 )
+        public String getName()
         {
-            double a = arg1.asNumber().toJava();
+            return "ToRadians";
+        }
+        
+        @Override
+        protected MtsValue invoke( MtsValue arg1 )
+        {
+            checkNumber( arg1, 1 );
             
-            double result = Math.toRadians( a );
-            
-            return valueOf( result );
+            return valueOf( Math.toRadians( arg1.asNumber().toJava() ) );
         }
     }
 }

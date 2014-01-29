@@ -3,7 +3,7 @@ package mobtalkerscript.mts.v2.value;
 public abstract class MtsFourArgFunction extends MtsThreeArgFunction
 {
     @Override
-    public MtsValue call( MtsValue... args )
+    protected MtsValue invoke( MtsValue... args )
     {
         switch ( args.length )
         {
@@ -21,10 +21,10 @@ public abstract class MtsFourArgFunction extends MtsThreeArgFunction
     }
     
     @Override
-    public MtsValue call( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+    protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
         return call( arg1, arg2, arg3, NIL );
     }
     
-    public abstract MtsValue call( MtsValue arg1, MtsValue arg2, MtsValue arg3, MtsValue arg4 );
+    protected abstract MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3, MtsValue arg4 );
 }

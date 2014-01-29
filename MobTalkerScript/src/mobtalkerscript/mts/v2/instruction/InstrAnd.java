@@ -2,8 +2,13 @@ package mobtalkerscript.mts.v2.instruction;
 
 import static mobtalkerscript.mts.v2.value.MtsBoolean.*;
 
-public class InstrAnd extends MtsInstruction
+public final class InstrAnd extends MtsJumpInstruction
 {
+    public InstrAnd( int offset )
+    {
+        super( offset );
+    }
+    
     @Override
     public void execute( MtsFrame frame )
     {
@@ -13,13 +18,13 @@ public class InstrAnd extends MtsInstruction
         }
         else
         {
-            frame.setInstructionPointer( 1 );
+            frame.setInstructionPointer( _offset );
         }
     }
     
     @Override
     public String toString()
     {
-        return "AND";
+        return "AND " + _offset;
     }
 }

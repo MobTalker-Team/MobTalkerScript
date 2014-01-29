@@ -317,46 +317,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
             throw new ScriptRuntimeException( msg, args );
     }
     
-    public static void checkTable( MtsValue value, String func, int i )
-    {
-        if ( !value.isTable() )
-            throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                              i,
-                                              func,
-                                              MtsType.TABLE,
-                                              value.getType() );
-    }
-    
-    public static void checkNumber( MtsValue value, String func, int i )
-    {
-        if ( !value.isNumber() || !value.isString() )
-            throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                              i,
-                                              func,
-                                              MtsType.NUMBER,
-                                              value.getType() );
-    }
-    
-    public static void checkString( MtsValue value, String func, int i )
-    {
-        if ( !value.isString() || !value.isNumber() )
-            throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                              i,
-                                              func,
-                                              MtsType.STRING,
-                                              value.getType() );
-    }
-    
-    public static void checkType( MtsValue value, MtsType expected, String func, int i )
-    {
-        if ( value.getType() != expected )
-            throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                              i,
-                                              func,
-                                              expected,
-                                              value.getType() );
-    }
-    
     // ========================================
     
     public static String formatHashCode( int hashCode )

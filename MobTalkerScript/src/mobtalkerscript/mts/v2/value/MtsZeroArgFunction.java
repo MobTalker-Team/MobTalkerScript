@@ -1,12 +1,12 @@
 package mobtalkerscript.mts.v2.value;
 
-public abstract class MtsZeroArgFunction extends MtsFunction
+public abstract class MtsZeroArgFunction extends MtsJavaFunction
 {
     @Override
-    public MtsValue call( MtsValue... args )
+    protected MtsValue invoke( MtsValue... args )
     {
-        return call();
+        return invoke();
     }
     
-    public abstract MtsValue call();
+    protected abstract MtsValue invoke();
 }

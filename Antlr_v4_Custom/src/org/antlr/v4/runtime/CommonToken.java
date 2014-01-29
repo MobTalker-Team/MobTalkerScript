@@ -79,17 +79,17 @@ public class CommonToken implements WritableToken, Serializable
         this.stop = stop;
         if ( source.a != null )
         {
-            this.line = source.a.getLine();
-            this.charPositionInLine = source.a.getCharPositionInLine();
+            line = source.a.getLine();
+            charPositionInLine = source.a.getCharPositionInLine();
         }
     }
     
     public CommonToken( int type, String text )
     {
         this.type = type;
-        this.channel = DEFAULT_CHANNEL;
+        channel = DEFAULT_CHANNEL;
         this.text = text;
-        this.source = EMPTY_SOURCE;
+        source = EMPTY_SOURCE;
     }
     
     public CommonToken( Token oldToken )
@@ -128,15 +128,10 @@ public class CommonToken implements WritableToken, Serializable
     @Override
     public String getText()
     {
-        if ( text != null )
-        {
-            return text;
-        }
+        if ( text != null ) { return text; }
         
         CharStream input = getInputStream();
-        if ( input == null )
-        {
-            return null;
+        if ( input == null ) { return null;
 //		int n = input.size();
 //		if ( start<n && stop<n) {
 //			return input.getText(Interval.of(start,stop));

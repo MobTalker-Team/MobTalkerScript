@@ -44,9 +44,9 @@ public class Trees
      * node payloads to get the text for the nodes. Detect
      * parse trees and extract data appropriately.
      */
-    public static String toStringTree(@NotNull Tree t)
+    public static String toStringTree( @NotNull Tree t )
     {
-        return toStringTree(t, (List<String>) null);
+        return toStringTree( t, (List<String>) null );
     }
     
     /**
@@ -54,11 +54,11 @@ public class Trees
      * node payloads to get the text for the nodes. Detect
      * parse trees and extract data appropriately.
      */
-    public static String toStringTree(@NotNull Tree t, @Nullable Parser recog)
+    public static String toStringTree( @NotNull Tree t, @Nullable Parser recog )
     {
         String[] ruleNames = recog != null ? recog.getRuleNames() : null;
-        List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
-        return toStringTree(t, ruleNamesList);
+        List<String> ruleNamesList = ruleNames != null ? Arrays.asList( ruleNames ) : null;
+        return toStringTree( t, ruleNamesList );
     }
     
     /**
@@ -66,55 +66,52 @@ public class Trees
      * node payloads to get the text for the nodes. Detect
      * parse trees and extract data appropriately.
      */
-    public static String toStringTree(@NotNull Tree t, @Nullable List<String> ruleNames)
+    public static String toStringTree( @NotNull Tree t, @Nullable List<String> ruleNames )
     {
-        String s = Utils.escapeWhitespace(getNodeText(t, ruleNames), false);
-        if (t.getChildCount() == 0)
-        {
-            return s;
-        }
+        String s = Utils.escapeWhitespace( getNodeText( t, ruleNames ), false );
+        if ( t.getChildCount() == 0 ) { return s; }
         StringBuilder buf = new StringBuilder();
-        buf.append("(");
-        s = Utils.escapeWhitespace(getNodeText(t, ruleNames), false);
-        buf.append(s);
-        buf.append(' ');
-        for (int i = 0; i < t.getChildCount(); i++)
+        buf.append( "(" );
+        s = Utils.escapeWhitespace( getNodeText( t, ruleNames ), false );
+        buf.append( s );
+        buf.append( ' ' );
+        for ( int i = 0; i < t.getChildCount(); i++ )
         {
-            if (i > 0)
+            if ( i > 0 )
             {
-                buf.append(' ');
+                buf.append( ' ' );
             }
-            buf.append(toStringTree(t.getChild(i), ruleNames));
+            buf.append( toStringTree( t.getChild( i ), ruleNames ) );
         }
-        buf.append(")");
+        buf.append( ")" );
         return buf.toString();
     }
     
-    public static String getNodeText(@NotNull Tree t, @Nullable Parser recog)
+    public static String getNodeText( @NotNull Tree t, @Nullable Parser recog )
     {
         String[] ruleNames = recog != null ? recog.getRuleNames() : null;
-        List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
-        return getNodeText(t, ruleNamesList);
+        List<String> ruleNamesList = ruleNames != null ? Arrays.asList( ruleNames ) : null;
+        return getNodeText( t, ruleNamesList );
     }
     
-    public static String getNodeText(@NotNull Tree t, @Nullable List<String> ruleNames)
+    public static String getNodeText( @NotNull Tree t, @Nullable List<String> ruleNames )
     {
-        if (ruleNames != null)
+        if ( ruleNames != null )
         {
-            if (t instanceof RuleNode)
+            if ( t instanceof RuleNode )
             {
-                int ruleIndex = ((RuleNode) t).getRuleContext().getRuleIndex();
-                String ruleName = ruleNames.get(ruleIndex);
+                int ruleIndex = ( (RuleNode) t ).getRuleContext().getRuleIndex();
+                String ruleName = ruleNames.get( ruleIndex );
                 return ruleName;
             }
-            else if (t instanceof ErrorNode)
+            else if ( t instanceof ErrorNode )
             {
                 return t.toString();
             }
-            else if (t instanceof TerminalNode)
+            else if ( t instanceof TerminalNode )
             {
-                Token symbol = ((TerminalNode) t).getSymbol();
-                if (symbol != null)
+                Token symbol = ( (TerminalNode) t ).getSymbol();
+                if ( symbol != null )
                 {
                     String s = symbol.getText();
                     return s;
@@ -123,10 +120,7 @@ public class Trees
         }
         // no recog for rule names
         Object payload = t.getPayload();
-        if (payload instanceof Token)
-        {
-            return ((Token) payload).getText();
-        }
+        if ( payload instanceof Token ) { return ( (Token) payload ).getText(); }
         return t.getPayload().toString();
     }
     
@@ -135,17 +129,14 @@ public class Trees
      * list is the root and the last is the parent of this node.
      */
     @NotNull
-    public static List<? extends Tree> getAncestors(@NotNull Tree t)
+    public static List<? extends Tree> getAncestors( @NotNull Tree t )
     {
-        if (t.getParent() == null)
-        {
-            return Collections.emptyList();
-        }
+        if ( t.getParent() == null ) { return Collections.emptyList(); }
         List<Tree> ancestors = new ArrayList<Tree>();
         t = t.getParent();
-        while (t != null)
+        while ( t != null )
         {
-            ancestors.add(0, t); // insert at start
+            ancestors.add( 0, t ); // insert at start
             t = t.getParent();
         }
         return ancestors;

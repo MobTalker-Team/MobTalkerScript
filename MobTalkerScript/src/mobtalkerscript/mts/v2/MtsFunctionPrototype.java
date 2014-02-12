@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.util.*;
 
+import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.value.*;
 
@@ -22,11 +23,12 @@ public class MtsFunctionPrototype
     
     // Debug information
     private final String _name;
-    private final int[] _lineNumbers;
+    private final List<SourcePosition> _lineNumbers;
     private final String _sourceFile;
     private final int _sourceLineStart;
     private final int _sourceLineEnd;
-    private final List<VariableDescription> _localDescr;
+    
+    private final List<LocalDescription> _localDescr;
     
     // ========================================
     
@@ -36,11 +38,11 @@ public class MtsFunctionPrototype
                                  List<MtsValue> constants,
                                  List<ExternalDescription> externals,
                                  String name,
-                                 int[] lineNumbers,
+                                 List<SourcePosition> lineNumbers,
                                  String sourceFile,
                                  int sourceStart,
                                  int sourceEnd,
-                                 List<VariableDescription> localDescr )
+                                 List<LocalDescription> localDescr )
     {
         checkNotNull( instructions );
         checkArgument( 0 <= maxStackSize, "Stack size cannot be negative" );
@@ -114,11 +116,11 @@ public class MtsFunctionPrototype
         return _sourceFile;
     }
     
-    public int getLineNumber( int instruction )
+    public SourcePosition getSourcePosition( int instruction )
     {
-        checkElementIndex( instruction, _lineNumbers.length );
+        checkElementIndex( instruction, _lineNumbers.size() );
         
-        return _lineNumbers[instruction];
+        return _lineNumbers.get( instruction );
     }
     
     // ========================================

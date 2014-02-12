@@ -13,13 +13,15 @@ public final class MtsFrame
     private final MtsValue[] _stack;
     private int _top;
     
-    private final MtsValue[] _locals;
-    private final List<MtsValue> _constants;
-    private final List<External> _externals;
+    private final FrameValue[] _locals;
+    private final FrameValue[] _externals;
+    
+    private int _lastLocal;
+    private int _lastExternal;
     
     // ========================================
     
-    public MtsFrame( MtsClosure closure, MtsValue[] args, List<External> externals )
+    public MtsFrame( MtsClosure closure, MtsValue[] args, FrameValue[] externals )
     {
         _closure = closure;
         _ip = 0;
@@ -28,18 +30,19 @@ public final class MtsFrame
         int nLocals = closure.getPrototype().getLocalCount();
         
         _stack = new MtsValue[nStack];
-        _top = -1;
+        _top = 0;
         
-        MtsValue[] locals = new MtsValue[nLocals];
+        FrameValue[] locals = new FrameValue[nLocals];
+        for ( int i = 0; i < args.length; i++ )
+        {
+            locals[i] = new FrameValue( args[i] );
+        }
         for ( int i = args.length; i < nLocals; i++ )
         {
-            locals[i] = MtsValue.NIL;
+            locals[i] = new FrameValue();
         }
-        
-        System.arraycopy( args, 0, locals, 0, args.length );
         _locals = locals;
         
-        _constants = closure.getPrototype().getConstants();
         _externals = externals;
     }
     
@@ -58,6 +61,16 @@ public final class MtsFrame
     public void setInstructionPointer( int offset )
     {
         _ip += offset - 1;
+    }
+    
+    public int getLastLocal()
+    {
+        return _lastLocal;
+    }
+    
+    public int getLastExternal()
+    {
+        return _lastExternal;
     }
     
     // ========================================
@@ -86,49 +99,31 @@ public final class MtsFrame
     
     // ========================================
     
-    public MtsValue getLocal( int i )
+    public MtsValue getConstant( int i )
     {
+        return _closure.getPrototype().getConstants().get( i );
+    }
+    
+    public FrameValue getLocal( int i )
+    {
+        _lastLocal = i;
         return _locals[i];
     }
     
-    public void setLocal( int i, MtsValue value )
+    public FrameValue getExternal( int i )
     {
-        _locals[i] = value;
-    }
-    
-    // ========================================
-    
-    public External getExternal( int i )
-    {
-        return _externals.get( i );
+        _lastExternal = i;
+        return _externals[i];
     }
     
     // ========================================
     
     public void push( MtsValue o )
     {
-        if ( _top++ == _stack.length )
-        {
-            _top--;
+        if ( _top == _stack.length )
             throw new ScriptEngineException( "stack overflow" );
-        }
         
-        _stack[_top] = o;
-    }
-    
-    public void pushLocal( int i )
-    {
-        push( _locals[i] );
-    }
-    
-    public void pushConstant( int i )
-    {
-        push( _constants.get( i ) );
-    }
-    
-    public void pushExternal( int i )
-    {
-        push( _externals.get( i ).get() );
+        _stack[_top++] = o;
     }
     
     public MtsValue pop()
@@ -136,7 +131,7 @@ public final class MtsFrame
         if ( stackIsEmpty() )
             throw new ScriptEngineException( "stack underflow" );
         
-        return _stack[_top--];
+        return _stack[--_top];
     }
     
     public MtsValue[] pop( int count )
@@ -148,19 +143,9 @@ public final class MtsFrame
             throw new ScriptEngineException( "stack underflow" );
         
         MtsValue[] values = new MtsValue[count];
-        System.arraycopy( _stack, ( _top - count ) + 1, values, 0, count );
+        System.arraycopy( _stack, ( _top - count ), values, 0, count );
         
         return values;
-    }
-    
-    public void storeLocal( int i )
-    {
-        _locals[i] = pop();
-    }
-    
-    public void storeExternal( int i )
-    {
-        _externals.get( i ).set( pop() );
     }
     
     public MtsValue peek()
@@ -184,14 +169,41 @@ public final class MtsFrame
     
     // ========================================
     
+    public void pushConstant( int i )
+    {
+        push( getConstant( i ).get( i ) );
+    }
+    
+    public void pushLocal( int i )
+    {
+        push( getLocal( i ).get() );
+    }
+    
+    public void pushExternal( int i )
+    {
+        push( getExternal( i ).get() );
+    }
+    
+    public void storeLocal( int i )
+    {
+        getLocal( i ).set( pop() );
+    }
+    
+    public void storeExternal( int i )
+    {
+        getExternal( i ).set( pop() );
+    }
+    
+    // ========================================
+    
     public int stackCount()
     {
-        return _top + 1;
+        return _top;
     }
     
     public boolean stackIsEmpty()
     {
-        return _top < 0;
+        return _top <= 0;
     }
     
 }

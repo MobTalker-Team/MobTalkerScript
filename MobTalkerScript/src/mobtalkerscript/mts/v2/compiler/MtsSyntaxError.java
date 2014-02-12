@@ -1,4 +1,4 @@
-package mobtalkerscript.mts.v2.parser;
+package mobtalkerscript.mts.v2.compiler;
 
 @SuppressWarnings( "serial" )
 public class MtsSyntaxError extends RuntimeException

@@ -1,20 +1,18 @@
 package mobtalkerscript.mts.v2.value;
 
 import static com.google.common.base.Preconditions.*;
-
-import java.util.*;
-
 import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.instruction.*;
 
 public final class MtsClosure extends MtsFunction
 {
     private final MtsFunctionPrototype _prototype;
-    private final List<External> _externals;
+    private final FrameValue[] _externals;
     
     // ========================================
     
-    public MtsClosure( MtsFunctionPrototype prototype, List<External> externals )
+    public MtsClosure( MtsFunctionPrototype prototype, FrameValue[] externals )
     {
         checkNotNull( prototype );
         checkNotNull( externals );
@@ -43,10 +41,10 @@ public final class MtsClosure extends MtsFunction
         catch ( ScriptRuntimeException ex )
         {
             String source = _prototype.getSourceFile();
-            int line = _prototype.getLineNumber( frame.getInstructionPointer() );
+            SourcePosition pos = _prototype.getSourcePosition( frame.getInstructionPointer() );
             String name = _prototype.getName();
             
-            ex.addStackTraceElement( new MtsStackTraceElement( source, line, name ) );
+            ex.addStackTraceElement( new MtsStackTraceElement( source, pos, name ) );
             
             throw ex;
         }

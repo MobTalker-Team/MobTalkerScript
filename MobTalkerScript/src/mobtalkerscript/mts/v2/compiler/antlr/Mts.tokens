@@ -76,7 +76,6 @@ REPEAT=16
 CALL=6
 DIV=62
 END=8
-Label=82
 SUB_ASSIGN=68
 LE=52
 BooleanLiteral=77

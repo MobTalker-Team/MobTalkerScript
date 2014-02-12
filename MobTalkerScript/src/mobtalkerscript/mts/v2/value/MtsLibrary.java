@@ -25,7 +25,7 @@ public abstract class MtsLibrary extends MtsFunction
     
     public abstract MtsValue bind( MtsString name, MtsValue env );
     
-    protected void bindFunction( MtsValue env, MtsJavaFunction func )
+    protected static void bindFunction( MtsValue env, MtsJavaFunction func )
     {
         env.set( func.getName(), func );
     }

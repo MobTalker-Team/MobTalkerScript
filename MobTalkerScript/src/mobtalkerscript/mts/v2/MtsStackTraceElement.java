@@ -1,9 +1,11 @@
 package mobtalkerscript.mts.v2;
 
+import mobtalkerscript.mts.v2.compiler.*;
+
 public class MtsStackTraceElement
 {
     private final String _fileName;
-    private final int _lineNumber;
+    private final SourcePosition _position;
     private final String _functionName;
     
     /**
@@ -12,23 +14,25 @@ public class MtsStackTraceElement
     public MtsStackTraceElement( String functionName )
     {
         _fileName = null;
-        _lineNumber = 0;
+        _position = SourcePosition.ZERO;
         _functionName = functionName;
     }
     
     /**
      * For compiled function
      */
-    public MtsStackTraceElement( String fileName, int lineNumber, String functionName )
+    public MtsStackTraceElement( String fileName, SourcePosition position, String functionName )
     {
         _fileName = fileName;
-        _lineNumber = lineNumber;
+        _position = position;
         _functionName = functionName;
     }
     
     public String getLocation()
     {
-        return _fileName == null ? "[Java]" : _fileName + ":" + _lineNumber;
+        return _fileName == null ? //
+                "[Java]"
+                : ( _fileName + ":" + _position.Line + ":" + _position.Coloum );
     }
     
     public String getFunctionName()

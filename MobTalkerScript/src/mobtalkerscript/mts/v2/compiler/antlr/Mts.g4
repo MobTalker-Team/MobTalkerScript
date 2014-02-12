@@ -34,12 +34,12 @@ CMD_WITH        : 'with' ;
 CMD_SCENE       : 'scene' ;
 CMD_AS          : 'as' ;
 CMD_HIDE        : 'hide' ;
-CMD_MUSIC       : 'play music' ;
-CMD_SOUND       : 'play sound' ;
-CMD_STOP        : 'stop music' ;
-CMD_FADEOUT     : 'fadeout' ;
-CMD_FADEIN      : 'fadein' ;
-CMD_PAUSE       : 'pause' ;
+//CMD_MUSIC       : 'play music' ;
+//CMD_SOUND       : 'play sound' ;
+//CMD_STOP        : 'stop music' ;
+//CMD_FADEOUT     : 'fadeout' ;
+//CMD_FADEIN      : 'fadein' ;
+//CMD_PAUSE       : 'pause' ;
 CMD_MENU        : 'menu' ;
 CMD_OPTION      : 'option' ;
 
@@ -130,10 +130,6 @@ fragment HexDigit
     : [0-9a-fA-F]
     ;
 
-Label
-    : '::' Name '::'
-    ;
-
 // =============================================================================
 
 /* Parser Rules */
@@ -182,8 +178,8 @@ stmt
       # CallStmt
     | command
       # CommandStmt
-    | Label
-      # Label
+    | '::' Name '::'
+      # LabelStmt
     | breakStmt
       # Break
     | returnStmt
@@ -200,6 +196,8 @@ stmt
       # NumericForLoop
     | 'for' genericForControl 'do' block 'end'
       # GenericForLoop
+    | funcDeclr
+      # FunctionDeclr
     ;
 
 assignment
@@ -214,8 +212,8 @@ assignment
 assignmentTarget
     : Name
       # SimpleAssignmentTarget
-    | Name fieldAccess ( fieldAccess | callArgs )* ( fieldAccess | appendExpr )
-      # NamePrefixedAssignmentTarget
+    | Name ( fieldAccess | callArgs )* ( fieldAccess | appendExpr )
+      # FieldAssignmentTarget
     | '(' expr ')' ( fieldAccess | callArgs )* ( fieldAccess | appendExpr )
       # ExprPrefixedAssignmentTarget
     ;
@@ -306,7 +304,7 @@ command
       # JumpCommandStmt
     | 'call' Name ';'
       # CallCommandStmt
-    | 'say' expr? expr expr ';'
+    | 'say' expr? expr expr? ';'
       # SayCommandStmt
     | 'show' expr+ ( 'at' expr )? ( 'offset' exprList )? ( 'with' exprList )? ';'
       # ShowCommandStmt
@@ -314,14 +312,14 @@ command
       # SceneCommandStmt
     | 'hide' expr ( 'with' exprList )? ';'
       # HideCommandStmt
-    | 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+    /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
       # PlayMusicCommandStmt
     | 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
       # PlaySoundCommandStmt
     | 'stop music' ( 'fadeout' expr )? ';'
-      # StopMusicCommandStmt
-    | 'pause' expr?
-      # PauseCommandStmt
+      # StopMusicCommandStmt*/
+    /*| 'pause' expr? ';'
+      # PauseCommandStmt*/
     | 'menu' expr? ( 'option' expr block )+ 'end'
       # MenuCommandStmt
     ;

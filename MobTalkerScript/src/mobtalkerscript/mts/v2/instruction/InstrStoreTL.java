@@ -14,7 +14,7 @@ public final class InstrStoreTL extends MtsIndexedInstruction
     {
         MtsValue value = frame.pop();
         MtsValue key = frame.pop();
-        MtsValue t = frame.getLocal( _index );
+        MtsValue t = frame.getLocal( _index ).get();
         t.set( key, value );
     }
     

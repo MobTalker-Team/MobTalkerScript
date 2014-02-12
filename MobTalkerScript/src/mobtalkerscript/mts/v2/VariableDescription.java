@@ -1,16 +1,14 @@
 package mobtalkerscript.mts.v2;
 
-public class VariableDescription
+public abstract class VariableDescription
 {
-    protected String _name;
-    protected int _pcStart;
-    protected int _pcEnd;
+    protected final String _name;
+    protected final int _index;
     
-    public VariableDescription( String name, int pcStart, int pcEnd )
+    public VariableDescription( String name, int index )
     {
         _name = name;
-        _pcStart = pcStart;
-        _pcEnd = pcEnd;
+        _index = index;
     }
     
     public String getName()
@@ -18,14 +16,14 @@ public class VariableDescription
         return _name;
     }
     
-    public int getPcStart()
+    public int getIndex()
     {
-        return _pcStart;
+        return _index;
     }
     
-    public int getPcEnd()
+    @Override
+    public String toString()
     {
-        return _pcEnd;
+        return _name;
     }
-    
 }

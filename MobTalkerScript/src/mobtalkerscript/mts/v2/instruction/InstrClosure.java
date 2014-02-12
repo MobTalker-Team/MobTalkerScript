@@ -5,8 +5,6 @@ import java.util.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-import com.google.common.collect.*;
-
 public class InstrClosure extends MtsIndexedInstruction
 {
     public InstrClosure( int prototype )
@@ -20,22 +18,21 @@ public class InstrClosure extends MtsIndexedInstruction
     public void execute( MtsFrame frame )
     {
         MtsFunctionPrototype prototype = frame.getClosure().getPrototype().getNestedPrototype( _index );
-        List<External> externals = createExternals( frame, prototype );
+        FrameValue[] externals = createExternals( frame, prototype );
         MtsClosure closure = new MtsClosure( prototype, externals );
         
         frame.push( closure );
     }
     
-    private List<External> createExternals( MtsFrame frame, MtsFunctionPrototype prototype )
+    private FrameValue[] createExternals( MtsFrame frame, MtsFunctionPrototype prototype )
     {
         List<ExternalDescription> descriptions = prototype.getExternals();
-        ArrayList<External> externals = Lists.newArrayListWithCapacity( descriptions.size() );
+        FrameValue[] externals = new FrameValue[descriptions.size()];
         
-        for ( ExternalDescription descr : descriptions )
+        for ( int i = 0; i < externals.length; i++ )
         {
-            externals.add( descr.isLocal()
-                    ? new External( descr.getIndex(), frame )
-                    : frame.getExternal( descr.getIndex() ) );
+            ExternalDescription descr = descriptions.get( i );
+            externals[i] = frame.getLocal( descr.getIndex() );
         }
         
         return externals;

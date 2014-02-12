@@ -12,7 +12,7 @@ public class InstrLoadTL extends MtsIndexedInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        MtsTable t = frame.getLocal( _index ).asTable();
+        MtsTable t = frame.getLocal( _index ).get().asTable();
         frame.push( t.get( frame.pop() ) );
     }
     

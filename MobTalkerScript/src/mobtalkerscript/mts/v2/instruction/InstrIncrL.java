@@ -10,7 +10,8 @@ public class InstrIncrL extends MtsIndexedInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.setLocal( _index, frame.getLocal( _index ).asNumber().incr() );
+        FrameValue register = frame.getLocal( _index );
+        register.set( register.get().asNumber().incr() );
     }
     
     @Override

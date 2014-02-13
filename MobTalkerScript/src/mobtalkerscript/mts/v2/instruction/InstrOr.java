@@ -4,20 +4,38 @@ import static mobtalkerscript.mts.v2.value.MtsBoolean.*;
 
 public final class InstrOr extends MtsJumpInstruction
 {
+    public InstrOr()
+    {
+        super();
+    }
+    
     public InstrOr( int offset )
     {
         super( offset );
     }
     
+    // ========================================
+    
     @Override
     public void execute( MtsFrame frame )
     {
-        if ( !isTrue( frame.peek() ) )
+        if ( isTrue( frame.peek() ) )
         {
-            frame.pop();
             frame.setInstructionPointer( _offset );
         }
+        else
+        {
+            frame.pop();
+        }
     }
+    
+    @Override
+    public int stackSizeChange()
+    {
+        return 0;
+    }
+    
+    // ========================================
     
     @Override
     public String toString()

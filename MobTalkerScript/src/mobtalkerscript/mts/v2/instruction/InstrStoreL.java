@@ -15,6 +15,12 @@ public final class InstrStoreL extends MtsIndexedInstruction
         frame.storeLocal( _index );
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return -1;
+    }
+    
     // ========================================
     
     @Override

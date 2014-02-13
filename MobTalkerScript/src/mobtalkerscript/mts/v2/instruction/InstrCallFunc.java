@@ -40,6 +40,12 @@ public final class InstrCallFunc extends MtsInstruction
         }
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return -( 1 + _nArgs ) + _nReturn;
+    }
+    
     // ========================================
     
     @Override

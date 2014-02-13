@@ -38,6 +38,12 @@ public class InstrClosure extends MtsIndexedInstruction
         return externals;
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return 1;
+    }
+    
     // ========================================
     
     @Override

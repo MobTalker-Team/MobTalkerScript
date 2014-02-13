@@ -27,6 +27,12 @@ public final class InstrReturn extends MtsInstruction
         return true;
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return 1 - _count;
+    }
+    
     // ========================================
     
     @Override

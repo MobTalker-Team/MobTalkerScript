@@ -20,6 +20,12 @@ public final class InstrTest extends MtsJumpInstruction
         }
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return -1;
+    }
+    
     // ========================================
     
     @Override

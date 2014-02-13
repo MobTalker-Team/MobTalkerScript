@@ -21,6 +21,12 @@ public class InstrConcat extends MtsInstruction
         frame.push( concat( frame.pop( _count ) ) );
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return _count - 1;
+    }
+    
     // ========================================
     
     @Override

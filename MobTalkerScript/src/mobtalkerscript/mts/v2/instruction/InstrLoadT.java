@@ -12,6 +12,12 @@ public class InstrLoadT extends MtsInstruction
     }
     
     @Override
+    public int stackSizeChange()
+    {
+        return -1;
+    }
+    
+    @Override
     public String toString()
     {
         return "LOADT";

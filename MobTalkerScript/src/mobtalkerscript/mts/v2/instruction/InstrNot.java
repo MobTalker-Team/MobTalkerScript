@@ -13,6 +13,12 @@ public class InstrNot extends MtsInstruction
     }
     
     @Override
+    public int stackSizeChange()
+    {
+        return 0;
+    }
+    
+    @Override
     public String toString()
     {
         return "NOT";

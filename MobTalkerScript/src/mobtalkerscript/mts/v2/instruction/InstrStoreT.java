@@ -7,9 +7,15 @@ public class InstrStoreT extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        MtsValue value = frame.pop();
+        MtsValue t = frame.pop();
         MtsValue key = frame.pop();
-        frame.pop().set( key, value );
+        t.set( key, frame.pop() );
+    }
+    
+    @Override
+    public int stackSizeChange()
+    {
+        return -3;
     }
     
     @Override

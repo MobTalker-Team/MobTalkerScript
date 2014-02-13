@@ -15,6 +15,12 @@ public final class InstrLoadE extends MtsIndexedInstruction
         frame.pushExternal( _index );
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return 1;
+    }
+    
     // ========================================
     
     @Override

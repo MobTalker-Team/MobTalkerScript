@@ -12,4 +12,10 @@ public abstract class MtsComparisonInstruction extends MtsInstruction
     }
     
     protected abstract MtsValue compare( MtsValue a, MtsValue b );
+    
+    @Override
+    public final int stackSizeChange()
+    {
+        return -1;
+    }
 }

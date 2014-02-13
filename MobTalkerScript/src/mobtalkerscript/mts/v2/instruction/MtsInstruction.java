@@ -15,6 +15,8 @@ public abstract class MtsInstruction
         return false;
     }
     
+    public abstract int stackSizeChange();
+    
     @Override
     public abstract String toString();
     

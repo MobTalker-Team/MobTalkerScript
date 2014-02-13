@@ -60,7 +60,7 @@ public final class MtsFrame
     
     public void setInstructionPointer( int offset )
     {
-        _ip += offset - 1;
+        _ip += offset;
     }
     
     public int getLastLocal()
@@ -84,7 +84,7 @@ public final class MtsFrame
         
         for ( ;; )
         {
-            MtsInstruction instr = instructions.get( _ip++ );
+            MtsInstruction instr = instructions.get( _ip );
             
             System.out.println( "Executing " + instr.toString() );
             
@@ -92,6 +92,8 @@ public final class MtsFrame
             
             if ( instr.exits() )
                 break;
+            
+            _ip++;
         }
         
         return pop();
@@ -171,7 +173,7 @@ public final class MtsFrame
     
     public void pushConstant( int i )
     {
-        push( getConstant( i ).get( i ) );
+        push( getConstant( i ) );
     }
     
     public void pushLocal( int i )

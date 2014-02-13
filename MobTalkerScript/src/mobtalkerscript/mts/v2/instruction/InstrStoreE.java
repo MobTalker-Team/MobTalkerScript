@@ -15,6 +15,12 @@ public final class InstrStoreE extends MtsIndexedInstruction
         frame.storeExternal( _index );
     }
     
+    @Override
+    public int stackSizeChange()
+    {
+        return -1;
+    }
+    
     // ========================================
     
     @Override

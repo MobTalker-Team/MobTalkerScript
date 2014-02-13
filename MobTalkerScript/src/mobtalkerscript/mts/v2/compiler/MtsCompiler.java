@@ -1,14 +1,45 @@
 package mobtalkerscript.mts.v2.compiler;
 
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
+
+import java.util.*;
+
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.value.*;
+
+import com.google.common.collect.*;
 
 public class MtsCompiler
 {
     public static final String G = "_G";
     public static final String ENV = "_ENV";
+    
+    // ========================================
+    // Cached Instructions
+    
+    private static final Map<String, MtsInstruction> _binaryOps;
+    private static final Map<String, MtsInstruction> _logicalOps;
+    
+    static
+    {
+        _binaryOps = Maps.newHashMap();
+        _binaryOps.put( "+", new InstrAdd() );
+        _binaryOps.put( "-", new InstrSub() );
+        _binaryOps.put( "*", new InstrMul() );
+        _binaryOps.put( "/", new InstrDiv() );
+        _binaryOps.put( "%", new InstrMod() );
+        
+        _logicalOps = Maps.newHashMap();
+        _logicalOps.put( "==", new InstrEQ() );
+        _logicalOps.put( "<", new InstrLT() );
+        _logicalOps.put( "<=", new InstrLTE() );
+    }
+    
+    private static final MtsInstruction _not = new InstrNot();
+    
+    private static final MtsInstruction _loadT = new InstrLoadT();
+    private static final MtsInstruction _storeT = new InstrStoreT();
     
     // ========================================
     
@@ -26,9 +57,19 @@ public class MtsCompiler
     
     // ========================================
     
-    protected void addInstr( MtsInstruction instr, int stackChange )
+    public void addInstr( MtsInstruction instr )
     {
-        _currentFunction.addInstruction( instr, _curLine, _curColoum, stackChange );
+        _currentFunction.addInstruction( instr, _curLine, _curColoum );
+    }
+    
+    public void markJumpOrigin()
+    {
+        _currentFunction.markJumpOrigin();
+    }
+    
+    public void setJumpTarget()
+    {
+        _currentFunction.setJumpTarget();
     }
     
     public void setLineNumber( int line, int coloum )
@@ -73,12 +114,12 @@ public class MtsCompiler
         if ( _currentFunction.isLocal( name ) )
         { // Local
             int index = _currentFunction.getLocalIndex( name );
-            addInstr( new InstrLoadL( index ), 1 );
+            addInstr( new InstrLoadL( index ) );
         }
         else if ( _currentFunction.isExternal( name ) )
         { // External
             int index = _currentFunction.getExternalIndex( name );
-            addInstr( new InstrLoadE( index ), 1 );
+            addInstr( new InstrLoadE( index ) );
         }
         else
         { // Global
@@ -94,12 +135,12 @@ public class MtsCompiler
         if ( _currentFunction.isExternal( ENV ) )
         {
             int index = _currentFunction.getExternalIndex( ENV );
-            addInstr( new InstrLoadE( index ), 1 );
+            addInstr( new InstrLoadE( index ) );
         }
         else if ( _currentFunction.isLocal( ENV ) )
         {
             int index = _currentFunction.getLocalIndex( ENV );
-            addInstr( new InstrLoadL( index ), 1 );
+            addInstr( new InstrLoadL( index ) );
         }
         else
         {
@@ -110,7 +151,7 @@ public class MtsCompiler
     public void loadConstant( MtsValue value )
     {
         int index = _currentFunction.getConstantIndex( value );
-        addInstr( new InstrLoadC( index ), 1 );
+        addInstr( new InstrLoadC( index ) );
     }
     
     public void store( String name )
@@ -118,17 +159,17 @@ public class MtsCompiler
         if ( _currentFunction.isLocal( name ) )
         { // Local
             int index = _currentFunction.getLocalIndex( name );
-            addInstr( new InstrStoreL( index ), -1 );
+            addInstr( new InstrStoreL( index ) );
         }
         else if ( _currentFunction.isExternal( name ) )
         { // External
             int index = _currentFunction.getExternalIndex( name );
-            addInstr( new InstrStoreE( index ), -1 );
+            addInstr( new InstrStoreE( index ) );
         }
         else
         { // Global
-            loadEnvironment();
             loadConstant( valueOf( name ) );
+            loadEnvironment();
             storeInTable();
         }
     }
@@ -137,12 +178,12 @@ public class MtsCompiler
     
     public void loadFromTable()
     {
-        addInstr( new InstrLoadT(), -1 );
+        addInstr( _loadT );
     }
     
     public void storeInTable()
     {
-        addInstr( new InstrStoreT(), -3 );
+        addInstr( _storeT );
     }
     
     // ========================================
@@ -151,9 +192,50 @@ public class MtsCompiler
     
 //    public abstract void postfixOperation( String op );
     
-//    public abstract void binaryOperation( String op );
+    public void binaryOperation( String op )
+    {
+        if ( !_binaryOps.containsKey( op ) )
+            throw new IllegalArgumentException( op );
+        
+        addInstr( _binaryOps.get( op ) );
+    }
     
-//    public abstract void logicOperation( String op );
+    public void logicOperation( String op )
+    {
+        if ( _logicalOps.containsKey( op ) )
+        {
+            addInstr( _logicalOps.get( op ) );
+        }
+        else if ( ">".equals( op ) )
+        {
+            addInstr( _logicalOps.get( "<=" ) );
+            addInstr( _not );
+        }
+        else if ( ">=".equals( op ) )
+        {
+            addInstr( _logicalOps.get( "<" ) );
+            addInstr( _not );
+        }
+        else if ( "!=".equals( op ) )
+        {
+            addInstr( _logicalOps.get( "==" ) );
+            addInstr( _not );
+        }
+        else if ( "and".equals( op ) )
+        {
+            addInstr( new InstrAnd() );
+            markJumpOrigin();
+        }
+        else if ( "or".equals( op ) )
+        {
+            addInstr( new InstrOr() );
+            markJumpOrigin();
+        }
+        else
+        {
+            throw new IllegalArgumentException( op );
+        }
+    }
     
     // ========================================
     

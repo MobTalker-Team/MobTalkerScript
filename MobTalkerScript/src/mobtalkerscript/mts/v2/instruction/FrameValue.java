@@ -7,6 +7,8 @@ public final class FrameValue
 {
     private MtsValue _value;
     
+    // ========================================
+    
     public FrameValue()
     {
         this( NIL );
@@ -17,6 +19,8 @@ public final class FrameValue
         _value = value;
     }
     
+    // ========================================
+    
     public MtsValue get()
     {
         return _value;
@@ -25,5 +29,13 @@ public final class FrameValue
     public void set( MtsValue value )
     {
         _value = value;
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        return _value.toString();
     }
 }

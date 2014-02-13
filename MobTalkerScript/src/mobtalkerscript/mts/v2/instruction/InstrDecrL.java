@@ -15,6 +15,12 @@ public class InstrDecrL extends MtsIndexedInstruction
     }
     
     @Override
+    public int stackSizeChange()
+    {
+        return 0;
+    }
+    
+    @Override
     public String toString()
     {
         return "DECRL " + _index;

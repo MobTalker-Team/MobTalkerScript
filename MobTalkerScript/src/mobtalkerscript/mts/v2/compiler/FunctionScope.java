@@ -19,10 +19,8 @@ public class FunctionScope
     private final List<ExternalDescription> _externals;
     private final List<LocalDescription> _locals;
     
-    private int _curStackSize;
-    private int _maxStackSize;
-    
     private final List<MtsInstruction> _instructions;
+    private final Queue<Integer> _marker;
     
     private final String _name;
     private final String _sourceFile;
@@ -40,6 +38,8 @@ public class FunctionScope
         _locals = Lists.newArrayList();
         
         _instructions = Lists.newArrayList();
+        _marker = Lists.newLinkedList();
+        
         _lineNumbers = Lists.newArrayList();
         
         _block = new BlockScope();
@@ -88,17 +88,34 @@ public class FunctionScope
     
     // ========================================
     
-    public void addInstruction( MtsInstruction instr, int line, int coloum, int stackChange )
+    public void addInstruction( MtsInstruction instr, int line, int coloum )
     {
         _instructions.add( instr );
         _lineNumbers.add( new SourcePosition( line, coloum ) );
-        _curStackSize += stackChange;
-        _maxStackSize = Math.max( _curStackSize, _maxStackSize );
     }
     
     public int getInstructionIndex()
     {
         return _instructions.size() - 1;
+    }
+    
+    public void markJumpOrigin()
+    {
+        int index = getInstructionIndex();
+        if ( !( _instructions.get( index ) instanceof MtsJumpInstruction ) )
+            throw new IllegalStateException();
+        
+        _marker.add( index );
+    }
+    
+    public void setJumpTarget()
+    {
+        int origin = _marker.remove();
+        MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.get( origin );
+        
+        int distance = getInstructionIndex() - origin;
+        
+        instr.setOffset( distance );
     }
     
     // ========================================
@@ -199,8 +216,16 @@ public class FunctionScope
     
     public MtsFunctionPrototype createPrototype()
     {
+        int curStackSize = 0;
+        int maxStackSize = 0;
+        for ( MtsInstruction instr : _instructions )
+        {
+            curStackSize += instr.stackSizeChange();
+            maxStackSize = Math.max( curStackSize, maxStackSize );
+        }
+        
         MtsFunctionPrototype p = new MtsFunctionPrototype( Lists.newArrayList( _instructions ),
-                                                           _maxStackSize,
+                                                           maxStackSize,
                                                            _locals.size(),
                                                            Lists.newArrayList( _constants ),
                                                            Lists.newArrayList( _externals ),

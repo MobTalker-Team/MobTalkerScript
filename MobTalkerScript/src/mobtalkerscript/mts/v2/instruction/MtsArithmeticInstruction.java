@@ -25,4 +25,10 @@ public abstract class MtsArithmeticInstruction extends MtsInstruction
     }
     
     protected abstract MtsNumber calculate( MtsNumber a, MtsNumber b );
+    
+    @Override
+    public final int stackSizeChange()
+    {
+        return -1;
+    }
 }

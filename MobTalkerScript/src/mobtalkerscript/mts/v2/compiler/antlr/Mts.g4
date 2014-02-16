@@ -78,13 +78,13 @@ POW             : '^' ;
 STR_CONCAT      : '..' ;
 TBL_APPEND      : '[]' ;
 
-ADD_ASSIGN      : '+=' ;
-SUB_ASSIGN      : '-=' ;
-MUL_ASSIGN      : '*=' ;
-DIV_ASSIGN      : '/=' ;
-MOD_ASSIGN      : '%=' ;
-POW_ASSIGN      : '^=' ;
-CONCAT_ASSIGN   : '.=' ;
+//ADD_ASSIGN      : '+=' ;
+//SUB_ASSIGN      : '-=' ;
+//MUL_ASSIGN      : '*=' ;
+//DIV_ASSIGN      : '/=' ;
+//MOD_ASSIGN      : '%=' ;
+//POW_ASSIGN      : '^=' ;
+//CONCAT_ASSIGN   : '.=' ;
 
 LineComment
     : '--' ~[\r\n]* -> channel( HIDDEN )
@@ -201,11 +201,11 @@ stmt
     ;
 
 assignment
-    : assignmentTarget ( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) expr ';'
+    : /*Target=assignmentTarget Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr ';'
       # OperatorAssignmentStmt
-    | assignmentTargetList '=' exprList ';'
+    |*/ Targets=assignmentTargetList '=' Exprs=exprList ';'
       # SimpleAssignmentStmt
-    | 'local' nameList ( '=' exprList )? ';'
+    | 'local' Names=nameList ( '=' Exprs=exprList )? ';'
       # LocalVariableDeclr
     ;
 
@@ -229,28 +229,28 @@ expr
       # SimpleExpr
     | tableCtor
       # SimpleExpr
-    | expr ( '++' | '--' )
-      # PostfixOpExpr
-    | ( '++' | '--' | '-' | 'not' ) expr
+    /*| expr ( '++' | '--' )
+      # PostfixOpExpr*/
+    | Operator=( /*'++' | '--' |*/ '-' | 'not' | '#' ) Right=expr
       # PrefixOpExpr
-    | expr ( '*' | '/' | '%' | '^' ) expr
+    | Left=expr Operator=( '*' | '/' | '%' | '^' ) Right=expr
       # BinaryOpExpr
-    | expr ( '+' | '-'  ) expr
+    | Left=expr Operator=( '+' | '-'  ) Right=expr
       # BinaryOpExpr
-    | expr ( '<=' | '>=' | '<' | '>' | '!=' | '==' ) expr
+    | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
       # LogicalOpExpr
-    | expr ( 'and' | 'or' ) expr
-      # LogicalOpExpr
-    | expr '..'<assoc=right> expr
+    | Left=expr Operator=( 'and' | 'or' ) Right=expr
+      # ConditionalBlockExpr
+    | Left=expr Operator='..'<assoc=right> Right=expr
       # BinaryOpExpr
     ;
 
 literal
-    : NullLiteral
-    | BooleanLiteral
-    | NumberLiteral
-    | HexNumberLiteral
-    | StringLiteral
+    : NullLiteral # LiteralNull
+    | BooleanLiteral # LiteralBoolean
+    | NumberLiteral # LiteralNumber
+    | HexNumberLiteral # LiteralNumber
+    | StringLiteral # LiteralString
     ;
 
 varAccess

@@ -12,7 +12,12 @@ public final class MtsClosure extends MtsFunction
     
     // ========================================
     
-    public MtsClosure( MtsFunctionPrototype prototype, FrameValue[] externals )
+    public MtsClosure( MtsFunctionPrototype prototype, MtsTable env )
+    {
+        this( prototype, new FrameValue( env ) );
+    }
+    
+    public MtsClosure( MtsFunctionPrototype prototype, FrameValue... externals )
     {
         checkNotNull( prototype );
         checkNotNull( externals );

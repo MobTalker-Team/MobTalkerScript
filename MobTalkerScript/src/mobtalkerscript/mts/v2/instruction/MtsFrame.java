@@ -58,9 +58,9 @@ public final class MtsFrame
         return _ip;
     }
     
-    public void setInstructionPointer( int offset )
+    public void setInstructionPointer( int target )
     {
-        _ip += offset;
+        _ip = target;
     }
     
     public int getLastLocal()

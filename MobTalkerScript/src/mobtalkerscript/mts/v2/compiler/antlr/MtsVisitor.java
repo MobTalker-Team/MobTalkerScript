@@ -82,6 +82,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitAssignmentStmt(@NotNull MtsParser.AssignmentStmtContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#ConditionalBlockExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionalBlockExpr(@NotNull MtsParser.ConditionalBlockExprContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#NameAccessExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -103,18 +110,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryOpExpr(@NotNull MtsParser.BinaryOpExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#PostfixOpExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPostfixOpExpr(@NotNull MtsParser.PostfixOpExprContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#CallStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCallStmt(@NotNull MtsParser.CallStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#LiteralBoolean}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiteralBoolean(@NotNull MtsParser.LiteralBooleanContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#ExprAccessExpr}.
@@ -129,6 +136,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlankStmt(@NotNull MtsParser.BlankStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#LiteralNull}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiteralNull(@NotNull MtsParser.LiteralNullContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#PrefixOpExpr}.
@@ -201,6 +215,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLocalFunctionDeclr(@NotNull MtsParser.LocalFunctionDeclrContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#LiteralString}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiteralString(@NotNull MtsParser.LiteralStringContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#nameList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -248,13 +269,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTableCtor(@NotNull MtsParser.TableCtorContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#OperatorAssignmentStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperatorAssignmentStmt(@NotNull MtsParser.OperatorAssignmentStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#LogicalOpExpr}.
@@ -353,6 +367,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExprPrefixedAssignmentTarget(@NotNull MtsParser.ExprPrefixedAssignmentTargetContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#LiteralNumber}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiteralNumber(@NotNull MtsParser.LiteralNumberContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#fieldList}.
@@ -465,11 +486,4 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAssignmentTargetList(@NotNull MtsParser.AssignmentTargetListContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#literal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLiteral(@NotNull MtsParser.LiteralContext ctx);
 }

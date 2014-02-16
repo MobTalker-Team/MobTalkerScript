@@ -98,6 +98,14 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitConditionalBlockExpr(@NotNull MtsParser.ConditionalBlockExprContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitNameAccessExpr(@NotNull MtsParser.NameAccessExprContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -122,7 +130,7 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitPostfixOpExpr(@NotNull MtsParser.PostfixOpExprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitCallStmt(@NotNull MtsParser.CallStmtContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -130,7 +138,7 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitCallStmt(@NotNull MtsParser.CallStmtContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralBoolean(@NotNull MtsParser.LiteralBooleanContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -147,6 +155,14 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitBlankStmt(@NotNull MtsParser.BlankStmtContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitLiteralNull(@NotNull MtsParser.LiteralNullContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -234,6 +250,14 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitLiteralString(@NotNull MtsParser.LiteralStringContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitNameList(@NotNull MtsParser.NameListContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -283,14 +307,6 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitTableCtor(@NotNull MtsParser.TableCtorContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
-	@Override public T visitOperatorAssignmentStmt(@NotNull MtsParser.OperatorAssignmentStmtContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -403,6 +419,14 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitExprPrefixedAssignmentTarget(@NotNull MtsParser.ExprPrefixedAssignmentTargetContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitLiteralNumber(@NotNull MtsParser.LiteralNumberContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -531,12 +555,4 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitAssignmentTargetList(@NotNull MtsParser.AssignmentTargetListContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
-	@Override public T visitLiteral(@NotNull MtsParser.LiteralContext ctx) { return visitChildren(ctx); }
 }

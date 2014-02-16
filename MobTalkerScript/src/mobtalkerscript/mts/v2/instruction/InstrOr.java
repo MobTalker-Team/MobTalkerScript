@@ -21,7 +21,7 @@ public final class InstrOr extends MtsJumpInstruction
     {
         if ( isTrue( frame.peek() ) )
         {
-            frame.setInstructionPointer( _offset );
+            super.execute( frame );
         }
         else
         {
@@ -40,6 +40,6 @@ public final class InstrOr extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "OR " + _offset;
+        return "OR " + getTarget();
     }
 }

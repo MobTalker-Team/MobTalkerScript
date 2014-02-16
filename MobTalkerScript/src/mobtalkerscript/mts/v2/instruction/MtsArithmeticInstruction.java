@@ -12,7 +12,7 @@ public abstract class MtsArithmeticInstruction extends MtsInstruction
         frame.push( calculate( coerce( frame.pop() ), b ) );
     }
     
-    private static MtsNumber coerce( MtsValue x )
+    public static MtsNumber coerce( MtsValue x )
     {
         try
         {

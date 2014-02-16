@@ -25,7 +25,7 @@ public final class InstrAnd extends MtsJumpInstruction
         }
         else
         {
-            frame.setInstructionPointer( _offset );
+            super.execute( frame );
         }
     }
     
@@ -40,6 +40,6 @@ public final class InstrAnd extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "AND " + _offset;
+        return "AND " + getTarget();
     }
 }

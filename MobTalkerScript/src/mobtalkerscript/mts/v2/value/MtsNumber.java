@@ -111,6 +111,11 @@ public final class MtsNumber extends MtsValue
         return valueOf( x._value % y._value );
     }
     
+    public static MtsNumber pow( MtsNumber x, MtsNumber y )
+    {
+        return valueOf( Math.pow( x._value, y._value ) );
+    }
+    
     public MtsNumber neg()
     {
         return valueOf( -_value );

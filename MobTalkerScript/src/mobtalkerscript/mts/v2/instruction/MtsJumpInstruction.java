@@ -2,25 +2,38 @@ package mobtalkerscript.mts.v2.instruction;
 
 public abstract class MtsJumpInstruction extends MtsInstruction
 {
-    protected int _offset;
+    private int _target;
     
     // ========================================
     
     public MtsJumpInstruction()
     {
-        this( 0 );
+        this( -1 );
     }
     
-    public MtsJumpInstruction( int offset )
+    public MtsJumpInstruction( int target )
     {
-        _offset = offset;
+        _target = target;
     }
     
     // ========================================
     
-    public void setOffset( int offset )
+    @Override
+    public void execute( MtsFrame frame )
     {
-        _offset = offset;
+        frame.setInstructionPointer( _target - 1 );
+    }
+    
+    // ========================================
+    
+    public int getTarget()
+    {
+        return _target;
+    }
+    
+    public void setTarget( int target )
+    {
+        _target = target;
     }
     
 }

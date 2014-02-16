@@ -19,14 +19,18 @@ public class FunctionScope
     private final List<ExternalDescription> _externals;
     private final List<LocalDescription> _locals;
     
-    private final List<MtsInstruction> _instructions;
-    private final Queue<Integer> _marker;
+    private final LinkedList<MtsInstruction> _instructions;
+    private final Queue<MtsJumpInstruction> _pendingJumps;
     
     private final String _name;
     private final String _sourceFile;
-    private final List<SourcePosition> _lineNumbers;
+    private final int _sourceLineStart;
+    private final int _sourceLineEnd;
+    private final LinkedList<SourcePosition> _lineNumbers;
     
     private BlockScope _block;
+    private final Queue<LoopBlock> _loops;
+    private final Queue<ConditionalBlock> _conditionals;
     
     // ========================================
     
@@ -37,22 +41,31 @@ public class FunctionScope
         _externals = Lists.newArrayList();
         _locals = Lists.newArrayList();
         
-        _instructions = Lists.newArrayList();
-        _marker = Lists.newLinkedList();
+        _instructions = Lists.newLinkedList();
+        _pendingJumps = Lists.newLinkedList();
         
-        _lineNumbers = Lists.newArrayList();
+        _lineNumbers = Lists.newLinkedList();
         
         _block = new BlockScope();
+        _loops = Lists.newLinkedList();
+        _conditionals = Lists.newLinkedList();
         
         // External 0 is always _ENV
         _externals.add( new ExternalDescription( MtsCompiler.ENV, 0 ) );
     }
     
-    public FunctionScope( FunctionScope parent, String name, String sourceFile )
+    public FunctionScope( FunctionScope parent,
+                          String name,
+                          String sourceFile,
+                          int sourceLineStart,
+                          int sourceLineEnd )
     {
         _parent = parent;
         _name = name;
+        
         _sourceFile = sourceFile;
+        _sourceLineStart = sourceLineStart;
+        _sourceLineEnd = sourceLineEnd;
     }
     
     // ========================================
@@ -88,6 +101,75 @@ public class FunctionScope
     
     // ========================================
     
+    public void enterLoopCondition()
+    {
+        _loops.add( new LoopBlock( getInstructionIndex() + 1 ) );
+    }
+    
+    public void enterLoopBody()
+    {
+        _loops.element().addPendingLeave( _instructions.getLast() );
+    }
+    
+    public void addPendingBreak()
+    {
+        _loops.element().addBreak( _instructions.getLast() );
+    }
+    
+    public void leaveLoopBlock()
+    {
+        LoopBlock loop = _loops.remove();
+        loop.setBreakTarget( getInstructionIndex() + 1 );
+        loop.setLeaveTarget( getInstructionIndex() + 1 );
+        
+        int target = loop.getFirstInstructionIndex();
+        MtsJumpInstruction jump = (MtsJumpInstruction) _instructions.getLast();
+        jump.setTarget( target );
+    }
+    
+    // ========================================
+    
+    public void enterConditional()
+    {
+        _conditionals.add( new ConditionalBlock() );
+    }
+    
+    public void markPendingNextCondition()
+    {
+        _conditionals.element().addPendingNext( _instructions.getLast() );
+    }
+    
+    public void markPendingLeaveCondition()
+    {
+        _conditionals.element().addPendingLeave( _instructions.getLast() );
+    }
+    
+    public void markBeginNextCondition()
+    {
+        _conditionals.element().markBeginNext( getInstructionIndex() );
+    }
+    
+    public void leaveConditional()
+    {
+        ConditionalBlock block = _conditionals.remove();
+        block.setLeaveTarget( getInstructionIndex() );
+    }
+    
+    // ========================================
+    
+    public void markPendingJump()
+    {
+        _pendingJumps.add( (MtsJumpInstruction) _instructions.getLast() );
+    }
+    
+    public void setJumpTarget()
+    {
+        MtsJumpInstruction instr = _pendingJumps.remove();
+        instr.setTarget( getInstructionIndex() );
+    }
+    
+    // ========================================
+    
     public void addInstruction( MtsInstruction instr, int line, int coloum )
     {
         _instructions.add( instr );
@@ -97,25 +179,6 @@ public class FunctionScope
     public int getInstructionIndex()
     {
         return _instructions.size() - 1;
-    }
-    
-    public void markJumpOrigin()
-    {
-        int index = getInstructionIndex();
-        if ( !( _instructions.get( index ) instanceof MtsJumpInstruction ) )
-            throw new IllegalStateException();
-        
-        _marker.add( index );
-    }
-    
-    public void setJumpTarget()
-    {
-        int origin = _marker.remove();
-        MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.get( origin );
-        
-        int distance = getInstructionIndex() - origin;
-        
-        instr.setOffset( distance );
     }
     
     // ========================================
@@ -232,8 +295,8 @@ public class FunctionScope
                                                            _name,
                                                            _lineNumbers,
                                                            _sourceFile,
-                                                           0,
-                                                           0,
+                                                           _sourceLineStart,
+                                                           _sourceLineEnd,
                                                            _locals );
         
         for ( FunctionScope child : _childs )

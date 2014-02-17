@@ -147,6 +147,8 @@ public final class MtsFrame
         MtsValue[] values = new MtsValue[count];
         System.arraycopy( _stack, ( _top - count ), values, 0, count );
         
+        _top -= count;
+        
         return values;
     }
     

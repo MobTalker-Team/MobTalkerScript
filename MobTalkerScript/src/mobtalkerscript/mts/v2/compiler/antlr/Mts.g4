@@ -77,14 +77,15 @@ MOD             : '%' ;
 POW             : '^' ;
 STR_CONCAT      : '..' ;
 TBL_APPEND      : '[]' ;
+SIZEOF			: '#' ;
 
-//ADD_ASSIGN      : '+=' ;
-//SUB_ASSIGN      : '-=' ;
-//MUL_ASSIGN      : '*=' ;
-//DIV_ASSIGN      : '/=' ;
-//MOD_ASSIGN      : '%=' ;
-//POW_ASSIGN      : '^=' ;
-//CONCAT_ASSIGN   : '.=' ;
+ADD_ASSIGN      : '+=' ;
+SUB_ASSIGN      : '-=' ;
+MUL_ASSIGN      : '*=' ;
+DIV_ASSIGN      : '/=' ;
+MOD_ASSIGN      : '%=' ;
+POW_ASSIGN      : '^=' ;
+CONCAT_ASSIGN   : '.=' ;
 
 LineComment
     : '--' ~[\r\n]* -> channel( HIDDEN )
@@ -94,41 +95,70 @@ BlockComment
     : '--[[' .*? ']]' -> channel( HIDDEN )
     ;
 
-NullLiteral
+Identifier
+    : [_a-zA-Z][_a-zA-Z0-9]*
+    ;
+
+NULL
     : 'nil'
     ;
 
-BooleanLiteral
+BOOLEAN
     : 'true' | 'false'
     ;
 
-StringLiteral
-    : '"' ( EscapeSequence | ~('\\'|'"') )* '"'
-    ;
+NORMALSTRING
+	: '"' ( EscapeSequence | ~('\\'|'"') )* '"'
+	;
 
-fragment EscapeSequence
-    : '\\' [$"\\]
+fragment 
+EscapeSequence
+    : '\\' [abfnrtvz$"\\]
     ;
+    
+LONGSTRING
+	: '[[' .*? ']]'
+	;
 
-Name
-    : [_a-zA-Z]+ [_a-zA-Z0-9]*
-    ;
-
-NumberLiteral
-    : Digit+ ( '.' Digit+ )?
-    ;
-
-fragment Digit
+fragment 
+Digit
     : [0-9]
     ;
 
-HexNumberLiteral
+fragment 
+HexDigit
+    : [0-9a-fA-F]
+    ;
+
+fragment
+ExponentPart
+	: [eE] [+-]? Digit+
+	;
+	
+fragment
+HexExponentPart
+	: [pP] [+-]? Digit+
+	;
+    
+INTEGER
+	: Digit+
+	;
+
+FLOAT
+	: Digit+ '.' Digit* ExponentPart?
+	| '.' Digit+ ExponentPart?
+	| Digit+ ExponentPart
+	;
+
+HEXINTEGER
     : '0' [xX] HexDigit+ ( '.' HexDigit+ )?
     ;
 
-fragment HexDigit
-    : [0-9a-fA-F]
-    ;
+HEXFLOAT
+	: '0' [xX] HexDigit+ '.' HexDigit* HexExponentPart?
+	| '0' [xX] '.' HexDigit+ HexExponentPart?
+	| '0' [xX] HexDigit+ HexExponentPart
+	;
 
 // =============================================================================
 
@@ -137,15 +167,155 @@ chunk
     : block EOF
     ;
 
-funcDeclr
-    : 'function' funcName funcBody
-      # GlobalFunctionDeclr
-    | 'local' 'function' Name funcBody
-      # LocalFunctionDeclr
+block
+    : stmt*
+    ;
+
+stmt
+    : ';'
+      # BlankStmt
+    | assignExpr ';'
+      # AssignmentStmt
+    | 'local' NameList=nameList ( '=' ExprList=exprList )?
+      # LocalVarDeclrStmt
+    | call ';'
+      # CallStmt
+    | command
+      # CommandStmt
+    | '::' Name=Identifier '::'
+      # LabelStmt
+    | 'break'
+      # BreakStmt
+    | 'return' ExprList=exprList? ';'
+      # ReturnStmt
+    | 'do' Block=block 'end'
+      # NestedBlock
+    | 'while' Condition=expr 'do' Block=block 'end'
+      # WhileLoop
+    | 'repeat' Block=block 'until' Condition=expr ';'
+      # RepeatLoop
+    | 'if' Condition=expr 'then' Block=block ElseIfs+=elseIfBody* ( Else=elseBody | 'end' )
+      # IfThenElse
+    | 'for' Control=numericForControl 'do' Block=block 'end'
+      # NumericForLoop
+    | 'for' Control=genericForControl 'do' Block=block 'end'
+      # GenericForLoop
+    | 'function' Name=funcName Body=funcBody
+      # FuncDeclrStmt
+    | 'local' 'function' Name=Identifier Body=funcBody
+      # LocalFuncDeclrStmt
+    ;
+
+expr
+    : '(' expr ')'
+      # SimpleExpr
+    | NULL 
+      # NullLiteral
+    | BOOLEAN
+      # BooleanLiteral
+    | ( INTEGER | FLOAT | HEXINTEGER | HEXFLOAT )
+      # NumberLiteral
+    | ( NORMALSTRING | LONGSTRING )
+      # StringLiteral
+    | funcExpr
+      # AnonFuncDeclrExpr
+    | call
+      # CallExpr
+    | varAccess
+      # SimpleExpr
+    | tableCtor
+      # SimpleExpr
+//    | Operator=( '++' | '--' ) expr
+//      # PrefixOpExpr
+//    | expr Operator=( '++' | '--' )
+//      # PostfixOpExpr
+    | Operator=( '-' | 'not' | '#' ) Expr=expr
+      # UnaryOpExpr
+    | Left=expr Operator=( '*' | '/' | '%' | '^' ) Right=expr
+      # BinaryOpExpr
+    | Left=expr Operator=( '+' | '-'  ) Right=expr
+      # BinaryOpExpr
+    | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
+      # LogicalOpExpr
+    | Left=expr Operator=( 'and' | 'or' ) Right=expr
+      # ConditionalOpExpr
+    | Left=expr Operator='..'<assoc=right> Right=expr
+      # BinaryOpExpr
+    ;
+
+assignExpr
+    : VarExprList=varExprList '=' ExprList=exprList
+      # SimpleAssignmentStmt
+  	//| varExpr ( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) expr
+  	| VarExpr=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
+  	  # OperatorAssignmentStmt
+    ;
+	
+varExpr
+	: ( Root=Identifier | '(' RootExpr=expr ')' Suffixes+=varSuffix ) Suffixes+=varSuffix*
+	;
+	
+varSuffix
+	: callArgs* fieldAccess
+	;
+	
+varOrExpr
+	: varExpr | '(' expr ')'
+	;
+
+varAccess
+	: varOrExpr fieldAccess*
+	;
+	
+call
+	: varOrExpr callArgs+
+	;
+
+callArgs
+    : ':' Identifier '(' exprList? ')'
+      # MethodCall
+    | '(' exprList? ')'
+      # FunctionCall
+    ;
+
+fieldAccess
+    : '[' Field=expr ']'
+      # ExprFieldAccess
+    | '.' Field=Identifier
+      # NameFieldAccess
+    ;
+
+tableCtor
+    : '{' fieldDefList? '}'
+    ;
+
+fieldDef
+    : '[' Key=expr ']' '=' Value=expr
+      # ExprKeyField
+    | Key=Identifier '=' Value=expr
+      # NameKeyField
+    | Value=expr
+      # ListField
+    ;
+    
+elseIfBody
+    : 'else if' expr 'then' block
+    ;
+
+elseBody
+    : 'else' block 'end'
+    ;
+
+numericForControl
+    : Identifier '=' expr ',' expr ( ',' expr )?
+    ;
+
+genericForControl
+    : nameList 'in' exprList
     ;
 
 funcName
-    : Name ( '.' Name )* ( ':' Name )?
+    : Identifier ( '.' Identifier )* ( ':' Identifier )?
     ;
 
 funcExpr
@@ -156,153 +326,10 @@ funcBody
     : '(' paramList? ')' block 'end'
     ;
 
-paramList
-    : nameList /*(',' '...')?*/
-    /*| '...'*/
-    ;
-
-nameList
-    : Name ( ',' Name )*
-    ;
-
-block
-    : stmt* returnStmt?
-    ;
-
-stmt
-    : ';'
-      # BlankStmt
-    | assignment
-      # AssignmentStmt
-    | call ';'
-      # CallStmt
-    | command
-      # CommandStmt
-    | '::' Name '::'
-      # LabelStmt
-    | breakStmt
-      # Break
-    | returnStmt
-      # Return
-    | 'do' block 'end'
-      # DoBlock
-    | 'while' expr 'do' block 'end'
-      # WhileLoop
-    | 'repeat' block 'until' expr ';'
-      # RepeatLoop
-    | 'if' expr 'then' block elseIfBody* ( elseBody | 'end' )
-      # IfThenElse
-    | 'for' numericForControl 'do' block 'end'
-      # NumericForLoop
-    | 'for' genericForControl 'do' block 'end'
-      # GenericForLoop
-    | funcDeclr
-      # FunctionDeclr
-    ;
-
-assignment
-    : /*Target=assignmentTarget Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr ';'
-      # OperatorAssignmentStmt
-    |*/ Targets=assignmentTargetList '=' Exprs=exprList ';'
-      # SimpleAssignmentStmt
-    | 'local' Names=nameList ( '=' Exprs=exprList )? ';'
-      # LocalVariableDeclr
-    ;
-
-assignmentTarget
-    : Name
-      # SimpleAssignmentTarget
-    | Name ( fieldAccess | callArgs )* ( fieldAccess | appendExpr )
-      # FieldAssignmentTarget
-    | '(' expr ')' ( fieldAccess | callArgs )* ( fieldAccess | appendExpr )
-      # ExprPrefixedAssignmentTarget
-    ;
-
-expr
-    : '(' expr ')'
-      # SimpleExpr
-    | literal
-      # LiteralExpr
-    | funcExpr
-      # AnonymousFunctionDeclr
-    | varAccess
-      # SimpleExpr
-    | tableCtor
-      # SimpleExpr
-    /*| expr ( '++' | '--' )
-      # PostfixOpExpr*/
-    | Operator=( /*'++' | '--' |*/ '-' | 'not' | '#' ) Right=expr
-      # PrefixOpExpr
-    | Left=expr Operator=( '*' | '/' | '%' | '^' ) Right=expr
-      # BinaryOpExpr
-    | Left=expr Operator=( '+' | '-'  ) Right=expr
-      # BinaryOpExpr
-    | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
-      # LogicalOpExpr
-    | Left=expr Operator=( 'and' | 'or' ) Right=expr
-      # ConditionalBlockExpr
-    | Left=expr Operator='..'<assoc=right> Right=expr
-      # BinaryOpExpr
-    ;
-
-literal
-    : NullLiteral # LiteralNull
-    | BooleanLiteral # LiteralBoolean
-    | NumberLiteral # LiteralNumber
-    | HexNumberLiteral # LiteralNumber
-    | StringLiteral # LiteralString
-    ;
-
-varAccess
-    : Name ( fieldAccess | callArgs )*
-      # NameAccessExpr
-    | '(' expr ')' ( fieldAccess | callArgs )*
-      # ExprAccessExpr
-    ;
-
-callArgs
-    : ':' Name '(' exprList? ')'
-      # MethodCall
-    | '(' exprList? ')'
-      # FunctionCall
-    ;
-
-exprList
-    : expr ( ',' expr )*
-    ;
-
-fieldAccess
-    : '[' expr ']'
-      # ExprFieldAccess
-    | '.' Name
-      # NameFieldAccess
-    ;
-
-appendExpr
-    : '[]'
-    ;
-
-tableCtor
-    : '{' fieldList? '}'
-    ;
-
-fieldList
-    : field ( ',' field )* ','?
-    ;
-
-field
-    : '[' expr ']' '=' expr
-      # ExprKeyField
-    | Name '=' expr
-      # NameKeyField
-    | expr
-      # ListField
-    ;
-
 command
-    : 'jump' Name ';'
+    : 'jump' Identifier ';'
       # JumpCommandStmt
-    | 'call' Name ';'
+    | 'call' Identifier ';'
       # CallCommandStmt
     | 'say' expr? expr expr? ';'
       # SayCommandStmt
@@ -313,48 +340,38 @@ command
     | 'hide' expr ( 'with' exprList )? ';'
       # HideCommandStmt
     /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-      # PlayMusicCommandStmt
-    | 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-      # PlaySoundCommandStmt
-    | 'stop music' ( 'fadeout' expr )? ';'
+      # PlayMusicCommandStmt*/
+    /*| 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+      # PlaySoundCommandStmt*/
+    /*| 'stop music' ( 'fadeout' expr )? ';'
       # StopMusicCommandStmt*/
     /*| 'pause' expr? ';'
       # PauseCommandStmt*/
     | 'menu' expr? ( 'option' expr block )+ 'end'
       # MenuCommandStmt
     ;
+    
+// ========================================
+// Lists
 
-call
-    : Name ( fieldAccess | callArgs )* callArgs
-      # NameCallExpr
-    | '(' expr ')' ( fieldAccess | callArgs )* callArgs
-      # ExprCallExpr
+nameList
+    : Identifier ( ',' Identifier )*
     ;
 
-elseIfBody
-    : 'else if' expr 'then' block
+paramList
+    : nameList /*(',' '...')?*/
+    /*| '...'*/
     ;
 
-elseBody
-    : 'else' block 'end'
+exprList
+    : expr ( ',' expr )*
+    ;
+    
+varExprList
+	: varExpr ( ',' varExpr )*
+	;
+
+fieldDefList
+    : fieldDef ( ',' fieldDef )* ','?
     ;
 
-numericForControl
-    : Name '=' expr ',' expr ( ',' expr )?
-    ;
-
-genericForControl
-    : nameList 'in' exprList
-    ;
-
-assignmentTargetList
-    : assignmentTarget ( ',' assignmentTarget )*
-    ;
-
-returnStmt
-    : 'return' exprList? ';'
-    ;
-
-breakStmt
-    : 'break' ';'
-    ;

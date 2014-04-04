@@ -36,24 +36,24 @@ public final class Stack<T>
     // ========================================
     
     @SuppressWarnings( "unchecked" )
-    private void checkArraySize()
+    private void resizeIfNeeded()
     {
-        if ( _array.length <= _top )
-        {
-            int newSize = _array.length << 1;
-            
-            T[] newArr = (T[]) new Object[newSize];
-            
-            System.arraycopy( _array, 0, newArr, 0, _array.length );
-            _array = newArr;
-        }
+        if ( _array.length > _top )
+            return;
+        
+        int newSize = _array.length << 1;
+        
+        T[] newArr = (T[]) new Object[newSize];
+        
+        System.arraycopy( _array, 0, newArr, 0, _array.length );
+        _array = newArr;
     }
     
     public void push( T o )
     {
         _top++;
         
-        checkArraySize();
+        resizeIfNeeded();
         
         _array[_top] = o;
     }

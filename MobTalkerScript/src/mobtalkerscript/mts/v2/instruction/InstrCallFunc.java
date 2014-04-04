@@ -20,14 +20,13 @@ public final class InstrCallFunc extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        MtsValue target = frame.pop();
-        
         MtsValue[] args = new MtsValue[_nArgs];
-        for ( int i = 0; i < _nArgs; i++ )
+        for ( int i = _nArgs; i >= 0; i-- )
         {
             args[i] = frame.pop();
         }
         
+        MtsValue target = frame.pop();
         MtsValue result = target.call( args );
         
         if ( _nReturn == 0 )

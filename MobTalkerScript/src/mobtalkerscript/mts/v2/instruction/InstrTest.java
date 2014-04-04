@@ -2,6 +2,9 @@ package mobtalkerscript.mts.v2.instruction;
 
 import static mobtalkerscript.mts.v2.value.MtsBoolean.*;
 
+/**
+ * Jump instruction that only jumps if the top of the stack is not true.
+ */
 public final class InstrTest extends MtsJumpInstruction
 {
     
@@ -37,6 +40,6 @@ public final class InstrTest extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "TEST " + getTarget();
+        return "TEST " + getDistance();
     }
 }

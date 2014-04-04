@@ -8,9 +8,9 @@ public class InstrJump extends MtsJumpInstruction
         super();
     }
     
-    public InstrJump( int target )
+    public InstrJump( int distance )
     {
-        super( target );
+        super( distance );
     }
     
     // ========================================
@@ -26,7 +26,7 @@ public class InstrJump extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "JUMP " + getTarget();
+        return "JUMP " + getDistance();
     }
     
 }

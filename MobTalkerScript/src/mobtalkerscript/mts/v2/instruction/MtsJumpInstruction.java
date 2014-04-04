@@ -1,19 +1,21 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import static com.google.common.base.Preconditions.*;
+
 public abstract class MtsJumpInstruction extends MtsInstruction
 {
-    private int _target;
+    private int _distance;
     
     // ========================================
     
     public MtsJumpInstruction()
     {
-        this( -1 );
+        this( 0 );
     }
     
-    public MtsJumpInstruction( int target )
+    public MtsJumpInstruction( int distance )
     {
-        _target = target;
+        _distance = distance;
     }
     
     // ========================================
@@ -21,19 +23,26 @@ public abstract class MtsJumpInstruction extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.setInstructionPointer( _target - 1 );
+        frame.setInstructionPointer( ( frame.getInstructionPointer() + getDistance() ) - 1 );
     }
     
     // ========================================
     
-    public int getTarget()
+    public int getDistance()
     {
-        return _target;
+        return _distance;
     }
     
-    public void setTarget( int target )
+    public void setDistance( int distance )
     {
-        _target = target;
+        checkArgument( distance != 0, "target can not be self (infinite loop)" );
+        
+        _distance = distance;
+    }
+    
+    public void setTarget( int sourceIndex, int targetIndex )
+    {
+        setDistance( targetIndex - sourceIndex );
     }
     
 }

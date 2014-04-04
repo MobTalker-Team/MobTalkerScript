@@ -40,6 +40,6 @@ public final class InstrAnd extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "AND " + getTarget();
+        return "AND " + getDistance();
     }
 }

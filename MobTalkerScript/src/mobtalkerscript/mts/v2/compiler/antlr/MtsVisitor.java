@@ -12,6 +12,13 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#fieldDefList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldDefList(@NotNull MtsParser.FieldDefListContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#chunk}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -19,18 +26,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitChunk(@NotNull MtsParser.ChunkContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#ExprCallExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#NullLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprCallExpr(@NotNull MtsParser.ExprCallExprContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#FieldAssignmentTarget}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFieldAssignmentTarget(@NotNull MtsParser.FieldAssignmentTargetContext ctx);
+	T visitNullLiteral(@NotNull MtsParser.NullLiteralContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#paramList}.
@@ -38,13 +38,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParamList(@NotNull MtsParser.ParamListContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#returnStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitReturnStmt(@NotNull MtsParser.ReturnStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#elseBody}.
@@ -61,13 +54,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitSayCommandStmt(@NotNull MtsParser.SayCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#LabelStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLabelStmt(@NotNull MtsParser.LabelStmtContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#funcExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -75,25 +61,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFuncExpr(@NotNull MtsParser.FuncExprContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#LabelStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLabelStmt(@NotNull MtsParser.LabelStmtContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#AssignmentStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitAssignmentStmt(@NotNull MtsParser.AssignmentStmtContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#ConditionalBlockExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConditionalBlockExpr(@NotNull MtsParser.ConditionalBlockExprContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#NameAccessExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNameAccessExpr(@NotNull MtsParser.NameAccessExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#CommandStmt}.
@@ -117,18 +96,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitCallStmt(@NotNull MtsParser.CallStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#LiteralBoolean}.
+	 * Visit a parse tree produced by {@link MtsParser#varSuffix}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteralBoolean(@NotNull MtsParser.LiteralBooleanContext ctx);
+	T visitVarSuffix(@NotNull MtsParser.VarSuffixContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#ExprAccessExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#varAccess}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprAccessExpr(@NotNull MtsParser.ExprAccessExprContext ctx);
+	T visitVarAccess(@NotNull MtsParser.VarAccessContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#BlankStmt}.
@@ -138,18 +117,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBlankStmt(@NotNull MtsParser.BlankStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#LiteralNull}.
+	 * Visit a parse tree produced by {@link MtsParser#ReturnStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteralNull(@NotNull MtsParser.LiteralNullContext ctx);
+	T visitReturnStmt(@NotNull MtsParser.ReturnStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#PrefixOpExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#UnaryOpExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrefixOpExpr(@NotNull MtsParser.PrefixOpExprContext ctx);
+	T visitUnaryOpExpr(@NotNull MtsParser.UnaryOpExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#FunctionCall}.
@@ -180,46 +159,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitIfThenElse(@NotNull MtsParser.IfThenElseContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#Return}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitReturn(@NotNull MtsParser.ReturnContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#AnonymousFunctionDeclr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAnonymousFunctionDeclr(@NotNull MtsParser.AnonymousFunctionDeclrContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#FunctionDeclr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionDeclr(@NotNull MtsParser.FunctionDeclrContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#SimpleAssignmentStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitSimpleAssignmentStmt(@NotNull MtsParser.SimpleAssignmentStmtContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#LocalFunctionDeclr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLocalFunctionDeclr(@NotNull MtsParser.LocalFunctionDeclrContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#LiteralString}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLiteralString(@NotNull MtsParser.LiteralStringContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#nameList}.
@@ -229,11 +173,53 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNameList(@NotNull MtsParser.NameListContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#FuncDeclrStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFuncDeclrStmt(@NotNull MtsParser.FuncDeclrStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#AnonFuncDeclrExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAnonFuncDeclrExpr(@NotNull MtsParser.AnonFuncDeclrExprContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#NestedBlock}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNestedBlock(@NotNull MtsParser.NestedBlockContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#call}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCall(@NotNull MtsParser.CallContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#LocalVarDeclrStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLocalVarDeclrStmt(@NotNull MtsParser.LocalVarDeclrStmtContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#ExprFieldAccess}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExprFieldAccess(@NotNull MtsParser.ExprFieldAccessContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#BreakStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBreakStmt(@NotNull MtsParser.BreakStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#elseIfBody}.
@@ -243,18 +229,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitElseIfBody(@NotNull MtsParser.ElseIfBodyContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#SimpleAssignmentTarget}.
+	 * Visit a parse tree produced by {@link MtsParser#varOrExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSimpleAssignmentTarget(@NotNull MtsParser.SimpleAssignmentTargetContext ctx);
+	T visitVarOrExpr(@NotNull MtsParser.VarOrExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#DoBlock}.
+	 * Visit a parse tree produced by {@link MtsParser#varExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDoBlock(@NotNull MtsParser.DoBlockContext ctx);
+	T visitVarExpr(@NotNull MtsParser.VarExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#block}.
@@ -271,6 +257,20 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitTableCtor(@NotNull MtsParser.TableCtorContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#NumberLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumberLiteral(@NotNull MtsParser.NumberLiteralContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#OperatorAssignmentStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperatorAssignmentStmt(@NotNull MtsParser.OperatorAssignmentStmtContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#LogicalOpExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -285,18 +285,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMethodCall(@NotNull MtsParser.MethodCallContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#breakStmt}.
+	 * Visit a parse tree produced by {@link MtsParser#CallExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBreakStmt(@NotNull MtsParser.BreakStmtContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#appendExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAppendExpr(@NotNull MtsParser.AppendExprContext ctx);
+	T visitCallExpr(@NotNull MtsParser.CallExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#ExprKeyField}.
@@ -313,25 +306,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitRepeatLoop(@NotNull MtsParser.RepeatLoopContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#LiteralExpr}.
+	 * Visit a parse tree produced by {@link MtsParser#varExprList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteralExpr(@NotNull MtsParser.LiteralExprContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#NameCallExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNameCallExpr(@NotNull MtsParser.NameCallExprContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#LocalVariableDeclr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLocalVariableDeclr(@NotNull MtsParser.LocalVariableDeclrContext ctx);
+	T visitVarExprList(@NotNull MtsParser.VarExprListContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#NumericForLoop}.
@@ -339,6 +318,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNumericForLoop(@NotNull MtsParser.NumericForLoopContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#ConditionalOpExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionalOpExpr(@NotNull MtsParser.ConditionalOpExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#NameKeyField}.
@@ -355,32 +341,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExprList(@NotNull MtsParser.ExprListContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#StringLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLiteral(@NotNull MtsParser.StringLiteralContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#WhileLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitWhileLoop(@NotNull MtsParser.WhileLoopContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#ExprPrefixedAssignmentTarget}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExprPrefixedAssignmentTarget(@NotNull MtsParser.ExprPrefixedAssignmentTargetContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#LiteralNumber}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLiteralNumber(@NotNull MtsParser.LiteralNumberContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#fieldList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFieldList(@NotNull MtsParser.FieldListContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#CallCommandStmt}.
@@ -390,20 +362,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitCallCommandStmt(@NotNull MtsParser.CallCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#GenericForLoop}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#GlobalFunctionDeclr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGlobalFunctionDeclr(@NotNull MtsParser.GlobalFunctionDeclrContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#funcName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -411,11 +369,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFuncName(@NotNull MtsParser.FuncNameContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#Break}.
+	 * Visit a parse tree produced by {@link MtsParser#GenericForLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBreak(@NotNull MtsParser.BreakContext ctx);
+	T visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#genericForControl}.
@@ -444,6 +402,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitJumpCommandStmt(@NotNull MtsParser.JumpCommandStmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#LocalFuncDeclrStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLocalFuncDeclrStmt(@NotNull MtsParser.LocalFuncDeclrStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#ListField}.
@@ -481,9 +446,9 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFuncBody(@NotNull MtsParser.FuncBodyContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#assignmentTargetList}.
+	 * Visit a parse tree produced by {@link MtsParser#BooleanLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignmentTargetList(@NotNull MtsParser.AssignmentTargetListContext ctx);
+	T visitBooleanLiteral(@NotNull MtsParser.BooleanLiteralContext ctx);
 }

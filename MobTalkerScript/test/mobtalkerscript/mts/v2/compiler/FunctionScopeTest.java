@@ -6,17 +6,13 @@ import org.junit.*;
 
 public class FunctionScopeTest
 {
-    private FunctionScope _func1;
-    private FunctionScope _func2;
-    private FunctionScope _func3;
+    private FunctionState _func1;
+    private FunctionState _func2;
+    private FunctionState _func3;
     
     @Before
     public void setUp() throws Exception
-    {
-        _func1 = new FunctionScope( null, "f1", "test" );
-        _func2 = new FunctionScope( _func1, "f2", "test" );
-        _func3 = new FunctionScope( _func2, "f3", "test" );
-    }
+    {}
     
     @Test
     public void testEnterBlock()

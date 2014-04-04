@@ -2,25 +2,24 @@ package mobtalkerscript.mts.v2.instruction;
 
 import mobtalkerscript.mts.v2.value.*;
 
-public class InstrStoreT extends MtsInstruction
+public class InstrNewTable extends MtsInstruction
 {
+    
     @Override
     public void execute( MtsFrame frame )
     {
-        MtsValue key = frame.pop();
-        MtsValue t = frame.pop();
-        t.set( key, frame.pop() );
+        frame.push( new MtsTable() );
     }
     
     @Override
     public int stackSizeChange()
     {
-        return -3;
+        return 1;
     }
     
     @Override
     public String toString()
     {
-        return "STORET";
+        return "NEWTABLE";
     }
 }

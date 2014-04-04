@@ -54,13 +54,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitSayCommandStmt(@NotNull MtsParser.SayCommandStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#funcExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFuncExpr(@NotNull MtsParser.FuncExprContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#LabelStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -178,13 +171,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFuncDeclrStmt(@NotNull MtsParser.FuncDeclrStmtContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#AnonFuncDeclrExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAnonFuncDeclrExpr(@NotNull MtsParser.AnonFuncDeclrExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#NestedBlock}.
@@ -374,6 +360,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#FuncDeclrExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFuncDeclrExpr(@NotNull MtsParser.FuncDeclrExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#genericForControl}.

@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import mobtalkerscript.mts.v2.*;
+
 public final class InstrLoadL extends MtsIndexedInstruction
 {
     public InstrLoadL( int i )
@@ -27,5 +29,11 @@ public final class InstrLoadL extends MtsIndexedInstruction
     public String toString()
     {
         return "LOADL " + _index;
+    }
+    
+    @Override
+    public String toString( MtsFunctionPrototype proto )
+    {
+        return toString() + " (" + proto.getLocals().get( _index ).getName() + ")";
     }
 }

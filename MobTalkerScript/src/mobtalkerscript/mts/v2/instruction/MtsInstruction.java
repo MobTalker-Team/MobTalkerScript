@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import mobtalkerscript.mts.v2.*;
+
 public abstract class MtsInstruction
 {
     
@@ -24,4 +26,8 @@ public abstract class MtsInstruction
     @Override
     public abstract String toString();
     
+    public String toString( MtsFunctionPrototype proto )
+    {
+        return toString();
+    }
 }

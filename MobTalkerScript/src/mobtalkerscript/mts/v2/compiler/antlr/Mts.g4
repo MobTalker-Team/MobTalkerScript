@@ -217,8 +217,8 @@ expr
       # NumberLiteral
     | ( NORMALSTRING | LONGSTRING )
       # StringLiteral
-    | funcExpr
-      # AnonFuncDeclrExpr
+    | 'function' funcBody
+      # FuncDeclrExpr
     | call
       # CallExpr
     | varAccess
@@ -315,15 +315,11 @@ genericForControl
     ;
 
 funcName
-    : Identifier ( '.' Identifier )* ( ':' Identifier )?
-    ;
-
-funcExpr
-    : 'function' funcBody
+    : RootName=Identifier ( '.' TableKeys+=Identifier )* ( ':' MethodName=Identifier )?
     ;
 
 funcBody
-    : '(' paramList? ')' block 'end'
+    : '(' Params=paramList? ')' Body=block 'end'
     ;
 
 command
@@ -355,23 +351,23 @@ command
 // Lists
 
 nameList
-    : Identifier ( ',' Identifier )*
+    : Names+=Identifier ( ',' Names+=Identifier )*
     ;
 
 paramList
-    : nameList /*(',' '...')?*/
+    : NameList=nameList /*(',' '...')?*/
     /*| '...'*/
     ;
 
 exprList
-    : expr ( ',' expr )*
+    : Exprs+=expr ( ',' Exprs+=expr )*
     ;
     
 varExprList
-	: varExpr ( ',' varExpr )*
+	: ExprList+=varExpr ( ',' ExprList+=varExpr )*
 	;
 
 fieldDefList
-    : fieldDef ( ',' fieldDef )* ','?
+    : FieldDefs+=fieldDef ( ',' FieldDef+=fieldDef )* ','?
     ;
 

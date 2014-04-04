@@ -3,6 +3,7 @@ package mobtalkerscript.mts.v2.compiler;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
+import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.value.*;
 
 import org.antlr.v4.runtime.*;
@@ -14,11 +15,12 @@ public class MtsCompilerTest
     @Test
     public void antlr()
     {
-        ANTLRInputStream stream = new ANTLRInputStream( "local a, b = 4, 2;\n" //
-                                                        + "c = {};\n"
-                                                        + "foo();"
-                                                        + "_ENV.c.a = a ^ b;\n"
-                                                        + "return 10 + c.a;" );
+        ANTLRInputStream stream = new ANTLRInputStream( "a, b = 4, 2; " //
+                                                        + "local c = {}; "
+                                                        + "function d( e, f ) c[e] = f; end "
+                                                        + "d(\"a\", 1); "
+                                                        + "_ENV.c.a = a ^ b; "
+                                                        + "return 10 + c.a; " );
         MtsLexer lexer = new MtsLexer( stream );
         lexer.setTokenFactory( new CommonTokenFactory( false ) );
         TokenStream tokens = new UnbufferedTokenStream<Token>( lexer );
@@ -49,6 +51,11 @@ public class MtsCompilerTest
                 return null;
             }
         } );
+        
+        for ( MtsInstruction instr : p.getInstructions() )
+        {
+            System.out.println( instr );
+        }
         
         MtsClosure closure = new MtsClosure( p, new MtsTable() );
         MtsValue result = closure.call();

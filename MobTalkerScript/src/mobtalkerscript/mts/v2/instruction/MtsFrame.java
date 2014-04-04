@@ -86,7 +86,7 @@ public final class MtsFrame
         {
             MtsInstruction instr = instructions.get( _ip );
             
-            System.out.println( "Executing " + instr.toString() );
+            System.out.println( "Executing " + instr.toString( this.getClosure().getPrototype() ) );
             
             instr.execute( this );
             

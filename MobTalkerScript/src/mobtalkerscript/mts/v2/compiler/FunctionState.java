@@ -388,15 +388,14 @@ public class FunctionState
         
         MtsFunctionPrototype p = new MtsFunctionPrototype( Lists.newArrayList( _instructions ),
                                                            maxStackSize,
-                                                           _locals.size(),
                                                            Lists.newArrayList( _constants ),
                                                            Lists.newArrayList( _externals ),
+                                                           _locals,
                                                            _name,
                                                            _lineNumbers,
                                                            _sourceFile,
                                                            _sourceLineStart,
-                                                           _sourceLineEnd,
-                                                           _locals );
+                                                           _sourceLineEnd );
         
         for ( FunctionState child : _childs )
         {

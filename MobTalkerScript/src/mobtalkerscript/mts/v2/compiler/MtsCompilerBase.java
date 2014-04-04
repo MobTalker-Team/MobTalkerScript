@@ -58,7 +58,12 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     // ========================================
     
-    public void declareFunction( String name, int sourceLineStart, int sourceLineEnd, String... params )
+    public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, String... params )
+    {
+        enterFunction( name, sourceLineStart, sourceLineEnd, params );
+    }
+    
+    public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, Iterable<String> params )
     {
         FunctionState child = new FunctionState( _currentFunction,
                                                  name,
@@ -74,7 +79,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         }
     }
     
-    public void leaveFunction()
+    public void exitFunction()
     {
         addInstr( InstrReturn( 0 ) );
         _currentFunction = _currentFunction.getParent();
@@ -266,6 +271,11 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         
         int index = _currentFunction.getConstantIndex( value );
         addInstr( InstrLoadC( index ) );
+    }
+    
+    public void loadConstant( String s )
+    {
+        loadConstant( valueOf( s ) );
     }
     
     public void loadNil()

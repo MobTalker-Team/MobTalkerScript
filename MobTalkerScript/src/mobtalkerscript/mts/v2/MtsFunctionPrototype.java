@@ -18,6 +18,7 @@ public class MtsFunctionPrototype
     
     private final List<MtsValue> _constants;
     private final List<ExternalDescription> _externals;
+    private final List<LocalDescription> _locals;
     
     private final List<MtsFunctionPrototype> _nestedPrototypes;
     
@@ -28,21 +29,18 @@ public class MtsFunctionPrototype
     private final int _sourceLineStart;
     private final int _sourceLineEnd;
     
-    private final List<LocalDescription> _localDescr;
-    
     // ========================================
     
     public MtsFunctionPrototype( List<MtsInstruction> instructions,
                                  int maxStackSize,
-                                 int localCount,
                                  List<MtsValue> constants,
                                  List<ExternalDescription> externals,
+                                 List<LocalDescription> locals,
                                  String name,
                                  List<SourcePosition> lineNumbers,
                                  String sourceFile,
                                  int sourceStart,
-                                 int sourceEnd,
-                                 List<LocalDescription> localDescr )
+                                 int sourceEnd )
     {
         checkNotNull( instructions );
         checkArgument( 0 <= maxStackSize, "Stack size cannot be negative" );
@@ -50,10 +48,11 @@ public class MtsFunctionPrototype
         
         _instructions = instructions;
         _maxStackSize = maxStackSize;
-        _localCount = localCount;
+        _localCount = locals.size();
         
         _constants = constants;
         _externals = externals;
+        _locals = locals;
         
         _nestedPrototypes = Lists.newArrayList();
         
@@ -62,7 +61,6 @@ public class MtsFunctionPrototype
         _sourceFile = sourceFile;
         _sourceLineStart = sourceStart;
         _sourceLineEnd = sourceEnd;
-        _localDescr = localDescr;
     }
     
     // ========================================
@@ -90,6 +88,11 @@ public class MtsFunctionPrototype
     public List<ExternalDescription> getExternals()
     {
         return _externals;
+    }
+    
+    public List<LocalDescription> getLocals()
+    {
+        return _locals;
     }
     
     // ========================================

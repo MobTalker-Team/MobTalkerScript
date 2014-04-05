@@ -1,4 +1,4 @@
-package mobtalkerscript.mts.v2.compiler;
+package mobtalkerscript.mts.v2;
 
 import mobtalkerscript.mts.v2.*;
 

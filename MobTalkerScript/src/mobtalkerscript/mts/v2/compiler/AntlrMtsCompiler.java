@@ -18,6 +18,7 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncNameContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LogicalOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameFieldAccessContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NullLiteralContext;
@@ -26,6 +27,7 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ReturnStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.SimpleAssignmentStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.StmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.StringLiteralContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.TableCtorContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.UnaryOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprListContext;
@@ -94,6 +96,15 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     private static List<String> getParameterNames( FuncBodyContext ctx )
     {
         List<String> paramNames = Lists.newArrayList();
+        
+        if ( ctx.getParent() instanceof FuncDeclrStmtContext )
+        {
+            if ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null )
+            {
+                paramNames.add( "self" );
+            }
+        }
+        
         for ( Token t : ctx.Params.NameList.Names )
         {
             paramNames.add( t.getText() );
@@ -130,6 +141,48 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     }
     
     @Override
+    public Void visitFuncName( FuncNameContext ctx )
+    {
+        if ( ctx.TableKeys.isEmpty() && ( ctx.MethodName == null ) )
+        {
+            storeVariable( ctx.RootName.getText() );
+        }
+        else
+        {
+            loadVariable( ctx.RootName.getText() );
+            
+            if ( !ctx.TableKeys.isEmpty() )
+            {
+                loadConstant( ctx.TableKeys.get( 0 ).getText() );
+                for ( int i = 0; i < ctx.TableKeys.size(); i++ )
+                {
+                    loadFromTable();
+                    loadConstant( ctx.TableKeys.get( i ).getText() );
+                }
+            }
+            
+            if ( ctx.MethodName != null )
+            {
+                loadFromTable();
+                loadConstant( ctx.MethodName.getText() );
+            }
+            
+            storeInTable();
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitFuncDeclrStmt( FuncDeclrStmtContext ctx )
+    {
+        visit( ctx.Body );
+        visit( ctx.Name );
+        
+        return null;
+    }
+    
+    @Override
     public Void visitFuncBody( FuncBodyContext ctx )
     {
         String funcName = getFunctionName( ctx );
@@ -155,15 +208,13 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     // ========================================
     // Assignments
     
-    @Override
-    public Void visitSimpleAssignmentStmt( SimpleAssignmentStmtContext ctx )
+    private void visitAssignmentExprs( List<ExprContext> exprs, int nTargets )
     {
-        int nTargets = ctx.VarExprList.ExprList.size();
-        int nExprs = ctx.ExprList.Exprs.size();
+        int nExprs = exprs.size();
         
         for ( int i = 0; i < nExprs; i++ )
         {
-            ExprContext exprCtx = ctx.ExprList.Exprs.get( i );
+            ExprContext exprCtx = exprs.get( i );
             
             if ( exprCtx instanceof CallExprContext )
             {
@@ -199,8 +250,45 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         {
             loadNil();
         }
+    }
+    
+    @Override
+    public Void visitSimpleAssignmentStmt( SimpleAssignmentStmtContext ctx )
+    {
+        int nTargets = ctx.VarExprList.ExprList.size();
+        visitAssignmentExprs( ctx.ExprList.Exprs, nTargets );
         
         visit( ctx.VarExprList );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitVarExprList( VarExprListContext ctx )
+    {
+        visit( Lists.reverse( ctx.ExprList ) );
+        return null;
+    }
+    
+    @Override
+    public Void visitLocalVarDeclrStmt( LocalVarDeclrStmtContext ctx )
+    {
+        for ( Token identifier : ctx.NameList.Names )
+        {
+            System.out.println( "Declaring local " + identifier.getText() );
+            declareLocal( identifier.getText() );
+        }
+        
+        if ( ctx.ExprList == null )
+            return null;
+        
+        int nTargets = ctx.NameList.Names.size();
+        visitAssignmentExprs( ctx.ExprList.Exprs, nTargets );
+        
+        for ( Token identifier : Lists.reverse( ctx.NameList.Names ) )
+        {
+            storeVariable( identifier.getText() );
+        }
         
         return null;
     }
@@ -237,14 +325,18 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitVarExpr( VarExprContext ctx )
     {
-        boolean isAssignment = TableAssignPattern.matches( ctx.getParent() );
-        
-        if ( ctx.Suffixes.isEmpty() && isAssignment )
+        // Simple Identifier?
+        if ( ctx.Suffixes.isEmpty() )
         {
-            storeVariable( ctx.Root.getText() );
+            if ( TableAssignPattern.matches( ctx.getParent() ) )
+                storeVariable( ctx.Root.getText() );
+            else
+                loadVariable( ctx.Root.getText() );
+            
             return null;
         }
         
+        // Visit root
         if ( ctx.Root != null )
         {
             loadVariable( ctx.Root.getText() );
@@ -254,14 +346,18 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             visit( ctx.RootExpr );
         }
         
+        // Visit suffixes
+        visit( ctx.Suffixes.get( 0 ) );
         for ( int i = 1; i < ctx.Suffixes.size(); i++ )
         {
-            VarSuffixContext suffix = ctx.Suffixes.get( i - 1 );
-            visit( suffix );
             loadFromTable();
+            
+            VarSuffixContext suffix = ctx.Suffixes.get( i );
+            visit( suffix );
         }
         
-        if ( isAssignment )
+        // Determine if we assigning or accessing
+        if ( TableAssignPattern.matches( ctx.getParent() ) )
         {
             storeInTable();
         }
@@ -269,6 +365,16 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         {
             loadFromTable();
         }
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitTableCtor( TableCtorContext ctx )
+    {
+        // TODO Fields
+        
+        createTable();
         
         return null;
     }
@@ -293,7 +399,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         visit( ctx.Expr );
         unaryOperation( ctx.Operator.getText() );
         
-        System.out.println( ctx.Operator.getText() );
+        System.out.println( "UnaryOp: " + ctx.Operator.getText() );
         return null;
     }
     
@@ -304,7 +410,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         visit( ctx.Right );
         binaryOperation( ctx.Operator.getText() );
         
-        System.out.println( ctx.Operator.getText() );
+        System.out.println( "BinaryOp: " + ctx.Operator.getText() );
         return null;
     }
     
@@ -315,7 +421,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         visit( ctx.Right );
         logicOperation( ctx.Operator.getText() );
         
-        System.out.println( ctx.Operator.getText() );
+        System.out.println( "LogicalOp: " + ctx.Operator.getText() );
         return null;
     }
     
@@ -327,7 +433,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         visit( ctx.Right );
         exitConditionalBlock();
         
-        System.out.println( ctx.Operator.getText() );
+        System.out.println( "ConditionalOp: " + ctx.Operator.getText() );
         return null;
     }
     
@@ -338,6 +444,8 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     public Void visitNullLiteral( NullLiteralContext ctx )
     {
         loadNil();
+        
+        System.out.println( "Literal: nil" );
         return null;
     }
     
@@ -347,7 +455,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         MtsNumber value = parseNumber( ctx.getText() );
         loadConstant( value );
         
-        System.out.println( value );
+        System.out.println( "Literal: " + value );
         return null;
     }
     
@@ -357,7 +465,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         MtsBoolean value = parseBoolean( ctx.getText() );
         loadConstant( value );
         
-        System.out.println( value );
+        System.out.println( "Literal: " + value );
         return null;
     }
     
@@ -367,7 +475,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         MtsString value = parseString( ctx.getText() );
         loadConstant( value );
         
-        System.out.println( value );
+        System.out.println( "Literal: " + value );
         return null;
     }
     

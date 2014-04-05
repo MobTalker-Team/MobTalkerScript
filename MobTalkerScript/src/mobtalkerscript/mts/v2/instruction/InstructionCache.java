@@ -31,6 +31,7 @@ public class InstructionCache
     private static final InstrDup _dup = new InstrDup();
     private static final InstrPop _pop = new InstrPop();
     
+    private static final InstrNewTable _newTable = new InstrNewTable();
     private static final InstrLoadT _loadT = new InstrLoadT();
     private static final InstrStoreT _storeT = new InstrStoreT();
     
@@ -283,6 +284,11 @@ public class InstructionCache
     public static InstrPop InstrPop()
     {
         return _pop;
+    }
+    
+    public static InstrNewTable InstrNewTable()
+    {
+        return _newTable;
     }
     
     public static InstrLoadT InstrLoadT()

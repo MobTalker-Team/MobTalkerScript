@@ -32,7 +32,11 @@ public class InstrClosure extends MtsIndexedInstruction
         for ( int i = 0; i < externals.length; i++ )
         {
             ExternalDescription descr = descriptions.get( i );
-            externals[i] = frame.getLocal( descr.getIndex() );
+            
+            if ( descr.isParentLocal() )
+                externals[i] = frame.getLocal( descr.getParentIndex() );
+            else
+                externals[i] = frame.getExternal( descr.getParentIndex() );
         }
         
         return externals;

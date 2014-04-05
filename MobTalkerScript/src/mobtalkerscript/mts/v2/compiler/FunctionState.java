@@ -19,8 +19,8 @@ public class FunctionState
     private final List<FunctionState> _childs;
     
     private final List<MtsValue> _constants;
-    private final List<ExternalDescription> _externals;
     private final List<LocalDescription> _locals;
+    private final List<ExternalDescription> _externals;
     
     private final LinkedList<MtsInstruction> _instructions;
     private final Queue<PendingJump> _pendingJumps;
@@ -43,8 +43,8 @@ public class FunctionState
         _childs = Lists.newArrayList();
         
         _constants = Lists.newArrayList();
-        _externals = Lists.newArrayList();
         _locals = Lists.newArrayList();
+        _externals = Lists.newArrayList();
         
         _instructions = Lists.newLinkedList();
         _pendingJumps = Lists.newLinkedList();
@@ -56,9 +56,6 @@ public class FunctionState
         _block = new BlockScope();
         _loops = Stack.newStack();
         _ifElses = Stack.newStack();
-        
-        // External 0 is always _ENV
-        _externals.add( new ExternalDescription( CompilerConstants.ENV, 0 ) );
     }
     
     public FunctionState( FunctionState parent,
@@ -337,15 +334,22 @@ public class FunctionState
         }
         
         // If we do not have a parent, we cannot create an external for that name
-        checkState( _parent == null, "Cannot create external %s because there is no parent scope!", name );
+        if ( _parent == null )
+            throw new IllegalArgumentException( name + " is a global!" );
+        
+        // Create a new external
+        int index = _externals.size();
+        int parentIndex;
+        boolean isParentLocal;
         
         // Get the external index from our parent. If it's not a local of our parent, call this method recursively on it.
-        int index = _parent.isLocal( name ) //
-                ? _parent.getLocalIndex( name )
-                : _parent.getExternalIndex( name );
+        if ( isParentLocal = _parent.isLocal( name ) )
+            parentIndex = _parent.getLocalIndex( name );
+        else
+            parentIndex = _parent.getExternalIndex( name );
         
-        _externals.add( new ExternalDescription( name, index ) );
-        return _externals.size() - 1;
+        _externals.add( new ExternalDescription( name, index, parentIndex, isParentLocal ) );
+        return index;
     }
     
     /**
@@ -366,6 +370,14 @@ public class FunctionState
             return false;
         
         return _parent.isLocal( name ) || _parent.isExternal( name );
+    }
+    
+    /**
+     * Forcibly declares an external. Should only be used for the main function of a chunk and {@value CompilerConstants#ENV}.
+     */
+    public void addExternal( ExternalDescription descr )
+    {
+        _externals.add( descr );
     }
     
     // ========================================

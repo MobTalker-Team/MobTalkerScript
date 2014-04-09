@@ -21,7 +21,7 @@ public final class InstrCallFunc extends MtsInstruction
     public void execute( MtsFrame frame )
     {
         MtsValue[] args = new MtsValue[_nArgs];
-        for ( int i = _nArgs; i >= 0; i-- )
+        for ( int i = _nArgs - 1; i >= 0; i-- )
         {
             args[i] = frame.pop();
         }

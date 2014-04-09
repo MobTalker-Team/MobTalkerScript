@@ -17,8 +17,8 @@ public class MtsCompilerTest
     {
         ANTLRInputStream stream = new ANTLRInputStream( "a, b = 4, 2; " //
                                                         + "local c = {}; "
-                                                        + "function d( e, f ) c[e] = f; end "
-                                                        + "d(\"b\", 2); "
+                                                        + "function d( e, f ) c[e] = f; return 1; end "
+                                                        + "x = d(\"b\", 2); "
                                                         + "c.a = a ^ b; "
                                                         + "return 10 + c.a + c.b; " );
         MtsLexer lexer = new MtsLexer( stream );

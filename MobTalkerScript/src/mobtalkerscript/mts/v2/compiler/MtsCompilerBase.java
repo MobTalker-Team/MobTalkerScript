@@ -281,6 +281,14 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         addInstr( InstrLoadNil() );
     }
     
+    public void loadNil( int count )
+    {
+        for ( int i = 0; i < count; i++ )
+        {
+            loadNil();
+        }
+    }
+    
     public void storeVariable( String name )
     {
         if ( _currentFunction.isLocal( name ) )
@@ -429,20 +437,6 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     public void callFunction( int nArgs, int nReturn )
     {
         addInstr( new InstrCallFunc( nArgs, nReturn ) );
-    }
-    
-    /**
-     * DUP
-     * LOADC name
-     * LOADT
-     * CALL nArgs nReturn
-     */
-    public void callMethod( String name, int nArgs, int nReturn )
-    {
-        addInstr( InstrDup() );
-        loadConstant( valueOf( name ) );
-        loadFromTable();
-        callFunction( nArgs + 1, nReturn );
     }
     
     public void returnFunction( int nValues )

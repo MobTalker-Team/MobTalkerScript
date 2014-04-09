@@ -1,6 +1,7 @@
 package mobtalkerscript.mts.v2.compiler;
 
-import static com.google.common.base.Preconditions.*;
+import static mobtalkerscript.mts.v2.instruction.InstructionCache.*;
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 
 import java.util.*;
 
@@ -17,9 +18,11 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncNameContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FunctionCallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LogicalOpExprContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.MethodCallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameFieldAccessContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NullLiteralContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NumberLiteralContext;
@@ -54,8 +57,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         CallStmtPattern = new TreePattern( CallContext.class, StmtContext.class );
         CallExprPattern = new TreePattern( CallContext.class, ExprContext.class );
         CallSuffixExprPattern = new TreePattern( VarSuffixContext.class );
-        CallAssignExprPattern = new TreePattern( CallContext.class,
-                                                 ExprContext.class,
+        CallAssignExprPattern = new TreePattern( ExprContext.class,
                                                  ExprListContext.class,
                                                  AssignExprContext.class );
         
@@ -208,7 +210,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     // ========================================
     // Assignments
     
-    private void visitAssignmentExprs( List<ExprContext> exprs, int nTargets )
+    /**
+     * Adjusts a given expression list so that all expressions are evaluated while adding exactly <code>nResults</code> values
+     * to the stack. Values may be discarded or nils may be pushed to match the desired amount.
+     */
+    private void adjustExprListResults( List<ExprContext> exprs, int nResults )
     {
         int nExprs = exprs.size();
         
@@ -218,47 +224,47 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             
             if ( exprCtx instanceof CallExprContext )
             {
-                CallExprContext callCtx = (CallExprContext) exprCtx;
-                
-                int nCallReturn;
+                CallContext call = ( (CallExprContext) exprCtx ).Call;
                 
                 if ( i == ( nExprs - 1 ) )
-                { // A call at the end fills every remaining target
-                    nCallReturn = ( 1 + nTargets ) - nExprs;
-                    nExprs = nTargets;
+                { // A call at the end fills every remaining targets
+                    call.nReturn = ( 1 + nResults ) - nExprs;
+                    nExprs = nResults;
                 }
-                
-                else if ( i < nTargets )
+                else if ( i < nResults )
                 { // Calls with a target and not at the end return one value
-                    nCallReturn = 1;
+                    call.nReturn = 1;
                 }
                 else
                 { // Calls with no target return no value
-                    nCallReturn = 0;
+                    call.nReturn = 0;
                 }
                 
-                visitCallExpr( callCtx, nCallReturn );
+                visit( call );
             }
             else
             {
+                // Every expression *must* be evaluated because meta-methods could be involved.
                 visit( exprCtx );
+                
+                if ( i >= nResults )
+                {
+                    addInstr( InstrPop() );
+                }
             }
         }
         
-        int nils = nTargets - nExprs;
-        for ( int i = 0; i < nils; i++ )
-        {
-            loadNil();
-        }
+        // Fill any leftover targets with nils
+        loadNil( nResults - nExprs );
     }
     
     @Override
     public Void visitSimpleAssignmentStmt( SimpleAssignmentStmtContext ctx )
     {
-        int nTargets = ctx.VarExprList.ExprList.size();
-        visitAssignmentExprs( ctx.ExprList.Exprs, nTargets );
+        int nTargets = ctx.Targets.ExprList.size();
+        adjustExprListResults( ctx.Exprs.Exprs, nTargets );
         
-        visit( ctx.VarExprList );
+        visit( ctx.Targets );
         
         return null;
     }
@@ -266,6 +272,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitVarExprList( VarExprListContext ctx )
     {
+        // Exprs are evaluated left to right, so they must be assigned right to left.
         visit( Lists.reverse( ctx.ExprList ) );
         return null;
     }
@@ -283,8 +290,9 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             return null;
         
         int nTargets = ctx.NameList.Names.size();
-        visitAssignmentExprs( ctx.ExprList.Exprs, nTargets );
+        adjustExprListResults( ctx.ExprList.Exprs, nTargets );
         
+        // Exprs are evaluated left to right, so they must be assigned right to left.
         for ( Token identifier : Lists.reverse( ctx.NameList.Names ) )
         {
             storeVariable( identifier.getText() );
@@ -297,14 +305,41 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     // Calls
     
     @Override
-    public Void visitCallExpr( CallExprContext ctx )
+    public Void visitFunctionCall( FunctionCallContext ctx )
     {
-        throw new AssertionError();
+        int nArgs = ctx.Args.Exprs.size();
+        
+        visit( ctx.Args );
+        callFunction( nArgs, ctx.nReturn );
+        
+        return null;
     }
     
-    public void visitCallExpr( CallExprContext ctx, int nReturn )
+    @Override
+    public Void visitMethodCall( MethodCallContext ctx )
     {
-        checkArgument( nReturn >= nReturn, "Cannot have negative amount of return values!" );
+        int nArgs = ctx.Args.Exprs.size();
+        String name = ctx.Method.getText();
+        
+        // self
+        addInstr( InstrDup() );
+        loadConstant( valueOf( name ) );
+        loadFromTable();
+        
+        visit( ctx.Args );
+        callFunction( nArgs + 1, ctx.nReturn );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCall( CallContext ctx )
+    {
+        Lists.reverse( ctx.Args ).get( 0 ).nReturn = ctx.nReturn;
+        
+        System.out.println( "Return values: " + ctx.nReturn );
+        
+        return visitChildren( ctx );
     }
     
     @Override

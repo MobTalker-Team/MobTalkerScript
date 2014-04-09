@@ -180,11 +180,11 @@ stmt
       # LocalVarDeclrStmt
     | call ';'
       # CallStmt
-    | command
-      # CommandStmt
+//    | command
+//      # CommandStmt
     | '::' Name=Identifier '::'
       # LabelStmt
-    | 'break'
+    | 'break' ';'
       # BreakStmt
     | 'return' ExprList=exprList? ';'
       # ReturnStmt
@@ -219,7 +219,7 @@ expr
       # StringLiteral
     | 'function' funcBody
       # FuncDeclrExpr
-    | call
+    | Call=call
       # CallExpr
     | varAccess
       # SimpleExpr
@@ -239,15 +239,15 @@ expr
       # LogicalOpExpr
     | Left=expr Operator=( 'and' | 'or' ) Right=expr
       # ConditionalOpExpr
-    | Left=expr Operator='..'<assoc=right> Right=expr
+    | Left=expr Operator='..' Right=expr
       # BinaryOpExpr
     ;
 
 assignExpr
-    : VarExprList=varExprList '=' ExprList=exprList
+    : Targets=varExprList '=' Exprs=exprList
       # SimpleAssignmentStmt
   	//| varExpr ( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) expr
-  	| VarExpr=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
+  	| Target=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
   	  # OperatorAssignmentStmt
     ;
 	
@@ -256,7 +256,7 @@ varExpr
 	;
 	
 varSuffix
-	: callArgs* fieldAccess
+	: callArgs[1]* fieldAccess
 	;
 	
 varOrExpr
@@ -267,14 +267,14 @@ varAccess
 	: varOrExpr fieldAccess*
 	;
 	
-call
-	: varOrExpr callArgs+
+call returns [int nReturn]
+	: varOrExpr Args+=callArgs[1]+
 	;
 
-callArgs
-    : ':' Identifier '(' exprList? ')'
+callArgs[int nReturn]
+    : ':' Method=Identifier '(' Args=exprList? ')'
       # MethodCall
-    | '(' exprList? ')'
+    | '(' Args=exprList? ')'
       # FunctionCall
     ;
 
@@ -322,30 +322,30 @@ funcBody
     : '(' Params=paramList? ')' Body=block 'end'
     ;
 
-command
-    : 'jump' Identifier ';'
-      # JumpCommandStmt
-    | 'call' Identifier ';'
-      # CallCommandStmt
-    | 'say' expr? expr expr? ';'
-      # SayCommandStmt
-    | 'show' expr+ ( 'at' expr )? ( 'offset' exprList )? ( 'with' exprList )? ';'
-      # ShowCommandStmt
-    | 'scene' expr+ ( 'as' expr ) ( 'with' exprList )? ';'
-      # SceneCommandStmt
-    | 'hide' expr ( 'with' exprList )? ';'
-      # HideCommandStmt
-    /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-      # PlayMusicCommandStmt*/
-    /*| 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-      # PlaySoundCommandStmt*/
-    /*| 'stop music' ( 'fadeout' expr )? ';'
-      # StopMusicCommandStmt*/
-    /*| 'pause' expr? ';'
-      # PauseCommandStmt*/
-    | 'menu' expr? ( 'option' expr block )+ 'end'
-      # MenuCommandStmt
-    ;
+//command
+//    : 'jump' Identifier ';'
+//      # JumpCommandStmt
+//    | 'call' Identifier ';'
+//      # CallCommandStmt
+//    | 'say' expr? expr expr? ';'
+//      # SayCommandStmt
+//    | 'show' expr+ ( 'at' expr )? ( 'offset' exprList )? ( 'with' exprList )? ';'
+//      # ShowCommandStmt
+//    | 'scene' expr+ ( 'as' expr ) ( 'with' exprList )? ';'
+//      # SceneCommandStmt
+//    | 'hide' expr ( 'with' exprList )? ';'
+//      # HideCommandStmt
+//    /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+//      # PlayMusicCommandStmt*/
+//    /*| 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+//      # PlaySoundCommandStmt*/
+//    /*| 'stop music' ( 'fadeout' expr )? ';'
+//      # StopMusicCommandStmt*/
+//    /*| 'pause' expr? ';'
+//      # PauseCommandStmt*/
+//    | 'menu' expr? ( 'option' expr block )+ 'end'
+//      # MenuCommandStmt
+//    ;
     
 // ========================================
 // Lists

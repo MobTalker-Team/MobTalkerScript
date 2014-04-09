@@ -9,14 +9,15 @@ LOCAL           : 'local' ;
 FUNCTION        : 'function' ;
 LABEL           : 'label' ;
 JUMP            : 'jump' ;
-CALL            : 'call' ;
+//GOTO			: 'goto' ;
 RETURN          : 'return' ;
 END             : 'end' ;
 DO              : 'do' ;
 
 IF              : 'if' ;
 THEN            : 'then' ;
-ELSEIF          : 'else if' ;
+ELSEIF          : 'elseif'
+				| 'else if' ;
 ELSE            : 'else' ;
 
 WHILE           : 'while' ;
@@ -180,8 +181,10 @@ stmt
       # LocalVarDeclrStmt
     | call ';'
       # CallStmt
-//    | command
-//      # CommandStmt
+    | command
+      # CommandStmt
+  	| 'jump' Target=Identifier ';'
+	  # GotoStmt
     | '::' Name=Identifier '::'
       # LabelStmt
     | 'break' ';'
@@ -286,7 +289,7 @@ fieldAccess
     ;
 
 tableCtor
-    : '{' fieldDefList? '}'
+    : '{' ( FieldDefs+=fieldDef ( ',' FieldDefs+=fieldDef )* ','? )? '}'
     ;
 
 fieldDef
@@ -299,7 +302,7 @@ fieldDef
     ;
     
 elseIfBody
-    : 'else if' expr 'then' block
+    : ( 'elseif' | 'else if' ) expr 'then' block
     ;
 
 elseBody
@@ -322,30 +325,26 @@ funcBody
     : '(' Params=paramList? ')' Body=block 'end'
     ;
 
-//command
-//    : 'jump' Identifier ';'
-//      # JumpCommandStmt
-//    | 'call' Identifier ';'
-//      # CallCommandStmt
-//    | 'say' expr? expr expr? ';'
-//      # SayCommandStmt
-//    | 'show' expr+ ( 'at' expr )? ( 'offset' exprList )? ( 'with' exprList )? ';'
-//      # ShowCommandStmt
-//    | 'scene' expr+ ( 'as' expr ) ( 'with' exprList )? ';'
-//      # SceneCommandStmt
-//    | 'hide' expr ( 'with' exprList )? ';'
-//      # HideCommandStmt
-//    /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-//      # PlayMusicCommandStmt*/
-//    /*| 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-//      # PlaySoundCommandStmt*/
-//    /*| 'stop music' ( 'fadeout' expr )? ';'
-//      # StopMusicCommandStmt*/
-//    /*| 'pause' expr? ';'
-//      # PauseCommandStmt*/
-//    | 'menu' expr? ( 'option' expr block )+ 'end'
-//      # MenuCommandStmt
-//    ;
+command
+    : 'say' expr? expr expr? ';'
+      # SayCommandStmt
+    | 'show' expr+ ( 'at' expr )? ( 'offset' exprList )? ( 'with' exprList )? ';'
+      # ShowCommandStmt
+    | 'scene' expr+ ( 'as' expr ) ( 'with' exprList )? ';'
+      # SceneCommandStmt
+    | 'hide' expr ( 'with' exprList )? ';'
+      # HideCommandStmt
+    /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+      # PlayMusicCommandStmt*/
+    /*| 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+      # PlaySoundCommandStmt*/
+    /*| 'stop music' ( 'fadeout' expr )? ';'
+      # StopMusicCommandStmt*/
+    /*| 'pause' expr? ';'
+      # PauseCommandStmt*/
+    | 'menu' expr? ( 'option' expr block )+ 'end'
+      # MenuCommandStmt
+    ;
     
 // ========================================
 // Lists
@@ -366,8 +365,4 @@ exprList
 varExprList
 	: ExprList+=varExpr ( ',' ExprList+=varExpr )*
 	;
-
-fieldDefList
-    : FieldDefs+=fieldDef ( ',' FieldDef+=fieldDef )* ','?
-    ;
 

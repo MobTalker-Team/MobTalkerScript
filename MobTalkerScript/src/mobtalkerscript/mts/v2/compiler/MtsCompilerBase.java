@@ -223,6 +223,20 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         _currentFunction.declareLocal( name );
     }
     
+    private void loadEnvironment()
+    {
+        if ( _currentFunction.isLocal( ENV ) )
+        { // Local environment
+            int index = _currentFunction.getLocalIndex( ENV );
+            addInstr( InstrLoadL( index ) );
+        }
+        else
+        { // Parent environment
+            int index = _currentFunction.getExternalIndex( ENV );
+            addInstr( InstrLoadE( index ) );
+        }
+    }
+    
     public void loadVariable( String name )
     {
         if ( _currentFunction.isLocal( name ) )
@@ -237,26 +251,9 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         }
         else
         { // Global
-            loadFromEnvironment( name );
-        }
-    }
-    
-    public void loadFromEnvironment( String name )
-    {
-        // If-Else inverted since environment will most likely be an external.
-        if ( _currentFunction.isLocal( ENV ) )
-        { // Local environment
-            int local = _currentFunction.getLocalIndex( ENV );
+            loadEnvironment();
+            
             int constant = _currentFunction.getConstantIndex( valueOf( name ) );
-            addInstr( InstrLoadL( local ) );
-            addInstr( InstrLoadC( constant ) );
-            addInstr( InstrLoadT() );
-        }
-        else
-        { // Parent environment
-            int external = _currentFunction.getExternalIndex( ENV );
-            int constant = _currentFunction.getConstantIndex( valueOf( name ) );
-            addInstr( InstrLoadE( external ) );
             addInstr( InstrLoadC( constant ) );
             addInstr( InstrLoadT() );
         }
@@ -303,26 +300,9 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         }
         else
         { // Global
-            storeInEnvironment( name );
-        }
-    }
-    
-    public void storeInEnvironment( String name )
-    {
-        // If-Else inverted since environment will most likely be an external.
-        if ( _currentFunction.isLocal( ENV ) )
-        {
-            int local = _currentFunction.getLocalIndex( ENV );
+            loadEnvironment();
+            
             int constant = _currentFunction.getConstantIndex( valueOf( name ) );
-            addInstr( InstrLoadL( local ) );
-            addInstr( InstrLoadC( constant ) );
-            addInstr( InstrStoreT() );
-        }
-        else
-        {
-            int external = _currentFunction.getExternalIndex( ENV );
-            int constant = _currentFunction.getConstantIndex( valueOf( name ) );
-            addInstr( InstrLoadE( external ) );
             addInstr( InstrLoadC( constant ) );
             addInstr( InstrStoreT() );
         }
@@ -330,9 +310,9 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     // ========================================
     
-    public void createTable()
+    public void createTable( int listElements, int hashPairs )
     {
-        addInstr( InstrNewTable() );
+        addInstr( InstrNewTable( listElements, hashPairs ) );
     }
     
     public void loadFromTable()

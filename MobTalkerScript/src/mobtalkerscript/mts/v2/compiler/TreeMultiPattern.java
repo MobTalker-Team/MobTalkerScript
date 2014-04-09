@@ -30,4 +30,10 @@ public class TreeMultiPattern implements ITreePattern
         
         return false;
     }
+    
+    @Override
+    public <T extends ParserRuleContext> T get( ParserRuleContext ctx )
+    {
+        throw new UnsupportedOperationException();
+    }
 }

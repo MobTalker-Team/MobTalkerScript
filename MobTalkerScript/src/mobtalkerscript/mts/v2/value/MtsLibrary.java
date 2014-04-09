@@ -29,4 +29,10 @@ public abstract class MtsLibrary extends MtsFunction
     {
         env.set( func.getName(), func );
     }
+    
+    protected static void checkIfGlobals( MtsValue env )
+    {
+        if ( !( env instanceof MtsGlobals ) )
+            throw new ScriptEngineException( "env is not an instance of MtsGlobals!" );
+    }
 }

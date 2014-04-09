@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.value;
 
+import java.util.*;
+
 import mobtalkerscript.mts.v2.*;
 
 import com.google.common.base.*;
@@ -41,6 +43,11 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     public static MtsArray arrayOf( MtsValue... values )
+    {
+        return new MtsArray( values );
+    }
+    
+    public static MtsArray arrayOf( List<MtsValue> values )
     {
         return new MtsArray( values );
     }

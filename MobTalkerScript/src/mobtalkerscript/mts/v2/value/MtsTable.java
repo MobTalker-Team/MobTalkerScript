@@ -252,6 +252,14 @@ public class MtsTable extends MtsMetaTableValue
         _listPart.add( value );
     }
     
+    public void add( Iterable<? extends MtsValue> values )
+    {
+        for ( MtsValue value : values )
+        {
+            add( value );
+        }
+    }
+    
     /**
      * Inserts a value into this table at the given location and shifts subsequent entries to the left if necessary.
      * <p>

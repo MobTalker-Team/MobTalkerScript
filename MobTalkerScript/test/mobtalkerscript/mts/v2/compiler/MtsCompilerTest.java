@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.compiler;
 
+import java.io.*;
+
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
@@ -13,14 +15,17 @@ public class MtsCompilerTest
 {
     
     @Test
-    public void antlr()
+    public void antlr() throws IOException
     {
-        ANTLRInputStream stream = new ANTLRInputStream( "a, b = 4, 2; " //
-                                                        + "local c = {}; "
-                                                        + "function d( e, f ) c[e] = f; return 1; end "
-                                                        + "x = d(\"b\", 2); "
-                                                        + "c.a = a ^ b; "
-                                                        + "return 10 + c.a + c.b; " );
+//        ANTLRInputStream stream = new ANTLRInputStream( "a, b = 4, 2; " //
+//                                                        + "local c = { 1, 2, y = \"abc\", [\"z\"] = b }; "
+//                                                        + "function d( e, f ) c[e] = f; return 1; end "
+//                                                        + "x = d(\"b\", 2); "
+//                                                        + "c.a = a ^ b; "
+//                                                        + "return 10 + c.a + c.b; " );
+        
+        ANTLRInputStream stream = new ANTLRFileStream( "C:\\Users\\Tobsen\\Desktop\\MtsExampleScript.txt" );
+        
         MtsLexer lexer = new MtsLexer( stream );
         lexer.setTokenFactory( new CommonTokenFactory( false ) );
         TokenStream tokens = new UnbufferedTokenStream<Token>( lexer );

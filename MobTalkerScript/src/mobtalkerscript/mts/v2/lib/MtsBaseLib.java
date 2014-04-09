@@ -20,8 +20,7 @@ public final class MtsBaseLib extends MtsLibrary
     @Override
     public MtsValue bind( MtsString name, MtsValue env )
     {
-        if ( !( env instanceof MtsGlobals ) )
-            throw new ScriptEngineException( "env for for base lib must be _G" );
+        checkIfGlobals( env );
         
         env.set( "_G", env );
         

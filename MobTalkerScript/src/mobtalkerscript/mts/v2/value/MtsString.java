@@ -62,6 +62,31 @@ public class MtsString extends MtsValue
         }
     }
     
+    public static MtsString concat( List<MtsValue> values )
+    {
+        if ( ( values == null ) || values.isEmpty() )
+            return EMPTY_STRING;
+        
+        int elements = values.size();
+        if ( elements == 1 )
+        {
+            return values.get( 0 ).toStringMts();
+        }
+        else if ( elements > 2 )
+        {
+            StringBuilder sb = new StringBuilder();
+            for ( MtsValue value : values )
+            {
+                sb.append( value.toStringMts().toJava() );
+            }
+            return valueOf( sb.toString() );
+        }
+        else
+        {
+            return values.get( 0 ).toStringMts().concat( values.get( 1 ) );
+        }
+    }
+    
     // ========================================
     
     private final String _value;

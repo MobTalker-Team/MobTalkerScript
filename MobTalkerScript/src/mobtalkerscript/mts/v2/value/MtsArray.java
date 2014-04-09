@@ -9,11 +9,16 @@ import java.util.*;
  */
 public class MtsArray extends MtsValue
 {
-    private final MtsValue[] _values;
+    private final List<MtsValue> _values;
     
     // ========================================
     
     /* package */MtsArray( MtsValue... values )
+    {
+        _values = Arrays.asList( values );
+    }
+    
+    /* package */MtsArray( List<MtsValue> values )
     {
         _values = values;
     }
@@ -26,12 +31,12 @@ public class MtsArray extends MtsValue
     @Override
     public MtsValue get( int i )
     {
-        return i < _values.length ? _values[i] : NIL;
+        return i < getSize() ? _values.get( i ) : NIL;
     }
     
     public int getSize()
     {
-        return _values.length;
+        return _values.size();
     }
     
     // ========================================
@@ -65,6 +70,6 @@ public class MtsArray extends MtsValue
     @Override
     public String toString()
     {
-        return getType() + Arrays.toString( _values );
+        return getType() + _values.toString();
     }
 }

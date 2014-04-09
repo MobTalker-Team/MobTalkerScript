@@ -136,10 +136,10 @@ public final class MtsFrame
         return _stack[--_top];
     }
     
-    public MtsValue[] pop( int count )
+    public List<MtsValue> pop( int count )
     {
         if ( count == 0 )
-            return new MtsValue[0];
+            return Collections.emptyList();
         
         if ( count > stackCount() )
             throw new ScriptEngineException( "stack underflow" );
@@ -149,7 +149,7 @@ public final class MtsFrame
         
         _top -= count;
         
-        return values;
+        return Arrays.asList( values );
     }
     
     public MtsValue peek()

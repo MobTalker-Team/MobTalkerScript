@@ -39,6 +39,19 @@ public class TreePattern implements ITreePattern
         return true;
     }
     
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public <T extends ParserRuleContext> T get( ParserRuleContext ctx )
+    {
+        ParserRuleContext result = ctx.getParent();
+        for ( int i = 1; i < _pattern.size(); i++ )
+        {
+            result = ctx.getParent();
+        }
+        
+        return (T) result;
+    }
+    
     // ========================================
     
     protected void printFailureMsg( ParserRuleContext ctx )

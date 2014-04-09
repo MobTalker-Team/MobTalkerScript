@@ -14,16 +14,19 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ConditionalOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprListContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FieldDefContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncNameContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FunctionCallContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ListFieldContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LogicalOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.MethodCallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameFieldAccessContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameKeyFieldContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NullLiteralContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NumberLiteralContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ReturnStmtContext;
@@ -107,9 +110,12 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             }
         }
         
-        for ( Token t : ctx.Params.NameList.Names )
+        if ( ctx.Params != null )
         {
-            paramNames.add( t.getText() );
+            for ( Token t : ctx.Params.NameList.Names )
+            {
+                paramNames.add( t.getText() );
+            }
         }
         
         return paramNames;
@@ -180,6 +186,19 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         visit( ctx.Body );
         visit( ctx.Name );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitLocalFuncDeclrStmt( LocalFuncDeclrStmtContext ctx )
+    {
+        String name = ctx.Name.getText();
+        
+        visit( ctx.Body );
+        
+        declareLocal( name );
+        storeVariable( name );
         
         return null;
     }
@@ -307,9 +326,13 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitFunctionCall( FunctionCallContext ctx )
     {
-        int nArgs = ctx.Args.Exprs.size();
+        int nArgs = 0;
+        if ( ctx.Args != null )
+        {
+            nArgs = ctx.Args.Exprs.size();
+            visit( ctx.Args );
+        }
         
-        visit( ctx.Args );
         callFunction( nArgs, ctx.nReturn );
         
         return null;
@@ -335,7 +358,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCall( CallContext ctx )
     {
-        Lists.reverse( ctx.Args ).get( 0 ).nReturn = ctx.nReturn;
+        ctx.Args.get( ctx.Args.size() - 1 ).nReturn = ctx.nReturn;
         
         System.out.println( "Return values: " + ctx.nReturn );
         
@@ -345,9 +368,14 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitReturnStmt( ReturnStmtContext ctx )
     {
-        int nReturn = ctx.ExprList.getChildCount();
+        int nReturn = 0;
         
-        visit( ctx.ExprList );
+        if ( ctx.ExprList != null )
+        {
+            nReturn = ctx.ExprList.getChildCount();
+            visit( ctx.ExprList );
+        }
+        
         returnFunction( nReturn );
         
         System.out.println( "Return " + nReturn );
@@ -364,9 +392,14 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         if ( ctx.Suffixes.isEmpty() )
         {
             if ( TableAssignPattern.matches( ctx.getParent() ) )
-                storeVariable( ctx.Root.getText() );
+            {
+                String name = ctx.Root.getText();
+                storeVariable( name );
+            }
             else
+            {
                 loadVariable( ctx.Root.getText() );
+            }
             
             return null;
         }
@@ -405,22 +438,53 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     }
     
     @Override
-    public Void visitTableCtor( TableCtorContext ctx )
-    {
-        // TODO Fields
-        
-        createTable();
-        
-        return null;
-    }
-    
-    @Override
     public Void visitNameFieldAccess( NameFieldAccessContext ctx )
     {
         String fieldName = ctx.Field.getText();
         loadConstant( fieldName );
         
         System.out.println( "Table Key: " + fieldName );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitTableCtor( TableCtorContext ctx )
+    {
+        if ( ctx.FieldDefs.isEmpty() )
+        {
+            createTable( 0, 0 );
+            return null;
+        }
+        
+        List<ListFieldContext> listFields = Lists.newArrayListWithExpectedSize( ( ctx.FieldDefs.size() + 1 ) / 2 );
+        int hashPairs = 0;
+        
+        for ( FieldDefContext fieldDef : ctx.FieldDefs )
+        {
+            if ( fieldDef instanceof ListFieldContext )
+            {
+                listFields.add( (ListFieldContext) fieldDef );
+            }
+            else
+            {
+                visit( fieldDef );
+                hashPairs++;
+            }
+        }
+        
+        visit( listFields );
+        
+        createTable( listFields.size(), hashPairs );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitNameKeyField( NameKeyFieldContext ctx )
+    {
+        loadConstant( ctx.Key.getText() );
+        visit( ctx.Value );
         
         return null;
     }

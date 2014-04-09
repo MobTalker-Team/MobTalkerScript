@@ -7,4 +7,6 @@ public interface ITreePattern
     
     boolean matches( ParserRuleContext ctx );
     
+    <T extends ParserRuleContext> T get( ParserRuleContext ctx );
+    
 }

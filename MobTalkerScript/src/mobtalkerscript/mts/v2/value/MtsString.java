@@ -62,12 +62,12 @@ public class MtsString extends MtsValue
         }
     }
     
-    public static MtsString concat( List<MtsValue> values )
+    public static MtsString concat( MtsVarArgs values )
     {
         if ( ( values == null ) || values.isEmpty() )
             return EMPTY_STRING;
         
-        int elements = values.size();
+        int elements = values.count();
         if ( elements == 1 )
         {
             return values.get( 0 ).toStringMts();
@@ -75,8 +75,9 @@ public class MtsString extends MtsValue
         else if ( elements > 2 )
         {
             StringBuilder sb = new StringBuilder();
-            for ( MtsValue value : values )
+            for ( int i = 0; i < values.count(); i++ )
             {
+                MtsValue value = values.get( i );
                 sb.append( value.toStringMts().toJava() );
             }
             return valueOf( sb.toString() );
@@ -85,6 +86,30 @@ public class MtsString extends MtsValue
         {
             return values.get( 0 ).toStringMts().concat( values.get( 1 ) );
         }
+    }
+    
+    public static MtsString concat( Iterable<MtsValue> values )
+    {
+        if ( ( values == null ) )
+            return EMPTY_STRING;
+        
+        Iterator<MtsValue> iter = values.iterator();
+        
+        if ( !iter.hasNext() )
+            return EMPTY_STRING;
+        
+        MtsValue value = iter.next();
+        if ( !iter.hasNext() )
+            return value.toStringMts();
+        
+        StringBuilder s = new StringBuilder( value.toStringMts().toJava() );
+        while ( iter.hasNext() )
+        {
+            value = iter.next();
+            s.append( value.toStringMts().toJava() );
+        }
+        
+        return valueOf( s.toString() );
     }
     
     // ========================================

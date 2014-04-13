@@ -8,7 +8,7 @@ import mobtalkerscript.mts.v2.value.*;
 public class MtsGlobals extends MtsTable
 {
     
-    public PrintStream out = System.err;
+    public PrintStream out = System.out;
     public PrintStream err = System.err;
     
     // ========================================
@@ -20,9 +20,13 @@ public class MtsGlobals extends MtsTable
         loadLibrary( new MtsBaseLib() );
     }
     
+    // ========================================
+    
     public void loadLibrary( MtsValue lib )
     {
         lib.call( EMPTY_STRING, this );
     }
+    
+    // ========================================
     
 }

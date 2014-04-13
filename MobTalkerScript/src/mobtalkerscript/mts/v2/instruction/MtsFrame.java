@@ -5,45 +5,55 @@ import java.util.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
+import com.google.common.collect.*;
+
 public final class MtsFrame
 {
+    private static boolean DEBUG = true;
+    
+    public static void enableDebug( boolean flag )
+    {
+        DEBUG = flag;
+    }
+    
+    // ========================================
+    
     private final MtsClosure _closure;
     private int _ip;
     
     private final MtsValue[] _stack;
     private int _top;
     
-    private final FrameValue[] _locals;
-    private final FrameValue[] _externals;
+    private final List<FrameValue> _locals;
+    private final List<FrameValue> _externals;
     
-    private int _lastLocal;
-    private int _lastExternal;
+    private String _lastVarOrConst;
     
     // ========================================
     
-    public MtsFrame( MtsClosure closure, MtsValue[] args, FrameValue[] externals )
+    public MtsFrame( MtsClosure closure, MtsVarArgs arguments, List<FrameValue> externals )
     {
         _closure = closure;
         _ip = 0;
         
         int nStack = closure.getPrototype().getMaxStackSize();
         int nLocals = closure.getPrototype().getLocalCount();
+        int nArgs = arguments.count();
         
         _stack = new MtsValue[nStack];
         _top = 0;
         
-        FrameValue[] locals = new FrameValue[nLocals];
-        for ( int i = 0; i < args.length; i++ )
-        {
-            locals[i] = new FrameValue( args[i] );
-        }
-        for ( int i = args.length; i < nLocals; i++ )
-        {
-            locals[i] = new FrameValue();
-        }
-        _locals = locals;
+        ArrayList<FrameValue> locals = Lists.newArrayListWithCapacity( nLocals );
+        int i = 0;
+        for ( ; i < nArgs; i++ )
+            locals.add( new FrameValue( arguments.get( i ) ) );
+        for ( ; i < nLocals; i++ )
+            locals.add( new FrameValue() );
         
+        _locals = locals;
         _externals = externals;
+        
+        _lastVarOrConst = "?";
     }
     
     // ========================================
@@ -63,14 +73,9 @@ public final class MtsFrame
         _ip = target;
     }
     
-    public int getLastLocal()
+    public String getLastVariableOrConstant()
     {
-        return _lastLocal;
-    }
-    
-    public int getLastExternal()
-    {
-        return _lastExternal;
+        return _lastVarOrConst;
     }
     
     // ========================================
@@ -103,19 +108,34 @@ public final class MtsFrame
     
     public MtsValue getConstant( int i )
     {
-        return _closure.getPrototype().getConstants().get( i );
+        MtsValue result = _closure.getPrototype().getConstant( i );
+        
+        if ( DEBUG )
+            _lastVarOrConst = result.isString() ? result.toString() : "?";
+        else
+            _lastVarOrConst = "?";
+        
+        return result;
     }
     
     public FrameValue getLocal( int i )
     {
-        _lastLocal = i;
-        return _locals[i];
+        if ( DEBUG )
+            _lastVarOrConst = _closure.getPrototype().getLocalDescription( i ).getName();
+        else
+            _lastVarOrConst = "?";
+        
+        return _locals.get( i );
     }
     
     public FrameValue getExternal( int i )
     {
-        _lastExternal = i;
-        return _externals[i];
+        if ( DEBUG )
+            _lastVarOrConst = _closure.getPrototype().getExternalDescription( i ).getName();
+        else
+            _lastVarOrConst = "?";
+        
+        return _externals.get( i );
     }
     
     // ========================================

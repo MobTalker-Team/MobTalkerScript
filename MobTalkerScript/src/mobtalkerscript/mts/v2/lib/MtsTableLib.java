@@ -14,13 +14,13 @@ public final class MtsTableLib extends MtsLibrary
     {
         MtsTable lib = new MtsTable( 1, 5 );
         
-        bindFunction( lib, Concat );
-        bindFunction( lib, Count );
-        bindFunction( lib, Insert );
-        bindFunction( lib, new Random() );
-        bindFunction( lib, Remove );
+        bindFunction( lib, "Concat", Concat );
+        bindFunction( lib, "Count", Count );
+        bindFunction( lib, "Insert", Insert );
+        bindFunction( lib, "Random", new Random() );
+        bindFunction( lib, "Remove", Remove );
         
-        env.set( "Table", lib );
+        env.set( "table", lib );
         return NIL;
     }
     
@@ -28,12 +28,6 @@ public final class MtsTableLib extends MtsLibrary
     
     private static final class Concat extends MtsFourArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "Concat";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
@@ -82,12 +76,6 @@ public final class MtsTableLib extends MtsLibrary
     private static final class Count extends MtsOneArgFunction
     {
         @Override
-        public String getName()
-        {
-            return "Count";
-        }
-        
-        @Override
         protected MtsValue invoke( MtsValue arg1 )
         {
             checkTable( arg1, 1 );
@@ -100,12 +88,6 @@ public final class MtsTableLib extends MtsLibrary
     
     private static final class Insert extends MtsThreeArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "Insert";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
@@ -133,23 +115,18 @@ public final class MtsTableLib extends MtsLibrary
         private final java.util.Random rnd = new java.util.Random();
         
         @Override
-        public String getName()
+        protected MtsValue invoke( MtsVarArgs args )
         {
-            return "Random";
-        }
-        
-        @Override
-        protected MtsValue invoke( MtsValue... args )
-        {
-            if ( args.length < 1 )
+            if ( args.isEmpty() )
                 return NIL;
             
-            if ( args.length > 1 )
-                return args[rnd.nextInt( args.length )];
+            if ( args.count() > 1 )
+                return args.get( rnd.nextInt( args.count() ) );
             
-            if ( args[0].isTable() )
+            MtsValue arg1 = args.get( 0 );
+            if ( arg1.isTable() )
             {
-                MtsTable t = args[0].asTable();
+                MtsTable t = arg1.asTable();
                 
                 if ( t.listSize() == 0 )
                     return NIL;
@@ -158,7 +135,7 @@ public final class MtsTableLib extends MtsLibrary
                 return t.get( k );
             }
             
-            return args[0];
+            return arg1;
         }
     }
     
@@ -166,12 +143,6 @@ public final class MtsTableLib extends MtsLibrary
     
     private static final class Remove extends MtsTwoArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "Remove";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1 )
         {

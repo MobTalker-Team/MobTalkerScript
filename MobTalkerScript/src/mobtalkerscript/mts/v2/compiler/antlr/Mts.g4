@@ -197,7 +197,7 @@ stmt
       # WhileLoop
     | 'repeat' Block=block 'until' Condition=expr ';'
       # RepeatLoop
-    | 'if' Condition=expr 'then' Block=block ElseIfs+=elseIfBody* ( Else=elseBody | 'end' )
+    | 'if' Condition=expr 'then' Block=block ElseIfs+=elseIfBody* Else=elseBody? 'end'
       # IfThenElse
     | 'for' Control=numericForControl 'do' Block=block 'end'
       # NumericForLoop
@@ -275,10 +275,7 @@ call returns [int nReturn]
 	;
 
 callArgs[int nReturn]
-    : ':' Method=Identifier '(' Args=exprList? ')'
-      # MethodCall
-    | '(' Args=exprList? ')'
-      # FunctionCall
+    : ( ':' Method=Identifier )? ( '(' Args=exprList? ')' | Arg=NORMALSTRING )
     ;
 
 fieldAccess
@@ -302,19 +299,19 @@ fieldDef
     ;
     
 elseIfBody
-    : ( 'elseif' | 'else if' ) expr 'then' block
+    : ( 'elseif' | 'else if' ) Condition=expr 'then' Block=block
     ;
 
 elseBody
-    : 'else' block 'end'
+    : 'else' Block=block
     ;
 
 numericForControl
-    : Identifier '=' expr ',' expr ( ',' expr )?
+    : Var=Identifier '=' Start=expr ',' Limit=expr ( ',' Step=expr )?
     ;
 
 genericForControl
-    : nameList 'in' exprList
+    : Vars=nameList 'in' Exprs=exprList
     ;
 
 funcName

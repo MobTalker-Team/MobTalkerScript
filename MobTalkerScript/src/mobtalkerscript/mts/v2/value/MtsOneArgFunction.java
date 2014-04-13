@@ -3,14 +3,14 @@ package mobtalkerscript.mts.v2.value;
 public abstract class MtsOneArgFunction extends MtsZeroArgFunction
 {
     @Override
-    protected MtsValue invoke( MtsValue... args )
+    protected MtsValue invoke( MtsVarArgs args )
     {
-        switch ( args.length )
+        switch ( args.count() )
         {
             case 0:
-                return call();
+                return invoke();
             default:
-                return call( args[0] );
+                return invoke( args.get( 0 ) );
         }
     }
     

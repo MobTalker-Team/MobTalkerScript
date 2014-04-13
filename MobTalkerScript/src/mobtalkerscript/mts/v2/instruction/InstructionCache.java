@@ -20,6 +20,7 @@ public class InstructionCache
     private static final InstrDiv _div = new InstrDiv();
     private static final InstrMod _mod = new InstrMod();
     private static final InstrPow _pow = new InstrPow();
+    private static final InstrConcat _concat = new InstrConcat( 2 );
     
     private static final Map<String, MtsInstruction> _logicalOps;
     private static final InstrEQ _eq = new InstrEQ();
@@ -60,6 +61,7 @@ public class InstructionCache
         _binaryOps.put( "/", InstrDiv() );
         _binaryOps.put( "%", InstrMod() );
         _binaryOps.put( "^", InstrPow() );
+        _binaryOps.put( "..", InstrConcat() );
         
         _logicalOps = Maps.newHashMapWithExpectedSize( 3 );
         _logicalOps.put( "==", InstrEq() );
@@ -109,7 +111,7 @@ public class InstructionCache
     public static MtsInstruction InstrBinaryOp( String op )
     {
         MtsInstruction instr = _binaryOps.get( op );
-        checkArgument( instr != null, "%s is not a valid binary operator!" );
+        checkArgument( instr != null, "%s is not a valid binary operator!", op );
         
         return instr;
     }
@@ -258,6 +260,11 @@ public class InstructionCache
     public static InstrPow InstrPow()
     {
         return _pow;
+    }
+    
+    public static InstrConcat InstrConcat()
+    {
+        return _concat;
     }
     
     public static InstrEQ InstrEq()

@@ -27,12 +27,12 @@ public final class InstrCallFunc extends MtsInstruction
         }
         
         MtsValue target = frame.pop();
-        MtsValue result = target.call( args );
+        MtsValue result = target.call( new MtsVarArgs( args ) );
         
         if ( _nReturn == 0 )
             return;
         
-        MtsArray results = result.asArray();
+        MtsVarArgs results = result.asVarArgs();
         for ( int i = 0; i < _nReturn; i++ )
         {
             frame.push( results.get( i ) );

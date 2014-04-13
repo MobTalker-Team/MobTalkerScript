@@ -193,6 +193,21 @@ public class FunctionState
     
     // ========================================
     
+    public void enterNumericForLoop( String loopVariable )
+    {
+        int loopIndex = declareLocal( loopVariable ).getIndex();
+        int limitIndex = declareLocal().getIndex();
+        int stepIndex = declareLocal().getIndex();
+        
+        addInstruction( new InstrForPrep( loopIndex, limitIndex, stepIndex ) );
+        
+        enterLoop();
+        addInstruction( new InstrForLoop( loopIndex, limitIndex, stepIndex ) );
+        markBreak();
+    }
+    
+    // ========================================
+    
     public void enterIfThenElse()
     {
         _ifElses.push( new ConditionalState() );
@@ -294,7 +309,7 @@ public class FunctionState
         return _block.isLocal( name );
     }
     
-    public int declareLocal( String name )
+    public LocalDescription declareLocal( String name )
     {
         int index = _locals.size();
         LocalDescription local = new LocalDescription( name, index, currentIndex() );
@@ -302,7 +317,19 @@ public class FunctionState
         
         _block.declare( local );
         
-        return index;
+        return local;
+    }
+    
+    /**
+     * Declares an anonymous local variable. This variable has no scope and can only be referenced by its index.
+     */
+    public LocalDescription declareLocal()
+    {
+        int index = _locals.size();
+        LocalDescription local = new LocalDescription( "$L" + index, index, currentIndex() );
+        _locals.add( local );
+        
+        return local;
     }
     
     public int getLocalIndex( String name )

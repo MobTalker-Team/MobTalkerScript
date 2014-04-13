@@ -9,7 +9,7 @@ public abstract class MtsMetaTableValue extends MtsValue
     @Override
     public boolean hasMetaTable()
     {
-        return _metaTable != null;
+        return ( _metaTable != null ) && !_metaTable.isNil();
     }
     
     @Override
@@ -34,5 +34,16 @@ public abstract class MtsMetaTableValue extends MtsValue
     protected MtsValue getMetaTag( MtsValue tag )
     {
         return hasMetaTable() ? _metaTable.get( tag ) : NIL;
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsValue call( MtsVarArgs args )
+    {
+        if ( !hasMetaTag( METATAG_CALL ) )
+            return super.call( args );
+        
+        return getMetaTag( METATAG_CALL ).call( this, args );
     }
 }

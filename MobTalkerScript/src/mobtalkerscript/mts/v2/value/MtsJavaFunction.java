@@ -8,11 +8,12 @@ import mobtalkerscript.mts.v2.*;
 public abstract class MtsJavaFunction extends MtsFunction
 {
     @Override
-    public final MtsValue call( MtsValue... args )
+    public final MtsValue call( MtsVarArgs args )
     {
         try
         {
-            return invoke( args );
+            MtsValue result = invoke( args );
+            return result.isVarArgs() ? result : new MtsVarArgs( result );
         }
         catch ( ScriptRuntimeException ex )
         {
@@ -23,18 +24,15 @@ public abstract class MtsJavaFunction extends MtsFunction
         }
     }
     
-    protected abstract MtsValue invoke( MtsValue... args );
+    protected abstract MtsValue invoke( MtsVarArgs args );
     
     // ========================================
     
     public void checkType( MtsValue value, int i, MtsType expected )
     {
         if ( value.getType() != expected )
-            throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                              i,
-                                              getName(),
-                                              expected,
-                                              value.getType() );
+            // TODO
+            throw new BadArgumentException( "(%s expected, got %s)", expected, value.getType() );
     }
     
     public void checkType( MtsValue value, int i, MtsType... expected )
@@ -46,7 +44,7 @@ public abstract class MtsJavaFunction extends MtsFunction
         }
         
         StringBuilder msg = new StringBuilder();
-        msg.append( "bad argument #%s to '%s' (" );
+        msg.append( "(" );
         
         msg.append( expected[0].getName() );
         int to = expected.length - 1;
@@ -55,9 +53,9 @@ public abstract class MtsJavaFunction extends MtsFunction
             msg.append( ", " ).append( expected[j].getName() );
         }
         msg.append( "or " ).append( expected[to].getName() );
-        msg.append( " expected, got %s" );
+        msg.append( " expected, got %s)" );
         
-        throw new ScriptRuntimeException( msg.toString(), i, getName(), value.getType() );
+        throw new BadArgumentException( msg.toString(), value.getType() );
     }
     
     public void checkTable( MtsValue value, int i )
@@ -65,11 +63,7 @@ public abstract class MtsJavaFunction extends MtsFunction
         if ( value.getType() == MtsType.TABLE )
             return;
         
-        throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                          i,
-                                          getName(),
-                                          MtsType.TABLE.getName(),
-                                          value.getType() );
+        throw new BadArgumentException( "(%s expected, got %s)", MtsType.TABLE.getName(), value.getType() );
     }
     
     public void checkString( MtsValue value, int i )
@@ -77,11 +71,7 @@ public abstract class MtsJavaFunction extends MtsFunction
         if ( ( value.getType() == MtsType.STRING ) || ( value.getType() == MtsType.NUMBER ) )
             return;
         
-        throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                          i,
-                                          getName(),
-                                          MtsType.STRING.getName(),
-                                          value.getType() );
+        throw new BadArgumentException( "(%s expected, got %s)", MtsType.STRING.getName(), value.getType() );
     }
     
     public void checkNumber( MtsValue value, int i )
@@ -89,10 +79,6 @@ public abstract class MtsJavaFunction extends MtsFunction
         if ( ( value.getType() == MtsType.NUMBER ) || ( value.getType() == MtsType.STRING ) )
             return;
         
-        throw new ScriptRuntimeException( "bad argument #%s to '%s' (%s expected, got %s)",
-                                          i,
-                                          getName(),
-                                          MtsType.NUMBER.getName(),
-                                          value.getType() );
+        throw new ScriptRuntimeException( "(%s expected, got %s)", MtsType.NUMBER.getName(), value.getType() );
     }
 }

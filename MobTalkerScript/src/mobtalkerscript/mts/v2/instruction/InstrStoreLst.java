@@ -1,14 +1,18 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import java.util.*;
+
 import mobtalkerscript.mts.v2.value.*;
 
-public final class InstrReturn extends MtsInstruction
+import com.google.common.collect.*;
+
+public class InstrStoreLst extends MtsInstruction
 {
     private final int _count;
     
     // ========================================
     
-    public InstrReturn( int count )
+    public InstrStoreLst( int count )
     {
         _count = count;
     }
@@ -18,19 +22,16 @@ public final class InstrReturn extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.push( new MtsVarArgs( frame.pop( _count ) ) );
-    }
-    
-    @Override
-    public boolean exits()
-    {
-        return true;
+        List<MtsValue> values = frame.pop( _count );
+        MtsTable t = frame.pop().asTable();
+        
+        t.add( Lists.reverse( values ) );
     }
     
     @Override
     public int stackSizeChange()
     {
-        return 1 - _count;
+        return -1 - _count;
     }
     
     // ========================================
@@ -38,6 +39,7 @@ public final class InstrReturn extends MtsInstruction
     @Override
     public String toString()
     {
-        return "RETURN " + _count;
+        return "STORELST " + _count;
     }
+    
 }

@@ -24,16 +24,17 @@ public final class MtsBaseLib extends MtsLibrary
         
         env.set( "_G", env );
         
-        bindFunction( env, Assert );
-        bindFunction( env, Error );
-        bindFunction( env, INext );
-        bindFunction( env, Next );
-        bindFunction( env, new Print( (MtsGlobals) env ) );
-        bindFunction( env, RawGet );
-        bindFunction( env, RawSet );
-        bindFunction( env, ToNumber );
-        bindFunction( env, ToString );
-        bindFunction( env, TypeOf );
+        bindFunction( env, "assert", Assert );
+        bindFunction( env, "error", Error );
+        bindFunction( env, "next", Next );
+        bindFunction( env, "inext", INext );
+        bindFunction( env, "print", new Print( (MtsGlobals) env ) );
+        bindFunction( env, "rawget", RawGet );
+        bindFunction( env, "rawset", RawSet );
+        bindFunction( env, "typeof", TypeOf );
+        
+        bindFunction( env, "toNumber", ToNumber );
+        bindFunction( env, "toString", ToString );
         
         return env;
     }
@@ -42,12 +43,6 @@ public final class MtsBaseLib extends MtsLibrary
     
     private static final class Assert extends MtsTwoArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "assert";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
@@ -63,12 +58,6 @@ public final class MtsBaseLib extends MtsLibrary
     
     private static final class Error extends MtsTwoArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "error";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1 )
         {
@@ -87,12 +76,6 @@ public final class MtsBaseLib extends MtsLibrary
     private static final class INext extends MtsTwoArgFunction
     {
         @Override
-        public String getName()
-        {
-            return "inext";
-        }
-        
-        @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
             checkTable( arg1, 1 );
@@ -104,12 +87,6 @@ public final class MtsBaseLib extends MtsLibrary
     
     private static final class Next extends MtsTwoArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "next";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
@@ -132,15 +109,9 @@ public final class MtsBaseLib extends MtsLibrary
         }
         
         @Override
-        public String getName()
+        protected MtsValue invoke( MtsVarArgs args )
         {
-            return "print";
-        }
-        
-        @Override
-        protected MtsValue invoke( MtsValue... args )
-        {
-            if ( args.length > 0 )
+            if ( args.count() > 0 )
             {
                 MtsString str = MtsString.concat( args );
                 _G.out.println( str.toJava() );
@@ -159,12 +130,6 @@ public final class MtsBaseLib extends MtsLibrary
     private static final class RawGet extends MtsTwoArgFunction
     {
         @Override
-        public String getName()
-        {
-            return "rawget";
-        }
-        
-        @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
             checkTable( arg1, 1 );
@@ -175,12 +140,6 @@ public final class MtsBaseLib extends MtsLibrary
     
     private static final class RawSet extends MtsThreeArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "rawset";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
         {
@@ -194,12 +153,6 @@ public final class MtsBaseLib extends MtsLibrary
     
     private static final class ToNumber extends MtsOneArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "toNumber";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1 )
         {
@@ -217,12 +170,6 @@ public final class MtsBaseLib extends MtsLibrary
     private static final class ToString extends MtsOneArgFunction
     {
         @Override
-        public String getName()
-        {
-            return "toString";
-        }
-        
-        @Override
         protected MtsValue invoke( MtsValue arg1 )
         {
             return arg1.toStringMts();
@@ -233,12 +180,6 @@ public final class MtsBaseLib extends MtsLibrary
     
     private static final class TypeOf extends MtsOneArgFunction
     {
-        @Override
-        public String getName()
-        {
-            return "typeof";
-        }
-        
         @Override
         protected MtsValue invoke( MtsValue arg1 )
         {

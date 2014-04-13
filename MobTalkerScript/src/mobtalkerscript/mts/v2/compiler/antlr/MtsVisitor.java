@@ -47,6 +47,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitSayCommandStmt(@NotNull MtsParser.SayCommandStmtContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#GotoStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGotoStmt(@NotNull MtsParser.GotoStmtContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#LabelStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -115,13 +122,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitUnaryOpExpr(@NotNull MtsParser.UnaryOpExprContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#FunctionCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionCall(@NotNull MtsParser.FunctionCallContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#NameFieldAccess}.
@@ -257,13 +257,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLogicalOpExpr(@NotNull MtsParser.LogicalOpExprContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#MethodCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMethodCall(@NotNull MtsParser.MethodCallContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#CallExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -334,11 +327,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitWhileLoop(@NotNull MtsParser.WhileLoopContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#CallCommandStmt}.
+	 * Visit a parse tree produced by {@link MtsParser#callArgs}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCallCommandStmt(@NotNull MtsParser.CallCommandStmtContext ctx);
+	T visitCallArgs(@NotNull MtsParser.CallArgsContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#funcName}.
@@ -381,13 +374,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMenuCommandStmt(@NotNull MtsParser.MenuCommandStmtContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#JumpCommandStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitJumpCommandStmt(@NotNull MtsParser.JumpCommandStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#LocalFuncDeclrStmt}.

@@ -14,7 +14,6 @@ public class MtsFunctionPrototype
 {
     private final List<MtsInstruction> _instructions;
     private final int _maxStackSize;
-    private final int _localCount;
     
     private final List<MtsValue> _constants;
     private final List<ExternalDescription> _externals;
@@ -48,7 +47,6 @@ public class MtsFunctionPrototype
         
         _instructions = instructions;
         _maxStackSize = maxStackSize;
-        _localCount = locals.size();
         
         _constants = constants;
         _externals = externals;
@@ -70,29 +68,45 @@ public class MtsFunctionPrototype
         return _instructions;
     }
     
-    public int getLocalCount()
-    {
-        return _localCount;
-    }
-    
     public int getMaxStackSize()
     {
         return _maxStackSize;
     }
     
-    public List<MtsValue> getConstants()
+    // ========================================
+    
+    public int getConstantCount()
     {
-        return _constants;
+        return _constants.size();
     }
     
-    public List<ExternalDescription> getExternals()
+    public MtsValue getConstant( int index )
     {
-        return _externals;
+        return _constants.get( index );
     }
     
-    public List<LocalDescription> getLocals()
+    // ========================================
+    
+    public int getExternalCount()
     {
-        return _locals;
+        return _externals.size();
+    }
+    
+    public ExternalDescription getExternalDescription( int index )
+    {
+        return _externals.get( index );
+    }
+    
+    // ========================================
+    
+    public int getLocalCount()
+    {
+        return _locals.size();
+    }
+    
+    public LocalDescription getLocalDescription( int index )
+    {
+        return _locals.get( index );
     }
     
     // ========================================
@@ -135,9 +149,9 @@ public class MtsFunctionPrototype
         
         s.append( "function " ).append( _name ).append( "\n" );
         s.append( " stack: " ).append( _maxStackSize ).append( "\n" );
-        s.append( " locals: " ).append( _localCount ).append( "\n" );
-        s.append( " externals: " ).append( _externals.size() ).append( "\n" );
-        s.append( " constants: " ).append( _constants.size() );
+        s.append( " locals: " ).append( getLocalCount() ).append( "\n" );
+        s.append( " externals: " ).append( getExternalCount() ).append( "\n" );
+        s.append( " constants: " ).append( getConstantCount() );
         
         return super.toString();
     }

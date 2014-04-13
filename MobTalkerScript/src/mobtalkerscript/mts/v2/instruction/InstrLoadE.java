@@ -34,6 +34,6 @@ public final class InstrLoadE extends MtsIndexedInstruction
     @Override
     public String toString( MtsFunctionPrototype proto )
     {
-        return toString() + " (" + proto.getExternals().get( _index ).getName() + ")";
+        return toString() + " (" + proto.getExternalDescription( _index ).getName() + ")";
     }
 }

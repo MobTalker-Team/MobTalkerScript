@@ -5,29 +5,23 @@ import mobtalkerscript.mts.v2.*;
 public abstract class MtsLibrary extends MtsFunction
 {
     @Override
-    public String getName()
+    public final MtsValue call( MtsVarArgs args )
     {
-        return getClass().getSimpleName();
-    }
-    
-    @Override
-    public final MtsValue call( MtsValue... args )
-    {
-        switch ( args.length )
+        switch ( args.count() )
         {
             case 2:
-                return bind( args[0].toStringMts(), args[1] );
+                return bind( args.get( 0 ).toStringMts(), args.get( 1 ) );
             default:
                 throw new ScriptRuntimeException( "wrong number of arguments for binding library (expected 2, got %s)",
-                                                  args.length );
+                                                  args.count() );
         }
     }
     
     public abstract MtsValue bind( MtsString name, MtsValue env );
     
-    protected static void bindFunction( MtsValue env, MtsJavaFunction func )
+    protected static void bindFunction( MtsValue env, String name, MtsJavaFunction func )
     {
-        env.set( func.getName(), func );
+        env.set( name, func );
     }
     
     protected static void checkIfGlobals( MtsValue env )

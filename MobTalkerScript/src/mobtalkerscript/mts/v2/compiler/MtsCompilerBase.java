@@ -58,6 +58,11 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         _currentFunction.addInstruction( instr, _curPosition );
     }
     
+    public void discardValue()
+    {
+        addInstr( InstrPop() );
+    }
+    
     // ========================================
     
     public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, String... params )
@@ -141,24 +146,16 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     // ========================================
     
-    public void enterForLoop()
+    public void enterNumericForLoop( String varName )
     {
-        _currentFunction.enterLoop();
         _currentFunction.enterBlock();
+        _currentFunction.enterNumericForLoop( varName );
     }
     
-    public void enterForBody()
-    {
-        addInstr( InstrTest() );
-        _currentFunction.markBreak();
-        _currentFunction.enterBlock();
-    }
-    
-    public void exitForLoop()
+    public void exitNumericForLoop()
     {
         addInstr( InstrJump() );
         _currentFunction.exitLoop();
-        _currentFunction.exitBlock();
         _currentFunction.exitBlock();
     }
     
@@ -218,9 +215,14 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     // ========================================
     
-    public void declareLocal( String name )
+    public LocalDescription declareLocal( String name )
     {
-        _currentFunction.declareLocal( name );
+        return _currentFunction.declareLocal( name );
+    }
+    
+    public LocalDescription declareLocal()
+    {
+        return _currentFunction.declareLocal();
     }
     
     private void loadEnvironment()
@@ -257,6 +259,11 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
             addInstr( InstrLoadC( constant ) );
             addInstr( InstrLoadT() );
         }
+    }
+    
+    public void loadLocal( int index )
+    {
+        addInstr( InstrLoadL( index ) );
     }
     
     public void loadConstant( MtsValue value )
@@ -308,6 +315,11 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         }
     }
     
+    public void storeLocal( int index )
+    {
+        addInstr( InstrStoreL( index ) );
+    }
+    
     // ========================================
     
     public void createTable( int listElements, int hashPairs )
@@ -323,6 +335,13 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     public void storeInTable()
     {
         addInstr( InstrStoreT() );
+    }
+    
+    public void loadMethod( String name )
+    {
+        addInstr( InstrDup() );
+        loadConstant( valueOf( name ) );
+        loadFromTable();
     }
     
     // ========================================
@@ -400,7 +419,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     /**
      * Creates a closure off the latest child of the current function (the function compiled last).
-     * 
+     * <p>
      * CLOSURE index
      */
     public void createClosure()

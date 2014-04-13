@@ -23,8 +23,9 @@ public class MtsCompilerTest
 //                                                        + "x = d(\"b\", 2); "
 //                                                        + "c.a = a ^ b; "
 //                                                        + "return 10 + c.a + c.b; " );
+        ANTLRInputStream stream = new ANTLRInputStream( "local i, x = 1, \"bar\"; while ( i <= 10 ) do print( \"i: \" .. i ); i = i + 1; x = toString( i ); end return x;" );
         
-        ANTLRInputStream stream = new ANTLRFileStream( "C:\\Users\\Tobsen\\Desktop\\MtsExampleScript.txt" );
+//        ANTLRInputStream stream = new ANTLRFileStream( "D:\\MobTalker2\\lua-5.2.2-tests\\locals.lua" );
         
         MtsLexer lexer = new MtsLexer( stream );
         lexer.setTokenFactory( new CommonTokenFactory( false ) );
@@ -40,29 +41,14 @@ public class MtsCompilerTest
         
         MtsFunctionPrototype p = compiler.compile();
         
-        MtsTable _ENV = new MtsTable();
-        _ENV.set( "foo", new MtsZeroArgFunction()
-        {
-            @Override
-            public String getName()
-            {
-                return "foo";
-            }
-            
-            @Override
-            protected MtsValue invoke()
-            {
-                System.out.println( "Hello!" );
-                return null;
-            }
-        } );
+        MtsTable _G = new MtsGlobals();
         
         for ( MtsInstruction instr : p.getInstructions() )
         {
             System.out.println( instr );
         }
         
-        MtsClosure closure = new MtsClosure( p, new MtsTable() );
+        MtsClosure closure = new MtsClosure( p, _G );
         MtsValue result = closure.call();
         
         System.out.println( result );

@@ -18,7 +18,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public static final MtsString EMPTY_STRING = new MtsString( "" );
     
-    public static final MtsArray EMPTY_ARRAY = new MtsArray();
+    public static final MtsVarArgs EMPTY_VARARGS = new MtsVarArgs();
     
     // ========================================
     
@@ -40,16 +40,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
     public static MtsString valueOf( String value )
     {
         return MtsString.of( value );
-    }
-    
-    public static MtsArray arrayOf( MtsValue... values )
-    {
-        return new MtsArray( values );
-    }
-    
-    public static MtsArray arrayOf( List<MtsValue> values )
-    {
-        return new MtsArray( values );
     }
     
     // ========================================
@@ -135,9 +125,9 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Checks if this value is a {@link MtsArray}.
+     * Checks if this value is a {@link MtsVarArgs}.
      */
-    public boolean isArray()
+    public boolean isVarArgs()
     {
         return false;
     }
@@ -205,9 +195,9 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Equivalent to a Java typecast to {@link MtsArray}.
+     * Equivalent to a Java typecast to {@link MtsVarArgs}.
      */
-    public MtsArray asArray()
+    public MtsVarArgs asVarArgs()
     {
         throw new ScriptRuntimeException( "Expected " + MtsType.VARARGS + ", got " + getType() );
     }
@@ -265,9 +255,31 @@ public abstract class MtsValue implements Comparable<MtsValue>
         set( valueOf( key ), value );
     }
     
-    public MtsValue call( MtsValue... args )
+    // ========================================
+    
+    public final MtsValue call()
+    {
+        return call( MtsVarArgs.EMPTY_VARARGS );
+    }
+    
+    public final MtsValue call( MtsValue arg1, MtsValue... args )
+    {
+        return call( new MtsVarArgs( arg1, args ) );
+    }
+    
+    public MtsValue call( MtsVarArgs args )
     {
         throw new ScriptRuntimeException( "attempt to call a %s value", getType() );
+    }
+    
+    public final MtsValue call( MtsValue arg1, List<MtsValue> args )
+    {
+        return call( new MtsVarArgs( arg1, args ) );
+    }
+    
+    public final MtsValue call( MtsValue arg1, MtsVarArgs args )
+    {
+        return call( new MtsVarArgs( arg1, args ) );
     }
     
     // ========================================

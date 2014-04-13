@@ -3,25 +3,25 @@ package mobtalkerscript.mts.v2.value;
 public abstract class MtsThreeArgFunction extends MtsTwoArgFunction
 {
     @Override
-    protected MtsValue invoke( MtsValue... args )
+    protected MtsValue invoke( MtsVarArgs args )
     {
-        switch ( args.length )
+        switch ( args.count() )
         {
             case 0:
-                return call();
+                return invoke();
             case 1:
-                return call( args[0] );
+                return invoke( args.get( 0 ) );
             case 2:
-                return call( args[0], args[1] );
+                return invoke( args.get( 0 ), args.get( 1 ) );
             default:
-                return call( args[0], args[1], args[2] );
+                return invoke( args.get( 0 ), args.get( 1 ), args.get( 2 ) );
         }
     }
     
     @Override
     protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
     {
-        return call( arg1, arg2, NIL );
+        return invoke( arg1, arg2, NIL );
     }
     
     protected abstract MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 );

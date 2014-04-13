@@ -1,6 +1,9 @@
 package mobtalkerscript.mts.v2.value;
 
 import static com.google.common.base.Preconditions.*;
+
+import java.util.*;
+
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.instruction.*;
@@ -8,16 +11,16 @@ import mobtalkerscript.mts.v2.instruction.*;
 public final class MtsClosure extends MtsFunction
 {
     private final MtsFunctionPrototype _prototype;
-    private final FrameValue[] _externals;
+    private final List<FrameValue> _externals;
     
     // ========================================
     
     public MtsClosure( MtsFunctionPrototype prototype, MtsTable env )
     {
-        this( prototype, new FrameValue( env ) );
+        this( prototype, Collections.singletonList( new FrameValue( env ) ) );
     }
     
-    public MtsClosure( MtsFunctionPrototype prototype, FrameValue... externals )
+    public MtsClosure( MtsFunctionPrototype prototype, List<FrameValue> externals )
     {
         checkNotNull( prototype );
         checkNotNull( externals );
@@ -36,7 +39,7 @@ public final class MtsClosure extends MtsFunction
     // ========================================
     
     @Override
-    public MtsValue call( MtsValue... args )
+    public MtsValue call( MtsVarArgs args )
     {
         MtsFrame frame = new MtsFrame( this, args, _externals );
         try
@@ -56,12 +59,6 @@ public final class MtsClosure extends MtsFunction
     }
     
     // ========================================
-    
-    @Override
-    public String getName()
-    {
-        return _prototype.getName();
-    }
     
     @Override
     public final boolean isClosure()

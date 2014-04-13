@@ -1,13 +1,11 @@
 package mobtalkerscript.mts.v2.compiler;
 
-import static mobtalkerscript.mts.v2.instruction.InstructionCache.*;
-import static mobtalkerscript.mts.v2.value.MtsValue.*;
-
 import java.util.*;
 
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.AssignExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.BooleanLiteralContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallArgsContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
@@ -19,16 +17,17 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncNameContext;
-import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FunctionCallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ListFieldContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LogicalOpExprContext;
-import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.MethodCallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameFieldAccessContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameKeyFieldContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NestedBlockContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NullLiteralContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NumberLiteralContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NumericForLoopContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.RepeatLoopContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ReturnStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.SimpleAssignmentStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.StmtContext;
@@ -38,6 +37,7 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.UnaryOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprListContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarSuffixContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.WhileLoopContext;
 import mobtalkerscript.mts.v2.value.*;
 
 import org.antlr.v4.runtime.*;
@@ -268,7 +268,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
                 
                 if ( i >= nResults )
                 {
-                    addInstr( InstrPop() );
+                    discardValue();
                 }
             }
         }
@@ -324,33 +324,31 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     // Calls
     
     @Override
-    public Void visitFunctionCall( FunctionCallContext ctx )
+    public Void visitCallArgs( CallArgsContext ctx )
     {
-        int nArgs = 0;
-        if ( ctx.Args != null )
+        if ( ctx.Method != null )
+        {
+            String name = ctx.Method.getText();
+            loadMethod( name );
+        }
+        
+        int nArgs;
+        if ( ctx.Arg != null )
+        {
+            nArgs = 1;
+            loadConstant( ctx.Arg.getText() );
+        }
+        else if ( ctx.Args != null )
         {
             nArgs = ctx.Args.Exprs.size();
             visit( ctx.Args );
         }
+        else
+        {
+            nArgs = 0;
+        }
         
         callFunction( nArgs, ctx.nReturn );
-        
-        return null;
-    }
-    
-    @Override
-    public Void visitMethodCall( MethodCallContext ctx )
-    {
-        int nArgs = ctx.Args.Exprs.size();
-        String name = ctx.Method.getText();
-        
-        // self
-        addInstr( InstrDup() );
-        loadConstant( valueOf( name ) );
-        loadFromTable();
-        
-        visit( ctx.Args );
-        callFunction( nArgs + 1, ctx.nReturn );
         
         return null;
     }
@@ -485,6 +483,57 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         loadConstant( ctx.Key.getText() );
         visit( ctx.Value );
+        
+        return null;
+    }
+    
+    // ========================================
+    // Blocks
+    
+    @Override
+    public Void visitNestedBlock( NestedBlockContext ctx )
+    {
+        enterBlock();
+        visit( ctx.Block );
+        leaveBlock();
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitWhileLoop( WhileLoopContext ctx )
+    {
+        enterWhileLoop();
+        visit( ctx.Condition );
+        enterWhileBody();
+        visit( ctx.Block );
+        exitWhileLoop();
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitRepeatLoop( RepeatLoopContext ctx )
+    {
+        enterRepeatLoop();
+        visit( ctx.Block );
+        enterUntilConditon();
+        visit( ctx.Condition );
+        exitRepeatLoop();
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitNumericForLoop( NumericForLoopContext ctx )
+    {
+        visit( ctx.Control.Start );
+        visit( ctx.Control.Limit );
+        visit( ctx.Control.Step );
+        enterNumericForLoop( ctx.Control.Var.getText() );
+        
+        visit( ctx.Block );
+        exitNumericForLoop();
         
         return null;
     }

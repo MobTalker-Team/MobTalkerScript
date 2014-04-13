@@ -34,6 +34,6 @@ public final class InstrLoadC extends MtsIndexedInstruction
     @Override
     public String toString( MtsFunctionPrototype proto )
     {
-        return toString() + " (" + proto.getConstants().get( _index ) + ")";
+        return toString() + " (" + proto.getConstant( _index ) + ")";
     }
 }

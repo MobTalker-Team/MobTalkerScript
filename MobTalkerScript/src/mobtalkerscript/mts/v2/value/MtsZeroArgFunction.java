@@ -3,7 +3,7 @@ package mobtalkerscript.mts.v2.value;
 public abstract class MtsZeroArgFunction extends MtsJavaFunction
 {
     @Override
-    protected MtsValue invoke( MtsValue... args )
+    protected MtsValue invoke( MtsVarArgs args )
     {
         return invoke();
     }

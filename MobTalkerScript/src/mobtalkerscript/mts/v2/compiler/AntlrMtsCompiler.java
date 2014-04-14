@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.compiler;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
+
 import java.util.*;
 
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.AssignExprContext;
@@ -529,7 +531,16 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         visit( ctx.Control.Start );
         visit( ctx.Control.Limit );
-        visit( ctx.Control.Step );
+        
+        if ( ctx.Control.Step != null )
+        {
+            visit( ctx.Control.Step );
+        }
+        else
+        {
+            loadConstant( ONE );
+        }
+        
         enterNumericForLoop( ctx.Control.Var.getText() );
         
         visit( ctx.Block );

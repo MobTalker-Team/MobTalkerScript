@@ -199,10 +199,16 @@ public class FunctionState
         int limitIndex = declareLocal().getIndex();
         int stepIndex = declareLocal().getIndex();
         
-        addInstruction( new InstrForPrep( loopIndex, limitIndex, stepIndex ) );
+        if ( !( ( stepIndex == ( limitIndex + 1 ) ) && ( limitIndex == ( loopIndex + 1 ) ) ) )
+            throw new AssertionError( String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
+                                                     loopIndex,
+                                                     limitIndex,
+                                                     stepIndex ) );
+        
+        addInstruction( new InstrNForPrep( loopIndex ) );
         
         enterLoop();
-        addInstruction( new InstrForLoop( loopIndex, limitIndex, stepIndex ) );
+        addInstruction( new InstrNForLoop( loopIndex ) );
         markBreak();
     }
     

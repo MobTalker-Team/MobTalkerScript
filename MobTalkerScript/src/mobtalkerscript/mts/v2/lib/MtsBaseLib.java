@@ -93,7 +93,7 @@ public final class MtsBaseLib extends MtsLibrary
             checkTable( arg1, 1 );
             
             MtsTable.Entry next = arg1.asTable().getNext( arg2 );
-            return next == null ? NIL : next.getKey();
+            return next == null ? NIL : new MtsVarArgs( next.getKey(), next.getValue() );
         }
     }
     

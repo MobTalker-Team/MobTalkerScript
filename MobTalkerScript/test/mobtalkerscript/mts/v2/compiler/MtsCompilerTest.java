@@ -23,7 +23,8 @@ public class MtsCompilerTest
 //                                                        + "x = d(\"b\", 2); "
 //                                                        + "c.a = a ^ b; "
 //                                                        + "return 10 + c.a + c.b; " );
-        ANTLRInputStream stream = new ANTLRInputStream( "local i, x = 1, \"bar\"; while ( i <= 10 ) do print( \"i: \" .. i ); i = i + 1; x = toString( i ); end return x;" );
+//        ANTLRInputStream stream = new ANTLRInputStream( "local i, x = 1, \"bar\"; while ( i <= 10 ) do print( \"i: \" .. i ); i = i + 1; x = toString( i ); end return x;" );
+        ANTLRInputStream stream = new ANTLRInputStream( "local a = \"bar\"; for i = 10, 1, -1 do local b = i * 2; print( a .. \": \" .. b ); end" );
         
 //        ANTLRInputStream stream = new ANTLRFileStream( "D:\\MobTalker2\\lua-5.2.2-tests\\locals.lua" );
         

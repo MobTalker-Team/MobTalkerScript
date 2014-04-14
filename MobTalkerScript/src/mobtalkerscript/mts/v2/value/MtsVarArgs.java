@@ -12,17 +12,22 @@ public class MtsVarArgs extends MtsValue
     
     public MtsVarArgs()
     {
-        _values = Collections.emptyList();
+        _values = Collections.<MtsValue> emptyList();
     }
     
-    public MtsVarArgs( MtsValue first, MtsValue... rest )
+    public MtsVarArgs( MtsValue value )
     {
-        _values = Lists.asList( first, rest );
+        this( Collections.singletonList( value ) );
+    }
+    
+    public MtsVarArgs( MtsValue first, MtsValue second )
+    {
+        this( Arrays.asList( first, second ) );
     }
     
     public MtsVarArgs( MtsValue[] values )
     {
-        _values = Arrays.asList( values );
+        this( Arrays.asList( values ) );
     }
     
     public MtsVarArgs( List<MtsValue> values )

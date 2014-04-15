@@ -25,8 +25,10 @@ public class MtsCompilerTest
 //                                                        + "return 10 + c.a + c.b; " );
 //        ANTLRInputStream stream = new ANTLRInputStream( "local i, x = 1, \"bar\"; while ( i <= 10 ) do print( \"i: \" .. i ); i = i + 1; x = toString( i ); end return x;" );
 //        ANTLRInputStream stream = new ANTLRInputStream( "local a = \"bar\"; for i = 10, 1, -1 do local b = i * 2; print( a .. \": \" .. b ); end" );
-        ANTLRInputStream stream = new ANTLRInputStream( "local t = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };"
-                                                        + "for i, v in next, t do print( i .. \": \" .. v ); end" );
+        ANTLRInputStream stream = new ANTLRInputStream( "   local t = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, a = \"foo\" };"
+                                                        + " for i, v in next, t do"
+                                                        + "     print( i .. \": \" .. v );"
+                                                        + " end" );
         
 //        ANTLRInputStream stream = new ANTLRFileStream( "D:\\MobTalker2\\lua-5.2.2-tests\\locals.lua" );
         

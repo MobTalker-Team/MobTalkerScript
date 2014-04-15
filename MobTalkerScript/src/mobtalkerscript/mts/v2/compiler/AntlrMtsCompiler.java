@@ -12,6 +12,8 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ConditionalOpExprContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseBodyContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseIfBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprListContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FieldDefContext;
@@ -20,6 +22,7 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncNameContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.GenericForLoopContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.IfThenElseContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ListFieldContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
@@ -125,33 +128,6 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         return paramNames;
     }
     
-    private static String getFunctionName( FuncBodyContext ctx )
-    {
-        ParserRuleContext parent = ctx.getParent();
-        if ( parent instanceof FuncDeclrStmtContext )
-        {
-            FuncNameContext nameCtx = ( (FuncDeclrStmtContext) parent ).Name;
-            if ( nameCtx.MethodName != null )
-                return nameCtx.MethodName.getText();
-            if ( !nameCtx.TableKeys.isEmpty() )
-                return nameCtx.TableKeys.get( nameCtx.TableKeys.size() - 1 ).getText();
-            
-            return nameCtx.RootName.getText();
-        }
-        else if ( parent instanceof LocalFuncDeclrStmtContext )
-        {
-            return ( (LocalFuncDeclrStmtContext) parent ).Name.getText();
-        }
-        else if ( parent instanceof FuncDeclrExprContext )
-        {
-            return "Anonymous Function";
-        }
-        else
-        {
-            throw new AssertionError();
-        }
-    }
-    
     @Override
     public Void visitFuncName( FuncNameContext ctx )
     {
@@ -232,54 +208,6 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     
     // ========================================
     // Assignments
-    
-    /**
-     * Adjusts a given expression list so that all expressions are evaluated while adding exactly <code>nResults</code> values
-     * to the stack. Values may be discarded or nils may be pushed to match the desired amount.
-     */
-    private void adjustExprListResults( List<ExprContext> exprs, int nResults )
-    {
-        int nExprs = exprs.size();
-        
-        for ( int i = 0; i < nExprs; i++ )
-        {
-            ExprContext exprCtx = exprs.get( i );
-            
-            if ( exprCtx instanceof CallExprContext )
-            {
-                CallContext call = ( (CallExprContext) exprCtx ).Call;
-                
-                if ( i == ( nExprs - 1 ) )
-                { // A call at the end fills every remaining targets
-                    call.nReturn = ( 1 + nResults ) - nExprs;
-                    nExprs = nResults;
-                }
-                else if ( i < nResults )
-                { // Calls with a target and not at the end return one value
-                    call.nReturn = 1;
-                }
-                else
-                { // Calls with no target return no value
-                    call.nReturn = 0;
-                }
-                
-                visit( call );
-            }
-            else
-            {
-                // Every expression *must* be evaluated because meta-methods could be involved.
-                visit( exprCtx );
-                
-                if ( i >= nResults )
-                {
-                    discardValue();
-                }
-            }
-        }
-        
-        // Fill any leftover targets with nils
-        loadNil( nResults - nExprs );
-    }
     
     @Override
     public Void visitSimpleAssignmentStmt( SimpleAssignmentStmtContext ctx )
@@ -504,6 +432,56 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         return null;
     }
     
+    // ========================================
+    // If-Then-Else
+    
+    @Override
+    public Void visitIfThenElse( IfThenElseContext ctx )
+    {
+        enterIfThenElseBlock();
+        
+        visit( ctx.Condition );
+        endIfCondition();
+        
+        visit( ctx.Block );
+        endThenBlock();
+        
+        visit( ctx.ElseIfs );
+        
+        if ( ctx.Else != null )
+        {
+            visit( ctx.Else );
+        }
+        
+        exitIfThenElse();
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitElseIfBody( ElseIfBodyContext ctx )
+    {
+        enterIfCondition();
+        visit( ctx.Condition );
+        endIfCondition();
+        visit( ctx.Block );
+        endThenBlock();
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitElseBody( ElseBodyContext ctx )
+    {
+        enterElseBlock();
+        visit( ctx.Block );
+        
+        return null;
+    }
+    
+    // ========================================
+    // Loops
+    
     @Override
     public Void visitWhileLoop( WhileLoopContext ctx )
     {
@@ -562,16 +540,6 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         exitForLoop();
         
         return null;
-    }
-    
-    private String[] getNames( NameListContext ctx )
-    {
-        String[] names = new String[ctx.Names.size()];
-        for ( int i = 0; i < ctx.Names.size(); i++ )
-        {
-            names[i] = ctx.Names.get( i ).getText();
-        }
-        return names;
     }
     
     // ========================================
@@ -671,6 +639,91 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         for ( ParserRuleContext ctx : ctxs )
         {
             visit( ctx );
+        }
+    }
+    
+    private String[] getNames( NameListContext ctx )
+    {
+        String[] names = new String[ctx.Names.size()];
+        for ( int i = 0; i < ctx.Names.size(); i++ )
+        {
+            names[i] = ctx.Names.get( i ).getText();
+        }
+        return names;
+    }
+    
+    /**
+     * Adjusts a given expression list so that all expressions are evaluated while adding exactly <code>nResults</code> values
+     * to the stack. Values may be discarded or nils may be pushed to match the desired amount.
+     */
+    private void adjustExprListResults( List<ExprContext> exprs, int nResults )
+    {
+        int nExprs = exprs.size();
+        
+        for ( int i = 0; i < nExprs; i++ )
+        {
+            ExprContext exprCtx = exprs.get( i );
+            
+            if ( exprCtx instanceof CallExprContext )
+            {
+                CallContext call = ( (CallExprContext) exprCtx ).Call;
+                
+                if ( i == ( nExprs - 1 ) )
+                { // A call at the end fills every remaining targets
+                    call.nReturn = ( 1 + nResults ) - nExprs;
+                    nExprs = nResults;
+                }
+                else if ( i < nResults )
+                { // Calls with a target and not at the end return one value
+                    call.nReturn = 1;
+                }
+                else
+                { // Calls with no target return no value
+                    call.nReturn = 0;
+                }
+                
+                visit( call );
+            }
+            else
+            {
+                // Every expression *must* be evaluated because meta-methods could be involved.
+                visit( exprCtx );
+                
+                if ( i >= nResults )
+                {
+                    discardValue();
+                }
+            }
+        }
+        
+        // Fill any leftover targets with nils
+        loadNil( nResults - nExprs );
+    }
+    
+    private static String getFunctionName( FuncBodyContext ctx )
+    {
+        ParserRuleContext parent = ctx.getParent();
+        if ( parent instanceof FuncDeclrStmtContext )
+        {
+            FuncNameContext nameCtx = ( (FuncDeclrStmtContext) parent ).Name;
+            if ( nameCtx.MethodName != null )
+                return nameCtx.MethodName.getText();
+            if ( !nameCtx.TableKeys.isEmpty() )
+                return nameCtx.TableKeys.get( nameCtx.TableKeys.size() - 1 ).getText();
+            
+            return nameCtx.RootName.getText();
+        }
+        else if ( parent instanceof LocalFuncDeclrStmtContext )
+        {
+            return ( (LocalFuncDeclrStmtContext) parent ).Name.getText();
+        }
+        else if ( parent instanceof FuncDeclrExprContext )
+        {
+            return "Anonymous Function";
+        }
+        else
+        {
+            throw new AssertionError();
         }
     }
     

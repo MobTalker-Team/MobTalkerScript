@@ -226,11 +226,6 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         return _currentFunction.declareLocal( name );
     }
     
-    public LocalDescription declareLocal()
-    {
-        return _currentFunction.declareAnonymousLocal();
-    }
-    
     private void loadEnvironment()
     {
         if ( _currentFunction.isLocal( ENV ) )

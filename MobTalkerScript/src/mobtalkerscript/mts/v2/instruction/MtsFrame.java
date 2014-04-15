@@ -5,6 +5,7 @@ import java.util.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 public final class MtsFrame
@@ -91,7 +92,9 @@ public final class MtsFrame
         {
             MtsInstruction instr = instructions.get( _ip );
             
-            System.out.println( "Executing " + instr.toString( this.getClosure().getPrototype() ) );
+            System.out.println( String.format( "Executing [%s] %s",
+                                               formatInstructionPointer( _ip, instructions.size() ),
+                                               instr.toString( this.getClosure().getPrototype() ) ) );
             
             instr.execute( this );
             
@@ -102,6 +105,12 @@ public final class MtsFrame
         }
         
         return pop();
+    }
+    
+    private static String formatInstructionPointer( int ip, int count )
+    {
+        int l = Integer.toString( count ).length();
+        return Strings.padStart( Integer.toString( ip ), l, '0' );
     }
     
     // ========================================

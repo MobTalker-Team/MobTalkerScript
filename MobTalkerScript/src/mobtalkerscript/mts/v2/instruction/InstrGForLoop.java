@@ -45,7 +45,7 @@ public final class InstrGForLoop extends MtsJumpInstruction
             indexVar.set( nextIndex );
             for ( int i = 0; i < _values; i++ )
             {
-                frame.getLocal( _values + i ).set( results.get( i ) );
+                frame.getLocal( _index + 3 + i ).set( results.get( i ) );
             }
         }
         else

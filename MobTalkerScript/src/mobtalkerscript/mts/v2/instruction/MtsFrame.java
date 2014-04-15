@@ -88,15 +88,19 @@ public final class MtsFrame
     {
         List<MtsInstruction> instructions = _closure.getPrototype().getInstructions();
         
+        System.out.println( "Stack: " + formatStack() );
+        
         for ( ;; )
         {
             MtsInstruction instr = instructions.get( _ip );
             
             System.out.println( String.format( "Executing [%s] %s",
-                                               formatInstructionPointer( _ip, instructions.size() ),
+                                               formatInstructionPointer( instructions.size() ),
                                                instr.toString( this.getClosure().getPrototype() ) ) );
             
             instr.execute( this );
+            
+            System.out.println( "Stack: " + formatStack() );
             
             if ( instr.exits() )
                 break;
@@ -107,10 +111,26 @@ public final class MtsFrame
         return pop();
     }
     
-    private static String formatInstructionPointer( int ip, int count )
+    private String formatStack()
+    {
+        if ( _top == 0 )
+            return "[]";
+        
+        StringBuilder s = new StringBuilder( "[" );
+        int i = 0;
+        for ( ; i < ( _top - 1 ); i++ )
+        {
+            s.append( _stack[i] ).append( ", " );
+        }
+        s.append( _stack[i] ).append( ']' );
+        
+        return s.toString();
+    }
+    
+    private String formatInstructionPointer( int count )
     {
         int l = Integer.toString( count ).length();
-        return Strings.padStart( Integer.toString( ip ), l, '0' );
+        return Strings.padStart( Integer.toString( _ip ), l, '0' );
     }
     
     // ========================================
@@ -237,6 +257,24 @@ public final class MtsFrame
     public boolean stackIsEmpty()
     {
         return _top <= 0;
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder( "Frame" );
+        
+        s.append( " [IP: " ).append( _ip );
+        s.append( ", Last used Variable or Constant: " ).append( _lastVarOrConst );
+        s.append( "]\n" );
+        
+        s.append( " Locals    " ).append( _locals.toString() ).append( "\n" );
+        s.append( " Externals " ).append( _externals.toString() ).append( "\n" );
+        s.append( " Stack     " ).append( formatStack() );
+        
+        return s.toString();
     }
     
 }

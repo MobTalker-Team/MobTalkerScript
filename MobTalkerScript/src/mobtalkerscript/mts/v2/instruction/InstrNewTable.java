@@ -24,6 +24,9 @@ public class InstrNewTable extends MtsInstruction
     {
         MtsTable t = new MtsTable( Math.max( _nListElements, 16 ), Math.max( _nHashElements, 16 ) );
         
+        // List elements
+        t.add( Lists.reverse( frame.pop( _nListElements ) ) );
+        
         // Key-Value pairs
         for ( int i = 0; i < _nHashElements; i++ )
         {
@@ -32,10 +35,7 @@ public class InstrNewTable extends MtsInstruction
             t.set( k, v );
         }
         
-        // List elements
-        t.add( Lists.reverse( frame.pop( _nListElements ) ) );
-        
-        frame.push( new MtsTable() );
+        frame.push( t );
     }
     
     @Override

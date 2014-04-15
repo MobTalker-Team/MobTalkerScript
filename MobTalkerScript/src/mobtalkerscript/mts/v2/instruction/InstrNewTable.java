@@ -13,7 +13,7 @@ public class InstrNewTable extends MtsInstruction
     
     public InstrNewTable( int listElements, int hashElements )
     {
-        _nListElements = hashElements;
+        _nListElements = listElements;
         _nHashElements = hashElements;
     }
     

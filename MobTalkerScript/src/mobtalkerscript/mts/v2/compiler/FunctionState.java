@@ -196,8 +196,8 @@ public class FunctionState
     public void enterNumericForLoop( String loopVariable )
     {
         int loopIndex = declareLocal( loopVariable ).getIndex();
-        int limitIndex = declareLocal().getIndex();
-        int stepIndex = declareLocal().getIndex();
+        int limitIndex = declareAnonymousLocal( "limit" ).getIndex();
+        int stepIndex = declareAnonymousLocal( "step" ).getIndex();
         
         if ( !( ( stepIndex == ( limitIndex + 1 ) ) && ( limitIndex == ( loopIndex + 1 ) ) ) )
             throw new AssertionError( String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
@@ -209,6 +209,36 @@ public class FunctionState
         
         enterLoop();
         addInstruction( new InstrNForLoop( loopIndex ) );
+        markBreak();
+    }
+    
+    public void enterGenericForLoop( String... loopVars )
+    {
+        int iterIndex = declareAnonymousLocal( "iter" ).getIndex();
+        int stateIndex = declareAnonymousLocal( "state" ).getIndex();
+        int indexIndex = declareAnonymousLocal( "index" ).getIndex();
+        
+        if ( !( ( indexIndex == ( stateIndex + 1 ) ) && ( stateIndex == ( iterIndex + 1 ) ) ) )
+            throw new AssertionError( String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
+                                                     iterIndex,
+                                                     stateIndex,
+                                                     indexIndex ) );
+        
+        for ( int i = 0; i < loopVars.length; i++ )
+        {
+            String loopVar = loopVars[i];
+            int varIndex = declareLocal( loopVar ).getIndex();
+            
+            if ( ( varIndex - i - 1 ) != indexIndex )
+                throw new AssertionError( "Loop variable indices are not consecutive!" );
+        }
+        
+        addInstruction( InstrStoreL( indexIndex ) );
+        addInstruction( InstrStoreL( stateIndex ) );
+        addInstruction( InstrStoreL( iterIndex ) );
+        
+        enterLoop();
+        addInstruction( new InstrGForLoop( iterIndex, loopVars.length ) );
         markBreak();
     }
     
@@ -329,10 +359,10 @@ public class FunctionState
     /**
      * Declares an anonymous local variable. This variable has no scope and can only be referenced by its index.
      */
-    public LocalDescription declareLocal()
+    public LocalDescription declareAnonymousLocal( String name )
     {
         int index = _locals.size();
-        LocalDescription local = new LocalDescription( "$L" + index, index, currentIndex() );
+        LocalDescription local = new LocalDescription( "$" + name, index, currentIndex() );
         _locals.add( local );
         
         return local;

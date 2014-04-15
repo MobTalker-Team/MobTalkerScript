@@ -152,7 +152,13 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         _currentFunction.enterNumericForLoop( varName );
     }
     
-    public void exitNumericForLoop()
+    public void enterGenericForLoop( String... vars )
+    {
+        _currentFunction.enterBlock();
+        _currentFunction.enterGenericForLoop( vars );
+    }
+    
+    public void exitForLoop()
     {
         addInstr( InstrJump() );
         _currentFunction.exitLoop();
@@ -222,7 +228,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public LocalDescription declareLocal()
     {
-        return _currentFunction.declareLocal();
+        return _currentFunction.declareAnonymousLocal();
     }
     
     private void loadEnvironment()

@@ -65,6 +65,6 @@ public final class InstrGForLoop extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return String.format( "GFORLOOP %s %s", _index, getDistance() );
+        return String.format( "GFORLOOP %s %s %s", _index, _values, getDistance() );
     }
 }

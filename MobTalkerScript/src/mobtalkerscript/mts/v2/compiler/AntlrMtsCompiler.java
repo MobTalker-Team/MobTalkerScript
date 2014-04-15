@@ -19,12 +19,14 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncNameContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.GenericForLoopContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ListFieldContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LogicalOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameFieldAccessContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameKeyFieldContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NameListContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NestedBlockContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NullLiteralContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.NumberLiteralContext;
@@ -544,9 +546,32 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         enterNumericForLoop( ctx.Control.Var.getText() );
         
         visit( ctx.Block );
-        exitNumericForLoop();
+        exitForLoop();
         
         return null;
+    }
+    
+    @Override
+    public Void visitGenericForLoop( GenericForLoopContext ctx )
+    {
+        adjustExprListResults( ctx.Control.Exprs.Exprs, 3 );
+        
+        enterGenericForLoop( getNames( ctx.Control.Vars ) );
+        
+        visit( ctx.Block );
+        exitForLoop();
+        
+        return null;
+    }
+    
+    private String[] getNames( NameListContext ctx )
+    {
+        String[] names = new String[ctx.Names.size()];
+        for ( int i = 0; i < ctx.Names.size(); i++ )
+        {
+            names[i] = ctx.Names.get( i ).getText();
+        }
+        return names;
     }
     
     // ========================================

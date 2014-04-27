@@ -6,6 +6,7 @@ import java.util.logging.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
+import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
 import mobtalkerscript.util.logging.*;
 
@@ -54,7 +55,8 @@ public class MtsCompilerTest
         
         MtsFunctionPrototype p = compiler.compile();
         
-        MtsTable _G = new MtsGlobals();
+        MtsGlobals _G = new MtsGlobals();
+        _G.loadLibrary( new MtsCommandConsoleLib() );
         
         System.out.println( p.toString( true, true ) );
         

@@ -19,7 +19,6 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ConditionalOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseIfBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprContext;
-import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprListContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FieldDefContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
@@ -59,23 +58,10 @@ import com.google.common.collect.*;
 @SuppressWarnings( "unchecked" )
 public class AntlrMtsCompiler extends MtsCompilerBase
 {
-    
-    private static final ITreePattern CallExprPattern;
-    private static final ITreePattern CallStmtPattern;
-    private static final ITreePattern CallSuffixExprPattern;
-    private static final ITreePattern CallAssignExprPattern;
-    
     private static final ITreePattern TableAssignPattern;
     
     static
     {
-        CallStmtPattern = new TreePattern( CallContext.class, StmtContext.class );
-        CallExprPattern = new TreePattern( CallContext.class, ExprContext.class );
-        CallSuffixExprPattern = new TreePattern( VarSuffixContext.class );
-        CallAssignExprPattern = new TreePattern( ExprContext.class,
-                                                 ExprListContext.class,
-                                                 AssignExprContext.class );
-        
         TableAssignPattern = new TreeMultiPattern( new TreePattern( AssignExprContext.class ),
                                                    new TreePattern( VarExprListContext.class,
                                                                     AssignExprContext.class ) );
@@ -115,7 +101,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         visit( ctxs );
         
         int exprs = ctxs.size();
-        if ( exprs > 0 )
+        if ( exprs > 1 )
         {
             createTable( exprs, 0 );
         }
@@ -124,6 +110,8 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandSay( CommandSayContext ctx )
     {
+        loadVariable( MtsCommandLib.FNAME_SAY );
+        
         if ( ctx.Character == null )
             loadNil();
         else
@@ -133,7 +121,6 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         
         loadConstant( valueOf( ctx.IsLast != null ) );
         
-        loadVariable( MtsCommandLib.FNAME_SAY );
         callFunction( 3, 0 );
         
         return null;
@@ -142,6 +129,8 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandShow( CommandShowContext ctx )
     {
+        loadVariable( MtsCommandLib.FNAME_SHOW );
+        
         visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Position == null )
@@ -163,8 +152,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
                 visit( ctx.Offset.Exprs.get( 1 ) );
         }
         
-        loadVariable( MtsCommandLib.FNAME_SHOW );
-        callFunction( 3, 0 );
+        callFunction( 4, 0 );
         
         return null;
     }
@@ -172,6 +160,8 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandScene( CommandSceneContext ctx )
     {
+        loadVariable( MtsCommandLib.FNAME_SCENE );
+        
         visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Mode == null )
@@ -179,7 +169,6 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         else
             visit( ctx.Mode );
         
-        loadVariable( MtsCommandLib.FNAME_SCENE );
         callFunction( 2, 0 );
         
         return null;
@@ -188,9 +177,10 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandHide( CommandHideContext ctx )
     {
+        loadVariable( MtsCommandLib.FNAME_HIDE );
+        
         visit( ctx.Group );
         
-        loadVariable( MtsCommandLib.FNAME_HIDE );
         callFunction( 1, 0 );
         
         return null;
@@ -384,6 +374,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCall( CallContext ctx )
     {
+        if ( ctx.getParent() instanceof StmtContext )
+        {
+            ctx.nReturn = 0;
+        }
+        
         ctx.Args.get( ctx.Args.size() - 1 ).nReturn = ctx.nReturn;
         
         System.out.println( "Return values: " + ctx.nReturn );

@@ -6,6 +6,7 @@ import static mobtalkerscript.mts.v2.instruction.InstructionCache.*;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
 
 import java.util.*;
+import java.util.regex.*;
 
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.antlr.*;
@@ -14,6 +15,7 @@ import mobtalkerscript.mts.v2.value.*;
 
 public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IMtsCompiler
 {
+    
     private final FunctionState _mainFunction;
     private FunctionState _currentFunction;
     
@@ -278,7 +280,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void loadConstant( String s )
     {
-        loadConstant( valueOf( s ) );
+        loadConstant( parseString( s ) );
     }
     
     public void loadNil()
@@ -458,19 +460,59 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         }
     }
     
-    public MtsString parseString( String s )
+    public static MtsString parseString( String s )
     {
         return MtsValue.valueOf( stripHyphen( s ) );
     }
     
-    public MtsBoolean parseBoolean( String s )
+    public static MtsBoolean parseBoolean( String s )
     {
         return MtsValue.valueOf( Boolean.parseBoolean( s ) );
     }
     
-    public MtsNumber parseNumber( String s )
+    public static MtsNumber parseNumber( String s )
     {
         return MtsValue.valueOf( Double.parseDouble( s ) );
+    }
+    
+    // ========================================
+    
+    private static final Pattern _interpolationPattern = Pattern.compile( "(?<!\\\\)\\{([_a-zA-Z][_a-zA-Z0-9]*)\\}" );
+    
+    public void interpolateString( String s )
+    {
+        s = stripHyphen( s );
+        Matcher matcher = _interpolationPattern.matcher( s );
+        
+        int start = 0;
+        int end = 0;
+        if ( matcher.find() )
+        {
+            do
+            {
+                end = matcher.start( 0 );
+                
+                if ( ( end - start ) > 0 )
+                {
+                    loadConstant( s.substring( start, end ) );
+                }
+                
+                String var = matcher.group( 1 );
+                loadVariable( var );
+                
+                start = matcher.end( 0 );
+            }
+            while ( matcher.find() );
+            
+            if ( ( s.length() - start ) > 0 )
+            {
+                loadConstant( s.substring( start ) );
+            }
+        }
+        else
+        {
+            loadConstant( s );
+        }
     }
     
     // ========================================

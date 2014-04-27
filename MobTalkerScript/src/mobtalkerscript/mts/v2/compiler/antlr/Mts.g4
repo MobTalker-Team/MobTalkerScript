@@ -223,10 +223,10 @@ expr
       # StringLiteral
     | 'function' funcBody
       # FuncDeclrExpr
-    | Call=call
-      # CallExpr
     | varAccess
       # SimpleExpr
+    | Call=call
+      # CallExpr
     | tableCtor
       # SimpleExpr
 //    | Operator=( '++' | '--' ) expr
@@ -326,11 +326,11 @@ funcBody
 command
     : 'say' Character=expr? Text=exprList IsLast='as conclusion'? ';'
       # CommandSay
-    | 'show' Path=exprList ( 'at' Position=expr )? ( 'offset' Offset=exprList )? /*( 'with' Effect=exprList )?*/ ';'
+    | 'show' Path+=expr+ ( 'at' Position=expr )? ( 'offset' Offset=exprList )? /*( 'with' Effect=exprList )?*/ ';'
       # CommandShow
-    | 'scene' Path=exprList ( 'as' Mode=expr )? /*( 'with' exprList )?*/ ';'
+    | 'scene' Path+=expr+ ( 'as' Mode=expr )? /*( 'with' exprList )?*/ ';'
       # CommandScene
-    | 'hide' Path=exprList /*( 'with' exprList )?*/ ';'
+    | 'hide' Group=expr /*( 'with' exprList )?*/ ';'
       # CommandHide
     /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
       # PlayMusicCommandStmt*/

@@ -110,11 +110,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     // ========================================
     // Commands
     
-    private void visitSingleOrList( ExprListContext ctx )
+    private void visitSingleOrCreateTable( List<ExprContext> ctxs )
     {
-        visit( ctx );
+        visit( ctxs );
         
-        int exprs = ctx.Exprs.size();
+        int exprs = ctxs.size();
         if ( exprs > 0 )
         {
             createTable( exprs, 0 );
@@ -129,7 +129,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         else
             visit( ctx.Character );
         
-        visitSingleOrList( ctx.Text );
+        visitSingleOrCreateTable( ctx.Text.Exprs );
         
         loadConstant( valueOf( ctx.IsLast != null ) );
         
@@ -142,7 +142,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandShow( CommandShowContext ctx )
     {
-        visitSingleOrList( ctx.Path );
+        visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Position == null )
             loadNil();
@@ -172,7 +172,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandScene( CommandSceneContext ctx )
     {
-        visitSingleOrList( ctx.Path );
+        visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Mode == null )
             loadNil();
@@ -188,7 +188,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandHide( CommandHideContext ctx )
     {
-        visitSingleOrList( ctx.Path );
+        visit( ctx.Group );
         
         loadVariable( MtsCommandLib.FNAME_HIDE );
         callFunction( 1, 0 );
@@ -294,7 +294,6 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         enterFunction( funcName, lineStart, lineEnd, paramNames );
         
         visit( ctx.Body );
-        returnFunction( 0 );
         
         System.out.println( "ExitFunction" );
         exitFunction();
@@ -721,10 +720,15 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitStringLiteral( StringLiteralContext ctx )
     {
-        MtsString value = parseString( ctx.getText() );
-        loadConstant( value );
+//        MtsString value = parseString( ctx.getText() );
+//        loadConstant( value );
+//        
+//        System.out.println( "Literal: " + value );
         
-        System.out.println( "Literal: " + value );
+        System.out.println( "Interpolating string: " + ctx.getText() );
+        
+        interpolateString( ctx.getText() );
+        
         return null;
     }
     

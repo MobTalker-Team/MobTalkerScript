@@ -271,7 +271,7 @@ varAccess
 	: varOrExpr fieldAccess*
 	;
 	
-call returns [int nReturn]
+call returns [int nReturn = 1]
 	: varOrExpr Args+=callArgs[1]+
 	;
 

@@ -1362,7 +1362,7 @@ public class MtsParser extends Parser {
 	}
 
 	public static class CallContext extends ParserRuleContext {
-		public int nReturn;
+		public int nReturn = 1;
 		public CallArgsContext callArgs;
 		public List<CallArgsContext> Args = new ArrayList<CallArgsContext>();
 		public CallArgsContext callArgs(int i) {

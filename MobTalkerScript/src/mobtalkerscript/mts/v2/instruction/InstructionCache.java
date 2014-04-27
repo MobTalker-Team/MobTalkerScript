@@ -76,13 +76,13 @@ public class InstructionCache
         _assignOps.put( "%=", InstrMod() );
         _assignOps.put( "^=", InstrPow() );
         
-        _loadL = new InstrLoadL[15];
-        _loadE = new InstrLoadE[15];
-        _loadC = new InstrLoadC[15];
-        _storeL = new InstrStoreL[15];
-        _storeE = new InstrStoreE[15];
+        _loadL = new InstrLoadL[50];
+        _loadE = new InstrLoadE[50];
+        _loadC = new InstrLoadC[50];
+        _storeL = new InstrStoreL[50];
+        _storeE = new InstrStoreE[50];
         
-        for ( int i = 0; i < 15; i++ )
+        for ( int i = 0; i < 50; i++ )
         {
             _loadL[i] = new InstrLoadL( i );
             _loadE[i] = new InstrLoadE( i );
@@ -265,6 +265,11 @@ public class InstructionCache
     public static InstrConcat InstrConcat()
     {
         return _concat;
+    }
+    
+    public static InstrConcat InstrConcat( int count )
+    {
+        return new InstrConcat( count );
     }
     
     public static InstrEQ InstrEq()

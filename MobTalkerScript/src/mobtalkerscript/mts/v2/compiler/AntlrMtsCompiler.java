@@ -12,6 +12,7 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandHideContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandMenuContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandSayContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandSceneContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandShowContext;
@@ -25,7 +26,9 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncNameContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.GenericForLoopContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.GotoStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.IfThenElseContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LabelStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ListFieldContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
@@ -182,6 +185,51 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         visit( ctx.Group );
         
         callFunction( 1, 0 );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCommandMenu( CommandMenuContext ctx )
+    {
+        loadVariable( MtsCommandLib.FNAME_MENU );
+        
+        if ( ctx.Caption == null )
+            loadNil();
+        else
+            visit( ctx.Caption );
+        
+        int choiceIndex = declareAnonymousLocal( "choice" ).getIndex();
+        
+        int nOptions = ctx.Options.size();
+        for ( int i = 0; i < nOptions; i++ )
+        {
+            visit( ctx.Options.get( i ).Caption );
+        }
+        
+        callFunction( 1 + nOptions, 1 );
+        storeLocal( choiceIndex );
+        
+        enterIfThenElseBlock();
+        enterBlock();
+        
+        for ( int i = 0; i < nOptions; i++ )
+        {
+            if ( i > 0 )
+            {
+                enterIfCondition();
+            }
+            
+            loadLocal( choiceIndex );
+            loadConstant( valueOf( i + 1 ) );
+            logicOperation( "==" );
+            endIfCondition();
+            visit( ctx.Options.get( i ).Block );
+            endThenBlock();
+        }
+        
+        exitBlock();
+        exitIfThenElse();
         
         return null;
     }
@@ -518,8 +566,25 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         enterBlock();
         visit( ctx.Block );
-        leaveBlock();
+        exitBlock();
         
+        return null;
+    }
+    
+    // ========================================
+    // Labels
+    
+    @Override
+    public Void visitLabelStmt( LabelStmtContext ctx )
+    {
+        declareLabel( ctx.Name.getText() );
+        return null;
+    }
+    
+    @Override
+    public Void visitGotoStmt( GotoStmtContext ctx )
+    {
+        gotoLabel( ctx.Target.getText() );
         return null;
     }
     
@@ -530,6 +595,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     public Void visitIfThenElse( IfThenElseContext ctx )
     {
         enterIfThenElseBlock();
+        enterBlock();
         
         visit( ctx.Condition );
         endIfCondition();
@@ -544,6 +610,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             visit( ctx.Else );
         }
         
+        exitBlock();
         exitIfThenElse();
         
         return null;

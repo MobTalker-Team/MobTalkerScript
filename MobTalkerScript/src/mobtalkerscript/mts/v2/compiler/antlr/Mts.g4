@@ -97,10 +97,6 @@ BlockComment
     : '--[[' .*? ']]' -> channel( HIDDEN )
     ;
 
-Identifier
-    : [_a-zA-Z][_a-zA-Z0-9]*
-    ;
-
 NULL
     : 'nil'
     ;
@@ -161,6 +157,10 @@ HEXFLOAT
 	| '0' [xX] '.' HexDigit+ HexExponentPart?
 	| '0' [xX] HexDigit+ HexExponentPart
 	;
+
+Identifier
+    : [_a-zA-Z][_a-zA-Z0-9]*
+    ;
 
 // =============================================================================
 

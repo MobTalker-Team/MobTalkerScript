@@ -25,8 +25,8 @@ public class MtsParser extends Parser {
 		OR=52, INC=53, DEC=54, ADD=55, SUB=56, MUL=57, DIV=58, MOD=59, POW=60, 
 		STR_CONCAT=61, TBL_APPEND=62, SIZEOF=63, ADD_ASSIGN=64, SUB_ASSIGN=65, 
 		MUL_ASSIGN=66, DIV_ASSIGN=67, MOD_ASSIGN=68, POW_ASSIGN=69, CONCAT_ASSIGN=70, 
-		LineComment=71, BlockComment=72, Identifier=73, NULL=74, BOOLEAN=75, NORMALSTRING=76, 
-		LONGSTRING=77, INTEGER=78, FLOAT=79, HEXINTEGER=80, HEXFLOAT=81;
+		LineComment=71, BlockComment=72, NULL=73, BOOLEAN=74, NORMALSTRING=75, 
+		LONGSTRING=76, INTEGER=77, FLOAT=78, HEXINTEGER=79, HEXFLOAT=80, Identifier=81;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'elseif'", "'else if'", "WS", "'local'", "'function'", "'label'", 
 		"'jump'", "'return'", "'end'", "'do'", "'if'", "'then'", "ELSEIF", "'else'", 
@@ -37,8 +37,8 @@ public class MtsParser extends Parser {
 		"'=='", "'<='", "'>='", "'!='", "'and'", "'or'", "'++'", "'--'", "'+'", 
 		"'-'", "'*'", "'/'", "'%'", "'^'", "'..'", "'[]'", "'#'", "'+='", "'-='", 
 		"'*='", "'/='", "'%='", "'^='", "'.='", "LineComment", "BlockComment", 
-		"Identifier", "'nil'", "BOOLEAN", "NORMALSTRING", "LONGSTRING", "INTEGER", 
-		"FLOAT", "HEXINTEGER", "HEXFLOAT"
+		"'nil'", "BOOLEAN", "NORMALSTRING", "LONGSTRING", "INTEGER", "FLOAT", 
+		"HEXINTEGER", "HEXFLOAT", "Identifier"
 	};
 	public static final int
 		RULE_chunk = 0, RULE_block = 1, RULE_stmt = 2, RULE_expr = 3, RULE_assignExpr = 4, 
@@ -498,7 +498,7 @@ public class MtsParser extends Parser {
 				setState(83); match(RETURN);
 				setState(85);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (Identifier - 73)) | (1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)) | (1L << (Identifier - 73)))) != 0)) {
 					{
 					setState(84); ((ReturnStmtContext)_localctx).ExprList = exprList();
 					}
@@ -854,7 +854,7 @@ public class MtsParser extends Parser {
 				_prevctx = _localctx;
 				setState(150);
 				_la = _input.LA(1);
-				if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (INTEGER - 78)) | (1L << (FLOAT - 78)) | (1L << (HEXINTEGER - 78)) | (1L << (HEXFLOAT - 78)))) != 0)) ) {
+				if ( !(((((_la - 77)) & ~0x3f) == 0 && ((1L << (_la - 77)) & ((1L << (INTEGER - 77)) | (1L << (FLOAT - 77)) | (1L << (HEXINTEGER - 77)) | (1L << (HEXFLOAT - 77)))) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				consume();
@@ -1472,7 +1472,7 @@ public class MtsParser extends Parser {
 				setState(235); match(LPAREN);
 				setState(237);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (Identifier - 73)) | (1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)) | (1L << (Identifier - 73)))) != 0)) {
 					{
 					setState(236); ((CallArgsContext)_localctx).Args = exprList();
 					}
@@ -1605,7 +1605,7 @@ public class MtsParser extends Parser {
 			setState(251); match(LBRACE);
 			setState(263);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << LBRACK) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (Identifier - 73)) | (1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << LBRACK) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)) | (1L << (Identifier - 73)))) != 0)) {
 				{
 				setState(252); ((TableCtorContext)_localctx).fieldDef = fieldDef();
 				((TableCtorContext)_localctx).FieldDefs.add(((TableCtorContext)_localctx).fieldDef);
@@ -2204,7 +2204,7 @@ public class MtsParser extends Parser {
 					setState(334); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (Identifier - 73)) | (1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)))) != 0) );
+				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)) | (1L << (Identifier - 73)))) != 0) );
 				setState(338);
 				_la = _input.LA(1);
 				if (_la==CMD_AT) {
@@ -2244,7 +2244,7 @@ public class MtsParser extends Parser {
 					setState(350); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (Identifier - 73)) | (1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)))) != 0) );
+				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)) | (1L << (Identifier - 73)))) != 0) );
 				setState(354);
 				_la = _input.LA(1);
 				if (_la==CMD_AS) {
@@ -2273,7 +2273,7 @@ public class MtsParser extends Parser {
 				setState(362); match(CMD_MENU);
 				setState(364);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (Identifier - 73)) | (1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (NULL - 73)) | (1L << (BOOLEAN - 73)) | (1L << (NORMALSTRING - 73)) | (1L << (LONGSTRING - 73)) | (1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)) | (1L << (Identifier - 73)))) != 0)) {
 					{
 					setState(363); ((CommandMenuContext)_localctx).Caption = expr(0);
 					}
@@ -2612,7 +2612,7 @@ public class MtsParser extends Parser {
 		"\n\30\f\30\16\30\u0184\13\30\3\31\3\31\3\32\3\32\3\32\7\32\u018b\n\32"+
 		"\f\32\16\32\u018e\13\32\3\33\3\33\3\33\7\33\u0193\n\33\f\33\16\33\u0196"+
 		"\13\33\3\33\2\34\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62"+
-		"\64\2\13\5\2//::AA\3\2PS\3\2NO\3\2;>\3\29:\4\2-.\61\64\3\2\65\66\3\2B"+
+		"\64\2\13\5\2//::AA\3\2OR\3\2MN\3\2;>\3\29:\4\2-.\61\64\3\2\65\66\3\2B"+
 		"H\3\2\3\4\u01c4\2\66\3\2\2\2\4<\3\2\2\2\6\u008d\3\2\2\2\b\u009f\3\2\2"+
 		"\2\n\u00bd\3\2\2\2\f\u00c5\3\2\2\2\16\u00d0\3\2\2\2\20\u00da\3\2\2\2\22"+
 		"\u00dc\3\2\2\2\24\u00e3\3\2\2\2\26\u00eb\3\2\2\2\30\u00fb\3\2\2\2\32\u00fd"+
@@ -2623,7 +2623,7 @@ public class MtsParser extends Parser {
 		"\2<:\3\2\2\2<=\3\2\2\2=\5\3\2\2\2><\3\2\2\2?\u008e\7)\2\2@A\5\n\6\2AB"+
 		"\7)\2\2B\u008e\3\2\2\2CD\7\6\2\2DG\5.\30\2EF\7,\2\2FH\5\62\32\2GE\3\2"+
 		"\2\2GH\3\2\2\2H\u008e\3\2\2\2IJ\5\24\13\2JK\7)\2\2K\u008e\3\2\2\2L\u008e"+
-		"\5*\26\2MN\7\t\2\2NO\7K\2\2O\u008e\7)\2\2PQ\7\"\2\2QR\7K\2\2R\u008e\7"+
+		"\5*\26\2MN\7\t\2\2NO\7S\2\2O\u008e\7)\2\2PQ\7\"\2\2QR\7S\2\2R\u008e\7"+
 		"\"\2\2ST\7\22\2\2T\u008e\7)\2\2UW\7\n\2\2VX\5\62\32\2WV\3\2\2\2WX\3\2"+
 		"\2\2XY\3\2\2\2Y\u008e\7)\2\2Z[\7\f\2\2[\\\5\4\3\2\\]\7\13\2\2]\u008e\3"+
 		"\2\2\2^_\7\21\2\2_`\5\b\5\2`a\7\f\2\2ab\5\4\3\2bc\7\13\2\2c\u008e\3\2"+
@@ -2635,13 +2635,13 @@ public class MtsParser extends Parser {
 		"\5$\23\2\u0081\u0082\7\f\2\2\u0082\u0083\5\4\3\2\u0083\u0084\7\13\2\2"+
 		"\u0084\u008e\3\2\2\2\u0085\u0086\7\7\2\2\u0086\u0087\5&\24\2\u0087\u0088"+
 		"\5(\25\2\u0088\u008e\3\2\2\2\u0089\u008a\7\6\2\2\u008a\u008b\7\7\2\2\u008b"+
-		"\u008c\7K\2\2\u008c\u008e\5(\25\2\u008d?\3\2\2\2\u008d@\3\2\2\2\u008d"+
+		"\u008c\7S\2\2\u008c\u008e\5(\25\2\u008d?\3\2\2\2\u008d@\3\2\2\2\u008d"+
 		"C\3\2\2\2\u008dI\3\2\2\2\u008dL\3\2\2\2\u008dM\3\2\2\2\u008dP\3\2\2\2"+
 		"\u008dS\3\2\2\2\u008dU\3\2\2\2\u008dZ\3\2\2\2\u008d^\3\2\2\2\u008dd\3"+
 		"\2\2\2\u008dj\3\2\2\2\u008dy\3\2\2\2\u008d\177\3\2\2\2\u008d\u0085\3\2"+
 		"\2\2\u008d\u0089\3\2\2\2\u008e\7\3\2\2\2\u008f\u0090\b\5\1\2\u0090\u0091"+
 		"\t\2\2\2\u0091\u00a0\5\b\5\2\u0092\u0093\7#\2\2\u0093\u0094\5\b\5\2\u0094"+
-		"\u0095\7$\2\2\u0095\u00a0\3\2\2\2\u0096\u00a0\7L\2\2\u0097\u00a0\7M\2"+
+		"\u0095\7$\2\2\u0095\u00a0\3\2\2\2\u0096\u00a0\7K\2\2\u0097\u00a0\7L\2"+
 		"\2\u0098\u00a0\t\3\2\2\u0099\u00a0\t\4\2\2\u009a\u009b\7\7\2\2\u009b\u00a0"+
 		"\5(\25\2\u009c\u00a0\5\22\n\2\u009d\u00a0\5\24\13\2\u009e\u00a0\5\32\16"+
 		"\2\u009f\u008f\3\2\2\2\u009f\u0092\3\2\2\2\u009f\u0096\3\2\2\2\u009f\u0097"+
@@ -2657,7 +2657,7 @@ public class MtsParser extends Parser {
 		"\3\2\2\2\u00b5\u00b6\5\64\33\2\u00b6\u00b7\7,\2\2\u00b7\u00b8\5\62\32"+
 		"\2\u00b8\u00be\3\2\2\2\u00b9\u00ba\5\f\7\2\u00ba\u00bb\t\t\2\2\u00bb\u00bc"+
 		"\5\b\5\2\u00bc\u00be\3\2\2\2\u00bd\u00b5\3\2\2\2\u00bd\u00b9\3\2\2\2\u00be"+
-		"\13\3\2\2\2\u00bf\u00c6\7K\2\2\u00c0\u00c1\7#\2\2\u00c1\u00c2\5\b\5\2"+
+		"\13\3\2\2\2\u00bf\u00c6\7S\2\2\u00c0\u00c1\7#\2\2\u00c1\u00c2\5\b\5\2"+
 		"\u00c2\u00c3\7$\2\2\u00c3\u00c4\5\16\b\2\u00c4\u00c6\3\2\2\2\u00c5\u00bf"+
 		"\3\2\2\2\u00c5\u00c0\3\2\2\2\u00c6\u00ca\3\2\2\2\u00c7\u00c9\5\16\b\2"+
 		"\u00c8\u00c7\3\2\2\2\u00c9\u00cc\3\2\2\2\u00ca\u00c8\3\2\2\2\u00ca\u00cb"+
@@ -2671,12 +2671,12 @@ public class MtsParser extends Parser {
 		"\2\2\u00e1\23\3\2\2\2\u00e2\u00e0\3\2\2\2\u00e3\u00e5\5\20\t\2\u00e4\u00e6"+
 		"\5\26\f\2\u00e5\u00e4\3\2\2\2\u00e6\u00e7\3\2\2\2\u00e7\u00e5\3\2\2\2"+
 		"\u00e7\u00e8\3\2\2\2\u00e8\25\3\2\2\2\u00e9\u00ea\7\60\2\2\u00ea\u00ec"+
-		"\7K\2\2\u00eb\u00e9\3\2\2\2\u00eb\u00ec\3\2\2\2\u00ec\u00f3\3\2\2\2\u00ed"+
+		"\7S\2\2\u00eb\u00e9\3\2\2\2\u00eb\u00ec\3\2\2\2\u00ec\u00f3\3\2\2\2\u00ed"+
 		"\u00ef\7#\2\2\u00ee\u00f0\5\62\32\2\u00ef\u00ee\3\2\2\2\u00ef\u00f0\3"+
-		"\2\2\2\u00f0\u00f1\3\2\2\2\u00f1\u00f4\7$\2\2\u00f2\u00f4\7N\2\2\u00f3"+
+		"\2\2\2\u00f0\u00f1\3\2\2\2\u00f1\u00f4\7$\2\2\u00f2\u00f4\7M\2\2\u00f3"+
 		"\u00ed\3\2\2\2\u00f3\u00f2\3\2\2\2\u00f4\27\3\2\2\2\u00f5\u00f6\7\'\2"+
 		"\2\u00f6\u00f7\5\b\5\2\u00f7\u00f8\7(\2\2\u00f8\u00fc\3\2\2\2\u00f9\u00fa"+
-		"\7+\2\2\u00fa\u00fc\7K\2\2\u00fb\u00f5\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fc"+
+		"\7+\2\2\u00fa\u00fc\7S\2\2\u00fb\u00f5\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fc"+
 		"\31\3\2\2\2\u00fd\u0109\7%\2\2\u00fe\u0103\5\34\17\2\u00ff\u0100\7*\2"+
 		"\2\u0100\u0102\5\34\17\2\u0101\u00ff\3\2\2\2\u0102\u0105\3\2\2\2\u0103"+
 		"\u0101\3\2\2\2\u0103\u0104\3\2\2\2\u0104\u0107\3\2\2\2\u0105\u0103\3\2"+
@@ -2684,18 +2684,18 @@ public class MtsParser extends Parser {
 		"\u010a\3\2\2\2\u0109\u00fe\3\2\2\2\u0109\u010a\3\2\2\2\u010a\u010b\3\2"+
 		"\2\2\u010b\u010c\7&\2\2\u010c\33\3\2\2\2\u010d\u010e\7\'\2\2\u010e\u010f"+
 		"\5\b\5\2\u010f\u0110\7(\2\2\u0110\u0111\7,\2\2\u0111\u0112\5\b\5\2\u0112"+
-		"\u0118\3\2\2\2\u0113\u0114\7K\2\2\u0114\u0115\7,\2\2\u0115\u0118\5\b\5"+
+		"\u0118\3\2\2\2\u0113\u0114\7S\2\2\u0114\u0115\7,\2\2\u0115\u0118\5\b\5"+
 		"\2\u0116\u0118\5\b\5\2\u0117\u010d\3\2\2\2\u0117\u0113\3\2\2\2\u0117\u0116"+
 		"\3\2\2\2\u0118\35\3\2\2\2\u0119\u011a\t\n\2\2\u011a\u011b\5\b\5\2\u011b"+
 		"\u011c\7\16\2\2\u011c\u011d\5\4\3\2\u011d\37\3\2\2\2\u011e\u011f\7\20"+
-		"\2\2\u011f\u0120\5\4\3\2\u0120!\3\2\2\2\u0121\u0122\7K\2\2\u0122\u0123"+
+		"\2\2\u011f\u0120\5\4\3\2\u0120!\3\2\2\2\u0121\u0122\7S\2\2\u0122\u0123"+
 		"\7,\2\2\u0123\u0124\5\b\5\2\u0124\u0125\7*\2\2\u0125\u0128\5\b\5\2\u0126"+
 		"\u0127\7*\2\2\u0127\u0129\5\b\5\2\u0128\u0126\3\2\2\2\u0128\u0129\3\2"+
 		"\2\2\u0129#\3\2\2\2\u012a\u012b\5.\30\2\u012b\u012c\7\26\2\2\u012c\u012d"+
-		"\5\62\32\2\u012d%\3\2\2\2\u012e\u0133\7K\2\2\u012f\u0130\7+\2\2\u0130"+
-		"\u0132\7K\2\2\u0131\u012f\3\2\2\2\u0132\u0135\3\2\2\2\u0133\u0131\3\2"+
+		"\5\62\32\2\u012d%\3\2\2\2\u012e\u0133\7S\2\2\u012f\u0130\7+\2\2\u0130"+
+		"\u0132\7S\2\2\u0131\u012f\3\2\2\2\u0132\u0135\3\2\2\2\u0133\u0131\3\2"+
 		"\2\2\u0133\u0134\3\2\2\2\u0134\u0138\3\2\2\2\u0135\u0133\3\2\2\2\u0136"+
-		"\u0137\7\60\2\2\u0137\u0139\7K\2\2\u0138\u0136\3\2\2\2\u0138\u0139\3\2"+
+		"\u0137\7\60\2\2\u0137\u0139\7S\2\2\u0138\u0136\3\2\2\2\u0138\u0139\3\2"+
 		"\2\2\u0139\'\3\2\2\2\u013a\u013c\7#\2\2\u013b\u013d\5\60\31\2\u013c\u013b"+
 		"\3\2\2\2\u013c\u013d\3\2\2\2\u013d\u013e\3\2\2\2\u013e\u013f\7$\2\2\u013f"+
 		"\u0140\5\4\3\2\u0140\u0141\7\13\2\2\u0141)\3\2\2\2\u0142\u0144\7\27\2"+
@@ -2719,7 +2719,7 @@ public class MtsParser extends Parser {
 		"\u0178\3\2\2\2\u0177\u0142\3\2\2\2\u0177\u014c\3\2\2\2\u0177\u015c\3\2"+
 		"\2\2\u0177\u0168\3\2\2\2\u0177\u016c\3\2\2\2\u0178+\3\2\2\2\u0179\u017a"+
 		"\7!\2\2\u017a\u017b\5\b\5\2\u017b\u017c\5\4\3\2\u017c-\3\2\2\2\u017d\u0182"+
-		"\7K\2\2\u017e\u017f\7*\2\2\u017f\u0181\7K\2\2\u0180\u017e\3\2\2\2\u0181"+
+		"\7S\2\2\u017e\u017f\7*\2\2\u017f\u0181\7S\2\2\u0180\u017e\3\2\2\2\u0181"+
 		"\u0184\3\2\2\2\u0182\u0180\3\2\2\2\u0182\u0183\3\2\2\2\u0183/\3\2\2\2"+
 		"\u0184\u0182\3\2\2\2\u0185\u0186\5.\30\2\u0186\61\3\2\2\2\u0187\u018c"+
 		"\5\b\5\2\u0188\u0189\7*\2\2\u0189\u018b\5\b\5\2\u018a\u0188\3\2\2\2\u018b"+

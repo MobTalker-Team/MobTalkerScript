@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 import static mobtalkerscript.mts.v2.instruction.InstructionCache.*;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.Queue;
 
 import mobtalkerscript.mts.v2.*;
@@ -114,12 +115,18 @@ public class FunctionState
     
     public void addLabel( String name )
     {
-        checkArgument( !_labels.containsKey( name ), "Label %s already exists!", name );
+        CompilerLabel label = _labels.get( name );
+        if ( label == null )
+        {
+            label = new CompilerLabel();
+            _labels.put( name, label );
+        }
+        else
+        {
+            checkArgument( label.getTarget() != 0, "label '%s' already exists", name );
+        }
         
-        CompilerLabel label = new CompilerLabel();
         label.setTarget( currentIndex() + 1 );
-        
-        _labels.put( name, label );
     }
     
     public CompilerLabel getLabel( String name )
@@ -452,6 +459,12 @@ public class FunctionState
         checkState( _pendingJumps.isEmpty(), "Didn't close all pending jumps!" );
         checkState( _loops.isEmpty(), "Didn't close all loops!" );
         checkState( _ifElses.isEmpty(), "Didn't close all IfElse!" );
+        
+        for ( Entry<String, CompilerLabel> label : _labels.entrySet() )
+        {
+            if ( label.getValue().getTarget() == 0 )
+                throw new IllegalStateException( "unknown label '" + label.getKey() + "'" );
+        }
         
         int curStackSize = 0;
         int maxStackSize = 0;

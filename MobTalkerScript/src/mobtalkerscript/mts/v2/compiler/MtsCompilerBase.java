@@ -101,7 +101,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         _currentFunction.enterBlock();
     }
     
-    public void leaveBlock()
+    public void exitBlock()
     {
         _currentFunction.exitBlock();
     }
@@ -226,6 +226,11 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     public LocalDescription declareLocal( String name )
     {
         return _currentFunction.declareLocal( name );
+    }
+    
+    public LocalDescription declareAnonymousLocal( String name )
+    {
+        return _currentFunction.declareAnonymousLocal( name );
     }
     
     private void loadEnvironment()
@@ -488,6 +493,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         int end = 0;
         if ( matcher.find() )
         {
+            int count = 0;
             do
             {
                 end = matcher.start( 0 );
@@ -495,10 +501,12 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
                 if ( ( end - start ) > 0 )
                 {
                     loadConstant( s.substring( start, end ) );
+                    count++;
                 }
                 
                 String var = matcher.group( 1 );
                 loadVariable( var );
+                count++;
                 
                 start = matcher.end( 0 );
             }
@@ -507,7 +515,10 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
             if ( ( s.length() - start ) > 0 )
             {
                 loadConstant( s.substring( start ) );
+                count++;
             }
+            
+            addInstr( InstrConcat( count ) );
         }
         else
         {

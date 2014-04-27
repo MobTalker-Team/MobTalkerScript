@@ -11,6 +11,10 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallArgsContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CallExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandHideContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandSayContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandSceneContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.CommandShowContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ConditionalOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseIfBodyContext;
@@ -45,6 +49,7 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprListContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarSuffixContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.WhileLoopContext;
+import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
 
 import org.antlr.v4.runtime.*;
@@ -103,18 +108,110 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     }
     
     // ========================================
+    // Commands
+    
+    private void visitSingleOrList( ExprListContext ctx )
+    {
+        visit( ctx );
+        
+        int exprs = ctx.Exprs.size();
+        if ( exprs > 0 )
+        {
+            createTable( exprs, 0 );
+        }
+    }
+    
+    @Override
+    public Void visitCommandSay( CommandSayContext ctx )
+    {
+        if ( ctx.Character == null )
+            loadNil();
+        else
+            visit( ctx.Character );
+        
+        visitSingleOrList( ctx.Text );
+        
+        loadConstant( valueOf( ctx.IsLast != null ) );
+        
+        loadVariable( MtsCommandLib.FNAME_SAY );
+        callFunction( 3, 0 );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCommandShow( CommandShowContext ctx )
+    {
+        visitSingleOrList( ctx.Path );
+        
+        if ( ctx.Position == null )
+            loadNil();
+        else
+            visit( ctx.Position );
+        
+        if ( ctx.Offset == null )
+        {
+            loadConstant( ZERO );
+            loadConstant( ZERO );
+        }
+        else
+        {
+            visit( ctx.Offset.Exprs.get( 0 ) );
+            if ( ctx.Offset.Exprs.size() < 2 )
+                loadConstant( ZERO );
+            else
+                visit( ctx.Offset.Exprs.get( 1 ) );
+        }
+        
+        loadVariable( MtsCommandLib.FNAME_SHOW );
+        callFunction( 3, 0 );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCommandScene( CommandSceneContext ctx )
+    {
+        visitSingleOrList( ctx.Path );
+        
+        if ( ctx.Mode == null )
+            loadNil();
+        else
+            visit( ctx.Mode );
+        
+        loadVariable( MtsCommandLib.FNAME_SCENE );
+        callFunction( 2, 0 );
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitCommandHide( CommandHideContext ctx )
+    {
+        visitSingleOrList( ctx.Path );
+        
+        loadVariable( MtsCommandLib.FNAME_HIDE );
+        callFunction( 1, 0 );
+        
+        return null;
+    }
+    
+    // ========================================
     // Functions
+    
+    private static boolean isMethodBody( FuncBodyContext ctx )
+    {
+        return ( ctx.getParent() instanceof FuncDeclrStmtContext )
+               && ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null );
+    }
     
     private static List<String> getParameterNames( FuncBodyContext ctx )
     {
         List<String> paramNames = Lists.newArrayList();
         
-        if ( ctx.getParent() instanceof FuncDeclrStmtContext )
+        if ( isMethodBody( ctx ) )
         {
-            if ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null )
-            {
-                paramNames.add( "self" );
-            }
+            paramNames.add( "self" );
         }
         
         if ( ctx.Params != null )
@@ -634,6 +731,9 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     // ========================================
     // Utilities
     
+    /**
+     * Extension to the other visit methods.
+     */
     public void visit( Iterable<? extends ParserRuleContext> ctxs )
     {
         for ( ParserRuleContext ctx : ctxs )
@@ -642,6 +742,9 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         }
     }
     
+    /**
+     * Returns an array of the given variable identifiers as strings.
+     */
     private String[] getNames( NameListContext ctx )
     {
         String[] names = new String[ctx.Names.size()];
@@ -654,7 +757,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     
     /**
      * Adjusts a given expression list so that all expressions are evaluated while adding exactly <code>nResults</code> values
-     * to the stack. Values may be discarded or nils may be pushed to match the desired amount.
+     * to the stack. Values may be discarded or nils may be added to match the desired amount.
      */
     private void adjustExprListResults( List<ExprContext> exprs, int nResults )
     {
@@ -700,6 +803,17 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         loadNil( nResults - nExprs );
     }
     
+    /**
+     * Extracts the name of a function.
+     * <p>
+     * This can be either
+     * <ul>
+     * <li>a method name</li>
+     * <li>a table key of the function</li>
+     * <li>a local variable name</li>
+     * <li>or <code>Anonymous Function</code></li>
+     * </ul>
+     */
     private static String getFunctionName( FuncBodyContext ctx )
     {
         ParserRuleContext parent = ctx.getParent();

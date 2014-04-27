@@ -1,18 +1,25 @@
 package mobtalkerscript.mts.v2.compiler;
 
 import java.io.*;
+import java.util.logging.*;
 
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
-import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.util.logging.*;
 
 import org.antlr.v4.runtime.*;
 import org.junit.*;
 
 public class MtsCompilerTest
 {
+    
+    @BeforeClass
+    public static void setUp() throws SecurityException, IOException
+    {
+        MTSLog.setLogger( Logger.getLogger( "MobTalkerScript" ) );
+    }
     
     @Test
     public void antlr() throws IOException
@@ -25,12 +32,13 @@ public class MtsCompilerTest
 //                                                        + "return 10 + c.a + c.b; " );
 //        ANTLRInputStream stream = new ANTLRInputStream( "local i, x = 1, \"bar\"; while ( i <= 10 ) do print( \"i: \" .. i ); i = i + 1; x = toString( i ); end return x;" );
 //        ANTLRInputStream stream = new ANTLRInputStream( "local a = \"bar\"; for i = 10, 1, -1 do local b = i * 2; print( a .. \": \" .. b ); end" );
-        ANTLRInputStream stream = new ANTLRInputStream( "   local t = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, a = \"foo\" };"
-                                                        + " for i, v in next, t do"
-                                                        + "     print( i .. \": \" .. v );"
-                                                        + " end" );
+//        ANTLRInputStream stream = new ANTLRInputStream( "   local t = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, a = \"foo\" };"
+//                                                        + " for i, v in next, t do"
+//                                                        + "     print( i .. \": \" .. v );"
+//                                                        + " end" );
         
 //        ANTLRInputStream stream = new ANTLRFileStream( "D:\\MobTalker2\\lua-5.2.2-tests\\locals.lua" );
+        ANTLRInputStream stream = new ANTLRFileStream( "C:\\Users\\Tobsen\\Desktop\\MtsExampleScript.txt" );
         
         MtsLexer lexer = new MtsLexer( stream );
         lexer.setTokenFactory( new CommonTokenFactory( false ) );
@@ -48,10 +56,7 @@ public class MtsCompilerTest
         
         MtsTable _G = new MtsGlobals();
         
-        for ( MtsInstruction instr : p.getInstructions() )
-        {
-            System.out.println( instr );
-        }
+        System.out.println( p.toString( true, true ) );
         
         MtsClosure closure = new MtsClosure( p, _G );
         MtsValue result = closure.call();

@@ -28,6 +28,7 @@ FOR             : 'for' ;
 IN              : 'in' ;
 
 CMD_SAY         : 'say' ;
+CMD_SAY_LAST	: 'as conclusion' ;
 CMD_SHOW        : 'show' ;
 CMD_AT          : 'at' ;
 CMD_OFFSET      : 'offset' ;
@@ -323,14 +324,14 @@ funcBody
     ;
 
 command
-    : 'say' expr? expr expr? ';'
-      # SayCommandStmt
-    | 'show' expr+ ( 'at' expr )? ( 'offset' exprList )? ( 'with' exprList )? ';'
-      # ShowCommandStmt
-    | 'scene' expr+ ( 'as' expr ) ( 'with' exprList )? ';'
-      # SceneCommandStmt
-    | 'hide' expr ( 'with' exprList )? ';'
-      # HideCommandStmt
+    : 'say' Character=expr? Text=exprList IsLast='as conclusion'? ';'
+      # CommandSay
+    | 'show' Path=exprList ( 'at' Position=expr )? ( 'offset' Offset=exprList )? /*( 'with' Effect=exprList )?*/ ';'
+      # CommandShow
+    | 'scene' Path=exprList ( 'as' Mode=expr )? /*( 'with' exprList )?*/ ';'
+      # CommandScene
+    | 'hide' Path=exprList /*( 'with' exprList )?*/ ';'
+      # CommandHide
     /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
       # PlayMusicCommandStmt*/
     /*| 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
@@ -339,9 +340,13 @@ command
       # StopMusicCommandStmt*/
     /*| 'pause' expr? ';'
       # PauseCommandStmt*/
-    | 'menu' expr? ( 'option' expr block )+ 'end'
-      # MenuCommandStmt
+    | 'menu' Caption=expr? Options+=commandMenuOption+ 'end'
+      # CommandMenu
     ;
+
+commandMenuOption
+	: 'option' Caption=expr Block=block
+	;
     
 // ========================================
 // Lists

@@ -259,7 +259,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public final MtsValue call()
     {
-        return call( MtsVarArgs.EMPTY_VARARGS );
+        return call( MtsValue.EMPTY_VARARGS );
     }
     
     public final MtsValue call( MtsValue arg )

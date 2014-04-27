@@ -2,8 +2,6 @@ package mobtalkerscript.mts.v2;
 
 import java.util.*;
 
-import mobtalkerscript.mts.v2.value.*;
-
 import com.google.common.collect.*;
 
 /**
@@ -12,15 +10,15 @@ import com.google.common.collect.*;
 @SuppressWarnings( "serial" )
 public class ScriptRuntimeException extends RuntimeException
 {
-    private static Object[] convert( MtsValue[] args )
-    {
-        Object[] sArgs = new Object[args.length];
-        for ( int i = 0; i < args.length; i++ )
-        {
-            sArgs[i] = args[i].toStringMts().toJava();
-        }
-        return sArgs;
-    }
+//    private static Object[] convert( MtsValue[] args )
+//    {
+//        Object[] sArgs = new Object[args.length];
+//        for ( int i = 0; i < args.length; i++ )
+//        {
+//            sArgs[i] = args[i].toStringMts().toJava();
+//        }
+//        return sArgs;
+//    }
     
     // ========================================
     

@@ -1,6 +1,5 @@
 package mobtalkerscript.mts.v2.instruction;
 
-
 public class InstrPop extends MtsInstruction
 {
     @Override

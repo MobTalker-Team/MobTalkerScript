@@ -55,7 +55,7 @@ public class MtsTable extends MtsMetaTableValue
     public Entry getFirstEntry()
     {
         if ( _listPart.length() > 0 )
-            return new Entry( MtsNumber.ONE, _listPart.get( 1 ) );
+            return new Entry( MtsValue.ONE, _listPart.get( 1 ) );
         
         return _hashPart.getFirst();
     }

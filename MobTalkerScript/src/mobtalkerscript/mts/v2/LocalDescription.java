@@ -1,7 +1,5 @@
 package mobtalkerscript.mts.v2;
 
-import mobtalkerscript.mts.v2.*;
-
 public class LocalDescription extends VariableDescription
 {
     private final int _start;

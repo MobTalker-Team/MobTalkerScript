@@ -1,6 +1,5 @@
 package mobtalkerscript.mts.v2.instruction;
 
-
 /* package */abstract class MtsIndexedInstruction extends MtsInstruction
 {
     

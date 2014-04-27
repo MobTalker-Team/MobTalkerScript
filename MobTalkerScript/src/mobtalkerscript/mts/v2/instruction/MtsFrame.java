@@ -4,6 +4,7 @@ import java.util.*;
 
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.util.logging.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -88,19 +89,28 @@ public final class MtsFrame
     {
         List<MtsInstruction> instructions = _closure.getPrototype().getInstructions();
         
-        System.out.println( "Stack: " + formatStack() );
+        if ( MTSLog.isFinestEnabled() )
+        {
+            MTSLog.finest( "Stack: " + formatStack() );
+        }
         
         for ( ;; )
         {
             MtsInstruction instr = instructions.get( _ip );
             
-            System.out.println( String.format( "Executing [%s] %s",
-                                               formatInstructionPointer( instructions.size() ),
-                                               instr.toString( this.getClosure().getPrototype() ) ) );
+            if ( MTSLog.isFinerEnabled() )
+            {
+                MTSLog.finer( "Executing [%s] %s",
+                              formatInstructionPointer( instructions.size() ),
+                              instr.toString( getClosure().getPrototype() ) );
+            }
             
             instr.execute( this );
             
-            System.out.println( "Stack: " + formatStack() );
+            if ( MTSLog.isFinestEnabled() )
+            {
+                MTSLog.finest( "Stack: " + formatStack() );
+            }
             
             if ( instr.exits() )
                 break;

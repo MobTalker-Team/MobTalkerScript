@@ -26,6 +26,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNullLiteral(@NotNull MtsParser.NullLiteralContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#CommandSay}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommandSay(@NotNull MtsParser.CommandSayContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#paramList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -38,13 +45,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitElseBody(@NotNull MtsParser.ElseBodyContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#SayCommandStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSayCommandStmt(@NotNull MtsParser.SayCommandStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#GotoStmt}.
@@ -110,6 +110,20 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBlankStmt(@NotNull MtsParser.BlankStmtContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#CommandMenu}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommandMenu(@NotNull MtsParser.CommandMenuContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#CommandShow}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommandShow(@NotNull MtsParser.CommandShowContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#ReturnStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -129,13 +143,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNameFieldAccess(@NotNull MtsParser.NameFieldAccessContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#ShowCommandStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitShowCommandStmt(@NotNull MtsParser.ShowCommandStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#IfThenElse}.
@@ -264,6 +271,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitCallExpr(@NotNull MtsParser.CallExprContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#commandMenuOption}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommandMenuOption(@NotNull MtsParser.CommandMenuOptionContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#ExprKeyField}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -348,6 +362,13 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link MtsParser#CommandScene}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommandScene(@NotNull MtsParser.CommandSceneContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link MtsParser#FuncDeclrExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -369,11 +390,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNumericForControl(@NotNull MtsParser.NumericForControlContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#MenuCommandStmt}.
+	 * Visit a parse tree produced by {@link MtsParser#CommandHide}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMenuCommandStmt(@NotNull MtsParser.MenuCommandStmtContext ctx);
+	T visitCommandHide(@NotNull MtsParser.CommandHideContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#LocalFuncDeclrStmt}.
@@ -390,25 +411,11 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitListField(@NotNull MtsParser.ListFieldContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#HideCommandStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitHideCommandStmt(@NotNull MtsParser.HideCommandStmtContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#SimpleExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitSimpleExpr(@NotNull MtsParser.SimpleExprContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link MtsParser#SceneCommandStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSceneCommandStmt(@NotNull MtsParser.SceneCommandStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#funcBody}.

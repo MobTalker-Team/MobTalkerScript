@@ -1,17 +1,17 @@
 package mobtalkerscript.util.logging;
 
-import java.util.*;
+import java.io.*;
 import java.util.logging.*;
 
-public class MTSLog
+public final class MTSLog
 {
+    private static Logger _log;
     
-    private static final Logger _log;
-    
-    static
+    public static void setLogger( Logger log )
     {
-        _log = Logger.getLogger( "MobTalkerScript" );
-        _log.setUseParentHandlers( false );
+        _log = log;
+        _configured = false;
+        configureLogging();
     }
     
     public static Logger getLogger()
@@ -40,7 +40,7 @@ public class MTSLog
     
     public static void log( Level level, Object obj )
     {
-        _log.log( level, Objects.toString( obj ) );
+        _log.log( level, java.util.Objects.toString( obj ) );
     }
     
     public static void log( Level level, String msg, Object... data )
@@ -129,6 +129,61 @@ public class MTSLog
         {
             log( Level.FINEST, msg, data );
         }
+    }
+    
+    // ========================================
+    
+    private static boolean _configured;
+    
+    private static Thread _consoleLogThread;
+    static PrintStream _errCache;
+    private static LogFormatter _formatter;
+    
+    private MTSLog()
+    {}
+    
+    @SuppressWarnings( "resource" )
+    private static void configureLogging()
+    {
+        if ( _configured )
+            return;
+        
+        LogManager.getLogManager().reset();
+        Logger globalLogger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
+        globalLogger.setLevel( Level.OFF );
+        
+        Logger stdOut = Logger.getLogger( "STDOUT" );
+        stdOut.setParent( _log );
+        Logger stdErr = Logger.getLogger( "STDERR" );
+        stdErr.setParent( _log );
+        
+        _log.setLevel( Level.ALL );
+        _log.setUseParentHandlers( false );
+        
+        _consoleLogThread = new Thread( new ConsoleLogThread() );
+        _consoleLogThread.setDaemon( true );
+        _consoleLogThread.start();
+        _formatter = new LogFormatter();
+        
+        resetLoggingHandlers();
+        
+        // Set system out to a log stream
+        _errCache = System.err;
+        
+        System.setOut( new PrintStream( new LoggingOutStream( stdOut ), true ) );
+        System.setErr( new PrintStream( new LoggingOutStream( stdErr ), true ) );
+        
+        _configured = true;
+    }
+    
+    private static void resetLoggingHandlers()
+    {
+//        ConsoleLogThread.wrappedHandler.setLevel( Level.parse( System.getProperty( "fml.log.level", "INFO" ) ) );
+        ConsoleLogThread.wrappedHandler.setLevel( Level.ALL );
+        
+        // Console handler captures the normal stderr before it gets replaced
+        _log.addHandler( new ConsoleLogWrapper() );
+        ConsoleLogThread.wrappedHandler.setFormatter( _formatter );
     }
     
 }

@@ -42,8 +42,8 @@ public class MtsFunctionPrototype
                                  int sourceEnd )
     {
         checkNotNull( instructions );
-        checkArgument( 0 <= maxStackSize, "Stack size cannot be negative" );
-        checkArgument( maxStackSize <= 0xFFFF, "Stack size exceeds maximum" );
+        checkArgument( 0 <= maxStackSize, "Stack size cannot be negative: " + maxStackSize );
+        checkArgument( maxStackSize <= 0xFE, "Stack size exceeds maximum " + maxStackSize );
         
         _instructions = instructions;
         _maxStackSize = maxStackSize;
@@ -147,12 +147,75 @@ public class MtsFunctionPrototype
     {
         StringBuilder s = new StringBuilder();
         
-        s.append( "function " ).append( _name ).append( "\n" );
-        s.append( " stack: " ).append( _maxStackSize ).append( "\n" );
-        s.append( " locals: " ).append( getLocalCount() ).append( "\n" );
-        s.append( " externals: " ).append( getExternalCount() ).append( "\n" );
-        s.append( " constants: " ).append( getConstantCount() );
+        s.append( "function " ).append( _name ).append( '\n' );
+        s.append( " source: " )
+         .append( _sourceFile )
+         .append( ':' )
+         .append( _sourceLineStart )
+         .append( '-' )
+         .append( _sourceLineEnd )
+         .append( '\n' );
+        s.append( " stack: " ).append( _maxStackSize ).append( '\n' );
+        s.append( " locals: " ).append( getLocalCount() ).append( '\n' );
+        s.append( " externals: " ).append( getExternalCount() ).append( '\n' );
+        s.append( " constants: " ).append( getConstantCount() ).append( '\n' );
+        s.append( " stacksize: " ).append( _maxStackSize ).append( '\n' );
+        s.append( " instructions: " ).append( _instructions.size() );
         
-        return super.toString();
+        return s.toString();
+    }
+    
+    public String toString( boolean full )
+    {
+        if ( !full )
+            return toString();
+        
+        StringBuilder s = new StringBuilder();
+        
+        s.append( "function " ).append( _name ).append( '\n' );
+        s.append( "  source: " )
+         .append( _sourceFile )
+         .append( ':' )
+         .append( _sourceLineStart )
+         .append( '-' )
+         .append( _sourceLineEnd )
+         .append( '\n' );
+        s.append( "  stack: " ).append( _maxStackSize ).append( '\n' );
+        s.append( "  locals: " ).append( getLocalCount() ).append( '\n' );
+        s.append( "  externals: " ).append( getExternalCount() ).append( '\n' );
+        s.append( "  constants: " ).append( getConstantCount() );
+        for ( int i = 0; i < getConstantCount(); i++ )
+        {
+            s.append( '\n' );
+            s.append( "    [" ).append( i ).append( "] " );
+            s.append( getConstant( i ) );
+        }
+        s.append( '\n' );
+        
+        s.append( "  instructions: " ).append( _instructions.size() );
+        for ( int i = 0; i < _instructions.size(); i++ )
+        {
+            s.append( '\n' );
+            s.append( "    [" ).append( i ).append( "] " );
+            s.append( _instructions.get( i ) );
+        }
+        s.append( '\n' );
+        
+        return s.toString();
+    }
+    
+    public String toString( boolean full, boolean includeChildren )
+    {
+        if ( !includeChildren )
+            return toString( full );
+        
+        StringBuilder s = new StringBuilder( toString( full ) );
+        for ( MtsFunctionPrototype child : _nestedPrototypes )
+        {
+            s.append( '\n' );
+            s.append( child.toString( full, true ) );
+        }
+        
+        return s.toString();
     }
 }

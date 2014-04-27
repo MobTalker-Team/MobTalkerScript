@@ -1,6 +1,5 @@
 package mobtalkerscript.mts.v2.compiler;
 
-
 /**
  * Stores information about a compiling loop block, e.g. references to different instructions.
  */

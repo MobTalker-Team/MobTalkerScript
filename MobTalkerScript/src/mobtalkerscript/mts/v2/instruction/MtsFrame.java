@@ -216,7 +216,7 @@ public final class MtsFrame
         if ( stackIsEmpty() )
             throw new ScriptEngineException( "stack is empty" );
         
-        return _stack[_top];
+        return _stack[_top - 1];
     }
     
     public void duplicateTop()

@@ -118,7 +118,12 @@ public final class MtsFrame
             _ip++;
         }
         
-        return pop();
+        MtsValue result = pop();
+        
+        if ( !stackIsEmpty() )
+            throw new AssertionError( "Stack was not emptied! " + formatStack() );
+        
+        return result;
     }
     
     private String formatStack()
@@ -221,13 +226,11 @@ public final class MtsFrame
     
     public void duplicateTop()
     {
-        if ( _top++ == _stack.length )
-        {
-            _top--;
+        if ( _top == _stack.length )
             throw new ScriptEngineException( "stack overflow" );
-        }
         
         _stack[_top] = _stack[_top - 1];
+        _top++;
     }
     
     // ========================================

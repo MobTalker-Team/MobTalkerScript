@@ -5,7 +5,7 @@ import java.io.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class MtsCommandConsoleLib extends MtsCommandLib
+public class ConsoleCommandLib extends MtsCommandLib
 {
     @Override
     public MtsValue bind( MtsString name, MtsValue env )
@@ -30,15 +30,19 @@ public class MtsCommandConsoleLib extends MtsCommandLib
             
             if ( !arg1.isNil() )
             {
-                s.append( '[' ).append( arg1.asString().toJava() ).append( "] " );
+                String name = arg1.isTable() //
+                        ? arg1.get( "Name" ).asString().toJava()
+                        : arg1.asString().toJava();
+                
+                s.append( '[' ).append( name ).append( "] " );
             }
             
             s.append( arg2.asString() );
             
             if ( !arg3.asBoolean().toJava() )
-            {
-                s.append( " \u25B6" );
-            }
+                s.append( " \u25BA" );
+            else
+                s.append( " \u25A0" );
             
             System.out.println( s.toString() );
             

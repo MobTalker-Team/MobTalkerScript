@@ -1,5 +1,6 @@
 package mobtalkerscript.mts.v2.lib;
 
+import java.nio.file.*;
 import java.util.*;
 
 import mobtalkerscript.mts.v2.value.*;
@@ -8,12 +9,14 @@ import com.google.common.collect.*;
 
 public class MtsPackageLib extends MtsLibrary
 {
-    private final Map<String, MtsValue> _loadedPackages;
+    private final List<String> _searchPaths = Lists.newArrayList( "./?.lua", "./?" );
+    private final MtsTable _loadedPackages;
     
     // ========================================
     
+    public MtsPackageLib()
     {
-        _loadedPackages = Maps.newHashMap();
+        _loadedPackages = new MtsTable( 0, 1 );
     }
     
     // ========================================
@@ -24,19 +27,42 @@ public class MtsPackageLib extends MtsLibrary
         checkIfGlobals( env );
         
         bindFunction( env, "require", new Require() );
+//        env.set( "_LOADED", _loadedPackages );
+        
+//        MtsValue defaultPath = env.get( "MTS_PATH" );
+//        if ( defaultPath.isString() )
+//        {
+//            _searchPaths.add( 0, defaultPath.asString().toJava() );
+//        }
         
         return null;
     }
     
     // ========================================
     
-    private static final class Require extends MtsOneArgFunction
+    private final class Require extends MtsOneArgFunction
     {
         @Override
         protected MtsValue invoke( MtsValue arg )
         {
-            return null;
+            checkString( arg, 1 );
+            
+            String libName = arg.asString().toJava();
+            MtsValue lib = _loadedPackages.get( libName );
+            
+            if ( lib != null )
+                return lib;
+            
+            for ( String pathPattern : _searchPaths )
+            {
+                Path path = Paths.get( pathPattern.replace( "?", libName ) );
+                if ( Files.exists( path ) )
+                {
+                    // TODO Compile it
+                }
+            }
+            
+            return NIL;
         }
     }
-    
 }

@@ -23,6 +23,7 @@ public final class MtsBaseLib extends MtsLibrary
         checkIfGlobals( env );
         
         env.set( "_G", env );
+        env.set( "_VERSION", valueOf( "2.0" ) );
         
         bindFunction( env, "assert", Assert );
         bindFunction( env, "error", Error );

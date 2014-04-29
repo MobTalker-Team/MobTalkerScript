@@ -148,6 +148,8 @@ public final class MTSLog
         if ( _configured )
             return;
         
+        Level lvl = _log.getLevel();
+        
         LogManager.getLogManager().reset();
         Logger globalLogger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
         globalLogger.setLevel( Level.OFF );
@@ -157,7 +159,7 @@ public final class MTSLog
         Logger stdErr = Logger.getLogger( "STDERR" );
         stdErr.setParent( _log );
         
-        _log.setLevel( Level.ALL );
+        _log.setLevel( lvl );
         _log.setUseParentHandlers( false );
         
         _consoleLogThread = new Thread( new ConsoleLogThread() );

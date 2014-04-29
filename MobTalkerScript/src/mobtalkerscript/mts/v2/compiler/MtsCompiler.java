@@ -9,11 +9,10 @@ import java.util.*;
 import java.util.regex.*;
 
 import mobtalkerscript.mts.v2.*;
-import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IMtsCompiler
+public class MtsCompiler
 {
     
     private final FunctionState _mainFunction;
@@ -28,7 +27,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         _curPosition = new SourcePosition( 0, 0 );
     }
     
-    public MtsCompilerBase( String sourceName, int sourceLineStart, int sourceLineEnd )
+    public MtsCompiler( String sourceName, int sourceLineStart, int sourceLineEnd )
     {
         _mainFunction = new FunctionState( null, "main", sourceName, sourceLineStart, sourceLineEnd );
         _mainFunction.addExternal( new ExternalDescription( ENV, 0, 0, true ) );
@@ -57,6 +56,7 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void addInstr( MtsInstruction instr )
     {
+        System.out.println( "  Instruction: " + instr );
         _currentFunction.addInstruction( instr, _curPosition );
     }
     
@@ -69,6 +69,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, String... params )
     {
+        System.out.println( "Enter Function " );
+        
         enterFunction( name, sourceLineStart, sourceLineEnd, params );
     }
     
@@ -90,6 +92,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void exitFunction()
     {
+        System.out.println( "Exit Function " );
+        
         addInstr( InstrReturn( 0 ) );
         _currentFunction = _currentFunction.getParent();
     }
@@ -98,11 +102,15 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void enterBlock()
     {
+        System.out.println( "Enter Block" );
+        
         _currentFunction.enterBlock();
     }
     
     public void exitBlock()
     {
+        System.out.println( "Exit Block" );
+        
         _currentFunction.exitBlock();
     }
     
@@ -110,11 +118,15 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void enterWhileLoop()
     {
+        System.out.println( "Enter WhileLoop" );
+        
         _currentFunction.enterLoop();
     }
     
     public void enterWhileBody()
     {
+        System.out.println( "Enter WhileBody" );
+        
         addInstr( InstrTest() );
         _currentFunction.markBreak();
         _currentFunction.enterBlock();
@@ -122,6 +134,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void exitWhileLoop()
     {
+        System.out.println( "Exit WhileLoop" );
+        
         addInstr( InstrJump() );
         _currentFunction.exitLoop();
         _currentFunction.exitBlock();
@@ -225,11 +239,15 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public LocalDescription declareLocal( String name )
     {
+        System.out.println( "Declare local: " + name );
+        
         return _currentFunction.declareLocal( name );
     }
     
     public LocalDescription declareAnonymousLocal( String name )
     {
+        System.out.println( "Declare internal: " + name );
+        
         return _currentFunction.declareAnonymousLocal( name );
     }
     
@@ -249,6 +267,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void loadVariable( String name )
     {
+        System.out.println( "Load Variable: " + name );
+        
         if ( _currentFunction.isLocal( name ) )
         { // Local
             int index = _currentFunction.getLocalIndex( name );
@@ -279,6 +299,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
         checkNotNull( value != null, "value cannot be null" );
         checkArgument( !value.isNil(), "value cannot be nil" );
         
+        System.out.println( "Load constant: " + value );
+        
         int index = _currentFunction.getConstantIndex( value );
         addInstr( InstrLoadC( index ) );
     }
@@ -290,6 +312,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void loadNil()
     {
+        System.out.println( "Load nil" );
+        
         addInstr( InstrLoadNil() );
     }
     
@@ -303,6 +327,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void storeVariable( String name )
     {
+        System.out.println( "Store Variable: " + name );
+        
         if ( _currentFunction.isLocal( name ) )
         { // Local
             int index = _currentFunction.getLocalIndex( name );
@@ -332,21 +358,29 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void createTable( int listElements, int hashPairs )
     {
+        System.out.println( "Create Table" );
+        
         addInstr( InstrNewTable( listElements, hashPairs ) );
     }
     
     public void loadFromTable()
     {
+        System.out.println( "Load from Table" );
+        
         addInstr( InstrLoadT() );
     }
     
     public void storeInTable()
     {
+        System.out.println( "Store in Table" );
+        
         addInstr( InstrStoreT() );
     }
     
     public void loadMethod( String name )
     {
+        System.out.println( "Load Method: " + name );
+        
         addInstr( InstrDup() );
         loadConstant( valueOf( name ) );
         loadFromTable();
@@ -356,21 +390,29 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
     
     public void assignmentOperation( String op )
     {
+        System.out.println( "Operator: " + op );
+        
         throw new UnsupportedOperationException();
     }
     
     public void unaryOperation( String op )
     {
+        System.out.println( "Operator: " + op );
+        
         addInstr( InstrUnaryOp( op ) );
     }
     
     public void binaryOperation( String op )
     {
+        System.out.println( "Operator: " + op );
+        
         addInstr( InstrBinaryOp( op ) );
     }
     
     public void logicOperation( String op )
     {
+        System.out.println( "Operator: " + op );
+        
         if ( ">".equals( op ) )
         {
             addInstr( InstrLte() );
@@ -399,6 +441,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
      */
     public void enterConditionalBlock( String op )
     {
+        System.out.println( "Operator: " + op );
+        
         if ( "and".equals( op ) )
         {
             addInstr( InstrAnd() );
@@ -432,6 +476,8 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
      */
     public void createClosure()
     {
+        System.out.println( "Create Closure" );
+        
         List<FunctionState> childs = _currentFunction.getChilds();
         int index = childs.size() - 1;
         
@@ -443,11 +489,15 @@ public abstract class MtsCompilerBase extends MtsBaseVisitor<Void> implements IM
      */
     public void callFunction( int nArgs, int nReturn )
     {
+        System.out.println( "Call Function" );
+        
         addInstr( new InstrCallFunc( nArgs, nReturn ) );
     }
     
     public void returnFunction( int nValues )
     {
+        System.out.println( "Return Function" );
+        
         addInstr( InstrReturn( nValues ) );
     }
     

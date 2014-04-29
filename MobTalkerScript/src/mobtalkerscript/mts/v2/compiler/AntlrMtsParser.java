@@ -1,9 +1,11 @@
 package mobtalkerscript.mts.v2.compiler;
 
+import static mobtalkerscript.mts.v2.compiler.MtsCompiler.*;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
 
 import java.util.*;
 
+import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.AssignExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.BooleanLiteralContext;
@@ -59,7 +61,7 @@ import org.antlr.v4.runtime.*;
 import com.google.common.collect.*;
 
 @SuppressWarnings( "unchecked" )
-public class AntlrMtsCompiler extends MtsCompilerBase
+public class AntlrMtsParser extends MtsBaseVisitor<Void>
 {
     private static final ITreePattern TableAssignPattern;
     
@@ -72,13 +74,15 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     
     // ========================================
     
-    public AntlrMtsCompiler( ChunkContext ctx )
+    private MtsCompiler _c;
+    
+    // ========================================
+    
+    public void compile( MtsCompiler compiler, ChunkContext chunk )
     {
-        super( ctx.getStart().getTokenSource().getSourceName(), //
-               ctx.getStart().getLine(),
-               ctx.getStop().getLine() );
-        
-        visit( ctx );
+        _c = compiler;
+        visit( chunk );
+        _c = null;
     }
     
     // ========================================
@@ -90,7 +94,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         System.out.println( "Enter Chunk" );
         
         visitChildren( ctx );
-        returnFunction( 0 );
+        _c.returnFunction( 0 );
         
         System.out.println( "Exit Chunk" );
         return null;
@@ -106,25 +110,25 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         int exprs = ctxs.size();
         if ( exprs > 1 )
         {
-            createTable( exprs, 0 );
+            _c.createTable( exprs, 0 );
         }
     }
     
     @Override
     public Void visitCommandSay( CommandSayContext ctx )
     {
-        loadVariable( MtsCommandLib.FNAME_SAY );
+        _c.loadVariable( MtsCommandLib.FNAME_SAY );
         
         if ( ctx.Character == null )
-            loadNil();
+            _c.loadNil();
         else
             visit( ctx.Character );
         
         visitSingleOrCreateTable( ctx.Text.Exprs );
         
-        loadConstant( valueOf( ctx.IsLast != null ) );
+        _c.loadConstant( valueOf( ctx.IsLast != null ) );
         
-        callFunction( 3, 0 );
+        _c.callFunction( 3, 0 );
         
         return null;
     }
@@ -132,30 +136,34 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandShow( CommandShowContext ctx )
     {
-        loadVariable( MtsCommandLib.FNAME_SHOW );
+        _c.loadVariable( MtsCommandLib.FNAME_SHOW );
         
         visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Position == null )
-            loadNil();
+            _c.loadNil();
         else
             visit( ctx.Position );
         
         if ( ctx.Offset == null )
         {
-            loadConstant( ZERO );
-            loadConstant( ZERO );
+            _c.loadConstant( ZERO );
+            _c.loadConstant( ZERO );
         }
         else
         {
             visit( ctx.Offset.Exprs.get( 0 ) );
             if ( ctx.Offset.Exprs.size() < 2 )
-                loadConstant( ZERO );
+            {
+                _c.loadConstant( ZERO );
+            }
             else
+            {
                 visit( ctx.Offset.Exprs.get( 1 ) );
+            }
         }
         
-        callFunction( 4, 0 );
+        _c.callFunction( 4, 0 );
         
         return null;
     }
@@ -163,16 +171,16 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandScene( CommandSceneContext ctx )
     {
-        loadVariable( MtsCommandLib.FNAME_SCENE );
+        _c.loadVariable( MtsCommandLib.FNAME_SCENE );
         
         visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Mode == null )
-            loadNil();
+            _c.loadNil();
         else
             visit( ctx.Mode );
         
-        callFunction( 2, 0 );
+        _c.callFunction( 2, 0 );
         
         return null;
     }
@@ -180,11 +188,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandHide( CommandHideContext ctx )
     {
-        loadVariable( MtsCommandLib.FNAME_HIDE );
+        _c.loadVariable( MtsCommandLib.FNAME_HIDE );
         
         visit( ctx.Group );
         
-        callFunction( 1, 0 );
+        _c.callFunction( 1, 0 );
         
         return null;
     }
@@ -192,14 +200,14 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCommandMenu( CommandMenuContext ctx )
     {
-        loadVariable( MtsCommandLib.FNAME_MENU );
+        _c.loadVariable( MtsCommandLib.FNAME_MENU );
         
         if ( ctx.Caption == null )
-            loadNil();
+            _c.loadNil();
         else
             visit( ctx.Caption );
         
-        int choiceIndex = declareAnonymousLocal( "choice" ).getIndex();
+        int choiceIndex = _c.declareAnonymousLocal( "choice" ).getIndex();
         
         int nOptions = ctx.Options.size();
         for ( int i = 0; i < nOptions; i++ )
@@ -207,29 +215,29 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             visit( ctx.Options.get( i ).Caption );
         }
         
-        callFunction( 1 + nOptions, 1 );
-        storeLocal( choiceIndex );
+        _c.callFunction( 1 + nOptions, 1 );
+        _c.storeLocal( choiceIndex );
         
-        enterIfThenElseBlock();
-        enterBlock();
+        _c.enterIfThenElseBlock();
+        _c.enterBlock();
         
         for ( int i = 0; i < nOptions; i++ )
         {
             if ( i > 0 )
             {
-                enterIfCondition();
+                _c.enterIfCondition();
             }
             
-            loadLocal( choiceIndex );
-            loadConstant( valueOf( i + 1 ) );
-            logicOperation( "==" );
-            endIfCondition();
+            _c.loadLocal( choiceIndex );
+            _c.loadConstant( valueOf( i + 1 ) );
+            _c.logicOperation( "==" );
+            _c.endIfCondition();
             visit( ctx.Options.get( i ).Block );
-            endThenBlock();
+            _c.endThenBlock();
         }
         
-        exitBlock();
-        exitIfThenElse();
+        _c.exitBlock();
+        _c.exitIfThenElse();
         
         return null;
     }
@@ -268,29 +276,29 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         if ( ctx.TableKeys.isEmpty() && ( ctx.MethodName == null ) )
         {
-            storeVariable( ctx.RootName.getText() );
+            _c.storeVariable( ctx.RootName.getText() );
         }
         else
         {
-            loadVariable( ctx.RootName.getText() );
+            _c.loadVariable( ctx.RootName.getText() );
             
             if ( !ctx.TableKeys.isEmpty() )
             {
-                loadConstant( ctx.TableKeys.get( 0 ).getText() );
+                _c.loadConstant( ctx.TableKeys.get( 0 ).getText() );
                 for ( int i = 0; i < ctx.TableKeys.size(); i++ )
                 {
-                    loadFromTable();
-                    loadConstant( ctx.TableKeys.get( i ).getText() );
+                    _c.loadFromTable();
+                    _c.loadConstant( ctx.TableKeys.get( i ).getText() );
                 }
             }
             
             if ( ctx.MethodName != null )
             {
-                loadFromTable();
-                loadConstant( ctx.MethodName.getText() );
+                _c.loadFromTable();
+                _c.loadConstant( ctx.MethodName.getText() );
             }
             
-            storeInTable();
+            _c.storeInTable();
         }
         
         return null;
@@ -312,8 +320,8 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         
         visit( ctx.Body );
         
-        declareLocal( name );
-        storeVariable( name );
+        _c.declareLocal( name );
+        _c.storeVariable( name );
         
         return null;
     }
@@ -327,15 +335,12 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         
         List<String> paramNames = getParameterNames( ctx );
         
-        System.out.println( "EnterFunction " + funcName + ", " + paramNames );
-        
-        enterFunction( funcName, lineStart, lineEnd, paramNames );
+        _c.enterFunction( funcName, lineStart, lineEnd, paramNames );
         
         visit( ctx.Body );
         
-        System.out.println( "ExitFunction" );
-        exitFunction();
-        createClosure();
+        _c.exitFunction();
+        _c.createClosure();
         
         return null;
     }
@@ -367,8 +372,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         for ( Token identifier : ctx.NameList.Names )
         {
-            System.out.println( "Declaring local " + identifier.getText() );
-            declareLocal( identifier.getText() );
+            _c.declareLocal( identifier.getText() );
         }
         
         if ( ctx.ExprList == null )
@@ -380,7 +384,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         // Exprs are evaluated left to right, so they must be assigned right to left.
         for ( Token identifier : Lists.reverse( ctx.NameList.Names ) )
         {
-            storeVariable( identifier.getText() );
+            _c.storeVariable( identifier.getText() );
         }
         
         return null;
@@ -392,29 +396,27 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitCallArgs( CallArgsContext ctx )
     {
+        int nArgs = 0;
+        
         if ( ctx.Method != null )
         {
             String name = ctx.Method.getText();
-            loadMethod( name );
+            _c.loadMethod( name );
+            nArgs++;
         }
         
-        int nArgs;
         if ( ctx.Arg != null )
         {
-            nArgs = 1;
-            loadConstant( ctx.Arg.getText() );
+            _c.loadConstant( ctx.Arg.getText() );
+            nArgs++;
         }
         else if ( ctx.Args != null )
         {
-            nArgs = ctx.Args.Exprs.size();
             visit( ctx.Args );
-        }
-        else
-        {
-            nArgs = 0;
+            nArgs += ctx.Args.Exprs.size();
         }
         
-        callFunction( nArgs, ctx.nReturn );
+        _c.callFunction( nArgs, ctx.nReturn );
         
         return null;
     }
@@ -428,9 +430,6 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         }
         
         ctx.Args.get( ctx.Args.size() - 1 ).nReturn = ctx.nReturn;
-        
-        System.out.println( "Return values: " + ctx.nReturn );
-        
         return visitChildren( ctx );
     }
     
@@ -445,9 +444,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             visit( ctx.ExprList );
         }
         
-        returnFunction( nReturn );
-        
-        System.out.println( "Return " + nReturn );
+        _c.returnFunction( nReturn );
         return null;
     }
     
@@ -463,11 +460,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             if ( TableAssignPattern.matches( ctx.getParent() ) )
             {
                 String name = ctx.Root.getText();
-                storeVariable( name );
+                _c.storeVariable( name );
             }
             else
             {
-                loadVariable( ctx.Root.getText() );
+                _c.loadVariable( ctx.Root.getText() );
             }
             
             return null;
@@ -476,7 +473,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         // Visit root
         if ( ctx.Root != null )
         {
-            loadVariable( ctx.Root.getText() );
+            _c.loadVariable( ctx.Root.getText() );
         }
         else
         {
@@ -487,7 +484,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         visit( ctx.Suffixes.get( 0 ) );
         for ( int i = 1; i < ctx.Suffixes.size(); i++ )
         {
-            loadFromTable();
+            _c.loadFromTable();
             
             VarSuffixContext suffix = ctx.Suffixes.get( i );
             visit( suffix );
@@ -496,11 +493,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         // Determine if we assigning or accessing
         if ( TableAssignPattern.matches( ctx.getParent() ) )
         {
-            storeInTable();
+            _c.storeInTable();
         }
         else
         {
-            loadFromTable();
+            _c.loadFromTable();
         }
         
         return null;
@@ -510,10 +507,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     public Void visitNameFieldAccess( NameFieldAccessContext ctx )
     {
         String fieldName = ctx.Field.getText();
-        loadConstant( fieldName );
-        
-        System.out.println( "Table Key: " + fieldName );
-        
+        _c.loadConstant( fieldName );
         return null;
     }
     
@@ -522,7 +516,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         if ( ctx.FieldDefs.isEmpty() )
         {
-            createTable( 0, 0 );
+            _c.createTable( 0, 0 );
             return null;
         }
         
@@ -544,7 +538,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         
         visit( listFields );
         
-        createTable( listFields.size(), hashPairs );
+        _c.createTable( listFields.size(), hashPairs );
         
         return null;
     }
@@ -552,7 +546,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitNameKeyField( NameKeyFieldContext ctx )
     {
-        loadConstant( ctx.Key.getText() );
+        _c.loadConstant( ctx.Key.getText() );
         visit( ctx.Value );
         
         return null;
@@ -564,9 +558,9 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitNestedBlock( NestedBlockContext ctx )
     {
-        enterBlock();
+        _c.enterBlock();
         visit( ctx.Block );
-        exitBlock();
+        _c.exitBlock();
         
         return null;
     }
@@ -577,14 +571,14 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitLabelStmt( LabelStmtContext ctx )
     {
-        declareLabel( ctx.Name.getText() );
+        _c.declareLabel( ctx.Name.getText() );
         return null;
     }
     
     @Override
     public Void visitGotoStmt( GotoStmtContext ctx )
     {
-        gotoLabel( ctx.Target.getText() );
+        _c.gotoLabel( ctx.Target.getText() );
         return null;
     }
     
@@ -594,14 +588,14 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitIfThenElse( IfThenElseContext ctx )
     {
-        enterIfThenElseBlock();
-        enterBlock();
+        _c.enterIfThenElseBlock();
+        _c.enterBlock();
         
         visit( ctx.Condition );
-        endIfCondition();
+        _c.endIfCondition();
         
         visit( ctx.Block );
-        endThenBlock();
+        _c.endThenBlock();
         
         visit( ctx.ElseIfs );
         
@@ -610,8 +604,8 @@ public class AntlrMtsCompiler extends MtsCompilerBase
             visit( ctx.Else );
         }
         
-        exitBlock();
-        exitIfThenElse();
+        _c.exitBlock();
+        _c.exitIfThenElse();
         
         return null;
     }
@@ -619,11 +613,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitElseIfBody( ElseIfBodyContext ctx )
     {
-        enterIfCondition();
+        _c.enterIfCondition();
         visit( ctx.Condition );
-        endIfCondition();
+        _c.endIfCondition();
         visit( ctx.Block );
-        endThenBlock();
+        _c.endThenBlock();
         
         return null;
     }
@@ -631,7 +625,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitElseBody( ElseBodyContext ctx )
     {
-        enterElseBlock();
+        _c.enterElseBlock();
         visit( ctx.Block );
         
         return null;
@@ -643,11 +637,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitWhileLoop( WhileLoopContext ctx )
     {
-        enterWhileLoop();
+        _c.enterWhileLoop();
         visit( ctx.Condition );
-        enterWhileBody();
+        _c.enterWhileBody();
         visit( ctx.Block );
-        exitWhileLoop();
+        _c.exitWhileLoop();
         
         return null;
     }
@@ -655,11 +649,11 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitRepeatLoop( RepeatLoopContext ctx )
     {
-        enterRepeatLoop();
+        _c.enterRepeatLoop();
         visit( ctx.Block );
-        enterUntilConditon();
+        _c.enterUntilConditon();
         visit( ctx.Condition );
-        exitRepeatLoop();
+        _c.exitRepeatLoop();
         
         return null;
     }
@@ -676,13 +670,13 @@ public class AntlrMtsCompiler extends MtsCompilerBase
         }
         else
         {
-            loadConstant( ONE );
+            _c.loadConstant( ONE );
         }
         
-        enterNumericForLoop( ctx.Control.Var.getText() );
+        _c.enterNumericForLoop( ctx.Control.Var.getText() );
         
         visit( ctx.Block );
-        exitForLoop();
+        _c.exitForLoop();
         
         return null;
     }
@@ -692,10 +686,10 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         adjustExprListResults( ctx.Control.Exprs.Exprs, 3 );
         
-        enterGenericForLoop( getNames( ctx.Control.Vars ) );
+        _c.enterGenericForLoop( getNames( ctx.Control.Vars ) );
         
         visit( ctx.Block );
-        exitForLoop();
+        _c.exitForLoop();
         
         return null;
     }
@@ -706,10 +700,19 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitUnaryOpExpr( UnaryOpExprContext ctx )
     {
-        visit( ctx.Expr );
-        unaryOperation( ctx.Operator.getText() );
+        if ( "-".equals( ctx.Operator.getText() ) && ( ctx.Expr instanceof NumberLiteralContext ) )
+        {
+            NumberLiteralContext nlCtx = new NumberLiteralContext( ctx );
+            nlCtx.addChild( new CommonToken( MtsParser.FLOAT, "-" + ctx.Expr.getText() ) );
+            
+            visit( nlCtx );
+        }
+        else
+        {
+            visit( ctx.Expr );
+            _c.unaryOperation( ctx.Operator.getText() );
+        }
         
-        System.out.println( "UnaryOp: " + ctx.Operator.getText() );
         return null;
     }
     
@@ -718,9 +721,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         visit( ctx.Left );
         visit( ctx.Right );
-        binaryOperation( ctx.Operator.getText() );
-        
-        System.out.println( "BinaryOp: " + ctx.Operator.getText() );
+        _c.binaryOperation( ctx.Operator.getText() );
         return null;
     }
     
@@ -729,9 +730,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     {
         visit( ctx.Left );
         visit( ctx.Right );
-        logicOperation( ctx.Operator.getText() );
-        
-        System.out.println( "LogicalOp: " + ctx.Operator.getText() );
+        _c.logicOperation( ctx.Operator.getText() );
         return null;
     }
     
@@ -739,11 +738,9 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     public Void visitConditionalOpExpr( ConditionalOpExprContext ctx )
     {
         visit( ctx.Left );
-        enterConditionalBlock( ctx.Operator.getText() );
+        _c.enterConditionalBlock( ctx.Operator.getText() );
         visit( ctx.Right );
-        exitConditionalBlock();
-        
-        System.out.println( "ConditionalOp: " + ctx.Operator.getText() );
+        _c.exitConditionalBlock();
         return null;
     }
     
@@ -753,9 +750,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     @Override
     public Void visitNullLiteral( NullLiteralContext ctx )
     {
-        loadNil();
-        
-        System.out.println( "Literal: nil" );
+        _c.loadNil();
         return null;
     }
     
@@ -763,9 +758,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     public Void visitNumberLiteral( NumberLiteralContext ctx )
     {
         MtsNumber value = parseNumber( ctx.getText() );
-        loadConstant( value );
-        
-        System.out.println( "Literal: " + value );
+        _c.loadConstant( value );
         return null;
     }
     
@@ -773,9 +766,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
     public Void visitBooleanLiteral( BooleanLiteralContext ctx )
     {
         MtsBoolean value = parseBoolean( ctx.getText() );
-        loadConstant( value );
-        
-        System.out.println( "Literal: " + value );
+        _c.loadConstant( value );
         return null;
     }
     
@@ -787,10 +778,7 @@ public class AntlrMtsCompiler extends MtsCompilerBase
 //        
 //        System.out.println( "Literal: " + value );
         
-        System.out.println( "Interpolating string: " + ctx.getText() );
-        
-        interpolateString( ctx.getText() );
-        
+        _c.interpolateString( ctx.getText() );
         return null;
     }
     
@@ -860,13 +848,13 @@ public class AntlrMtsCompiler extends MtsCompilerBase
                 
                 if ( i >= nResults )
                 {
-                    discardValue();
+                    _c.discardValue();
                 }
             }
         }
         
         // Fill any leftover targets with nils
-        loadNil( nResults - nExprs );
+        _c.loadNil( nResults - nExprs );
     }
     
     /**

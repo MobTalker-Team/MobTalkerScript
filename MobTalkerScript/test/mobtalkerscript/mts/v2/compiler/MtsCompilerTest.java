@@ -7,6 +7,7 @@ import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v2.lib.*;
+import mobtalkerscript.mts.v2.lib.mobtalker.*;
 import mobtalkerscript.mts.v2.value.*;
 import mobtalkerscript.util.logging.*;
 
@@ -19,7 +20,10 @@ public class MtsCompilerTest
     @BeforeClass
     public static void setUp() throws SecurityException, IOException
     {
-        MTSLog.setLogger( Logger.getLogger( "MobTalkerScript" ) );
+        Logger logger = Logger.getLogger( "MobTalkerScript" );
+        logger.setLevel( Level.FINER );
+        
+        MTSLog.setLogger( logger );
     }
     
     @Test
@@ -51,12 +55,15 @@ public class MtsCompilerTest
         
         System.out.println( chunk.toStringTree( parser ) );
         
-        AntlrMtsCompiler compiler = new AntlrMtsCompiler( chunk );
+        AntlrMtsParser compiler = new AntlrMtsParser( chunk );
         
         MtsFunctionPrototype p = compiler.compile();
         
         MtsGlobals _G = new MtsGlobals();
-        _G.loadLibrary( new MtsCommandConsoleLib() );
+        _G.loadLibrary( new ConsoleCommandLib() );
+        
+        _G.loadLibrary( new MobTalkerConsoleBaseLib( "Console", 0 ) );
+        _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
         
         System.out.println( p.toString( true, true ) );
         
@@ -64,90 +71,6 @@ public class MtsCompilerTest
         MtsValue result = closure.call();
         
         System.out.println( result );
-    }
-    
-    @Test
-    public void test1()
-    {
-//        AntlrMtsCompiler compiler = 
-//        
-//        compiler.declareLocal( "a" );
-//        compiler.declareLocal( "C" );
-//        compiler.declareLocal( "b" );
-//        
-//        compiler.enterBlock();
-//        compiler.declareLocal( "b" );
-//        compiler.loadConstant( valueOf( 2 ) );
-//        compiler.storeVariable( "b" );
-//        compiler.exitBlock();
-//        
-//        compiler.loadConstant( valueOf( 1 ) );
-//        compiler.storeVariable( "C" );
-//        
-//        compiler.loadConstant( valueOf( 2 ) );
-//        compiler.storeVariable( "a" );
-//        
-//        compiler.loadVariable( "a" );
-//        compiler.loadConstant( valueOf( 1 ) );
-//        compiler.binaryOperation( "+" );
-//        
-//        compiler.enterConditionalBlock( "and" );
-//        
-//        compiler.loadConstant( valueOf( 10 ) );
-//        compiler.loadVariable( "C" );
-//        compiler.binaryOperation( "-" );
-//        compiler.loadConstant( valueOf( 0 ) );
-//        compiler.logicOperation( ">" );
-//        
-//        compiler.endConditionalBlock();
-//        
-//        compiler.storeVariable( "result" );
-//        compiler.loadVariable( "result" );
-//        
-//        compiler.returnFunction( 1 );
-//        
-//        MtsFunctionPrototype p = compiler.compile();
-//        
-//        MtsClosure closure = new MtsClosure( p, new FrameValue[] { new FrameValue( new MtsTable() ) } );
-//        
-//        MtsValue result = closure.call();
-//        
-//        System.out.println( result );
-    }
-    
-    @Test
-    public void test2()
-    {
-//        AntlrMtsCompiler compiler = new AntlrMtsCompiler( "test", 0, 0 );
-//        
-//        compiler.declareLocal( "i" );
-//        compiler.loadConstant( valueOf( 0 ) );
-//        compiler.storeVariable( "i" );
-//        
-//        compiler.beginWhileCondition();
-////        compiler.load( "i" );
-////        compiler.loadConstant( valueOf( 1000000 ) );
-////        compiler.logicOperation( "<" );
-//        compiler.loadConstant( valueOf( true ) );
-//        
-//        compiler.exitWhileBody();
-//        compiler.loadVariable( "i" );
-//        compiler.loadConstant( valueOf( 1 ) );
-//        compiler.binaryOperation( "+" );
-//        compiler.storeVariable( "i" );
-//        
-//        compiler.endWhile();
-//        
-//        compiler.loadVariable( "i" );
-//        compiler.returnFunction( 1 );
-//        
-//        MtsFunctionPrototype p = compiler.compile();
-//        
-//        MtsClosure closure = new MtsClosure( p, new MtsTable() );
-//        
-//        MtsValue result = closure.call();
-//        
-//        System.out.println( result );
     }
     
 }

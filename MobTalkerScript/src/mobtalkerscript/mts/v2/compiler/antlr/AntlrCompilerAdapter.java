@@ -1,11 +1,11 @@
-package mobtalkerscript.mts.v2.compiler;
+package mobtalkerscript.mts.v2.compiler.antlr;
 
 import static mobtalkerscript.mts.v2.compiler.MtsCompiler.*;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
 
 import java.util.*;
 
-import mobtalkerscript.mts.v2.compiler.antlr.*;
+import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.AssignExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.BooleanLiteralContext;
@@ -61,7 +61,7 @@ import org.antlr.v4.runtime.*;
 import com.google.common.collect.*;
 
 @SuppressWarnings( "unchecked" )
-public class AntlrMtsParser extends MtsBaseVisitor<Void>
+public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
 {
     private static final ITreePattern TableAssignPattern;
     

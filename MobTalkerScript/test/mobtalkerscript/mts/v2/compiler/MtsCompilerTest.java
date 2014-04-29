@@ -55,7 +55,12 @@ public class MtsCompilerTest
         
         System.out.println( chunk.toStringTree( parser ) );
         
-        AntlrMtsParser compiler = new AntlrMtsParser( chunk );
+        MtsCompiler compiler = new MtsCompiler( tokens.getSourceName(),
+                                                chunk.getStart().getLine(),
+                                                chunk.getStop().getLine() );
+        
+        AntlrCompilerAdapter adapter = new AntlrCompilerAdapter();
+        adapter.compile( compiler, chunk );
         
         MtsFunctionPrototype p = compiler.compile();
         
@@ -72,5 +77,4 @@ public class MtsCompilerTest
         
         System.out.println( result );
     }
-    
 }

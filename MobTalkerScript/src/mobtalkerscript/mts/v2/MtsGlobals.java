@@ -12,6 +12,7 @@ import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
 
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.*;
 
 public class MtsGlobals extends MtsTable
 {
@@ -49,6 +50,14 @@ public class MtsGlobals extends MtsTable
         
         // Parse it
         MtsParser parser = new MtsParser( tokens );
+        parser.removeErrorListeners();
+        parser.addErrorListener( new MtsAntlrErrorListener() );
+        parser.setErrorHandler( new MtsErrorStrategy() );
+        
+        // TODO: Doesn't seem to work, look further into it.
+//        parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
+        parser.getInterpreter().setPredictionMode( PredictionMode.LL );
+        
         ChunkContext chunk = parser.chunk();
         
         // Compile it
@@ -56,8 +65,8 @@ public class MtsGlobals extends MtsTable
                                                 chunk.getStart().getLine(),
                                                 chunk.getStop().getLine() );
         
-        AntlrMtsParser translator = new AntlrMtsParser();
-        translator.compile( compiler, chunk );
+        AntlrCompilerAdapter adapter = new AntlrCompilerAdapter();
+        adapter.compile( compiler, chunk );
         
         return compiler.compile();
     }

@@ -18,7 +18,7 @@ final class LoggingOutStream extends ByteArrayOutputStream
     public void flush() throws IOException
     {
         String record;
-        synchronized ( MTSLog.class )
+        synchronized ( MtsLog.class )
         {
             super.flush();
             record = this.toString();

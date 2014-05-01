@@ -38,7 +38,6 @@ public class ConditionalState
         
         if ( _pendingNext != null )
         {
-            System.out.println( "Automatically marking next on exit" );
             markBeginNext( target );
         }
     }

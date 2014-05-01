@@ -15,7 +15,7 @@ public final class MtsClosure extends MtsFunction
     
     // ========================================
     
-    public MtsClosure( MtsFunctionPrototype prototype, MtsTable env )
+    public MtsClosure( MtsFunctionPrototype prototype, MtsValue env )
     {
         this( prototype, Collections.singletonList( new FrameValue( env ) ) );
     }
@@ -39,7 +39,7 @@ public final class MtsClosure extends MtsFunction
     // ========================================
     
     @Override
-    public MtsValue call( MtsVarArgs args )
+    public MtsVarArgs call( MtsVarArgs args )
     {
         MtsFrame frame = new MtsFrame( this, args, _externals );
         try

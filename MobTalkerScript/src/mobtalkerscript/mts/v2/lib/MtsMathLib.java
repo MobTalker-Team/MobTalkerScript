@@ -59,7 +59,7 @@ public final class MtsMathLib extends MtsLibrary
         bindFunction( math, "ToDegrees", ToDegrees );
         bindFunction( math, "ToRadians", ToRadians );
         
-        env.set( "math", math );
+        env.set( "Math", math );
         
         return NIL;
     }

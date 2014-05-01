@@ -1,16 +1,20 @@
 package mobtalkerscript.mts.v2.lib;
 
-import java.io.*;
-
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
 public class ConsoleCommandLib extends MtsCommandLib
 {
+    /* package */MtsGlobals _G;
+    
+    // ========================================
+    
     @Override
     public MtsValue bind( MtsString name, MtsValue env )
     {
         checkIfGlobals( env );
+        
+        _G = (MtsGlobals) env;
         
         env.set( FNAME_SAY, new ShowText() );
         env.set( FNAME_SHOW, new ShowSprite() );
@@ -21,7 +25,7 @@ public class ConsoleCommandLib extends MtsCommandLib
     
     // ========================================
     
-    private static final class ShowText extends MtsThreeArgFunction
+    private final class ShowText extends MtsThreeArgFunction
     {
         @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
@@ -31,7 +35,7 @@ public class ConsoleCommandLib extends MtsCommandLib
             if ( !arg1.isNil() )
             {
                 String name = arg1.isTable() //
-                        ? arg1.get( "Name" ).asString().toJava()
+                ? arg1.get( "Name" ).asString().toJava()
                         : arg1.asString().toJava();
                 
                 s.append( '[' ).append( name ).append( "] " );
@@ -44,7 +48,7 @@ public class ConsoleCommandLib extends MtsCommandLib
             else
                 s.append( " \u25A0" );
             
-            System.out.println( s.toString() );
+            _G.out.println( s.toString() );
             
             return EMPTY_VARARGS;
         }
@@ -63,7 +67,7 @@ public class ConsoleCommandLib extends MtsCommandLib
     
     // ========================================
     
-    private static final class ShowMenu extends MtsJavaFunction
+    private final class ShowMenu extends MtsJavaFunction
     {
         
         @Override
@@ -72,7 +76,11 @@ public class ConsoleCommandLib extends MtsCommandLib
             if ( !args.get( 0 ).isNil() )
             {
                 String caption = args.get( 0 ).asString().toJava();
-                System.out.println( caption );
+                _G.out.println( caption );
+            }
+            else
+            {
+                _G.out.println( "Make your choice" );
             }
             
             int nOptions = args.count() - 1;
@@ -81,15 +89,15 @@ public class ConsoleCommandLib extends MtsCommandLib
             
             for ( int i = 0; i < nOptions; i++ )
             {
-                System.out.println( "  " + ( i + 1 ) + ": " + args.get( i + 1 ).asString().toJava() );
+                _G.out.println( "  " + ( i + 1 ) + ": " + args.get( i + 1 ).asString().toJava() );
             }
             
             for ( ;; )
             {
-                System.out.println( "Enter your choice" );
+                _G.out.print( "> " );
                 try
                 {
-                    String input = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+                    String input = _G.in.readLine();
                     int choice = Integer.parseInt( input );
                     if ( ( 0 < choice ) && ( choice <= nOptions ) )
                         return valueOf( choice );

@@ -1,11 +1,14 @@
 package mobtalkerscript.mts.v2.lib.mobtalker;
 
+import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
 public class MobTalkerConsoleBaseLib extends MtsLibrary
 {
     /* package */final MtsString _playerName;
     /* package */MtsNumber _loveLevel;
+    
+    /* package */MtsGlobals _G;
     
     // ========================================
     
@@ -21,6 +24,8 @@ public class MobTalkerConsoleBaseLib extends MtsLibrary
     public MtsValue bind( MtsString name, MtsValue env )
     {
         checkIfGlobals( env );
+        
+        _G = (MtsGlobals) env;
         
         bindFunction( env, "GetPlayerName", new GetPlayerName() );
         bindFunction( env, "GetPlayerGameMode", new GetPlayerGameMode() );
@@ -77,14 +82,14 @@ public class MobTalkerConsoleBaseLib extends MtsLibrary
     
     // ========================================
     
-    private final class HurtPlayer extends MtsOneArgFunction
+    private class HurtPlayer extends MtsOneArgFunction
     {
         @Override
         protected MtsValue invoke( MtsValue arg )
         {
             checkNumber( arg, 1 );
             
-            System.out.println( "You were hurt for " + arg.asNumber().toString() + " damage!" );
+            _G.out.println( "You were hurt for " + arg.asNumber().toString() + " damage!" );
             
             return EMPTY_VARARGS;
         }

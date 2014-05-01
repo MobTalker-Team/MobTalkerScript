@@ -1,10 +1,11 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import static mobtalkerscript.util.logging.MtsLog.*;
+
 import java.util.*;
 
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
-import mobtalkerscript.util.logging.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -85,31 +86,31 @@ public final class MtsFrame
     /**
      * Executes the instructions given until an instruction signals a frame exit and returns the top of the stack.
      */
-    public MtsValue run()
+    public MtsVarArgs run()
     {
         List<MtsInstruction> instructions = _closure.getPrototype().getInstructions();
         
-        if ( MTSLog.isFinestEnabled() )
+        if ( EngineLog.isFinestEnabled() )
         {
-            MTSLog.finest( "Stack: " + formatStack() );
+            EngineLog.finest( "Stack: " + formatStack() );
         }
         
         for ( ;; )
         {
             MtsInstruction instr = instructions.get( _ip );
             
-            if ( MTSLog.isFinerEnabled() )
+            if ( EngineLog.isInfoEnabled() )
             {
-                MTSLog.finer( "Executing [%s] %s",
-                              formatInstructionPointer( instructions.size() ),
-                              instr.toString( getClosure().getPrototype() ) );
+                EngineLog.info( "Executing [%s] %s",
+                                formatInstructionPointer( instructions.size() ),
+                                instr.toString( getClosure().getPrototype() ) );
             }
             
             instr.execute( this );
             
-            if ( MTSLog.isFinestEnabled() )
+            if ( EngineLog.isFinestEnabled() )
             {
-                MTSLog.finest( "Stack: " + formatStack() );
+                EngineLog.finest( "Stack: " + formatStack() );
             }
             
             if ( instr.exits() )
@@ -120,10 +121,12 @@ public final class MtsFrame
         
         MtsValue result = pop();
         
-        if ( !stackIsEmpty() )
-            throw new AssertionError( "Stack was not emptied! " + formatStack() );
+        assert stackIsEmpty()
+        /*   */: "Stack was not emptied! " + formatStack();
+        assert result.isVarArgs()
+        /*   */: "Return value is not of type VarArgs, but " + result.getType() + "!";
         
-        return result;
+        return result.asVarArgs();
     }
     
     private String formatStack()

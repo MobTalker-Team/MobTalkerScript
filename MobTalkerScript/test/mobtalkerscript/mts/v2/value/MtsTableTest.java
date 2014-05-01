@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.junit.*;
 
-public class MislTableTest
+public class MtsTableTest
 {
     
     private MtsTable _table;

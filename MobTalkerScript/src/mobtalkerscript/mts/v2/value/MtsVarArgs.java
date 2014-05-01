@@ -55,6 +55,18 @@ public class MtsVarArgs extends MtsValue
     
     // ========================================
     
+    public MtsVarArgs subArgs( int start, int end )
+    {
+        return new MtsVarArgs( _values.subList( start, Math.min( end, _values.size() ) ) );
+    }
+    
+    public MtsVarArgs subArgs( int start )
+    {
+        return subArgs( start, _values.size() );
+    }
+    
+    // ========================================
+    
     /**
      * Returns the value at index <code>i</code> (zero based) or <code>nil</code>, if the index does not exist.
      */

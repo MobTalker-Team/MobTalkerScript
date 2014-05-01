@@ -39,7 +39,7 @@ public abstract class MtsMetaTableValue extends MtsValue
     // ========================================
     
     @Override
-    public MtsValue call( MtsVarArgs args )
+    public MtsVarArgs call( MtsVarArgs args )
     {
         if ( !hasMetaTag( METATAG_CALL ) )
             return super.call( args );

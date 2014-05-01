@@ -1,7 +1,9 @@
 package mobtalkerscript.mts.v2.compiler.antlr;
 
+import static com.google.common.base.Preconditions.*;
 import static mobtalkerscript.mts.v2.compiler.MtsCompiler.*;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
+import static mobtalkerscript.util.logging.MtsLog.*;
 
 import java.util.*;
 
@@ -74,15 +76,21 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     
     // ========================================
     
-    private MtsCompiler _c;
+    private final MtsCompiler _c;
     
     // ========================================
     
-    public void compile( MtsCompiler compiler, ChunkContext chunk )
+    public AntlrCompilerAdapter( MtsCompiler c )
     {
-        _c = compiler;
+        checkNotNull( c );
+        _c = c;
+    }
+    
+    // ========================================
+    
+    public void compile( ChunkContext chunk )
+    {
         visit( chunk );
-        _c = null;
     }
     
     // ========================================
@@ -91,12 +99,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitChunk( ChunkContext ctx )
     {
-        System.out.println( "Enter Chunk" );
+        CompilerLog.info( "Enter Chunk" );
         
         visitChildren( ctx );
         _c.returnFunction( 0 );
         
-        System.out.println( "Exit Chunk" );
+        CompilerLog.info( "Exit Chunk" );
         return null;
     }
     
@@ -773,11 +781,6 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitStringLiteral( StringLiteralContext ctx )
     {
-//        MtsString value = parseString( ctx.getText() );
-//        loadConstant( value );
-//        
-//        System.out.println( "Literal: " + value );
-        
         _c.interpolateString( ctx.getText() );
         return null;
     }

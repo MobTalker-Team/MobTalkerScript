@@ -9,6 +9,7 @@ public final class MtsBaseLib extends MtsLibrary
     private static final MtsJavaFunction Error = new Error();
     private static final MtsJavaFunction INext = new INext();
     private static final MtsJavaFunction Next = new Next();
+    private static final MtsJavaFunction PCall = new PCall();
     private static final MtsJavaFunction RawGet = new RawGet();
     private static final MtsJavaFunction RawSet = new RawSet();
     private static final MtsJavaFunction ToNumber = new ToNumber();
@@ -17,25 +18,35 @@ public final class MtsBaseLib extends MtsLibrary
     
     // ========================================
     
+    /* package */MtsGlobals _G;
+    
+    // ========================================
+    
     @Override
     public MtsValue bind( MtsString name, MtsValue env )
     {
         checkIfGlobals( env );
         
+        _G = (MtsGlobals) env;
+        
         env.set( "_G", env );
-        env.set( "_VERSION", valueOf( "2.0" ) );
+        env.set( "_VERSION", valueOf( "2.0.0-alpha" ) );
         
         bindFunction( env, "assert", Assert );
         bindFunction( env, "error", Error );
         bindFunction( env, "next", Next );
         bindFunction( env, "inext", INext );
-        bindFunction( env, "print", new Print( (MtsGlobals) env ) );
+        bindFunction( env, "print", new Print() );
         bindFunction( env, "rawget", RawGet );
         bindFunction( env, "rawset", RawSet );
         bindFunction( env, "typeof", TypeOf );
         
-        bindFunction( env, "toNumber", ToNumber );
-        bindFunction( env, "toString", ToString );
+        bindFunction( env, "pcall", PCall );
+        
+        bindFunction( env, "LoadString", new LoadString() );
+        
+        bindFunction( env, "ToNumber", ToNumber );
+        bindFunction( env, "ToString", ToString );
         
         return env;
     }
@@ -102,13 +113,6 @@ public final class MtsBaseLib extends MtsLibrary
     
     private final class Print extends MtsJavaFunction
     {
-        private final MtsGlobals _G;
-        
-        public Print( MtsGlobals g )
-        {
-            _G = g;
-        }
-        
         @Override
         protected MtsValue invoke( MtsVarArgs args )
         {
@@ -185,6 +189,60 @@ public final class MtsBaseLib extends MtsLibrary
         protected MtsValue invoke( MtsValue arg1 )
         {
             return valueOf( arg1.getType().getName() );
+        }
+    }
+    
+    // ========================================
+    
+    private final class LoadString extends MtsJavaFunction
+    {
+        @Override
+        protected MtsValue invoke( MtsVarArgs args )
+        {
+            checkString( args.get( 0 ), 0 );
+            
+            MtsFunctionPrototype p;
+            try
+            {
+                p = _G.loadString( args.get( 0 ).asString().toJava() );
+            }
+            catch ( Exception ex )
+            {
+                throw new ScriptRuntimeException( "Unable to load string: %s", ex.getMessage() );
+            }
+            
+            MtsValue env = args.get( 1 );
+            if ( env.isNil() )
+            {
+                env = _G;
+            }
+            
+            return new MtsClosure( p, env );
+        }
+    }
+    
+    // ========================================
+    
+    private static final class PCall extends MtsJavaFunction
+    {
+        @Override
+        protected MtsValue invoke( MtsVarArgs args )
+        {
+            MtsValue f = args.get( 0 );
+            MtsVarArgs callArgs = args.subArgs( 1 );
+            
+            MtsVarArgs result;
+            try
+            {
+                MtsVarArgs callResults = f.call( callArgs );
+                result = new MtsVarArgs( TRUE, callResults );
+            }
+            catch ( ScriptRuntimeException ex )
+            {
+                result = new MtsVarArgs( FALSE, valueOf( ex.getMessage() ) );
+            }
+            
+            return result;
         }
     }
     

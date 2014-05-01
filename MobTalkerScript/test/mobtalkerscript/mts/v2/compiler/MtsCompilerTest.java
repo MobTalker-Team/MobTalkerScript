@@ -4,14 +4,11 @@ import java.io.*;
 import java.util.logging.*;
 
 import mobtalkerscript.mts.v2.*;
-import mobtalkerscript.mts.v2.compiler.antlr.*;
-import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.lib.mobtalker.*;
 import mobtalkerscript.mts.v2.value.*;
 import mobtalkerscript.util.logging.*;
 
-import org.antlr.v4.runtime.*;
 import org.junit.*;
 
 public class MtsCompilerTest
@@ -20,59 +17,27 @@ public class MtsCompilerTest
     @BeforeClass
     public static void setUp() throws SecurityException, IOException
     {
-        Logger logger = Logger.getLogger( "MobTalkerScript" );
+        Logger logger = Logger.getLogger( "MTS" );
         logger.setLevel( Level.FINER );
         
-        MTSLog.setLogger( logger );
+        MtsLog.setLogger( logger, true );
     }
     
     @Test
-    public void antlr() throws IOException
+    public void antlr() throws Exception
     {
-//        ANTLRInputStream stream = new ANTLRInputStream( "a, b = 4, 2; " //
-//                                                        + "local c = { 1, 2, y = \"abc\", [\"z\"] = b }; "
-//                                                        + "function d( e, f ) c[e] = f; return 1; end "
-//                                                        + "x = d(\"b\", 2); "
-//                                                        + "c.a = a ^ b; "
-//                                                        + "return 10 + c.a + c.b; " );
-//        ANTLRInputStream stream = new ANTLRInputStream( "local i, x = 1, \"bar\"; while ( i <= 10 ) do print( \"i: \" .. i ); i = i + 1; x = toString( i ); end return x;" );
-//        ANTLRInputStream stream = new ANTLRInputStream( "local a = \"bar\"; for i = 10, 1, -1 do local b = i * 2; print( a .. \": \" .. b ); end" );
-//        ANTLRInputStream stream = new ANTLRInputStream( "   local t = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, a = \"foo\" };"
-//                                                        + " for i, v in next, t do"
-//                                                        + "     print( i .. \": \" .. v );"
-//                                                        + " end" );
+        MtsGlobals _ENV = new MtsGlobals();
+        _ENV.loadLibrary( new ConsoleCommandLib() );
         
-//        ANTLRInputStream stream = new ANTLRFileStream( "D:\\MobTalker2\\lua-5.2.2-tests\\locals.lua" );
-        ANTLRInputStream stream = new ANTLRFileStream( "C:\\Users\\Tobsen\\Desktop\\MtsExampleScript.txt" );
+        _ENV.loadLibrary( new MobTalkerConsoleBaseLib( "Console", 0 ) );
+        _ENV.loadLibrary( new MobTalkerConsoleCharacterLib() );
         
-        MtsLexer lexer = new MtsLexer( stream );
-        lexer.setTokenFactory( new CommonTokenFactory( false ) );
-        TokenStream tokens = new UnbufferedTokenStream<Token>( lexer );
-        
-        MtsParser parser = new MtsParser( tokens );
-        
-        ChunkContext chunk = parser.chunk();
-        
-        System.out.println( chunk.toStringTree( parser ) );
-        
-        MtsCompiler compiler = new MtsCompiler( tokens.getSourceName(),
-                                                chunk.getStart().getLine(),
-                                                chunk.getStop().getLine() );
-        
-        AntlrCompilerAdapter adapter = new AntlrCompilerAdapter();
-        adapter.compile( compiler, chunk );
-        
-        MtsFunctionPrototype p = compiler.compile();
-        
-        MtsGlobals _G = new MtsGlobals();
-        _G.loadLibrary( new ConsoleCommandLib() );
-        
-        _G.loadLibrary( new MobTalkerConsoleBaseLib( "Console", 0 ) );
-        _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
+        MtsFunctionPrototype p;
+        p = _ENV.loadFile( "C:\\Users\\Tobsen\\Desktop\\MtsExampleScript.txt" );
         
         System.out.println( p.toString( true, true ) );
         
-        MtsClosure closure = new MtsClosure( p, _G );
+        MtsClosure closure = new MtsClosure( p, _ENV );
         MtsValue result = closure.call();
         
         System.out.println( result );

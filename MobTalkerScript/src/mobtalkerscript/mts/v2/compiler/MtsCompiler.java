@@ -2,8 +2,9 @@ package mobtalkerscript.mts.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
 import static mobtalkerscript.mts.v2.compiler.CompilerConstants.*;
-import static mobtalkerscript.mts.v2.instruction.InstructionCache.*;
+import static mobtalkerscript.mts.v2.instruction.Instructions.*;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
+import static mobtalkerscript.util.logging.MtsLog.*;
 
 import java.util.*;
 import java.util.regex.*;
@@ -56,7 +57,8 @@ public class MtsCompiler
     
     public void addInstr( MtsInstruction instr )
     {
-        System.out.println( "  Instruction: " + instr );
+        CompilerLog.fine( "  Instruction: " + instr );
+        
         _currentFunction.addInstruction( instr, _curPosition );
     }
     
@@ -69,7 +71,7 @@ public class MtsCompiler
     
     public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, String... params )
     {
-        System.out.println( "Enter Function " );
+        CompilerLog.info( "Enter Function " );
         
         enterFunction( name, sourceLineStart, sourceLineEnd, params );
     }
@@ -92,7 +94,7 @@ public class MtsCompiler
     
     public void exitFunction()
     {
-        System.out.println( "Exit Function " );
+        CompilerLog.info( "Exit Function " );
         
         addInstr( InstrReturn( 0 ) );
         _currentFunction = _currentFunction.getParent();
@@ -102,14 +104,14 @@ public class MtsCompiler
     
     public void enterBlock()
     {
-        System.out.println( "Enter Block" );
+        CompilerLog.info( "Enter Block" );
         
         _currentFunction.enterBlock();
     }
     
     public void exitBlock()
     {
-        System.out.println( "Exit Block" );
+        CompilerLog.info( "Exit Block" );
         
         _currentFunction.exitBlock();
     }
@@ -118,14 +120,14 @@ public class MtsCompiler
     
     public void enterWhileLoop()
     {
-        System.out.println( "Enter WhileLoop" );
+        CompilerLog.info( "Enter WhileLoop" );
         
         _currentFunction.enterLoop();
     }
     
     public void enterWhileBody()
     {
-        System.out.println( "Enter WhileBody" );
+        CompilerLog.info( "Enter WhileBody" );
         
         addInstr( InstrTest() );
         _currentFunction.markBreak();
@@ -134,7 +136,7 @@ public class MtsCompiler
     
     public void exitWhileLoop()
     {
-        System.out.println( "Exit WhileLoop" );
+        CompilerLog.info( "Exit WhileLoop" );
         
         addInstr( InstrJump() );
         _currentFunction.exitLoop();
@@ -239,14 +241,14 @@ public class MtsCompiler
     
     public LocalDescription declareLocal( String name )
     {
-        System.out.println( "Declare local: " + name );
+        CompilerLog.info( "Declare local: " + name );
         
         return _currentFunction.declareLocal( name );
     }
     
     public LocalDescription declareAnonymousLocal( String name )
     {
-        System.out.println( "Declare internal: " + name );
+        CompilerLog.info( "Declare internal: " + name );
         
         return _currentFunction.declareAnonymousLocal( name );
     }
@@ -267,7 +269,7 @@ public class MtsCompiler
     
     public void loadVariable( String name )
     {
-        System.out.println( "Load Variable: " + name );
+        CompilerLog.info( "Load Variable: " + name );
         
         if ( _currentFunction.isLocal( name ) )
         { // Local
@@ -299,7 +301,7 @@ public class MtsCompiler
         checkNotNull( value != null, "value cannot be null" );
         checkArgument( !value.isNil(), "value cannot be nil" );
         
-        System.out.println( "Load constant: " + value );
+        CompilerLog.info( "Load constant: " + value );
         
         int index = _currentFunction.getConstantIndex( value );
         addInstr( InstrLoadC( index ) );
@@ -312,7 +314,7 @@ public class MtsCompiler
     
     public void loadNil()
     {
-        System.out.println( "Load nil" );
+        CompilerLog.info( "Load nil" );
         
         addInstr( InstrLoadNil() );
     }
@@ -327,7 +329,7 @@ public class MtsCompiler
     
     public void storeVariable( String name )
     {
-        System.out.println( "Store Variable: " + name );
+        CompilerLog.info( "Store Variable: " + name );
         
         if ( _currentFunction.isLocal( name ) )
         { // Local
@@ -358,28 +360,28 @@ public class MtsCompiler
     
     public void createTable( int listElements, int hashPairs )
     {
-        System.out.println( "Create Table" );
+        CompilerLog.info( "Create Table" );
         
         addInstr( InstrNewTable( listElements, hashPairs ) );
     }
     
     public void loadFromTable()
     {
-        System.out.println( "Load from Table" );
+        CompilerLog.info( "Load from Table" );
         
         addInstr( InstrLoadT() );
     }
     
     public void storeInTable()
     {
-        System.out.println( "Store in Table" );
+        CompilerLog.info( "Store in Table" );
         
         addInstr( InstrStoreT() );
     }
     
     public void loadMethod( String name )
     {
-        System.out.println( "Load Method: " + name );
+        CompilerLog.info( "Load Method: " + name );
         
         addInstr( InstrDup() );
         loadConstant( valueOf( name ) );
@@ -390,28 +392,28 @@ public class MtsCompiler
     
     public void assignmentOperation( String op )
     {
-        System.out.println( "Operator: " + op );
+        CompilerLog.info( "Operator: " + op );
         
         throw new UnsupportedOperationException();
     }
     
     public void unaryOperation( String op )
     {
-        System.out.println( "Operator: " + op );
+        CompilerLog.info( "Operator: " + op );
         
         addInstr( InstrUnaryOp( op ) );
     }
     
     public void binaryOperation( String op )
     {
-        System.out.println( "Operator: " + op );
+        CompilerLog.info( "Operator: " + op );
         
         addInstr( InstrBinaryOp( op ) );
     }
     
     public void logicOperation( String op )
     {
-        System.out.println( "Operator: " + op );
+        CompilerLog.info( "Operator: " + op );
         
         if ( ">".equals( op ) )
         {
@@ -441,7 +443,7 @@ public class MtsCompiler
      */
     public void enterConditionalBlock( String op )
     {
-        System.out.println( "Operator: " + op );
+        CompilerLog.info( "Operator: " + op );
         
         if ( "and".equals( op ) )
         {
@@ -476,7 +478,7 @@ public class MtsCompiler
      */
     public void createClosure()
     {
-        System.out.println( "Create Closure" );
+        CompilerLog.info( "Create Closure" );
         
         List<FunctionState> childs = _currentFunction.getChilds();
         int index = childs.size() - 1;
@@ -489,14 +491,14 @@ public class MtsCompiler
      */
     public void callFunction( int nArgs, int nReturn )
     {
-        System.out.println( "Call Function" );
+        CompilerLog.info( "Call Function" );
         
         addInstr( new InstrCallFunc( nArgs, nReturn ) );
     }
     
     public void returnFunction( int nValues )
     {
-        System.out.println( "Return Function" );
+        CompilerLog.info( "Return Function" );
         
         addInstr( InstrReturn( nValues ) );
     }

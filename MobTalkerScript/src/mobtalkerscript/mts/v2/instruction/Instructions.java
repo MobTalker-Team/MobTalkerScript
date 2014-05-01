@@ -6,7 +6,7 @@ import java.util.*;
 
 import com.google.common.collect.*;
 
-public class InstructionCache
+public class Instructions
 {
     private static final Map<String, MtsInstruction> _unaryOps;
     private static final InstrNeg _neg = new InstrNeg();
@@ -20,7 +20,8 @@ public class InstructionCache
     private static final InstrDiv _div = new InstrDiv();
     private static final InstrMod _mod = new InstrMod();
     private static final InstrPow _pow = new InstrPow();
-    private static final InstrConcat _concat = new InstrConcat( 2 );
+    
+    private static final InstrConcat[] _concat;
     
     private static final Map<String, MtsInstruction> _logicalOps;
     private static final InstrEQ _eq = new InstrEQ();
@@ -61,7 +62,12 @@ public class InstructionCache
         _binaryOps.put( "/", InstrDiv() );
         _binaryOps.put( "%", InstrMod() );
         _binaryOps.put( "^", InstrPow() );
-        _binaryOps.put( "..", InstrConcat() );
+        
+        _concat = new InstrConcat[10];
+        for ( int i = 0; i < 10; i++ )
+            _concat[i] = new InstrConcat( i );
+        
+        _binaryOps.put( "..", InstrConcat( 2 ) );
         
         _logicalOps = Maps.newHashMapWithExpectedSize( 3 );
         _logicalOps.put( "==", InstrEq() );
@@ -76,26 +82,29 @@ public class InstructionCache
         _assignOps.put( "%=", InstrMod() );
         _assignOps.put( "^=", InstrPow() );
         
-        _loadL = new InstrLoadL[50];
-        _loadE = new InstrLoadE[50];
-        _loadC = new InstrLoadC[50];
-        _storeL = new InstrStoreL[50];
-        _storeE = new InstrStoreE[50];
-        
-        for ( int i = 0; i < 50; i++ )
+        _loadL = new InstrLoadL[20];
+        _storeL = new InstrStoreL[20];
+        for ( int i = 0; i < _loadL.length; i++ )
         {
             _loadL[i] = new InstrLoadL( i );
-            _loadE[i] = new InstrLoadE( i );
-            _loadC[i] = new InstrLoadC( i );
             _storeL[i] = new InstrStoreL( i );
+        }
+        
+        _loadE = new InstrLoadE[20];
+        _storeE = new InstrStoreE[20];
+        for ( int i = 0; i < 20; i++ )
+        {
+            _loadE[i] = new InstrLoadE( i );
             _storeE[i] = new InstrStoreE( i );
         }
         
+        _loadC = new InstrLoadC[100];
+        for ( int i = 0; i < 100; i++ )
+            _loadC[i] = new InstrLoadC( i );
+        
         _return = new InstrReturn[5];
         for ( int i = 0; i < 5; i++ )
-        {
             _return[i] = new InstrReturn( i );
-        }
     }
     
     // ========================================
@@ -125,6 +134,7 @@ public class InstructionCache
     }
     
     // ========================================
+    // Jump Instructions. These should never be cached or interned.
     
     public static InstrAnd InstrAnd()
     {
@@ -262,14 +272,9 @@ public class InstructionCache
         return _pow;
     }
     
-    public static InstrConcat InstrConcat()
-    {
-        return _concat;
-    }
-    
     public static InstrConcat InstrConcat( int count )
     {
-        return new InstrConcat( count );
+        return ( count < _concat.length ) ? _concat[count] : new InstrConcat( count );
     }
     
     public static InstrEQ InstrEq()
@@ -314,8 +319,33 @@ public class InstructionCache
     
     // ========================================
     
+    public static InstrNForPrep InstrNForPrep( int varIndex )
+    {
+        return new InstrNForPrep( varIndex );
+    }
+    
+    public static InstrNForLoop InstrNForLoop( int varIndex )
+    {
+        return new InstrNForLoop( varIndex );
+    }
+    
+    public static InstrNForLoop InstrNForLoop( int varIndex, int jumpDistance )
+    {
+        return new InstrNForLoop( varIndex, jumpDistance );
+    }
+    
+    public static InstrGForLoop InstrGForLoop( int varIndex, int nVars )
+    {
+        return new InstrGForLoop( varIndex, nVars );
+    }
+    
+    public static InstrGForLoop InstrGForLoop( int varIndex, int nVars, int jumpDistance )
+    {
+        return new InstrGForLoop( varIndex, nVars, jumpDistance );
+    }
+    
     // ========================================
     
-    private InstructionCache()
+    private Instructions()
     {}
 }

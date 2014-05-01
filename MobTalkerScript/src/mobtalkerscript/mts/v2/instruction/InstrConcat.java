@@ -8,7 +8,7 @@ public class InstrConcat extends MtsInstruction
     
     // ========================================
     
-    public InstrConcat( int count )
+    /* package */InstrConcat( int count )
     {
         _count = count;
     }

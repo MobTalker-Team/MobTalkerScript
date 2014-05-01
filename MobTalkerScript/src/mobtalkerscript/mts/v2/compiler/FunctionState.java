@@ -1,7 +1,7 @@
 package mobtalkerscript.mts.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
-import static mobtalkerscript.mts.v2.instruction.InstructionCache.*;
+import static mobtalkerscript.mts.v2.instruction.Instructions.*;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -206,16 +206,16 @@ public class FunctionState
         int limitIndex = declareAnonymousLocal( "limit" ).getIndex();
         int stepIndex = declareAnonymousLocal( "step" ).getIndex();
         
-        if ( !( ( stepIndex == ( limitIndex + 1 ) ) && ( limitIndex == ( loopIndex + 1 ) ) ) )
-            throw new AssertionError( String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                                                     loopIndex,
-                                                     limitIndex,
-                                                     stepIndex ) );
+        assert ( stepIndex == ( limitIndex + 1 ) ) && ( limitIndex == ( loopIndex + 1 ) )
+        /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
+                              loopIndex,
+                              limitIndex,
+                              stepIndex );
         
-        addInstruction( new InstrNForPrep( loopIndex ) );
+        addInstruction( InstrNForPrep( loopIndex ) );
         
         enterLoop();
-        addInstruction( new InstrNForLoop( loopIndex ) );
+        addInstruction( InstrNForLoop( loopIndex ) );
         markBreak();
     }
     
@@ -225,19 +225,19 @@ public class FunctionState
         int stateIndex = declareAnonymousLocal( "state" ).getIndex();
         int indexIndex = declareAnonymousLocal( "index" ).getIndex();
         
-        if ( !( ( indexIndex == ( stateIndex + 1 ) ) && ( stateIndex == ( iterIndex + 1 ) ) ) )
-            throw new AssertionError( String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                                                     iterIndex,
-                                                     stateIndex,
-                                                     indexIndex ) );
+        assert ( indexIndex == ( stateIndex + 1 ) ) && ( stateIndex == ( iterIndex + 1 ) )
+        /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
+                              iterIndex,
+                              stateIndex,
+                              indexIndex );
         
         for ( int i = 0; i < loopVars.length; i++ )
         {
             String loopVar = loopVars[i];
             int varIndex = declareLocal( loopVar ).getIndex();
             
-            if ( ( varIndex - i - 1 ) != indexIndex )
-                throw new AssertionError( "Loop variable indices are not consecutive!" );
+            assert ( varIndex - i - 1 ) == indexIndex
+            /*   */: "Loop variable indices are not consecutive!";
         }
         
         addInstruction( InstrStoreL( indexIndex ) );
@@ -245,7 +245,7 @@ public class FunctionState
         addInstruction( InstrStoreL( iterIndex ) );
         
         enterLoop();
-        addInstruction( new InstrGForLoop( iterIndex, loopVars.length ) );
+        addInstruction( InstrGForLoop( iterIndex, loopVars.length ) );
         markBreak();
     }
     
@@ -404,8 +404,7 @@ public class FunctionState
         }
         
         // If we do not have a parent, we cannot create an external for that name
-        if ( _parent == null )
-            throw new IllegalArgumentException( name + " is a global!" );
+        checkArgument( _parent != null, name + " is a global!" );
         
         // Create a new external
         int index = _externals.size();

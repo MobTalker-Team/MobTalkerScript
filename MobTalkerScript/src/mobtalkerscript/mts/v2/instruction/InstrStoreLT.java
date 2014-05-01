@@ -9,7 +9,7 @@ public class InstrStoreLT extends MtsInstruction
     
     // ========================================
     
-    private InstrStoreLT( int local, int constant )
+    /* package */InstrStoreLT( int local, int constant )
     {
         _local = local;
         _constant = constant;

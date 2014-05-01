@@ -12,13 +12,13 @@ public final class InstrNForLoop extends MtsJumpInstruction
     
     // ========================================
     
-    public InstrNForLoop( int index )
+    /* package */InstrNForLoop( int index )
     {
         super();
         _index = index;
     }
     
-    public InstrNForLoop( int index, int offset )
+    /* package */InstrNForLoop( int index, int offset )
     {
         super( offset );
         _index = index;

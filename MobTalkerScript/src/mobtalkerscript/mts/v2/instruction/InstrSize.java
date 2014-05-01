@@ -6,7 +6,6 @@ import mobtalkerscript.mts.v2.value.*;
 
 public class InstrSize extends MtsInstruction
 {
-    
     @Override
     public void execute( MtsFrame frame )
     {
@@ -36,5 +35,4 @@ public class InstrSize extends MtsInstruction
     {
         return "SIZE";
     }
-    
 }

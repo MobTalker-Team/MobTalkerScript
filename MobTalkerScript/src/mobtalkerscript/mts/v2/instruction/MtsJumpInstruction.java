@@ -8,12 +8,12 @@ public abstract class MtsJumpInstruction extends MtsInstruction
     
     // ========================================
     
-    public MtsJumpInstruction()
+    protected MtsJumpInstruction()
     {
         this( 0 );
     }
     
-    public MtsJumpInstruction( int distance )
+    protected MtsJumpInstruction( int distance )
     {
         _distance = distance;
     }
@@ -33,16 +33,17 @@ public abstract class MtsJumpInstruction extends MtsInstruction
         return _distance;
     }
     
-    public void setDistance( int distance )
+    public MtsJumpInstruction setDistance( int distance )
     {
         checkArgument( distance != 0, "target can not be self (infinite loop)" );
         
         _distance = distance;
+        return this;
     }
     
-    public void setTarget( int sourceIndex, int targetIndex )
+    public MtsJumpInstruction setTarget( int sourceIndex, int targetIndex )
     {
-        setDistance( targetIndex - sourceIndex );
+        return setDistance( targetIndex - sourceIndex );
     }
     
 }

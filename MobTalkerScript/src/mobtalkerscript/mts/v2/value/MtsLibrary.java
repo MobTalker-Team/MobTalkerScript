@@ -5,12 +5,12 @@ import mobtalkerscript.mts.v2.*;
 public abstract class MtsLibrary extends MtsFunction
 {
     @Override
-    public final MtsValue call( MtsVarArgs args )
+    public final MtsVarArgs call( MtsVarArgs args )
     {
         switch ( args.count() )
         {
             case 2:
-                return bind( args.get( 0 ).toStringMts(), args.get( 1 ) );
+                return new MtsVarArgs( bind( args.get( 0 ).toStringMts(), args.get( 1 ) ) );
             default:
                 throw new ScriptRuntimeException( "wrong number of arguments for binding library (expected 2, got %s)",
                                                   args.count() );

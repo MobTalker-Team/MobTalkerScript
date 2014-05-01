@@ -2,7 +2,7 @@ package mobtalkerscript.mts.v2.instruction;
 
 import mobtalkerscript.mts.v2.value.*;
 
-public abstract class MtsComparisonInstruction extends MtsInstruction
+/* package */abstract class MtsComparisonInstruction extends MtsInstruction
 {
     @Override
     public final void execute( MtsFrame frame )

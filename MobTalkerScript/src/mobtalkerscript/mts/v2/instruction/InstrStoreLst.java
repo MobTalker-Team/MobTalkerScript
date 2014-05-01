@@ -12,7 +12,7 @@ public class InstrStoreLst extends MtsInstruction
     
     // ========================================
     
-    public InstrStoreLst( int count )
+    /* package */InstrStoreLst( int count )
     {
         _count = count;
     }

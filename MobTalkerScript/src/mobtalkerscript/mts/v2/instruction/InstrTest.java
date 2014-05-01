@@ -7,13 +7,12 @@ import static mobtalkerscript.mts.v2.value.MtsBoolean.*;
  */
 public final class InstrTest extends MtsJumpInstruction
 {
-    
-    public InstrTest()
+    /* package */InstrTest()
     {
         super();
     }
     
-    public InstrTest( int offset )
+    /* package */InstrTest( int offset )
     {
         super( offset );
     }

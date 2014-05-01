@@ -8,7 +8,7 @@ public final class InstrReturn extends MtsInstruction
     
     // ========================================
     
-    public InstrReturn( int count )
+    /* package */InstrReturn( int count )
     {
         _count = count;
     }

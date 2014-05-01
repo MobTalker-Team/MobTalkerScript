@@ -8,7 +8,7 @@ import mobtalkerscript.mts.v2.value.*;
  */
 public final class InstrNForPrep extends MtsIndexedInstruction
 {
-    public InstrNForPrep( int i )
+    /* package */InstrNForPrep( int i )
     {
         super( i );
     }

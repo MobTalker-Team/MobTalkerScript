@@ -3,7 +3,7 @@ package mobtalkerscript.mts.v2.instruction;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public abstract class MtsArithmeticInstruction extends MtsInstruction
+/* package */abstract class MtsArithmeticInstruction extends MtsInstruction
 {
     @Override
     public final void execute( MtsFrame frame )

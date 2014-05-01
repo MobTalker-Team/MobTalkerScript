@@ -9,7 +9,7 @@ public class InstrStoreET extends MtsInstruction
     
     // ========================================
     
-    private InstrStoreET( int external, int constant )
+    /* package */InstrStoreET( int external, int constant )
     {
         _external = external;
         _constant = constant;

@@ -4,7 +4,7 @@ import mobtalkerscript.mts.v2.*;
 
 public final class InstrStoreE extends MtsIndexedInstruction
 {
-    public InstrStoreE( int i )
+    /* package */InstrStoreE( int i )
     {
         super( i );
     }

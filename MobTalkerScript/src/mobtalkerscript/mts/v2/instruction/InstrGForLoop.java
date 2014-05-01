@@ -12,14 +12,14 @@ public final class InstrGForLoop extends MtsJumpInstruction
     
     // ========================================
     
-    public InstrGForLoop( int index, int values )
+    /* package */InstrGForLoop( int index, int values )
     {
         super();
         _index = index;
         _values = values;
     }
     
-    public InstrGForLoop( int index, int values, int offset )
+    /* package */InstrGForLoop( int index, int values, int offset )
     {
         super( offset );
         _index = index;

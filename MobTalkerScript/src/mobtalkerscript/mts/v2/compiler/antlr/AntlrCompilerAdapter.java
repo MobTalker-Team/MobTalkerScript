@@ -146,6 +146,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( MtsCommandLib.FNAME_SHOW );
         
+        visit( ctx.Character );
         visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Position == null )
@@ -171,7 +172,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             }
         }
         
-        _c.callFunction( 4, 0 );
+        _c.callFunction( 5, 0 );
         
         return null;
     }

@@ -77,8 +77,8 @@ public class MtsGlobals extends MtsTable
         
         // Parse it
         MtsParser parser = new MtsParser( tokens );
-//        parser.removeErrorListeners();
-//        parser.addErrorListener( new MtsAntlrErrorListener() );
+        parser.removeErrorListeners();
+        parser.addErrorListener( new MtsAntlrErrorListener() );
         parser.setErrorHandler( new MtsErrorStrategy() );
         
         // TODO: SLL doesn't seem to work, look further into it.

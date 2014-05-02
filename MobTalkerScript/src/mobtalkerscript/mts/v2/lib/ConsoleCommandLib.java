@@ -35,7 +35,7 @@ public class ConsoleCommandLib extends MtsCommandLib
             if ( !arg1.isNil() )
             {
                 String name = arg1.isTable() //
-                ? arg1.get( "Name" ).asString().toJava()
+                        ? arg1.get( "Name" ).asString().toJava()
                         : arg1.asString().toJava();
                 
                 s.append( '[' ).append( name ).append( "] " );
@@ -56,11 +56,80 @@ public class ConsoleCommandLib extends MtsCommandLib
     
     // ========================================
     
-    private static final class ShowSprite extends MtsThreeArgFunction
+    private final class ShowSprite extends MtsJavaFunction
     {
         @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+        protected MtsValue invoke( MtsVarArgs args )
         {
+            MtsValue characterArg = args.get( 0 );
+            MtsValue pathArg = args.get( 1 );
+            MtsValue positionArg = args.get( 2 );
+            MtsValue offsetXArg = args.get( 3 );
+            MtsValue offsetYArg = args.get( 4 );
+//            MtsValue effectArg = args.get( 5 );
+            
+            // Character
+            StringBuilder pathBuilder = new StringBuilder();
+            if ( characterArg.isTable() )
+            {
+                String basePath = characterArg.get( "SpritePath" ).toStringMts().toJava();
+                pathBuilder.append( basePath );
+            }
+            else
+            {
+                String basePath = characterArg.toStringMts().toJava();
+                pathBuilder.append( basePath );
+            }
+            
+            // Path
+            if ( pathArg.isTable() )
+            {
+                for ( MtsValue pathPart : pathArg.asTable().listView() )
+                {
+                    pathBuilder.append( "/" ).append( pathPart.toStringMts().toJava() );
+                }
+            }
+            else
+            {
+                pathBuilder.append( "/" ).append( pathArg.toStringMts() );
+            }
+            
+            String path = pathBuilder.toString();
+            
+            if ( !path.endsWith( ".png" ) )
+            {
+                path += ".png";
+            }
+            
+            // Position
+            String position;
+            if ( positionArg.isNil() )
+            {
+                position = "center";
+            }
+            else
+            {
+                position = positionArg.toStringMts().toJava();
+            }
+            
+            // Offset
+            int offsetX = (int) offsetXArg.asNumber().asInteger().toJava();
+            int offsetY = (int) offsetYArg.asNumber().asInteger().toJava();
+            
+            // Effect
+            String effect = "none";
+            
+            _G.out.println( "Displaying sprite '"
+                            + path
+                            + "' at "
+                            + position
+                            + "["
+                            + offsetX
+                            + ","
+                            + offsetY
+                            + "] with effect '"
+                            + effect + "'." );
+            
             return EMPTY_VARARGS;
         }
     }
@@ -69,7 +138,6 @@ public class ConsoleCommandLib extends MtsCommandLib
     
     private final class ShowMenu extends MtsJavaFunction
     {
-        
         @Override
         protected MtsValue invoke( MtsVarArgs args )
         {
@@ -103,7 +171,9 @@ public class ConsoleCommandLib extends MtsCommandLib
                         return valueOf( choice );
                 }
                 catch ( Exception ex )
-                {}
+                {
+                    _G.out.println( ex.getMessage() );
+                }
             }
         }
     }

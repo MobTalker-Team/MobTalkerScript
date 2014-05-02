@@ -6,9 +6,9 @@
 	<property name="src" value="${basedir}/src" />
 	<property name="bin" value="${basedir}/bin" />
 
-	<property name="version.major" value="1" />
-	<property name="version.minor" value="2" />
-	<property name="version.patch" value="1" />
+	<property name="version.major" value="2" />
+	<property name="version.minor" value="0" />
+	<property name="version.patch" value="0" />
 
 	<path id="classpath">
 		<pathelement location="${MobTalker2.libraries.location}/Antlr4-Custom.jar" />

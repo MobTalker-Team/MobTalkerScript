@@ -2,12 +2,16 @@ package mobtalkerscript.mts.v2.value;
 
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
 
+import java.util.*;
+
+import com.google.common.collect.*;
+
 /**
  * An Array-backed list specifically tailored for MobTalkerScript.
  * <p>
  * NOTE: The index is 1 based.
  */
-/* package */final class TableListPart
+/* package */final class TableListPart implements Iterable<MtsValue>
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
     
@@ -364,5 +368,18 @@ import static mobtalkerscript.mts.v2.value.MtsValue.*;
             // ++i is needed for conversion between 1-based and 0-based indices.
             hashPart.set( valueOf( ++i ), value );
         }
+    }
+    
+    // ========================================
+    
+    public Iterable<MtsValue> iterableView()
+    {
+        return Iterables.unmodifiableIterable( Arrays.asList( _entries ) );
+    }
+    
+    @Override
+    public Iterator<MtsValue> iterator()
+    {
+        return Iterators.forArray( _entries );
     }
 }

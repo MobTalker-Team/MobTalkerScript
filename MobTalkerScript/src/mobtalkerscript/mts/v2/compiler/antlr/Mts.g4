@@ -326,7 +326,11 @@ funcBody
 command
     : 'say' Character=expr? Text=exprList IsLast='as conclusion'? ';'
       # CommandSay
-    | 'show' Path+=expr+ ( 'at' Position=expr )? ( 'offset' Offset=exprList )? /*( 'with' Effect=exprList )?*/ ';'
+    | 'show' Character=expr 
+    		 Path+=expr+ 
+    		 ( 'at' Position=expr )? 
+    		 ( 'offset' Offset=exprList )? 
+    		 /*( 'with' Effect=exprList )?*/ ';'
       # CommandShow
     | 'scene' Path+=expr+ ( 'as' Mode=expr )? /*( 'with' exprList )?*/ ';'
       # CommandScene

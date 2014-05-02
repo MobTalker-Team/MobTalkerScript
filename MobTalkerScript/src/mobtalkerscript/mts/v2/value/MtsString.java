@@ -190,7 +190,7 @@ public class MtsString extends MtsValue
     @Override
     public String toString()
     {
-        return "\"" + _value + "\"";
+        return _value;
     }
     
     @Override

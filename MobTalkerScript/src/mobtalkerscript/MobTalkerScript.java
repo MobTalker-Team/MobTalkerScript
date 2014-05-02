@@ -2,7 +2,9 @@ package mobtalkerscript;
 
 import java.util.logging.*;
 
+import joptsimple.*;
 import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.lib.mobtalker.*;
@@ -14,15 +16,29 @@ import mobtalkerscript.util.logging.*;
  */
 public class MobTalkerScript
 {
-    
     public static void main( String[] args ) throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-        MtsLog.CompilerLog.setLevel( Level.OFF );
-        MtsLog.EngineLog.setLevel( Level.OFF );
         
+        // Options
+        OptionParser parser = new OptionParser();
+        OptionSpec<String> compilerLogLevel = parser.accepts( "compilerLog" )
+                                                    .withRequiredArg()
+                                                    .defaultsTo( "OFF" );
+        OptionSpec<String> engineLogLevel = parser.accepts( "engineLog" )
+                                                  .withRequiredArg()
+                                                  .defaultsTo( "OFF" );
+        OptionSpec<String> files = parser.nonOptions();
+        
+        OptionSet options = parser.parse( args );
+        
+        MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
+        MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
+        
+        // Preload some classes
         Instructions.class.getClass();
         
+        // Initialize engine
         MtsGlobals _G = new MtsGlobals();
         _G.loadLibrary( new MtsMathLib() );
         _G.loadLibrary( new MtsTableLib() );
@@ -33,18 +49,44 @@ public class MobTalkerScript
         
         _G.out.println( "MobTalkerScript " //
                         + _G.get( "_VERSION" ).asString().toJava()
-                        + " Copyright \u00A9 2013-2014 Tobias Rummelt, mobtalker.net" );
+                        + " Copyright (c) 2013-2014 Tobias Rummelt, mobtalker.net" );
+        _G.out.println( "CAUTION: This is an alpha version software and may contain serious bugs and incomplete features!" );
+        _G.out.println( "         Please report any bugs you may encount." );
         
-        if ( args.length >= 1 )
+        // Load specified file if any
+        if ( options.has( files ) )
         {
-            _G.out.println( "Loading file '" + args[0] + "'" );
+            String path = options.valueOf( files );
             
-            MtsFunctionPrototype fileChunk = _G.loadFile( args[0] );
-            new MtsClosure( fileChunk, _G ).call();
+            _G.out.println( "Loading file '" + path + "'" );
+            
+            MtsFunctionPrototype fileChunk = null;
+            try
+            {
+                fileChunk = _G.loadFile( path );
+            }
+            catch ( MtsSyntaxError ex )
+            {
+                _G.err.println( ex.getMessage() );
+            }
+            catch ( Exception ex )
+            {
+                ex.printStackTrace();
+            }
+            
+            // Give the err stream time to print
+            Thread.sleep( 1 );
+            
+            if ( fileChunk != null )
+            {
+                new MtsClosure( fileChunk, _G ).call();
+            }
         }
         
+        // Interactive loop
         for ( ;; )
         {
+            _G.out.print( "> " );
             String line = _G.in.readLine();
             
             if ( line.startsWith( "exit" ) )

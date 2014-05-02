@@ -3,6 +3,7 @@ package mobtalkerscript;
 import java.util.logging.*;
 
 import joptsimple.*;
+import joptsimple.internal.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.instruction.*;
@@ -50,11 +51,11 @@ public class MobTalkerScript
         _G.out.println( "MobTalkerScript " //
                         + _G.get( "_VERSION" ).asString().toJava()
                         + " Copyright (c) 2013-2014 Tobias Rummelt, mobtalker.net" );
-        _G.out.println( "CAUTION: This is an alpha version software and may contain serious bugs and incomplete features!" );
-        _G.out.println( "         Please report any bugs you may encount." );
+        _G.out.println( "CAUTION: This is an alpha version software and may contain bugs and incomplete features!" );
+        _G.out.println( "         Please report any bugs you may encounter to the bug tracker." );
         
         // Load specified file if any
-        if ( options.has( files ) )
+        if ( !Strings.isNullOrEmpty( options.valueOf( files ) ) )
         {
             String path = options.valueOf( files );
             

@@ -1,9 +1,10 @@
 <?xml version="1.0" ?>
-<project name="MobTalkerScript" default="build">
+<project name="MobTalkerScript" default="build-standalone">
 	<property name="Minecraft.libraries.location" value="${basedir}/../../Minecraft-1_6/forge/mcp/jars/libraries" />
 	<property name="MobTalker2.libraries.location" value="${basedir}/../../lib" />
 
 	<property name="src" value="${basedir}/src" />
+	<property name="res" value="${basedir}/res" />
 	<property name="bin" value="${basedir}/bin" />
 
 	<property name="version.major" value="2" />
@@ -11,27 +12,32 @@
 	<property name="version.patch" value="0" />
 
 	<path id="classpath">
-		<pathelement location="${MobTalker2.libraries.location}/Antlr4-Custom.jar" />
+		<pathelement location="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />
 		<pathelement location="${Minecraft.libraries.location}/com/google/guava/guava/14.0/guava-14.0.jar" />
+		<pathelement location="${Minecraft.libraries.location}/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar" />
 		<pathelement location="${Minecraft.libraries.location}/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" />
 	</path>
 
-	<target name="build">
+	<target name="build-standalone">
 		<delete includeemptydirs="true">
 			<fileset dir="${bin}" erroronmissingdir="false" />
 		</delete>
 		<mkdir dir="${bin}" />
-		
-		<javac srcdir="${src}" destdir="${bin}" source="6" target="6" includeantruntime="false" >
+
+		<javac srcdir="${src}" destdir="${bin}" source="6" target="6" includeantruntime="false">
 			<classpath refid="classpath" />
 		</javac>
 
 		<!-- Build the jar -->
 		<zip destfile="${MobTalker2.libraries.location}/MobTalkerScript-${version.major}.${version.minor}.${version.patch}.jar">
 			<fileset dir="${bin}" />
-			<zipfileset src="${MobTalker2.libraries.location}/Antlr4-Custom.jar" />
+			<fileset dir="${res}" />
+			<zipfileset excludes="META-INF/*" src="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />
+			<zipfileset excludes="META-INF/*" src="${Minecraft.libraries.location}/com/google/guava/guava/14.0/guava-14.0.jar" />
+			<zipfileset excludes="META-INF/*" src="${Minecraft.libraries.location}/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar" />
+			<zipfileset excludes="META-INF/*" src="${Minecraft.libraries.location}/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" />
 		</zip>
-		
+
 		<delete includeemptydirs="true">
 			<fileset dir="${bin}" />
 		</delete>

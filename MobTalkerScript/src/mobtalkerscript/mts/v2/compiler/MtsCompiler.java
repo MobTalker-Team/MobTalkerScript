@@ -7,6 +7,7 @@ import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import static mobtalkerscript.util.logging.MtsLog.*;
 
 import java.util.*;
+import java.util.logging.*;
 import java.util.regex.*;
 
 import mobtalkerscript.mts.v2.*;
@@ -406,7 +407,8 @@ public class MtsCompiler
     
     public void binaryOperation( String op )
     {
-        CompilerLog.info( "Operator: " + op );
+        // Beware of the '%' operator
+        CompilerLog.log( Level.INFO, "Operator: " + op );
         
         addInstr( InstrBinaryOp( op ) );
     }
@@ -534,7 +536,8 @@ public class MtsCompiler
     
     // ========================================
     
-    private static final Pattern _interpolationPattern = Pattern.compile( "(?<!\\\\)\\{([_a-zA-Z][_a-zA-Z0-9]*)\\}" );
+    private static final Pattern _interpolationPattern =
+                                                         Pattern.compile( "(?<!\\\\)\\{([_a-zA-Z][_a-zA-Z0-9]*)\\}" );
     
     public void interpolateString( String s )
     {

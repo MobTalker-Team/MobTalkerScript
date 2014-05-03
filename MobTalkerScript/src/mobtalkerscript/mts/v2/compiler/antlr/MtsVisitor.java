@@ -250,13 +250,6 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNumberLiteral(@NotNull MtsParser.NumberLiteralContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#OperatorAssignmentStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperatorAssignmentStmt(@NotNull MtsParser.OperatorAssignmentStmtContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#LogicalOpExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -348,18 +341,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitCallArgs(@NotNull MtsParser.CallArgsContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#funcName}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFuncName(@NotNull MtsParser.FuncNameContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#GenericForLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#funcName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFuncName(@NotNull MtsParser.FuncNameContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#CommandScene}.

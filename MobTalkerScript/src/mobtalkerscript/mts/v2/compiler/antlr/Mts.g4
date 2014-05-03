@@ -251,8 +251,8 @@ assignExpr
     : Targets=varExprList '=' Exprs=exprList
       # SimpleAssignmentStmt
   	//| varExpr ( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) expr
-  	| Target=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
-  	  # OperatorAssignmentStmt
+  	//| Target=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
+  	//  # OperatorAssignmentStmt
     ;
 	
 varExpr

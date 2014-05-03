@@ -290,14 +290,6 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitOperatorAssignmentStmt(@NotNull MtsParser.OperatorAssignmentStmtContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
 	@Override public T visitLogicalOpExpr(@NotNull MtsParser.LogicalOpExprContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -402,7 +394,7 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitFuncName(@NotNull MtsParser.FuncNameContext ctx) { return visitChildren(ctx); }
+	@Override public T visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -410,7 +402,7 @@ public class MtsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mt
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitGenericForLoop(@NotNull MtsParser.GenericForLoopContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFuncName(@NotNull MtsParser.FuncNameContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

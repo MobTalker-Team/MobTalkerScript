@@ -125,8 +125,8 @@ public class MtsTable extends MtsMetaTableValue
             MtsValue tag = getMetaTag( METATAG_INDEX );
             
             return tag.isTable() //
-            ? tag.get( key )
-                    : tag.call( this, key ).get( 1 );
+                    ? tag.get( key )
+                    : tag.call( this, key ).get( 0 );
         }
         
         return result;
@@ -263,7 +263,7 @@ public class MtsTable extends MtsMetaTableValue
     }
     
     /**
-     * Inserts a value into this table at the given location and shifts subsequent entries to the left if necessary.
+     * Inserts a value into this table at the given location (1 based) and shifts subsequent entries to the left if necessary.
      * <p>
      * If <tt>key</tt> is not part of the sequence of this table a simple {@link #setRaw(MtsValue, MtsValue) setRaw} is
      * performed.

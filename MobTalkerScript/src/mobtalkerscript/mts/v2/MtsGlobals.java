@@ -59,11 +59,14 @@ public class MtsGlobals extends MtsTable
     
     // ========================================
     
-    public MtsFunctionPrototype loadString( String chunk ) throws Exception
+    public MtsFunctionPrototype loadString( String chunk, String source ) throws Exception
     {
         checkArgument( !isNullOrEmpty( chunk ), "chunk cannot be null or empty" );
         
-        return load( new ANTLRInputStream( chunk ) );
+        ANTLRInputStream stream = new ANTLRInputStream( chunk );
+        stream.name = source;
+        
+        return load( stream );
     }
     
     // ========================================
@@ -84,7 +87,16 @@ public class MtsGlobals extends MtsTable
         // TODO: SLL doesn't seem to work, look further into it.
         parser.getInterpreter().setPredictionMode( PredictionMode.LL_EXACT_AMBIG_DETECTION );
         
-        ChunkContext chunk = parser.chunk();
+        ChunkContext chunk;
+        try
+        {
+            chunk = parser.chunk();
+        }
+        catch ( MtsSyntaxError ex )
+        {
+//            throw new NullPointerException( "cannot be null" );
+            throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
+        }
         
         // Compile it
         MtsCompiler compiler = new MtsCompiler( tokens.getSourceName(),

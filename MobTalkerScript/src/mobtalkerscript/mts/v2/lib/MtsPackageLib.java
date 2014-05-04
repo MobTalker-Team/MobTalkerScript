@@ -3,20 +3,32 @@ package mobtalkerscript.mts.v2.lib;
 import java.nio.file.*;
 import java.util.*;
 
+import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.value.*;
 
 import com.google.common.collect.*;
 
 public class MtsPackageLib extends MtsLibrary
 {
-    private final List<String> _searchPaths = Lists.newArrayList( "./?.lua", "./?" );
+    private MtsGlobals _G;
+    private final List<String> _searchPaths;
     private final MtsTable _loadedPackages;
     
     // ========================================
     
     public MtsPackageLib()
     {
+        this( "." );
+    }
+    
+    public MtsPackageLib( String basePath )
+    {
         _loadedPackages = new MtsTable( 0, 1 );
+        _searchPaths = Lists.newArrayList( basePath + "/?.mts",
+                                           basePath + "/?.script",
+                                           basePath + "/lib/?.mts",
+                                           basePath + "/lib/?.script" );
     }
     
     // ========================================
@@ -26,14 +38,12 @@ public class MtsPackageLib extends MtsLibrary
     {
         checkIfGlobals( env );
         
-        bindFunction( env, "require", new Require() );
-//        env.set( "_LOADED", _loadedPackages );
+        _G = (MtsGlobals) env;
         
-//        MtsValue defaultPath = env.get( "MTS_PATH" );
-//        if ( defaultPath.isString() )
-//        {
-//            _searchPaths.add( 0, defaultPath.asString().toJava() );
-//        }
+        bindFunction( env, "require", new Require() );
+        
+//        MtsTable lib = new MtsTable( 0, 1 );
+//        env.set( "Package", lib );
         
         return null;
     }
@@ -47,22 +57,47 @@ public class MtsPackageLib extends MtsLibrary
         {
             checkString( arg, 1 );
             
-            String libName = arg.asString().toJava();
+            MtsString libName = arg.asString();
             MtsValue lib = _loadedPackages.get( libName );
             
-            if ( lib != null )
+            if ( !lib.isNil() )
                 return lib;
             
             for ( String pathPattern : _searchPaths )
             {
-                Path path = Paths.get( pathPattern.replace( "?", libName ) );
+                
+                Path path = Paths.get( pathPattern.replace( "?", libName.toJava() ) );
+                
+                _G.out.println( "Searching path '"
+                                + path.toString()
+                                + " for module '"
+                                + libName.toJava()
+                                + "'" );
+                
                 if ( Files.exists( path ) )
                 {
-                    // TODO Compile it
+                    MtsFunctionPrototype p;
+                    try
+                    {
+                        p = _G.loadFile( path );
+                    }
+                    catch ( MtsSyntaxError ex )
+                    {
+                        throw ex;
+                    }
+                    catch ( Exception ex )
+                    {
+                        throw new ScriptEngineException( ex );
+                    }
+                    
+                    lib = new MtsClosure( p, _G ).call();
+                    _loadedPackages.set( libName, lib );
+                    
+                    return lib;
                 }
             }
             
-            return NIL;
+            throw new ScriptRuntimeException( "module '%s' not found", libName.toJava() );
         }
     }
 }

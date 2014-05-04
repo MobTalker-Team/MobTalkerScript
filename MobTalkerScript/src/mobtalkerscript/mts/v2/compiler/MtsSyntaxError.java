@@ -4,33 +4,38 @@ package mobtalkerscript.mts.v2.compiler;
 public class MtsSyntaxError extends RuntimeException
 {
     private final String _sourceName;
-    private final int _line;
-    private final int _col;
+    private final SourcePosition _sourcePosition;
     private final String _msg;
     
     // ========================================
     
-    public MtsSyntaxError( String sourceName, int line, int col, String msg )
+    public MtsSyntaxError( String sourceName, SourcePosition sourcePosition, String msg )
     {
         _sourceName = sourceName;
-        _line = line;
-        _col = col;
+        _sourcePosition = sourcePosition;
+        _msg = msg;
+    }
+    
+    public MtsSyntaxError( String sourceName, int line, int coloum, String msg )
+    {
+        _sourceName = sourceName;
+        _sourcePosition = new SourcePosition( line, coloum );
         _msg = msg;
     }
     
     // ========================================
     
-    public int getLine()
+    public String getSourceName()
     {
-        return _line;
+        return _sourceName;
     }
     
-    public int getCharPos()
+    public SourcePosition getSourcePosition()
     {
-        return _col;
+        return _sourcePosition;
     }
     
-    public String getMsg()
+    public String getOriginalMessage()
     {
         return _msg;
     }
@@ -40,23 +45,10 @@ public class MtsSyntaxError extends RuntimeException
     @Override
     public String getMessage()
     {
-        return toString();
+        return new StringBuilder().append( _sourceName )
+                                  .append( ":" )
+                                  .append( _sourcePosition.Line )
+                                  .append( ": " )
+                                  .append( _msg ).toString();
     }
-    
-    @Override
-    public String toString()
-    {
-        StringBuilder s = new StringBuilder();
-        
-        s.append( _sourceName ) //
-         .append( ":" )
-         .append( _line )
-         .append( "," )
-         .append( _col )
-         .append( " : " )
-         .append( _msg );
-        
-        return s.toString();
-    }
-    
 }

@@ -204,7 +204,7 @@ public final class MtsBaseLib extends MtsLibrary
             MtsFunctionPrototype p;
             try
             {
-                p = _G.loadString( args.get( 0 ).asString().toJava() );
+                p = _G.loadString( args.get( 0 ).asString().toJava(), "string" );
             }
             catch ( Exception ex )
             {

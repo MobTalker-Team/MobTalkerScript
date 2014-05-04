@@ -1,11 +1,13 @@
 package mobtalkerscript;
 
+import java.nio.file.*;
 import java.util.logging.*;
 
 import joptsimple.*;
 import joptsimple.internal.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.*;
+import mobtalkerscript.mts.v2.compiler.antlr.*;
 import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.lib.mobtalker.*;
@@ -38,6 +40,8 @@ public class MobTalkerScript
         
         // Preload some classes
         Instructions.class.getClass();
+        MtsParser.class.getClass();
+        MtsCompiler.class.getClass();
         
         // Initialize engine
         MtsGlobals _G = new MtsGlobals();
@@ -61,6 +65,8 @@ public class MobTalkerScript
             
             _G.out.println( "Loading file '" + path + "'" );
             
+            _G.loadLibrary( new MtsPackageLib( Paths.get( path ).getParent().toString() ) );
+            
             MtsFunctionPrototype fileChunk = null;
             try
             {
@@ -81,6 +87,10 @@ public class MobTalkerScript
                 new MtsClosure( fileChunk, _G ).call();
             }
         }
+        else
+        {
+            _G.loadLibrary( new MtsPackageLib() );
+        }
         
         // Interactive loop
         for ( ;; )
@@ -96,11 +106,11 @@ public class MobTalkerScript
             MtsFunctionPrototype chunk;
             try
             {
-                chunk = _G.loadString( line );
+                chunk = _G.loadString( line, "stdin" );
             }
             catch ( Exception ex )
             {
-                _G.out.println( ex.getMessage() );
+                ex.printStackTrace( _G.err );
                 continue;
             }
             

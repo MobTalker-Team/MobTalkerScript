@@ -42,6 +42,11 @@ public abstract class MtsValue implements Comparable<MtsValue>
         return MtsString.of( value );
     }
     
+    public static MtsVarArgs valueOf( MtsValue... args )
+    {
+        return new MtsVarArgs( args );
+    }
+    
     // ========================================
     
     /**

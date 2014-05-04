@@ -9,7 +9,7 @@ LOCAL           : 'local' ;
 FUNCTION        : 'function' ;
 LABEL           : 'label' ;
 JUMP            : 'jump' ;
-//GOTO			: 'goto' ;
+//GOTO            : 'goto' ;
 RETURN          : 'return' ;
 END             : 'end' ;
 DO              : 'do' ;
@@ -17,7 +17,7 @@ DO              : 'do' ;
 IF              : 'if' ;
 THEN            : 'then' ;
 ELSEIF          : 'elseif'
-				| 'else if' ;
+                | 'else if' ;
 ELSE            : 'else' ;
 
 WHILE           : 'while' ;
@@ -28,7 +28,7 @@ FOR             : 'for' ;
 IN              : 'in' ;
 
 CMD_SAY         : 'say' ;
-CMD_SAY_LAST	: 'as conclusion' ;
+CMD_SAY_LAST    : 'as conclusion' ;
 CMD_SHOW        : 'show' ;
 CMD_AT          : 'at' ;
 CMD_OFFSET      : 'offset' ;
@@ -79,7 +79,7 @@ MOD             : '%' ;
 POW             : '^' ;
 STR_CONCAT      : '..' ;
 TBL_APPEND      : '[]' ;
-SIZEOF			: '#' ;
+SIZEOF            : '#' ;
 
 ADD_ASSIGN      : '+=' ;
 SUB_ASSIGN      : '-=' ;
@@ -106,8 +106,8 @@ BOOLEAN
     ;
 
 NORMALSTRING
-	: '"' ( EscapeSequence | ~('\\'|'"') )* '"'
-	;
+    : '"' ( EscapeSequence | ~('\\'|'"') )* '"'
+    ;
 
 fragment 
 EscapeSequence
@@ -115,8 +115,8 @@ EscapeSequence
     ;
     
 LONGSTRING
-	: '[[' .*? ']]'
-	;
+    : '[[' .*? ']]'
+    ;
 
 fragment 
 Digit
@@ -130,33 +130,33 @@ HexDigit
 
 fragment
 ExponentPart
-	: [eE] [+-]? Digit+
-	;
-	
+    : [eE] [+-]? Digit+
+    ;
+    
 fragment
 HexExponentPart
-	: [pP] [+-]? Digit+
-	;
+    : [pP] [+-]? Digit+
+    ;
     
 INTEGER
-	: Digit+
-	;
+    : Digit+
+    ;
 
 FLOAT
-	: Digit+ '.' Digit* ExponentPart?
-	| '.' Digit+ ExponentPart?
-	| Digit+ ExponentPart
-	;
+    : Digit+ '.' Digit* ExponentPart?
+    | '.' Digit+ ExponentPart?
+    | Digit+ ExponentPart
+    ;
 
 HEXINTEGER
     : '0' [xX] HexDigit+ ( '.' HexDigit+ )?
     ;
 
 HEXFLOAT
-	: '0' [xX] HexDigit+ '.' HexDigit* HexExponentPart?
-	| '0' [xX] '.' HexDigit+ HexExponentPart?
-	| '0' [xX] HexDigit+ HexExponentPart
-	;
+    : '0' [xX] HexDigit+ '.' HexDigit* HexExponentPart?
+    | '0' [xX] '.' HexDigit+ HexExponentPart?
+    | '0' [xX] HexDigit+ HexExponentPart
+    ;
 
 Identifier
     : [_a-zA-Z][_a-zA-Z0-9]*
@@ -175,105 +175,104 @@ block
 
 stmt
     : ';'
-      # BlankStmt
+    # BlankStmt
     | assignExpr ';'
-      # AssignmentStmt
+    # AssignmentStmt
     | 'local' NameList=nameList ( '=' ExprList=exprList )?
-      # LocalVarDeclrStmt
+    # LocalVarDeclrStmt
     | call ';'
-      # CallStmt
+    # CallStmt
     | command
-      # CommandStmt
-  	| 'jump' Target=Identifier ';'
-	  # GotoStmt
+    # CommandStmt
+    | 'jump' Target=Identifier ';'
+    # GotoStmt
     | '::' Name=Identifier '::'
-      # LabelStmt
+    # LabelStmt
     | 'break' ';'
-      # BreakStmt
+    # BreakStmt
     | 'return' ExprList=exprList? ';'
-      # ReturnStmt
+    # ReturnStmt
     | 'do' Block=block 'end'
-      # NestedBlock
+    # NestedBlock
     | 'while' Condition=expr 'do' Block=block 'end'
-      # WhileLoop
+    # WhileLoop
     | 'repeat' Block=block 'until' Condition=expr ';'
-      # RepeatLoop
+    # RepeatLoop
     | 'if' Condition=expr 'then' Block=block ElseIfs+=elseIfBody* Else=elseBody? 'end'
-      # IfThenElse
+    # IfThenElse
     | 'for' Control=numericForControl 'do' Block=block 'end'
-      # NumericForLoop
+    # NumericForLoop
     | 'for' Control=genericForControl 'do' Block=block 'end'
-      # GenericForLoop
+    # GenericForLoop
     | 'function' Name=funcName Body=funcBody
-      # FuncDeclrStmt
+    # FuncDeclrStmt
     | 'local' 'function' Name=Identifier Body=funcBody
-      # LocalFuncDeclrStmt
+    # LocalFuncDeclrStmt
     ;
 
 expr
     : '(' expr ')'
-      # SimpleExpr
+    # SimpleExpr
     | NULL 
-      # NullLiteral
+    # NullLiteral
     | BOOLEAN
-      # BooleanLiteral
+    # BooleanLiteral
     | ( INTEGER | FLOAT | HEXINTEGER | HEXFLOAT )
-      # NumberLiteral
+    # NumberLiteral
     | ( NORMALSTRING | LONGSTRING )
-      # StringLiteral
+    # StringLiteral
     | 'function' funcBody
-      # FuncDeclrExpr
+    # FuncDeclrExpr
     | varAccess
-      # SimpleExpr
+    # SimpleExpr
     | Call=call
-      # CallExpr
+    # CallExpr
     | tableCtor
-      # SimpleExpr
+    # SimpleExpr
 //    | Operator=( '++' | '--' ) expr
 //      # PrefixOpExpr
 //    | expr Operator=( '++' | '--' )
 //      # PostfixOpExpr
     | Operator=( '-' | 'not' | '#' ) Expr=expr
-      # UnaryOpExpr
+    # UnaryOpExpr
     | Left=expr Operator=( '*' | '/' | '%' | '^' ) Right=expr
-      # BinaryOpExpr
+    # BinaryOpExpr
     | Left=expr Operator=( '+' | '-'  ) Right=expr
-      # BinaryOpExpr
+    # BinaryOpExpr
     | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
-      # LogicalOpExpr
+    # LogicalOpExpr
     | Left=expr Operator=( 'and' | 'or' ) Right=expr
-      # ConditionalOpExpr
+    # ConditionalOpExpr
     | Left=expr Operator='..' Right=expr
-      # BinaryOpExpr
+    # BinaryOpExpr
     ;
 
 assignExpr
     : Targets=varExprList '=' Exprs=exprList
-      # SimpleAssignmentStmt
-  	//| varExpr ( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) expr
-  	//| Target=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
-  	//  # OperatorAssignmentStmt
+    # SimpleAssignmentStmt
+//      | Target=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
+//        # OperatorAssignmentStmt
     ;
-	
+    
 varExpr
-	: ( Root=Identifier | '(' RootExpr=expr ')' Suffixes+=varSuffix ) Suffixes+=varSuffix*
-	;
-	
+    : ( Root=Identifier | '(' RootExpr=expr ')' Suffixes+=varSuffix ) Suffixes+=varSuffix*
+    ;
+    
 varSuffix
-	: callArgs[1]* fieldAccess
-	;
-	
+    : callArgs[1]* fieldAccess
+    ;
+    
 varOrExpr
-	: varExpr | '(' expr ')'
-	;
+    : varExpr | '(' expr ')'
+    ;
 
 varAccess
-	: varOrExpr fieldAccess*
-	;
-	
+    : varOrExpr fieldAccess*
+    ;
+    
 call returns [int nReturn = 1]
-	: varOrExpr Args+=callArgs[1]+
-	;
+    : varOrExpr Args+=callArgs[1]+
+    ;
 
 callArgs[int nReturn]
     : ( ':' Method=Identifier )? ( '(' Args=exprList? ')' | Arg=NORMALSTRING )
@@ -281,9 +280,9 @@ callArgs[int nReturn]
 
 fieldAccess
     : '[' Field=expr ']'
-      # ExprFieldAccess
+    # ExprFieldAccess
     | '.' Field=Identifier
-      # NameFieldAccess
+    # NameFieldAccess
     ;
 
 tableCtor
@@ -292,11 +291,11 @@ tableCtor
 
 fieldDef
     : '[' Key=expr ']' '=' Value=expr
-      # ExprKeyField
+    # ExprKeyField
     | Key=Identifier '=' Value=expr
-      # NameKeyField
+    # NameKeyField
     | Value=expr
-      # ListField
+    # ListField
     ;
     
 elseIfBody
@@ -325,32 +324,32 @@ funcBody
 
 command
     : 'say' Character=expr? Text=exprList IsLast='as conclusion'? ';'
-      # CommandSay
+    # CommandSay
     | 'show' Character=expr 
-    		 Path+=expr+ 
-    		 ( 'at' Position=expr )? 
-    		 ( 'offset' Offset=exprList )? 
-    		 /*( 'with' Effect=exprList )?*/ ';'
-      # CommandShow
+            Path+=expr+ 
+            ( 'at' Position=expr )? 
+            ( 'offset' Offset=exprList )? 
+            /*( 'with' Effect=exprList )?*/ ';'
+    # CommandShow
     | 'scene' Path+=expr+ ( 'as' Mode=expr )? /*( 'with' exprList )?*/ ';'
-      # CommandScene
+    # CommandScene
     | 'hide' Group=expr /*( 'with' exprList )?*/ ';'
-      # CommandHide
-    /*| 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-      # PlayMusicCommandStmt*/
-    /*| 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-      # PlaySoundCommandStmt*/
-    /*| 'stop music' ( 'fadeout' expr )? ';'
-      # StopMusicCommandStmt*/
-    /*| 'pause' expr? ';'
-      # PauseCommandStmt*/
+    # CommandHide
+//    | 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+//      # PlayMusicCommandStmt
+//    | 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
+//      # PlaySoundCommandStmt
+//    | 'stop music' ( 'fadeout' expr )? ';'
+//      # StopMusicCommandStmt
+//    | 'pause' expr? ';'
+//      # PauseCommandStmt
     | 'menu' Caption=expr? Options+=commandMenuOption+ 'end'
-      # CommandMenu
+    # CommandMenu
     ;
 
 commandMenuOption
-	: 'option' Caption=expr Block=block
-	;
+    : 'option' Caption=expr Block=block
+    ;
     
 // ========================================
 // Lists
@@ -361,7 +360,7 @@ nameList
 
 paramList
     : NameList=nameList /*(',' '...')?*/
-    /*| '...'*/
+//    | '...'
     ;
 
 exprList
@@ -369,6 +368,5 @@ exprList
     ;
     
 varExprList
-	: ExprList+=varExpr ( ',' ExprList+=varExpr )*
-	;
-
+    : ExprList+=varExpr ( ',' ExprList+=varExpr )*
+    ;

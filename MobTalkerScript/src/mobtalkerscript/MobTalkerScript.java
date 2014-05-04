@@ -74,8 +74,6 @@ public class MobTalkerScript
             {
                 ex.printStackTrace();
             }
-            
-            // Give the err stream time to print
             Thread.sleep( 1 );
             
             if ( fileChunk != null )
@@ -87,6 +85,8 @@ public class MobTalkerScript
         // Interactive loop
         for ( ;; )
         {
+            Thread.sleep( 1 );
+            
             _G.out.print( "> " );
             String line = _G.in.readLine();
             

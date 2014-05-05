@@ -2,12 +2,14 @@ package mobtalkerscript.mts.v2.lib.mobtalker;
 
 import mobtalkerscript.mts.v2.value.*;
 
-public class MinecraftWorldConsoleLib extends MtsLibrary
+public class MinecraftConsoleWorldLib extends MtsLibrary
 {
     
     @Override
     public MtsValue bind( MtsString name, MtsValue env )
     {
+        checkIfGlobals( env );
+        
         MtsTable lib = new MtsTable( 0, 12 );
         
         bindFunction( lib, "GetBiome", new GetBiome() );
@@ -25,7 +27,9 @@ public class MinecraftWorldConsoleLib extends MtsLibrary
         bindFunction( lib, "GetGameRule", new GetGameRule() );
         bindFunction( lib, "GetType", new GetType() );
         
-        return lib;
+        env.set( "World", lib );
+        
+        return null;
     }
     
     // ========================================

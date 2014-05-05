@@ -3,7 +3,7 @@ package mobtalkerscript.mts.v2.lib.mobtalker;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class MobTalkerConsoleBaseLib extends MtsLibrary
+public class MobTalkerConsoleInteractionLib extends MtsLibrary
 {
     /* package */final MtsString _playerName;
     /* package */MtsNumber _loveLevel;
@@ -12,7 +12,7 @@ public class MobTalkerConsoleBaseLib extends MtsLibrary
     
     // ========================================
     
-    public MobTalkerConsoleBaseLib( String playerName, double loveLevel )
+    public MobTalkerConsoleInteractionLib( String playerName, double loveLevel )
     {
         _playerName = valueOf( playerName );
         _loveLevel = valueOf( loveLevel );

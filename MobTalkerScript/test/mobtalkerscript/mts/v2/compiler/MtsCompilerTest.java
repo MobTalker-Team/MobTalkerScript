@@ -29,7 +29,7 @@ public class MtsCompilerTest
         MtsGlobals _ENV = new MtsGlobals();
         _ENV.loadLibrary( new ConsoleCommandLib() );
         
-        _ENV.loadLibrary( new MobTalkerConsoleBaseLib( "Console", 0 ) );
+        _ENV.loadLibrary( new MobTalkerConsoleInteractionLib( "Console", 0 ) );
         _ENV.loadLibrary( new MobTalkerConsoleCharacterLib() );
         
         MtsFunctionPrototype p;

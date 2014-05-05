@@ -33,6 +33,16 @@ public class MtsPackageLib extends MtsLibrary
     
     // ========================================
     
+    /**
+     * Adds a module to the list of known modules of this library.
+     */
+    public void addModule( String name, MtsTable module )
+    {
+        _loadedPackages.set( name, module );
+    }
+    
+    // ========================================
+    
     @Override
     public MtsValue bind( MtsString name, MtsValue env )
     {

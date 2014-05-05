@@ -49,8 +49,9 @@ public class MobTalkerScript
         _G.loadLibrary( new MtsTableLib() );
         
         _G.loadLibrary( new ConsoleCommandLib() );
-        _G.loadLibrary( new MobTalkerConsoleBaseLib( "Console", 0 ) );
+        _G.loadLibrary( new MobTalkerConsoleInteractionLib( "Console", 0 ) );
         _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
+        _G.loadLibrary( new MinecraftConsoleWorldLib() );
         
         _G.out.println( "MobTalkerScript " //
                         + _G.get( "_VERSION" ).asString().toJava()

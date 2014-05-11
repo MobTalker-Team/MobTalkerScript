@@ -3,7 +3,6 @@ package mobtalkerscript.mts.v2.value;
 public abstract class MtsObject extends MtsValue
 {
     protected final Object _value;
-    protected MtsTable _metatable;
     
     // ========================================
     

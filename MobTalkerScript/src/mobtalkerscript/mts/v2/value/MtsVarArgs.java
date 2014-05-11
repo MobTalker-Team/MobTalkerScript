@@ -94,6 +94,13 @@ public class MtsVarArgs extends MtsValue
     
     // ========================================
     
+    public MtsValue[] toArray()
+    {
+        return (MtsValue[]) _values.toArray();
+    }
+    
+    // ========================================
+    
     @Override
     public boolean isVarArgs()
     {

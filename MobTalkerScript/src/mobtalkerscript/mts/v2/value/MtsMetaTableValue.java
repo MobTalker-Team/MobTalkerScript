@@ -19,9 +19,9 @@ public abstract class MtsMetaTableValue extends MtsValue
     }
     
     @Override
-    public void setMetaTable( MtsTable t )
+    public void setMetaTable( MtsValue t )
     {
-        _metaTable = t;
+        _metaTable = t.isTable() ? t.asTable() : null;
     }
     
     // ========================================

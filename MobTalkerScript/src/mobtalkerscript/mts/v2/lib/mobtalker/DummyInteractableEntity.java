@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.lib.mobtalker;
 
+import com.google.common.base.*;
+
 public class DummyInteractableEntity implements IInteractableEntity
 {
     protected String _name;
@@ -22,7 +24,7 @@ public class DummyInteractableEntity implements IInteractableEntity
     @Override
     public String getName()
     {
-        return _name;
+        return Strings.isNullOrEmpty( _name ) ? _type : _name;
     }
     
     // ========================================

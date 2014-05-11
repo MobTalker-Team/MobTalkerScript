@@ -12,6 +12,8 @@ public final class MtsBaseLib extends MtsGlobalLibrary
     private static final MtsJavaFunction PCall = new PCall();
     private static final MtsJavaFunction RawGet = new RawGet();
     private static final MtsJavaFunction RawSet = new RawSet();
+    private static final MtsJavaFunction GetMetaTable = new GetMetaTable();
+    private static final MtsJavaFunction SetMetaTable = new SetMetaTable();
     private static final MtsJavaFunction ToNumber = new ToNumber();
     private static final MtsJavaFunction ToString = new ToString();
     private static final MtsJavaFunction TypeOf = new TypeOf();
@@ -32,6 +34,9 @@ public final class MtsBaseLib extends MtsGlobalLibrary
         bindFunction( "rawget", RawGet );
         bindFunction( "rawset", RawSet );
         bindFunction( "typeof", TypeOf );
+        
+        bindFunction( "getmetatable", GetMetaTable );
+        bindFunction( "setmetatable", SetMetaTable );
         
         bindFunction( "pcall", PCall );
         
@@ -144,6 +149,29 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             arg1.asTable().set( arg2, arg3, false );
             
             return EMPTY_VARARGS;
+        }
+    }
+    
+    // ========================================
+    
+    private static final class GetMetaTable extends MtsOneArgFunction
+    {
+        @Override
+        protected MtsValue invoke( MtsValue arg )
+        {
+            MtsTable t = checkTable( arg, 0 );
+            return t.getMetaTable();
+        }
+    }
+    
+    private static final class SetMetaTable extends MtsTwoArgFunction
+    {
+        @Override
+        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        {
+            MtsTable t = checkTable( arg1, 0 );
+            t.setMetaTable( arg2 );
+            return arg1;
         }
     }
     

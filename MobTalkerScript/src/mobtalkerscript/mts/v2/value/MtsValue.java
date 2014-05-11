@@ -228,7 +228,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
         return null;
     }
     
-    public void setMetaTable( MtsTable table )
+    public void setMetaTable( MtsValue table )
     {}
     
     public boolean hasMetaTag( MtsString tag )

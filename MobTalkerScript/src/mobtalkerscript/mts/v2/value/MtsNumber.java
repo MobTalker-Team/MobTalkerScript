@@ -202,6 +202,15 @@ public final class MtsNumber extends MtsValue
         return valueOf( toString() );
     }
     
+    @Override
+    public String toString()
+    {
+        if ( isInteger() )
+            return Integer.toString( (int) _value );
+        else
+            return Double.toString( _value );
+    }
+    
     // ========================================
     
     @Override

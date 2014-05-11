@@ -1,10 +1,11 @@
 package mobtalkerscript.mts.v2.value;
 
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
+
+import java.util.*;
+
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.MtsTable.Entry;
-
-import com.google.common.base.*;
 
 /**
  * Basically a HashMap specifically tailored for MobTalkerScript.
@@ -170,7 +171,7 @@ import com.google.common.base.*;
         while ( e != null )
         {
             HashEntry next = e.next;
-            if ( ( e.hash == hash ) && Objects.equal( key, e.key ) )
+            if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
             {
                 _count--;
                 
@@ -200,7 +201,7 @@ import com.google.common.base.*;
         
         for ( HashEntry e = _entries[indexFor( hash, _entries.length )]; e != null; e = e.next )
         {
-            if ( ( e.hash == hash ) && Objects.equal( key, e.key ) )
+            if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
                 return e.value;
         }
         
@@ -211,8 +212,9 @@ import com.google.common.base.*;
     {
         HashEntry e = _entries[i];
         _entries[i] = new HashEntry( key, hash, value, e );
+        _count++;
         
-        if ( _count++ >= _threshold )
+        if ( _count >= _threshold )
         {
             resize( 2 * _entries.length );
         }
@@ -220,6 +222,8 @@ import com.google.common.base.*;
     
     public MtsValue set( MtsValue key, MtsValue value )
     {
+        assert key != null : "key was null";
+        
         if ( key.isNil() )
             throw new ScriptRuntimeException( "table index is nil" );
         
@@ -231,7 +235,7 @@ import com.google.common.base.*;
         
         for ( HashEntry entry = _entries[i]; entry != null; entry = entry.next )
         {
-            if ( ( entry.hash == hash ) && Objects.equal( key, entry.key ) )
+            if ( ( entry.hash == hash ) && Objects.equals( key, entry.key ) )
             {
                 MtsValue oldValue = entry.value;
                 entry.value = value;
@@ -280,7 +284,7 @@ import com.google.common.base.*;
         int i = indexFor( hash, t.length );
         for ( next = t[i]; next != null; next = next.next )
         {
-            if ( ( next.hash == hash ) && Objects.equal( key, next.key ) )
+            if ( ( next.hash == hash ) && Objects.equals( key, next.key ) )
                 break;
         }
         
@@ -312,6 +316,14 @@ import com.google.common.base.*;
     public int count()
     {
         return _count;
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        return Arrays.toString( _entries );
     }
     
     // ========================================

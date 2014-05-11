@@ -49,7 +49,7 @@ public class MtsTable extends MtsMetaTableValue
     
     public boolean containsKey( MtsValue key )
     {
-        return !isEmpty() && ( _listPart.contains( key ) || ( _hashPart.get( key ) != null ) );
+        return !isEmpty() && ( _listPart.contains( key ) || !_hashPart.get( key ).isNil() );
     }
     
     /**
@@ -286,6 +286,7 @@ public class MtsTable extends MtsMetaTableValue
             {
                 _listPart.add( value );
                 _listPart.collectFrom( _hashPart );
+                return;
             }
         }
         

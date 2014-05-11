@@ -380,4 +380,12 @@ import com.google.common.collect.*;
     {
         return Iterators.forArray( _entries );
     }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        return Arrays.toString( _entries );
+    }
 }

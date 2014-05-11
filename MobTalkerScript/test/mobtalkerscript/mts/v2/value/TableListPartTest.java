@@ -62,17 +62,13 @@ public class TableListPartTest
     }
     
     @Test
-    public void testContainsMislValue()
+    public void testContains()
     {
         assertFalse( _list.contains( valueOf( "foo" ) ) );
         assertFalse( _list.contains( 0 ) );
         assertFalse( _list.contains( ZERO ) );
         assertFalse( _list.contains( 1 ) );
         assertFalse( _list.contains( ONE ) );
-        
-        _list.add( valueOf( "a" ) );
-        assertTrue( _list.contains( 0 ) );
-        assertTrue( _list.contains( ZERO ) );
         
         _list.add( valueOf( "bc" ) );
         assertTrue( _list.contains( 1 ) );
@@ -167,66 +163,6 @@ public class TableListPartTest
         assertEquals( 1, _list.length() );
         
         _list.set( 1, ONE );
-    }
-    
-    @Test
-    public void testRemoveMislNumber()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testRemoveInt()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testRemoveLast()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testGetMislNumber()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testGetInt()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testConcatStringIntInt()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testConcatStringInt()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testConcatString()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testCollectFrom()
-    {
-        fail( "Not yet implemented" );
-    }
-    
-    @Test
-    public void testTransferOrphansTo()
-    {
-        fail( "Not yet implemented" );
     }
     
 }

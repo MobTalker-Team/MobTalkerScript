@@ -189,7 +189,7 @@ public class MtsTableTest
         assertEquals( valueOf( "d" ), _table.get( valueOf( 0.1 ) ) );
     }
     
-    @Test
+//    @Test
     public void testPerformance()
     {
         for ( int i = -0xFFFFF; i < 0x1FFFFF; i++ )

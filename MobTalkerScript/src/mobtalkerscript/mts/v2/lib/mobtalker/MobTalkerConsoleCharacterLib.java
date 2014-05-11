@@ -1,21 +1,18 @@
 package mobtalkerscript.mts.v2.lib.mobtalker;
 
+import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class MobTalkerConsoleCharacterLib extends MtsLibrary
+public class MobTalkerConsoleCharacterLib extends MtsGlobalLibrary
 {
     
     @Override
-    public MtsValue bind( MtsString name, MtsValue env )
+    public void bind()
     {
-        checkIfGlobals( env );
-        
         MtsTable lib = new MtsTable( 0, 1 );
         bindFunction( lib, "Create", new Create() );
         
-        env.set( "Character", lib );
-        
-        return null;
+        _G.set( "Character", lib );
     }
     
     // ========================================

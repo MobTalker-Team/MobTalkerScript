@@ -1,5 +1,6 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
@@ -14,14 +15,20 @@ import mobtalkerscript.mts.v2.value.*;
     
     public static MtsNumber coerce( MtsValue x )
     {
-        try
-        {
+        if ( x.isNumber() )
             return x.asNumber();
-        }
-        catch ( Exception ex )
+        
+        if ( x.isString() )
         {
-            throw new ScriptRuntimeException( "attempt to perform arithmetic on a %s value", x.getType() );
+            try
+            {
+                return valueOf( Double.parseDouble( x.asString().asJavaString() ) );
+            }
+            catch ( NumberFormatException ex )
+            {}
         }
+        
+        throw new ScriptRuntimeException( "attempt to perform arithmetic on a %s value", x.getType() );
     }
     
     protected abstract MtsNumber calculate( MtsNumber a, MtsNumber b );

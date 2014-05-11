@@ -38,7 +38,7 @@ public final class MtsTableLib extends MtsLibrary
             
             checkString( arg2, 2 );
             
-            return arg1.asTable().concat( arg2.asString() );
+            return arg1.asTable().concatElements( arg2.asString() );
         }
         
         @Override
@@ -52,7 +52,7 @@ public final class MtsTableLib extends MtsLibrary
             checkString( arg2, 2 );
             checkNumber( arg3, 3 );
             
-            return arg1.asTable().concat( arg2.asString(), arg3.asNumber() );
+            return arg1.asTable().concatElements( arg2.asString(), arg3.asNumber() );
         }
         
         @Override
@@ -67,7 +67,7 @@ public final class MtsTableLib extends MtsLibrary
             checkNumber( arg3, 3 );
             checkNumber( arg4, 4 );
             
-            return arg1.asTable().concat( arg2.asString(), arg3.asNumber(), arg4.asNumber() );
+            return arg1.asTable().concatElements( arg2.asString(), arg3.asNumber(), arg4.asNumber() );
         }
     }
     

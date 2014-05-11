@@ -1,6 +1,7 @@
-package mobtalkerscript.mts.v2.value;
+package mobtalkerscript.mts.v2.lib;
 
 import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.value.*;
 
 public abstract class MtsLibrary extends MtsFunction
 {
@@ -10,7 +11,7 @@ public abstract class MtsLibrary extends MtsFunction
         switch ( args.count() )
         {
             case 2:
-                return new MtsVarArgs( bind( args.get( 0 ).toStringMts(), args.get( 1 ) ) );
+                return new MtsVarArgs( bind( args.get( 0 ).toMtsString(), args.get( 1 ) ) );
             default:
                 throw new ScriptRuntimeException( "wrong number of arguments for binding library (expected 2, got %s)",
                                                   args.count() );
@@ -21,12 +22,6 @@ public abstract class MtsLibrary extends MtsFunction
     
     protected static void bindFunction( MtsValue env, String name, MtsJavaFunction func )
     {
-        env.set( name, func );
-    }
-    
-    protected static void checkIfGlobals( MtsValue env )
-    {
-        if ( !( env instanceof MtsGlobals ) )
-            throw new ScriptEngineException( "env is not an instance of MtsGlobals!" );
+        env.set( name, func, false );
     }
 }

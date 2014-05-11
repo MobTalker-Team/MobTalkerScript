@@ -49,12 +49,13 @@ public class MobTalkerScript
         _G.loadLibrary( new MtsTableLib() );
         
         _G.loadLibrary( new ConsoleCommandLib() );
-        _G.loadLibrary( new MobTalkerConsoleInteractionLib( "Console", 0 ) );
+        _G.loadLibrary( new MobTalkerConsoleInteractionLib( new DummyTalkingPlayer( "Console", 20 ),
+                                                            new DummyTalkingEntity( "", "Creeper", 20, 0 ) ) );
         _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
         _G.loadLibrary( new MinecraftConsoleWorldLib() );
         
         _G.out.println( "MobTalkerScript " //
-                        + _G.get( "_VERSION" ).asString().toJava()
+                        + _G.get( "_VERSION" ).asString().asJavaString()
                         + " Copyright (c) 2013-2014 Tobias Rummelt, mobtalker.net" );
         _G.out.println( "CAUTION: This is an alpha version software and may contain bugs and incomplete features!" );
         _G.out.println( "         Please report any bugs you may encounter to the bug tracker." );

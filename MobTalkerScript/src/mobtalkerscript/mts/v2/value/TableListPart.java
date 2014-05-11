@@ -72,7 +72,7 @@ import com.google.common.collect.*;
      */
     public boolean contains( MtsValue key )
     {
-        return isValidKey( key ) && ( key.asNumber().toJava() < _limit );
+        return isValidKey( key ) && ( key.asNumber().asJavaInt() < _limit );
     }
     
     /**
@@ -82,7 +82,7 @@ import com.google.common.collect.*;
      */
     public boolean contains( MtsNumber key )
     {
-        return isValidKey( key ) && ( key.toJava() <= _limit );
+        return isValidKey( key ) && ( key.asJavaInt() <= _limit );
     }
     
     /**
@@ -228,10 +228,12 @@ import com.google.common.collect.*;
      */
     public MtsValue remove( MtsNumber key )
     {
-        if ( !contains( key ) )
+        int i = key.asJavaInt();
+        
+        if ( !contains( i ) )
             throw new IllegalArgumentException( "key is not part of this list" );
         
-        return doRemove( (int) key.toJava() );
+        return doRemove( i );
     }
     
     /**
@@ -290,11 +292,7 @@ import com.google.common.collect.*;
      */
     public MtsValue get( MtsNumber key )
     {
-        if ( !contains( key ) )
-            throw new IllegalArgumentException( "key is not part of this list" );
-        
-        int i = (int) key.toJava() - 1; // Adjust Lua index to Java.
-        return _entries[i];
+        return get( key.asJavaInt() );
     }
     
     /**
@@ -321,10 +319,10 @@ import com.google.common.collect.*;
         if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
             return EMPTY_STRING;
         
-        StringBuilder s = new StringBuilder( _entries[from].toStringMts().toJava() );
+        StringBuilder s = new StringBuilder( _entries[from].toMtsString().asJavaString() );
         for ( int i = from + 1; i <= to; i++ )
         {
-            s.append( sep ).append( _entries[i].toStringMts().toJava() );
+            s.append( sep ).append( _entries[i].toMtsString().asJavaString() );
         }
         
         return valueOf( s.toString() );

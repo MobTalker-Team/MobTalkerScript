@@ -1,6 +1,5 @@
 package mobtalkerscript.mts.v2.instruction;
 
-import static mobtalkerscript.mts.v2.value.MtsNumber.*;
 import mobtalkerscript.mts.v2.value.*;
 
 /**
@@ -22,7 +21,7 @@ public final class InstrNForPrep extends MtsIndexedInstruction
         MtsNumber limitVal = frame.pop().asNumber();
         MtsNumber loopVal = frame.pop().asNumber();
         
-        loopVal = sub( loopVal, stepVal );
+        loopVal = loopVal.sub( stepVal );
         
         frame.getLocal( _index ).set( loopVal );
         frame.getLocal( _index + 1 ).set( limitVal );

@@ -3,7 +3,7 @@ package mobtalkerscript.mts.v2.lib;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public final class MtsBaseLib extends MtsLibrary
+public final class MtsBaseLib extends MtsGlobalLibrary
 {
     private static final MtsJavaFunction Assert = new Assert();
     private static final MtsJavaFunction Error = new Error();
@@ -18,37 +18,27 @@ public final class MtsBaseLib extends MtsLibrary
     
     // ========================================
     
-    /* package */MtsGlobals _G;
-    
-    // ========================================
-    
     @Override
-    public MtsValue bind( MtsString name, MtsValue env )
+    protected void bind()
     {
-        checkIfGlobals( env );
+        _G.set( "_G", _G, false );
+        _G.set( "_VERSION", valueOf( "2.0.0-alpha" ), false );
         
-        _G = (MtsGlobals) env;
+        bindFunction( "assert", Assert );
+        bindFunction( "error", Error );
+        bindFunction( "next", Next );
+        bindFunction( "inext", INext );
+        bindFunction( "print", new Print() );
+        bindFunction( "rawget", RawGet );
+        bindFunction( "rawset", RawSet );
+        bindFunction( "typeof", TypeOf );
         
-        env.set( "_G", env );
-        env.set( "_VERSION", valueOf( "2.0.0-alpha" ) );
+        bindFunction( "pcall", PCall );
         
-        bindFunction( env, "assert", Assert );
-        bindFunction( env, "error", Error );
-        bindFunction( env, "next", Next );
-        bindFunction( env, "inext", INext );
-        bindFunction( env, "print", new Print() );
-        bindFunction( env, "rawget", RawGet );
-        bindFunction( env, "rawset", RawSet );
-        bindFunction( env, "typeof", TypeOf );
+        bindFunction( "LoadString", new LoadString() );
         
-        bindFunction( env, "pcall", PCall );
-        
-        bindFunction( env, "LoadString", new LoadString() );
-        
-        bindFunction( env, "ToNumber", ToNumber );
-        bindFunction( env, "ToString", ToString );
-        
-        return env;
+        bindFunction( "ToNumber", ToNumber );
+        bindFunction( "ToString", ToString );
     }
     
     // ========================================
@@ -60,7 +50,7 @@ public final class MtsBaseLib extends MtsLibrary
         {
             if ( !MtsBoolean.isTrue( arg1 ) )
             {
-                String msg = arg2.isNil() ? "assertion failed!" : arg2.toStringMts().toJava();
+                String msg = arg2.isNil() ? "assertion failed!" : arg2.toMtsString().asJavaString();
                 throw new ScriptRuntimeException( msg );
             }
             
@@ -73,13 +63,14 @@ public final class MtsBaseLib extends MtsLibrary
         @Override
         protected MtsValue invoke( MtsValue arg1 )
         {
-            throw new ScriptRuntimeException( arg1.toStringMts().toJava() );
+            throw new ScriptRuntimeException( arg1.toMtsString().asJavaString() );
         }
         
         @Override
         protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
         {
-            throw new ScriptRuntimeException( (int) arg2.asNumber().toJava(), arg1.toStringMts().toJava() );
+            throw new ScriptRuntimeException( arg2.asNumber().asJavaInt(),
+                                              arg1.toMtsString().asJavaString() );
         }
     }
     
@@ -93,7 +84,7 @@ public final class MtsBaseLib extends MtsLibrary
             checkTable( arg1, 1 );
             
             MtsTable.Entry next = arg1.asTable().getINext( arg2.asNumber() );
-            return next == null ? NIL : next.getKey();
+            return next == null ? EMPTY_VARARGS : next.getKey();
         }
     }
     
@@ -105,7 +96,7 @@ public final class MtsBaseLib extends MtsLibrary
             checkTable( arg1, 1 );
             
             MtsTable.Entry next = arg1.asTable().getNext( arg2 );
-            return next == null ? NIL : new MtsVarArgs( next.getKey(), next.getValue() );
+            return next == null ? EMPTY_VARARGS : new MtsVarArgs( next.getKey(), next.getValue() );
         }
     }
     
@@ -119,14 +110,14 @@ public final class MtsBaseLib extends MtsLibrary
             if ( args.count() > 0 )
             {
                 MtsString str = MtsString.concat( args );
-                _G.out.println( str.toJava() );
+                getGlobals().out.println( str.asJavaString() );
             }
             else
             {
-                _G.out.println();
+                getGlobals().out.println();
             }
             
-            return NIL;
+            return EMPTY_VARARGS;
         }
     }
     
@@ -139,7 +130,7 @@ public final class MtsBaseLib extends MtsLibrary
         {
             checkTable( arg1, 1 );
             
-            return arg1.asTable().getRaw( arg2 );
+            return arg1.asTable().get( arg2, false );
         }
     }
     
@@ -150,7 +141,9 @@ public final class MtsBaseLib extends MtsLibrary
         {
             checkTable( arg1, 1 );
             
-            return arg1.asTable().setRaw( arg2, arg3 );
+            arg1.asTable().set( arg2, arg3, false );
+            
+            return EMPTY_VARARGS;
         }
     }
     
@@ -168,7 +161,7 @@ public final class MtsBaseLib extends MtsLibrary
             if ( arg1.isBoolean() )
                 return MtsNumber.parse( arg1.asBoolean() );
             
-            return NIL;
+            return EMPTY_VARARGS;
         }
     }
     
@@ -177,7 +170,7 @@ public final class MtsBaseLib extends MtsLibrary
         @Override
         protected MtsValue invoke( MtsValue arg1 )
         {
-            return arg1.toStringMts();
+            return arg1.toMtsString();
         }
     }
     
@@ -204,7 +197,7 @@ public final class MtsBaseLib extends MtsLibrary
             MtsFunctionPrototype p;
             try
             {
-                p = _G.loadString( args.get( 0 ).asString().toJava(), "string" );
+                p = getGlobals().loadString( args.get( 0 ).asString().asJavaString(), "string" );
             }
             catch ( Exception ex )
             {
@@ -214,7 +207,7 @@ public final class MtsBaseLib extends MtsLibrary
             MtsValue env = args.get( 1 );
             if ( env.isNil() )
             {
-                env = _G;
+                env = getGlobals();
             }
             
             return new MtsClosure( p, env );

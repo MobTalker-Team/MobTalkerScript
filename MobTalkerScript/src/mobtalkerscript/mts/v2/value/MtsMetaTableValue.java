@@ -9,7 +9,7 @@ public abstract class MtsMetaTableValue extends MtsValue
     @Override
     public boolean hasMetaTable()
     {
-        return ( _metaTable != null ) && !_metaTable.isNil();
+        return _metaTable != null;
     }
     
     @Override
@@ -26,14 +26,10 @@ public abstract class MtsMetaTableValue extends MtsValue
     
     // ========================================
     
-    protected boolean hasMetaTag( MtsValue tag )
+    @Override
+    public boolean hasMetaTag( MtsString tag )
     {
         return hasMetaTable() && _metaTable.containsKey( tag );
-    }
-    
-    protected MtsValue getMetaTag( MtsValue tag )
-    {
-        return hasMetaTable() ? _metaTable.get( tag ) : NIL;
     }
     
     // ========================================
@@ -41,9 +37,42 @@ public abstract class MtsMetaTableValue extends MtsValue
     @Override
     public MtsVarArgs call( MtsVarArgs args )
     {
-        if ( !hasMetaTag( METATAG_CALL ) )
+        return __call( args );
+    }
+    
+    // ========================================
+    
+    public MtsVarArgs __call( MtsVarArgs args )
+    {
+        MtsValue tag = getMetaTag( __CALL );
+        
+        if ( tag.isNil() )
             return super.call( args );
         
-        return getMetaTag( METATAG_CALL ).call( this, args );
+        return tag.call( this, args );
+    }
+    
+    public MtsValue __index( MtsValue table, MtsValue key )
+    {
+        MtsValue tag = getMetaTag( __INDEX );
+        
+        if ( tag.isNil() )
+            return super.get( key );
+        if ( tag.isFunction() )
+            return tag.call( this, key );
+        
+        return tag.get( key );
+    }
+    
+    public void __newindex( MtsValue table, MtsValue key, MtsValue value )
+    {
+        MtsValue tag = getMetaTag( __NEWINDEX );
+        
+        if ( tag.isNil() )
+            super.set( key, value );
+        else if ( tag.isFunction() )
+            tag.call( this, key, value );
+        else
+            tag.set( key, value );
     }
 }

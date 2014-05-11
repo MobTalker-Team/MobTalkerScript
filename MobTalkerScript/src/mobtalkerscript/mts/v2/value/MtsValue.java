@@ -18,7 +18,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public static final MtsString EMPTY_STRING = new MtsString( "" );
     
-    public static final MtsVarArgs EMPTY_VARARGS = new MtsVarArgs();
+    public static final MtsVarArgs EMPTY_VARARGS = new MtsVarArgs( Collections.<MtsValue> emptyList() );
     
     // ========================================
     
@@ -40,11 +40,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
     public static MtsString valueOf( String value )
     {
         return MtsString.of( value );
-    }
-    
-    public static MtsVarArgs valueOf( MtsValue... args )
-    {
-        return new MtsVarArgs( args );
     }
     
     // ========================================
@@ -170,7 +165,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     /**
      * Equivalent to a Java typecast to {@link MtsObject}.
      */
-    public MtsObject<?> asObject() throws ClassCastException
+    public MtsObject asObject()
     {
         throw new ScriptRuntimeException( "Expected " + MtsType.OBJECT + ", got " + getType() );
     }
@@ -209,11 +204,20 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     // ========================================
     
-    public static final MtsString METATAG_INDEX = valueOf( "__index" );
-    public static final MtsString METATAG_NEWINDEX = valueOf( "__newindex" );
-    public static final MtsString METATAG_CALL = valueOf( "__call" );
-    public static final MtsString METATAG_EQUALS = valueOf( "__eq" );
+    public static final MtsString __INDEX = valueOf( "__index" );
+    public static final MtsString __NEWINDEX = valueOf( "__newindex" );
+    public static final MtsString __LEN = valueOf( "__len" );
+    public static final MtsString __CALL = valueOf( "__call" );
+    public static final MtsString __EQ = valueOf( "__eq" );
+    public static final MtsString __LT = valueOf( "__lt" );
+    public static final MtsString __LTE = valueOf( "__lte" );
+    public static final MtsString __TOSTRING = valueOf( "__tostring" );
     
+    /**
+     * Determines if this value has a meta table set.
+     * <p>
+     * <b>Note:</b> If this method returns <code>true</code>, {@link #getMetaTable()} has to return a non-null value.
+     */
     public boolean hasMetaTable()
     {
         return false;
@@ -221,43 +225,98 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public MtsTable getMetaTable()
     {
-        throw new ScriptRuntimeException( "attempt to get metatable from a %s value", getType() );
+        return null;
     }
     
-    public void setMetaTable( MtsTable t )
+    public void setMetaTable( MtsTable table )
+    {}
+    
+    public boolean hasMetaTag( MtsString tag )
     {
-        throw new ScriptRuntimeException( "attempt to set metatable for a %s value", getType() );
+        return false;
+    }
+    
+    public final MtsValue getMetaTag( MtsString tag )
+    {
+        return hasMetaTable() ? getMetaTable().get( tag ) : NIL;
     }
     
     // ========================================
     
-    public MtsValue get( MtsValue key )
-    {
-        throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
-    }
-    
-    public MtsValue get( String key )
+    public final MtsValue get( String key )
     {
         return get( valueOf( key ) );
     }
     
-    /**
-     * Differs from {@link #get(MtsValue)} in that it always returns <code>this</code> when <code>i</code> is <code>1</code> and
-     * no meta method has been set.
-     */
-    public MtsValue get( int i )
+    public final MtsValue get( MtsValue key )
     {
-        return i == 1 ? this : NIL;
+        return get( key, true );
     }
     
-    public void set( MtsValue key, MtsValue value )
+    /**
+     * Attempts to index this value using the given key, with optional meta tag processing.
+     * <p>
+     * Describes the indexing access operation <code>table[key]</code>.
+     * <p>
+     * If no value for <code>key</code> can be found and <code>useMetaTag</code> is <code>true</code>, the {@value #__INDEX}
+     * meta tag will be used to retrieve a value for <code>key</code>. If it is an
+     * 
+     * @param key The key used to index this value.
+     * @param useMetaTag Specifies if the {@value #__INDEX} meta tag should be used.
+     * @return The result of the lookup for a value for <code>key</code>.
+     * @throws ScriptRuntimeException If this value cannot be indexed.
+     */
+    public MtsValue get( MtsValue key, boolean useMetaTag )
     {
         throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
     }
     
-    public void set( String key, MtsValue value )
+    // ========================================
+    
+    /**
+     * Differs from {@link #get(MtsValue)} in that it always returns <code>this</code> when <code>i</code> is <code>1</code> and
+     * no meta method has been set.
+     * <p>
+     * 0 based.
+     */
+    public MtsValue get( int i )
     {
-        set( valueOf( key ), value );
+        return i == 0 ? this : NIL;
+    }
+    
+    // ========================================
+    
+    public final void set( String key, MtsValue value )
+    {
+        set( key, value, true );
+    }
+    
+    public final void set( String key, MtsValue value, boolean useMetaTag )
+    {
+        set( valueOf( key ), value, useMetaTag );
+    }
+    
+    public final void set( MtsValue key, MtsValue value )
+    {
+        set( key, value, true );
+    }
+    
+    /**
+     * Attempts to index this value and set the value of a given key, with optional meta tag processing.
+     * <p>
+     * Describes the indexing assignment operation <code>table[key] = value</code>.
+     * <p>
+     * If <code>key</code> does not exist already and <code>useMetaTag</code> is <code>true</code>, the {@value #__NEWINDEX}
+     * meta tag is tried. If it is a {@link MtsFunction} invoke <code>call(this, key, value)</code> on it. Otherwise this
+     * operation is repeated on it with the same arguments.
+     * 
+     * @param key The key to set the value for.
+     * @param value The value to set for key.
+     * @param useMetaTag Specifies if the {@value #__NEWINDEX} meta tag should be used.
+     */
+    public void set( MtsValue key, MtsValue value, boolean useMetaTag )
+    {
+        throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
     }
     
     // ========================================
@@ -274,12 +333,12 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public final MtsVarArgs call( MtsValue arg1, MtsValue arg2 )
     {
-        return call( new MtsVarArgs( Arrays.asList( arg1, arg2 ) ) );
+        return call( new MtsVarArgs( arg1, arg2 ) );
     }
     
     public final MtsVarArgs call( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
-        return call( new MtsVarArgs( Arrays.asList( arg1, arg2, arg3 ) ) );
+        return call( new MtsVarArgs( arg1, arg2, arg3 ) );
     }
     
     public MtsVarArgs call( MtsVarArgs args )
@@ -287,15 +346,12 @@ public abstract class MtsValue implements Comparable<MtsValue>
         throw new ScriptRuntimeException( "attempt to call a %s value", getType() );
     }
     
-    public final MtsVarArgs call( MtsValue arg1, MtsVarArgs args )
-    {
-        return call( new MtsVarArgs( arg1, args ) );
-    }
+    // ========================================
     
-//  public final MtsValue call( MtsValue arg1, List<MtsValue> args )
-//  {
-//      return call( new MtsVarArgs( arg1, args ) );
-//  }
+    public MtsNumber getLength()
+    {
+        throw new ScriptRuntimeException( "attempt to get length of a %s value", getType() );
+    }
     
     // ========================================
     
@@ -306,10 +362,12 @@ public abstract class MtsValue implements Comparable<MtsValue>
      * 
      * @return The MtsString representation of this value.
      */
-    public MtsString toStringMts()
+    public MtsString toMtsString()
     {
         return valueOf( toString() );
     }
+    
+    // ========================================
     
     @Override
     public String toString()
@@ -330,7 +388,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      * @param x The value to compare this value with.
      * @return {@link #TRUE} if both values are equal, {@link #FALSE} otherwise.
      */
-    public MtsBoolean equalsMts( MtsValue x )
+    public MtsBoolean isMtsEqual( MtsValue x )
     {
         return valueOf( equals( x ) );
     }
@@ -345,15 +403,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     // ========================================
     
-    public static void checkNotNil( MtsValue value, String msg, Object... args )
-    {
-        if ( value.isNil() )
-            throw new ScriptRuntimeException( msg, args );
-    }
-    
-    // ========================================
-    
-    public static String formatHashCode( int hashCode )
+    /* package */static String formatHashCode( int hashCode )
     {
         return Strings.padStart( Integer.toHexString( hashCode ), 8, '0' );
     }

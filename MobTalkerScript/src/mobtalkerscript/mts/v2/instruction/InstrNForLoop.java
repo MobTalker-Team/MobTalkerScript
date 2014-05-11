@@ -1,6 +1,5 @@
 package mobtalkerscript.mts.v2.instruction;
 
-import static mobtalkerscript.mts.v2.value.MtsNumber.*;
 import mobtalkerscript.mts.v2.value.*;
 
 /**
@@ -35,7 +34,7 @@ public final class InstrNForLoop extends MtsJumpInstruction
         MtsNumber limitVal = frame.getLocal( _index + 1 ).get().asNumber();
         MtsNumber stepVal = frame.getLocal( _index + 2 ).get().asNumber();
         
-        loopVal = add( loopVal, stepVal );
+        loopVal = loopVal.add( stepVal );
         
         if ( stepVal.isPositive() )
         {

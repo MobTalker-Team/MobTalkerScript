@@ -35,8 +35,8 @@ public final class MtsMathLib extends MtsLibrary
     {
         MtsTable math = new MtsTable( 0, 20 );
         
-        math.setRaw( "PI", PI );
-        math.setRaw( "E", E );
+        math.set( "PI", PI, false );
+        math.set( "E", E, false );
         
         bindFunction( math, "Abs", Abs );
         bindFunction( math, "Ceil", Ceil );
@@ -73,7 +73,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.abs( arg1.asNumber().toJava() ) );
+            return valueOf( Math.abs( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -84,7 +84,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.ceil( arg1.asNumber().toJava() ) );
+            return valueOf( Math.ceil( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -95,7 +95,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.cos( arg1.asNumber().toJava() ) );
+            return valueOf( Math.cos( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -106,7 +106,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.cosh( arg1.asNumber().toJava() ) );
+            return valueOf( Math.cosh( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -117,7 +117,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.floor( arg1.asNumber().toJava() ) );
+            return valueOf( Math.floor( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -128,7 +128,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.log( arg1.asNumber().toJava() ) );
+            return valueOf( Math.log( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -139,7 +139,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.log10( arg1.asNumber().toJava() ) );
+            return valueOf( Math.log10( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -151,11 +151,11 @@ public final class MtsMathLib extends MtsLibrary
             if ( args.isEmpty() )
                 throw new BadArgumentException( "got no value" );
             
-            double result = args.get( 0 ).asNumber().toJava();
+            double result = args.get( 0 ).asNumber().asJavaDouble();
             
             for ( int i = 1; i < args.count(); i++ )
             {
-                double n = args.get( i ).asNumber().toJava();
+                double n = args.get( i ).asNumber().asJavaDouble();
                 result = Math.max( result, n );
             }
             
@@ -171,11 +171,11 @@ public final class MtsMathLib extends MtsLibrary
             if ( args.isEmpty() )
                 throw new BadArgumentException( "got no value" );
             
-            double result = args.get( 0 ).asNumber().toJava();
+            double result = args.get( 0 ).asNumber().asJavaDouble();
             
             for ( int i = 1; i < args.count(); i++ )
             {
-                double n = args.get( i ).asNumber().toJava();
+                double n = args.get( i ).asNumber().asJavaDouble();
                 result = Math.min( result, n );
             }
             
@@ -191,7 +191,7 @@ public final class MtsMathLib extends MtsLibrary
             checkNumber( arg1, 1 );
             checkNumber( arg2, 2 );
             
-            return valueOf( Math.pow( arg1.asNumber().toJava(), arg2.asNumber().toJava() ) );
+            return valueOf( Math.pow( arg1.asNumber().asJavaDouble(), arg2.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -210,7 +210,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( _rnd.nextInt( (int) arg1.asNumber().toJava() ) );
+            return valueOf( _rnd.nextInt( (int) arg1.asNumber().asJavaDouble() ) );
         }
         
         @Override
@@ -219,8 +219,8 @@ public final class MtsMathLib extends MtsLibrary
             checkNumber( arg1, 1 );
             checkNumber( arg2, 2 );
             
-            int a = (int) arg1.asNumber().toJava();
-            int b = (int) arg2.asNumber().toJava();
+            int a = (int) arg1.asNumber().asJavaDouble();
+            int b = (int) arg2.asNumber().asJavaDouble();
             
             return valueOf( a + _rnd.nextInt( b ) );
         }
@@ -233,7 +233,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.round( arg1.asNumber().toJava() ) );
+            return valueOf( Math.round( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -244,7 +244,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.sin( arg1.asNumber().toJava() ) );
+            return valueOf( Math.sin( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -255,7 +255,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.sinh( arg1.asNumber().toJava() ) );
+            return valueOf( Math.sinh( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -266,7 +266,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.signum( arg1.asNumber().toJava() ) );
+            return valueOf( Math.signum( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -277,7 +277,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.sqrt( arg1.asNumber().toJava() ) );
+            return valueOf( Math.sqrt( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -288,7 +288,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.tan( arg1.asNumber().toJava() ) );
+            return valueOf( Math.tan( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -299,7 +299,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.tanh( arg1.asNumber().toJava() ) );
+            return valueOf( Math.tanh( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -310,7 +310,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.toDegrees( arg1.asNumber().toJava() ) );
+            return valueOf( Math.toDegrees( arg1.asNumber().asJavaDouble() ) );
         }
     }
     
@@ -321,7 +321,7 @@ public final class MtsMathLib extends MtsLibrary
         {
             checkNumber( arg1, 1 );
             
-            return valueOf( Math.toRadians( arg1.asNumber().toJava() ) );
+            return valueOf( Math.toRadians( arg1.asNumber().asJavaDouble() ) );
         }
     }
 }

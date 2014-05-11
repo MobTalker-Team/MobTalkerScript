@@ -9,9 +9,8 @@ import mobtalkerscript.mts.v2.value.*;
 
 import com.google.common.collect.*;
 
-public class MtsPackageLib extends MtsLibrary
+public class MtsPackageLib extends MtsGlobalLibrary
 {
-    private MtsGlobals _G;
     private final List<String> _searchPaths;
     private final MtsTable _loadedPackages;
     
@@ -44,18 +43,12 @@ public class MtsPackageLib extends MtsLibrary
     // ========================================
     
     @Override
-    public MtsValue bind( MtsString name, MtsValue env )
+    public void bind()
     {
-        checkIfGlobals( env );
-        
-        _G = (MtsGlobals) env;
-        
-        bindFunction( env, "require", new Require() );
+        bindFunction( _G, "require", new Require() );
         
 //        MtsTable lib = new MtsTable( 0, 1 );
 //        env.set( "Package", lib );
-        
-        return null;
     }
     
     // ========================================
@@ -76,12 +69,12 @@ public class MtsPackageLib extends MtsLibrary
             for ( String pathPattern : _searchPaths )
             {
                 
-                Path path = Paths.get( pathPattern.replace( "?", libName.toJava() ) );
+                Path path = Paths.get( pathPattern.replace( "?", libName.asJavaString() ) );
                 
                 _G.out.println( "Searching path '"
                                 + path.toString()
                                 + " for module '"
-                                + libName.toJava()
+                                + libName.asJavaString()
                                 + "'" );
                 
                 if ( Files.exists( path ) )
@@ -107,7 +100,7 @@ public class MtsPackageLib extends MtsLibrary
                 }
             }
             
-            throw new ScriptRuntimeException( "module '%s' not found", libName.toJava() );
+            throw new ScriptRuntimeException( "module '%s' not found", libName.asJavaString() );
         }
     }
 }

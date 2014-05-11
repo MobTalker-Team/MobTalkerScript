@@ -7,6 +7,7 @@ import static mobtalkerscript.util.logging.MtsLog.*;
 
 import java.util.*;
 
+import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.AssignExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
@@ -55,7 +56,6 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarExprListContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.VarSuffixContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.WhileLoopContext;
-import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
 
 import org.antlr.v4.runtime.*;
@@ -125,7 +125,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandSay( CommandSayContext ctx )
     {
-        _c.loadVariable( MtsCommandLib.FNAME_SAY );
+        _c.loadVariable( Constants.FunctionNames.COMMAND_SAY );
         
         if ( ctx.Character == null )
             _c.loadNil();
@@ -144,7 +144,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandShow( CommandShowContext ctx )
     {
-        _c.loadVariable( MtsCommandLib.FNAME_SHOW );
+        _c.loadVariable( Constants.FunctionNames.COMMAND_SHOW );
         
         visit( ctx.Character );
         visitSingleOrCreateTable( ctx.Path );
@@ -180,7 +180,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandScene( CommandSceneContext ctx )
     {
-        _c.loadVariable( MtsCommandLib.FNAME_SCENE );
+        _c.loadVariable( Constants.FunctionNames.COMMAND_SCENE );
         
         visitSingleOrCreateTable( ctx.Path );
         
@@ -197,7 +197,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandHide( CommandHideContext ctx )
     {
-        _c.loadVariable( MtsCommandLib.FNAME_HIDE );
+        _c.loadVariable( Constants.FunctionNames.COMMAND_HIDE );
         
         visit( ctx.Group );
         
@@ -209,7 +209,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandMenu( CommandMenuContext ctx )
     {
-        _c.loadVariable( MtsCommandLib.FNAME_MENU );
+        _c.loadVariable( Constants.FunctionNames.COMMAND_MENU );
         
         if ( ctx.Caption == null )
             _c.loadNil();
@@ -529,7 +529,8 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             return null;
         }
         
-        List<ListFieldContext> listFields = Lists.newArrayListWithExpectedSize( ( ctx.FieldDefs.size() + 1 ) / 2 );
+        List<ListFieldContext> listFields =
+                                            Lists.newArrayListWithExpectedSize( ( ctx.FieldDefs.size() + 1 ) / 2 );
         int hashPairs = 0;
         
         for ( FieldDefContext fieldDef : ctx.FieldDefs )

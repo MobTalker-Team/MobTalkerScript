@@ -1,13 +1,13 @@
 package mobtalkerscript.mts.v2.value;
 
-public abstract class MtsObject<T> extends MtsValue
+public abstract class MtsObject extends MtsValue
 {
-    protected final T _value;
+    protected final Object _value;
     protected MtsTable _metatable;
     
     // ========================================
     
-    protected MtsObject( T value )
+    protected MtsObject( Object value )
     {
         _value = value;
     }
@@ -15,9 +15,12 @@ public abstract class MtsObject<T> extends MtsValue
     // ========================================
     
     @Override
-    public MtsString toStringMts()
+    public MtsString toMtsString()
     {
-        return MtsValue.valueOf( toString() );
+        if ( !hasMetaTag( __TOSTRING ) )
+            return super.toMtsString();
+        
+        return getMetaTag( __TOSTRING ).call( this ).get( 0 ).asString();
     }
     
     // ========================================
@@ -29,7 +32,7 @@ public abstract class MtsObject<T> extends MtsValue
     }
     
     @Override
-    public MtsObject<T> asObject() throws ClassCastException
+    public MtsObject asObject()
     {
         return this;
     }
@@ -41,17 +44,17 @@ public abstract class MtsObject<T> extends MtsValue
     }
     
     @Override
-    public MtsBoolean equalsMts( MtsValue x )
+    public MtsBoolean isMtsEqual( MtsValue x )
     {
         return x.isObject() ? valueOf( x.asObject().equals( _value ) ) : FALSE;
     }
     
-    // ========================================
-    
-    public T toJava() throws ClassCastException
+    public Object asJavaObject()
     {
         return _value;
     }
+    
+    // ========================================
     
     @Override
     public int hashCode()
@@ -64,7 +67,8 @@ public abstract class MtsObject<T> extends MtsValue
     {
         if ( obj instanceof MtsObject )
         {
-            Object other = ( (MtsObject<?>) obj ).toJava();
+            Object other = ( (MtsObject) obj ).asJavaObject();
+            
             return _value == other;
         }
         

@@ -10,19 +10,34 @@ public class MtsVarArgs extends MtsValue
     
     // ========================================
     
-    public MtsVarArgs()
-    {
-        _values = Collections.<MtsValue> emptyList();
-    }
-    
     public MtsVarArgs( MtsValue value )
     {
         this( Collections.singletonList( value ) );
     }
     
-    public MtsVarArgs( MtsValue first, MtsValue second )
+    public MtsVarArgs( MtsValue e1, MtsValue e2 )
     {
-        this( Arrays.asList( first, second ) );
+        this( ImmutableList.of( e1, e2 ) );
+    }
+    
+    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3 )
+    {
+        this( ImmutableList.of( e1, e2, e3 ) );
+    }
+    
+    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4 )
+    {
+        this( ImmutableList.of( e1, e2, e3, e4 ) );
+    }
+    
+    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5 )
+    {
+        this( ImmutableList.of( e1, e2, e3, e4, e5 ) );
+    }
+    
+    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5, MtsValue e6 )
+    {
+        this( ImmutableList.of( e1, e2, e3, e4, e5, e6 ) );
     }
     
     public MtsVarArgs( MtsValue[] values )
@@ -32,15 +47,6 @@ public class MtsVarArgs extends MtsValue
     
     public MtsVarArgs( List<MtsValue> values )
     {
-        _values = values;
-    }
-    
-    public MtsVarArgs( MtsValue first, List<MtsValue> rest )
-    {
-        ArrayList<MtsValue> values = Lists.newArrayListWithCapacity( rest.size() + 1 );
-        values.add( first );
-        values.addAll( rest );
-        
         _values = values;
     }
     

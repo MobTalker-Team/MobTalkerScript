@@ -23,25 +23,25 @@ public class MtsTableTest
     {
         assertEquals( 0, _table.count() );
         
-        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        _table.set( valueOf( 0 ), valueOf( "a" ) );
         assertEquals( 1, _table.count() );
         
-        _table.setRaw( valueOf( 3 ), valueOf( "b" ) );
+        _table.set( valueOf( 3 ), valueOf( "b" ) );
         assertEquals( 2, _table.count() );
         
-        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
+        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
         assertEquals( 3, _table.count() );
         
-        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        _table.set( valueOf( "foo" ), valueOf( "e" ) );
         assertEquals( 4, _table.count() );
         
-        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        _table.set( valueOf( 1 ), valueOf( "c" ) );
         assertEquals( 5, _table.count() );
         
-        _table.setRaw( valueOf( 1 ), NIL );
+        _table.set( valueOf( 1 ), NIL );
         assertEquals( 4, _table.count() );
         
-        _table.setRaw( valueOf( 0.1 ), NIL );
+        _table.set( valueOf( 0.1 ), NIL );
         assertEquals( 3, _table.count() );
     }
     
@@ -50,28 +50,28 @@ public class MtsTableTest
     {
         assertEquals( 0, _table.listSize() );
         
-        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        _table.set( valueOf( 0 ), valueOf( "a" ) );
         assertEquals( 0, _table.listSize() );
         
-        _table.setRaw( valueOf( 1 ), valueOf( "a" ) );
+        _table.set( valueOf( 1 ), valueOf( "a" ) );
         assertEquals( 1, _table.listSize() );
         
-        _table.setRaw( valueOf( 3 ), valueOf( "b" ) );
+        _table.set( valueOf( 3 ), valueOf( "b" ) );
         assertEquals( 1, _table.listSize() );
         
-        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
+        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
         assertEquals( 1, _table.listSize() );
         
-        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        _table.set( valueOf( "foo" ), valueOf( "e" ) );
         assertEquals( 1, _table.listSize() );
         
-        _table.setRaw( valueOf( 2 ), valueOf( "c" ) );
+        _table.set( valueOf( 2 ), valueOf( "c" ) );
         assertEquals( 3, _table.listSize() );
         
-        _table.setRaw( valueOf( 2 ), NIL );
+        _table.set( valueOf( 2 ), NIL );
         assertEquals( 1, _table.listSize() );
         
-        _table.setRaw( valueOf( 0.1 ), NIL );
+        _table.set( valueOf( 0.1 ), NIL );
         assertEquals( 1, _table.listSize() );
     }
     
@@ -80,7 +80,7 @@ public class MtsTableTest
     {
         assertTrue( _table.isEmpty() );
         
-        _table.setRaw( valueOf( "x" ), valueOf( 1 ) );
+        _table.set( valueOf( "x" ), valueOf( 1 ) );
         
         assertFalse( _table.isEmpty() );
     }
@@ -92,12 +92,12 @@ public class MtsTableTest
         assertFalse( _table.containsKey( valueOf( "foo" ) ) );
         assertFalse( _table.containsKey( valueOf( 0.1 ) ) );
         
-        _table.setRaw( valueOf( 1 ), valueOf( "a" ) );
-        _table.setRaw( valueOf( 3 ), valueOf( "b" ) );
-        _table.setRaw( valueOf( 2 ), valueOf( "c" ) );
+        _table.set( valueOf( 1 ), valueOf( "a" ) );
+        _table.set( valueOf( 3 ), valueOf( "b" ) );
+        _table.set( valueOf( 2 ), valueOf( "c" ) );
         
-        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
-        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
+        _table.set( valueOf( "foo" ), valueOf( "e" ) );
         
         assertTrue( _table.containsKey( valueOf( 2 ) ) );
         assertTrue( _table.containsKey( valueOf( "foo" ) ) );
@@ -109,19 +109,19 @@ public class MtsTableTest
     {
         assertNull( _table.getFirstEntry() );
         
-        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        _table.set( valueOf( "foo" ), valueOf( "e" ) );
         assertEquals( valueOf( "e" ), _table.getFirstEntry().getValue() );
         
-        _table.setRaw( valueOf( 1 ), valueOf( "a" ) );
+        _table.set( valueOf( 1 ), valueOf( "a" ) );
         assertEquals( valueOf( "a" ), _table.getFirstEntry().getValue() );
         
-        _table.setRaw( valueOf( 0 ), valueOf( "d" ) );
+        _table.set( valueOf( 0 ), valueOf( "d" ) );
         assertEquals( valueOf( "a" ), _table.getFirstEntry().getValue() );
         
-        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
+        _table.set( valueOf( 2 ), valueOf( "b" ) );
         assertEquals( valueOf( "a" ), _table.getFirstEntry().getValue() );
         
-        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        _table.set( valueOf( 1 ), valueOf( "c" ) );
         assertEquals( valueOf( "c" ), _table.getFirstEntry().getValue() );
         
         _table.remove( valueOf( 1 ) );
@@ -133,21 +133,21 @@ public class MtsTableTest
     {
         assertNull( _table.getNext( NIL ) );
         
-        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
+        _table.set( valueOf( 0 ), valueOf( "a" ) );
         assertEquals( valueOf( 0 ), _table.getNext( NIL ).getKey() );
         assertNull( _table.getNext( valueOf( 0 ) ) );
         
-        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
-        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
-        _table.setRaw( valueOf( 0 ), valueOf( "e" ) );
+        _table.set( valueOf( 2 ), valueOf( "b" ) );
+        _table.set( valueOf( 1 ), valueOf( "c" ) );
+        _table.set( valueOf( 0 ), valueOf( "e" ) );
         
         assertEquals( valueOf( 1 ), _table.getNext( NIL ).getKey() );
         assertEquals( valueOf( 2 ), _table.getNext( valueOf( 1 ) ).getKey() );
         assertNotNull( _table.getNext( valueOf( 2 ) ) );
         
-        _table.setRaw( valueOf( 0.1 ), valueOf( "e" ) );
-        _table.setRaw( valueOf( "foo" ), valueOf( "f" ) );
-        _table.setRaw( valueOf( "foo" ), valueOf( "g" ) );
+        _table.set( valueOf( 0.1 ), valueOf( "e" ) );
+        _table.set( valueOf( "foo" ), valueOf( "f" ) );
+        _table.set( valueOf( "foo" ), valueOf( "g" ) );
         
         assertEquals( valueOf( 1 ), _table.getNext( NIL ).getKey() );
         assertEquals( valueOf( 2 ), _table.getNext( valueOf( 1 ) ).getKey() );
@@ -155,38 +155,38 @@ public class MtsTableTest
     }
     
     @Test
-    public void testRawset()
+    public void testset()
     {
-        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
-        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
-        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
-        _table.setRaw( valueOf( 0 ), valueOf( "e" ) );
+        _table.set( valueOf( 0 ), valueOf( "a" ) );
+        _table.set( valueOf( 2 ), valueOf( "b" ) );
+        _table.set( valueOf( 1 ), valueOf( "c" ) );
+        _table.set( valueOf( 0 ), valueOf( "e" ) );
         
-        _table.setRaw( valueOf( 0.1 ), valueOf( "e" ) );
-        _table.setRaw( valueOf( "foo" ), valueOf( "f" ) );
-        _table.setRaw( valueOf( "foo" ), valueOf( "g" ) );
+        _table.set( valueOf( 0.1 ), valueOf( "e" ) );
+        _table.set( valueOf( "foo" ), valueOf( "f" ) );
+        _table.set( valueOf( "foo" ), valueOf( "g" ) );
         
-        assertEquals( valueOf( "e" ), _table.getRaw( valueOf( 0 ) ) );
-        assertEquals( valueOf( "g" ), _table.getRaw( valueOf( "foo" ) ) );
+        assertEquals( valueOf( "e" ), _table.get( valueOf( 0 ) ) );
+        assertEquals( valueOf( "g" ), _table.get( valueOf( "foo" ) ) );
     }
     
     @Test
-    public void testRawget()
+    public void testget()
     {
-        assertEquals( NIL, _table.getRaw( valueOf( 2 ) ) );
-        assertEquals( NIL, _table.getRaw( valueOf( "foo" ) ) );
-        assertEquals( NIL, _table.getRaw( valueOf( 0.1 ) ) );
+        assertEquals( NIL, _table.get( valueOf( 2 ) ) );
+        assertEquals( NIL, _table.get( valueOf( "foo" ) ) );
+        assertEquals( NIL, _table.get( valueOf( 0.1 ) ) );
         
-        _table.setRaw( valueOf( 0 ), valueOf( "a" ) );
-        _table.setRaw( valueOf( 2 ), valueOf( "b" ) );
-        _table.setRaw( valueOf( 1 ), valueOf( "c" ) );
+        _table.set( valueOf( 0 ), valueOf( "a" ) );
+        _table.set( valueOf( 2 ), valueOf( "b" ) );
+        _table.set( valueOf( 1 ), valueOf( "c" ) );
         
-        _table.setRaw( valueOf( 0.1 ), valueOf( "d" ) );
-        _table.setRaw( valueOf( "foo" ), valueOf( "e" ) );
+        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
+        _table.set( valueOf( "foo" ), valueOf( "e" ) );
         
-        assertEquals( valueOf( "b" ), _table.getRaw( valueOf( 2 ) ) );
-        assertEquals( valueOf( "e" ), _table.getRaw( valueOf( "foo" ) ) );
-        assertEquals( valueOf( "d" ), _table.getRaw( valueOf( 0.1 ) ) );
+        assertEquals( valueOf( "b" ), _table.get( valueOf( 2 ) ) );
+        assertEquals( valueOf( "e" ), _table.get( valueOf( "foo" ) ) );
+        assertEquals( valueOf( "d" ), _table.get( valueOf( 0.1 ) ) );
     }
     
     @Test
@@ -221,7 +221,7 @@ public class MtsTableTest
             start = System.nanoTime();
             for ( int i = 2; i < 0x1FFFFF; i++ )
             {
-                table.setRaw( valueOf( i ), valueOf( i ) );
+                table.set( valueOf( i ), valueOf( i ) );
             }
             elapsed = System.nanoTime() - start;
             best = elapsed < best ? elapsed : best;
@@ -251,7 +251,7 @@ public class MtsTableTest
             start = System.nanoTime();
             for ( int i = -0xFFFFF; i < 0xFFFFF; i++ )
             {
-                table.setRaw( valueOf( i ), valueOf( i ) );
+                table.set( valueOf( i ), valueOf( i ) );
             }
             elapsed = System.nanoTime() - start;
             best = elapsed < best ? elapsed : best;

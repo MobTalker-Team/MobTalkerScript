@@ -3,24 +3,14 @@ package mobtalkerscript.mts.v2.lib;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class ConsoleCommandLib extends MtsCommandLib
+public class ConsoleCommandLib extends MtsGlobalLibrary
 {
-    /* package */MtsGlobals _G;
-    
-    // ========================================
-    
     @Override
-    public MtsValue bind( MtsString name, MtsValue env )
+    protected void bind()
     {
-        checkIfGlobals( env );
-        
-        _G = (MtsGlobals) env;
-        
-        env.set( FNAME_SAY, new ShowText() );
-        env.set( FNAME_SHOW, new ShowSprite() );
-        env.set( FNAME_MENU, new ShowMenu() );
-        
-        return null;
+        bindFunction( Constants.FunctionNames.COMMAND_SAY, new ShowText() );
+        bindFunction( Constants.FunctionNames.COMMAND_SHOW, new ShowSprite() );
+        bindFunction( Constants.FunctionNames.COMMAND_MENU, new ShowMenu() );
     }
     
     // ========================================
@@ -35,8 +25,8 @@ public class ConsoleCommandLib extends MtsCommandLib
             if ( !arg1.isNil() )
             {
                 String name = arg1.isTable() //
-                        ? arg1.get( "Name" ).asString().toJava()
-                        : arg1.asString().toJava();
+                        ? arg1.get( "Name" ).asString().asJavaString()
+                        : arg1.asString().asJavaString();
                 
                 s.append( '[' ).append( name ).append( "] " );
             }
@@ -72,12 +62,12 @@ public class ConsoleCommandLib extends MtsCommandLib
             StringBuilder pathBuilder = new StringBuilder();
             if ( characterArg.isTable() )
             {
-                String basePath = characterArg.get( "SpritePath" ).toStringMts().toJava();
+                String basePath = characterArg.get( "SpritePath" ).toMtsString().asJavaString();
                 pathBuilder.append( basePath );
             }
             else
             {
-                String basePath = characterArg.toStringMts().toJava();
+                String basePath = characterArg.toMtsString().asJavaString();
                 pathBuilder.append( basePath );
             }
             
@@ -86,12 +76,12 @@ public class ConsoleCommandLib extends MtsCommandLib
             {
                 for ( MtsValue pathPart : pathArg.asTable().listView() )
                 {
-                    pathBuilder.append( "/" ).append( pathPart.toStringMts().toJava() );
+                    pathBuilder.append( "/" ).append( pathPart.toMtsString().asJavaString() );
                 }
             }
             else
             {
-                pathBuilder.append( "/" ).append( pathArg.toStringMts() );
+                pathBuilder.append( "/" ).append( pathArg.toMtsString() );
             }
             
             String path = pathBuilder.toString();
@@ -109,12 +99,12 @@ public class ConsoleCommandLib extends MtsCommandLib
             }
             else
             {
-                position = positionArg.toStringMts().toJava();
+                position = positionArg.toMtsString().asJavaString();
             }
             
             // Offset
-            int offsetX = (int) offsetXArg.asNumber().asInteger().toJava();
-            int offsetY = (int) offsetYArg.asNumber().asInteger().toJava();
+            int offsetX = offsetXArg.asNumber().asJavaInt();
+            int offsetY = offsetYArg.asNumber().asJavaInt();
             
             // Effect
             String effect = "none";
@@ -143,7 +133,7 @@ public class ConsoleCommandLib extends MtsCommandLib
         {
             if ( !args.get( 0 ).isNil() )
             {
-                String caption = args.get( 0 ).asString().toJava();
+                String caption = args.get( 0 ).asString().asJavaString();
                 _G.out.println( caption );
             }
             else
@@ -157,7 +147,7 @@ public class ConsoleCommandLib extends MtsCommandLib
             
             for ( int i = 0; i < nOptions; i++ )
             {
-                _G.out.println( "  " + ( i + 1 ) + ": " + args.get( i + 1 ).asString().toJava() );
+                _G.out.println( "  " + ( i + 1 ) + ": " + args.get( i + 1 ).asString().asJavaString() );
             }
             
             for ( ;; )

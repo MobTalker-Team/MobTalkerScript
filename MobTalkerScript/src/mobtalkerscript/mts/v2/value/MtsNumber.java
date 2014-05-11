@@ -1,7 +1,6 @@
 package mobtalkerscript.mts.v2.value;
 
-import static com.google.common.base.Preconditions.*;
-import mobtalkerscript.mts.v2.*;
+import com.google.common.math.*;
 
 public final class MtsNumber extends MtsValue
 {
@@ -17,55 +16,47 @@ public final class MtsNumber extends MtsValue
     
     // ========================================
     
-    private static final double _max = Integer.MAX_VALUE;
-    private static final double _min = Integer.MIN_VALUE;
-    
-    public static final MtsNumber MAX_VALUE = valueOf( _max );
-    public static final MtsNumber MIN_VALUE = valueOf( _min );
+    public static final MtsNumber NaN = of( Double.NaN );
     
     // ========================================
     
     public static MtsNumber of( double value )
     {
-        if ( !isInteger( value ) )
-            return new MtsNumber( value );
-        
-        return of( (int) value );
+        return new MtsNumber( value );
     }
     
     public static MtsNumber of( int value )
     {
-        if ( ( -128 < value ) && ( value <= 128 ) )
-            return CACHE[value + 127];
-        else
-            return new MtsNumber( value );
+        return new MtsNumber( value );
     }
     
-    public static MtsValue parse( MtsString mtsStr )
+    public static MtsValue parse( MtsString str )
     {
-        String s = mtsStr.toJava();
+        String s = str.asJavaString();
         
+        MtsValue n;
         try
         {
             double d = Double.parseDouble( s );
-            return of( d );
+            n = of( d );
         }
         catch ( NumberFormatException ex )
         {
-            return NIL;
+            n = NIL;
         }
+        
+        return n;
     }
     
-    public static MtsValue parse( MtsBoolean mtsBool )
+    public static MtsNumber parse( MtsBoolean b )
     {
-        boolean b = mtsBool.toJava();
-        return b ? ONE : ZERO;
+        return b.toJava() ? ONE : ZERO;
     }
     
-    public static boolean isInteger( double value )
-    {
-        return value == (long) value;
-    }
+    // ========================================
+    
+    public static final double MAX_VALUE = Double.MAX_VALUE;
+    public static final double MIN_VALUE = Double.MIN_VALUE;
     
     // ========================================
     
@@ -75,60 +66,96 @@ public final class MtsNumber extends MtsValue
     
     /* package */MtsNumber( double value )
     {
-        checkArgument( !Double.isNaN( value ), "NaN" );
-        checkArgument( !Double.isInfinite( value ), "Value is infinite" );
-        
-        if ( ( value < _min ) || ( _max < value ) )
-            throw new ScriptRuntimeException( "Number is out of 2^31 range: %s", value );
-        
+        _value = value;
+    }
+    
+    /* package */MtsNumber( int value )
+    {
         _value = value;
     }
     
     // ========================================
     
-    public static MtsNumber add( MtsNumber x, MtsNumber y )
+    public MtsNumber add( MtsNumber other )
     {
-        return valueOf( x._value + y._value );
+        return of( this._value + other._value );
     }
     
-    public static MtsNumber sub( MtsNumber x, MtsNumber y )
+    public MtsNumber sub( MtsNumber other )
     {
-        return valueOf( x._value - y._value );
+        return of( this._value - other._value );
     }
     
-    public static MtsNumber mul( MtsNumber x, MtsNumber y )
+    public MtsNumber mul( MtsNumber other )
     {
-        return valueOf( x._value * y._value );
+        return of( this._value * other._value );
     }
     
-    public static MtsNumber div( MtsNumber x, MtsNumber y )
+    public MtsNumber div( MtsNumber other )
     {
-        return valueOf( x._value / y._value );
+        return of( this._value / other._value );
     }
     
-    public static MtsNumber mod( MtsNumber x, MtsNumber y )
+    public MtsNumber mod( MtsNumber other )
     {
-        return valueOf( x._value % y._value );
+        return of( this._value % other._value );
     }
     
-    public static MtsNumber pow( MtsNumber x, MtsNumber y )
+    public MtsNumber pow( MtsNumber other )
     {
-        return valueOf( Math.pow( x._value, y._value ) );
+        return of( Math.pow( this._value, other._value ) );
     }
     
     public MtsNumber neg()
     {
-        return valueOf( -_value );
+        return of( -_value );
     }
     
     public MtsNumber incr()
     {
-        return valueOf( _value + 1.0D );
+        return of( _value + 1.0D );
     }
     
     public MtsNumber decr()
     {
-        return valueOf( _value - 1.0D );
+        return of( _value - 1.0D );
+    }
+    
+    // ========================================
+    
+    public MtsNumber floor()
+    {
+        return of( Math.floor( _value ) );
+    }
+    
+    public MtsNumber ceil()
+    {
+        return of( Math.ceil( _value ) );
+    }
+    
+    public MtsNumber round()
+    {
+        return of( Math.round( _value ) );
+    }
+    
+    // ========================================
+    
+    public boolean isNaN()
+    {
+        return Double.isNaN( _value );
+    }
+    
+    public boolean isInfinite()
+    {
+        return Double.isInfinite( _value );
+    }
+    
+    /**
+     * Determines if this number is greater than zero.
+     */
+    public boolean isPositive()
+    {
+        return _value > 0.0D;
     }
     
     // ========================================
@@ -142,18 +169,7 @@ public final class MtsNumber extends MtsValue
     @Override
     public boolean isInteger()
     {
-        return isInteger( _value );
-    }
-    
-    @Override
-    public boolean isDecimal()
-    {
-        return !isInteger( _value );
-    }
-    
-    public boolean isPositive()
-    {
-        return 0.0D < _value;
+        return DoubleMath.isMathematicalInteger( _value );
     }
     
     @Override
@@ -162,25 +178,14 @@ public final class MtsNumber extends MtsValue
         return this;
     }
     
-    /**
-     * Equivalent to a Java typecast to {@link MtsNumber}, where the value is floored.
-     */
-    public MtsNumber asInteger()
+    public double asJavaDouble()
     {
-        if ( isInteger() )
-        {
-            return this;
-        }
-        else
-        {
-            return new MtsNumber( Math.floor( _value ) );
-        }
+        return _value;
     }
     
-    @Override
-    public MtsString asString()
+    public int asJavaInt()
     {
-        return valueOf( isInteger() ? Integer.toString( (int) _value ) : Double.toString( _value ) );
+        return (int) _value;
     }
     
     @Override
@@ -192,28 +197,23 @@ public final class MtsNumber extends MtsValue
     // ========================================
     
     @Override
-    public MtsString toStringMts()
+    public MtsString toMtsString()
     {
         return valueOf( toString() );
     }
     
-    public double toJava()
-    {
-        return _value;
-    }
+    // ========================================
     
     @Override
-    public String toString()
+    public int compareTo( MtsValue o )
     {
-        if ( isInteger() )
-        {
-            return Integer.toString( (int) _value );
-        }
-        else
-        {
-            return Double.toString( _value );
-        }
+        if ( o.isNumber() || o.isString() )
+            return (int) Math.rint( _value - o.asNumber()._value );
+        
+        return 0;
     }
+    
+    // ========================================
     
     @Override
     public int hashCode()
@@ -224,45 +224,19 @@ public final class MtsNumber extends MtsValue
         // Long.valueOf( Double.doubleToLongBits( _value ) ).hashCode();
         
         long bits = Double.doubleToLongBits( _value );
-        return ( (int) bits ) ^ ( (int) ( bits >> 32 ) );
+        return (int) ( bits ^ ( bits >> 32 ) );
     }
     
     @Override
     public boolean equals( Object obj )
     {
-        if ( obj == this )
+        if ( obj == null )
+            return false;
+        if ( this == obj )
             return true;
-        
         if ( !( obj instanceof MtsNumber ) )
             return false;
         
-        return ( (MtsNumber) obj ).toJava() == _value;
+        return compareTo( (MtsNumber) obj ) == 0;
     }
-    
-    @Override
-    public MtsBoolean equalsMts( MtsValue x )
-    {
-        if ( x.isNumber() )
-        {
-            MtsNumber other = x.asNumber();
-            return valueOf( _value == other._value );
-        }
-        else
-        {
-            return FALSE;
-        }
-    }
-    
-    // ========================================
-    // Comparable
-    
-    @Override
-    public int compareTo( MtsValue o )
-    {
-        if ( !o.isNumber() )
-            return 0;
-        
-        return (int) Math.signum( _value - o.asNumber().toJava() );
-    }
-    
 }

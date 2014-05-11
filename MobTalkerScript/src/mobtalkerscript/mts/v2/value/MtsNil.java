@@ -2,12 +2,11 @@ package mobtalkerscript.mts.v2.value;
 
 public class MtsNil extends MtsValue
 {
-    
     private final MtsString stringValue;
     
     // ========================================
     
-    MtsNil()
+    /* package */MtsNil()
     {
         stringValue = MtsValue.valueOf( "nil" );
     }
@@ -34,13 +33,13 @@ public class MtsNil extends MtsValue
     }
     
     @Override
-    public MtsBoolean equalsMts( MtsValue x )
+    public MtsBoolean isMtsEqual( MtsValue x )
     {
         return valueOf( x.isNil() );
     }
     
     @Override
-    public MtsString toStringMts()
+    public MtsString toMtsString()
     {
         return stringValue;
     }

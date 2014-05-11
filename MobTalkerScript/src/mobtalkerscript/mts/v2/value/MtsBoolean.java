@@ -2,17 +2,16 @@ package mobtalkerscript.mts.v2.value;
 
 public class MtsBoolean extends MtsValue
 {
-    
     public static MtsBoolean parse( MtsString s )
     {
-        boolean b = Boolean.parseBoolean( s.toJava() );
+        boolean b = Boolean.parseBoolean( s.asJavaString() );
         return valueOf( b );
     }
     
     public static MtsBoolean parse( MtsNumber n )
     {
-        int i = (int) n.toJava();
-        return valueOf( i != 0 );
+        int i = (int) n.asJavaDouble();
+        return valueOf( i != 0.0D );
     }
     
     public static boolean isTrue( MtsValue v )
@@ -30,7 +29,7 @@ public class MtsBoolean extends MtsValue
     
     // ========================================
     
-    MtsBoolean( boolean value )
+    /* package */MtsBoolean( boolean value )
     {
         _value = value;
         _obj = Boolean.valueOf( value );
@@ -41,14 +40,14 @@ public class MtsBoolean extends MtsValue
     
     // ========================================
     
-    public static MtsBoolean or( MtsBoolean x, MtsBoolean y )
+    public MtsBoolean or( MtsBoolean other )
     {
-        return valueOf( x._value || y._value );
+        return valueOf( this._value || other._value );
     }
     
-    public static MtsBoolean and( MtsBoolean x, MtsBoolean y )
+    public MtsBoolean and( MtsBoolean other )
     {
-        return valueOf( x._value && y._value );
+        return valueOf( this._value && other._value );
     }
     
     public MtsBoolean not()
@@ -67,7 +66,7 @@ public class MtsBoolean extends MtsValue
     // ========================================
     
     @Override
-    public MtsString toStringMts()
+    public MtsString toMtsString()
     {
         return _stringValue;
     }
@@ -87,7 +86,7 @@ public class MtsBoolean extends MtsValue
     }
     
     @Override
-    public MtsBoolean equalsMts( MtsValue x )
+    public MtsBoolean isMtsEqual( MtsValue x )
     {
         return valueOf( this == x );
     }

@@ -1,16 +1,15 @@
 package mobtalkerscript.mts.v2.lib.mobtalker;
 
+import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class MinecraftConsoleWorldLib extends MtsLibrary
+public class MinecraftConsoleWorldLib extends MtsGlobalLibrary
 {
     
     @Override
-    public MtsValue bind( MtsString name, MtsValue env )
+    public void bind()
     {
-        checkIfGlobals( env );
-        
-        MtsTable lib = new MtsTable( 0, 12 );
+        MtsTable lib = new MtsTable( 0, 13 );
         
         bindFunction( lib, "GetBiome", new GetBiome() );
         bindFunction( lib, "GetWeather", new GetWeather() );
@@ -26,10 +25,9 @@ public class MinecraftConsoleWorldLib extends MtsLibrary
         bindFunction( lib, "GetDifficulty", new GetDifficulty() );
         bindFunction( lib, "GetGameRule", new GetGameRule() );
         bindFunction( lib, "GetType", new GetType() );
+        bindFunction( lib, "IsSinglePlayer", new IsSinglePlayer() );
         
-        env.set( "World", lib );
-        
-        return null;
+        _G.set( "World", lib, false );
     }
     
     // ========================================
@@ -50,7 +48,7 @@ public class MinecraftConsoleWorldLib extends MtsLibrary
         protected MtsValue invoke( MtsValue arg )
         {
             // clear, raining, snowing,
-            return valueOf( valueOf( "clear" ), FALSE );
+            return new MtsVarArgs( valueOf( "clear" ), FALSE );
         }
     }
     
@@ -89,7 +87,7 @@ public class MinecraftConsoleWorldLib extends MtsLibrary
         @Override
         protected MtsValue invoke( MtsValue arg )
         {
-            return valueOf( ZERO, ZERO, ZERO );
+            return new MtsVarArgs( ZERO, ZERO, ZERO );
         }
     }
     
@@ -120,7 +118,7 @@ public class MinecraftConsoleWorldLib extends MtsLibrary
         protected MtsValue invoke()
         {
             // peaceful, easy, normal, hard
-            return valueOf( valueOf( "peaceful" ), FALSE );
+            return new MtsVarArgs( valueOf( "peaceful" ), FALSE );
         }
     }
     
@@ -149,6 +147,15 @@ public class MinecraftConsoleWorldLib extends MtsLibrary
         {
             // Default, Flat, LargeBiomes
             return valueOf( "Default" );
+        }
+    }
+    
+    private final class IsSinglePlayer extends MtsZeroArgFunction
+    {
+        @Override
+        protected MtsValue invoke()
+        {
+            return TRUE;
         }
     }
 }

@@ -7,7 +7,7 @@ public class InstrEQ extends MtsComparisonInstruction
     @Override
     protected MtsValue compare( MtsValue a, MtsValue b )
     {
-        return a.equalsMts( b );
+        return a.isMtsEqual( b );
     }
     
     @Override

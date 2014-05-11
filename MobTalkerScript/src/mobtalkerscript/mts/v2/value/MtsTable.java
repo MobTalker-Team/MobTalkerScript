@@ -1,6 +1,7 @@
 package mobtalkerscript.mts.v2.value;
 
 import static com.google.common.base.Preconditions.*;
+import static mobtalkerscript.util.MtsCheck.*;
 
 import java.util.*;
 
@@ -79,7 +80,7 @@ public class MtsTable extends MtsMetaTableValue
         
         if ( TableListPart.isValidKey( key ) )
         {
-            int i = (int) key.asNumber().toJava();
+            int i = key.asNumber().asJavaInt();
             
             if ( _listPart.contains( i++ ) )
             {
@@ -95,144 +96,12 @@ public class MtsTable extends MtsMetaTableValue
     
     public Entry getINext( MtsNumber key )
     {
-        int i = (int) key.asNumber().toJava();
+        int i = key.asNumber().asJavaInt() + 1;
         
-        if ( _listPart.contains( ++i ) )
+        if ( _listPart.contains( i ) )
             return new Entry( valueOf( i ), _listPart.get( i ) );
         else
             return null;
-    }
-    
-    /**
-     * First checks if <code>key</code> is present in this table.<br/>
-     * If it is, call {@link #getRaw(MtsValue) getRaw}.<br/>
-     * If it is not, look for a {@link MtsValue#METATAG_INDEX __index} meta tag.
-     * <p>
-     * If there is no meta tag, call {@link #getRaw(MtsValue) getRaw}.<br/>
-     * If the tag is a table, repeat the operation on it.<br/>
-     * Otherwise attempt to call it with <code>this</code> and <code>key</code> as the arguments.
-     * 
-     * @see #getRaw(MtsValue)
-     * @see MtsValue#METATAG_INDEX
-     */
-    @Override
-    public MtsValue get( MtsValue key )
-    {
-        MtsValue result = getRaw( key );
-        
-        if ( result.isNil() && hasMetaTag( METATAG_INDEX ) )
-        {
-            MtsValue tag = getMetaTag( METATAG_INDEX );
-            
-            return tag.isTable() //
-                    ? tag.get( key )
-                    : tag.call( this, key ).get( 0 );
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Returns the value associated with the specified key in this table, or {@link MtsNil nil} if no such mapping exists.
-     */
-    public MtsValue getRaw( MtsValue key )
-    {
-        checkNotNull( key );
-        
-        if ( isEmpty() || key.isNil() )
-            return NIL;
-        
-        if ( TableListPart.isValidKey( key ) )
-        {
-            int i = (int) key.asNumber().toJava();
-            
-            if ( _listPart.contains( i ) )
-                return _listPart.get( i );
-        }
-        
-        return _hashPart.get( key );
-    }
-    
-    // ========================================
-    
-    /**
-     * First checks if <code>key</code> is already present in this table.<br/>
-     * If it is, call {@link #setRaw(MtsValue, MtsValue) setRaw}.<br/>
-     * If it is not, look for a {@link MtsValue#METATAG_NEWINDEX __newindex} meta tag.
-     * <p>
-     * If there is no meta tag, call {@link #setRaw(MtsValue, MtsValue) setRaw}.<br/>
-     * If the tag is a table, repeat the operation on it.<br/>
-     * Otherwise attempt to call it with <code>this</code>, <code>key</code> and <code>value</code> as the arguments.
-     * 
-     * @see #setRaw(MtsValue, MtsValue)
-     * @see MtsValue#METATAG_NEWINDEX
-     */
-    @Override
-    public void set( MtsValue key, MtsValue value )
-    {
-        if ( !containsKey( key ) && hasMetaTag( METATAG_NEWINDEX ) )
-        {
-            MtsValue tag = getMetaTag( METATAG_NEWINDEX );
-            
-            if ( tag.isTable() )
-            {
-                tag.set( key, value );
-            }
-            else
-            {
-                tag.call( this, key, value );
-            }
-        }
-        else
-        {
-            setRaw( key, value );
-        }
-    }
-    
-    public MtsValue setRaw( String key, MtsValue value )
-    {
-        return setRaw( valueOf( key ), value );
-    }
-    
-    /**
-     * Associates the specified value with the specified key in this table.
-     * If the table previously contained a mapping for the key, the old value is replaced.
-     * If the value is set to {@link MtsNil nil} the entry for that mapping is removed.
-     * 
-     * @return The previous value associated with the key, or {@link MtsNil nil} if there was no such mapping.
-     */
-    public MtsValue setRaw( MtsValue key, MtsValue value )
-    {
-        checkNotNull( key );
-        checkNotNil( key, "table index is nil" );
-        
-        if ( TableListPart.isValidKey( key ) )
-        {
-            int i = (int) key.asNumber().toJava();
-            
-            if ( _listPart.contains( i ) )
-            {
-                MtsValue old = _listPart.set( i, value );
-                
-                if ( value.isNil() )
-                {
-                    _listPart.transferOrphansTo( _hashPart );
-                }
-                
-                return old;
-            }
-            
-            if ( _listPart.contains( i - 1 ) || ( i == 1 ) )
-            {
-                _listPart.add( value );
-                MtsValue old = _hashPart.remove( key );
-                _listPart.collectFrom( _hashPart );
-                
-                return old;
-            }
-        }
-        
-        return _hashPart.set( key, value );
     }
     
     // ========================================
@@ -265,7 +134,7 @@ public class MtsTable extends MtsMetaTableValue
     /**
      * Inserts a value into this table at the given location (1 based) and shifts subsequent entries to the left if necessary.
      * <p>
-     * If <tt>key</tt> is not part of the sequence of this table a simple {@link #setRaw(MtsValue, MtsValue) setRaw} is
+     * If <tt>key</tt> is not part of the sequence of this table a simple {@link #rawset(MtsValue, MtsValue) setRaw} is
      * performed.
      */
     public void insert( MtsValue key, MtsValue value )
@@ -274,12 +143,12 @@ public class MtsTable extends MtsMetaTableValue
         
         if ( _listPart.contains( key ) )
         {
-            int i = (int) key.asNumber().toJava();
+            int i = key.asNumber().asJavaInt();
             _listPart.insert( i, value );
             _listPart.collectFrom( _hashPart );
         }
         
-        setRaw( key, value );
+        rawset( key, value );
     }
     
     /**
@@ -291,7 +160,7 @@ public class MtsTable extends MtsMetaTableValue
         
         if ( _listPart.contains( key ) )
         {
-            int i = (int) key.asNumber().toJava();
+            int i = key.asNumber().asJavaInt();
             MtsValue removed = _listPart.remove( i );
             
             _listPart.transferOrphansTo( _hashPart );
@@ -307,27 +176,156 @@ public class MtsTable extends MtsMetaTableValue
         return _listPart.removeLast();
     }
     
-    public MtsString concat( MtsString sep, MtsNumber from, MtsNumber to )
+    public MtsString concatElements( MtsString sep, MtsNumber from, MtsNumber to )
     {
-        return _listPart.concat( sep.toJava(), (int) from.toJava(), (int) to.toJava() );
+        return _listPart.concat( sep.asJavaString(), from.asJavaInt(), to.asJavaInt() );
     }
     
-    public MtsString concat( MtsString sep, MtsNumber from )
+    public MtsString concatElements( MtsString sep, MtsNumber from )
     {
-        return _listPart.concat( sep.toJava(), (int) from.toJava() );
+        return _listPart.concat( sep.asJavaString(), from.asJavaInt() );
     }
     
-    public MtsString concat( MtsString sep )
+    public MtsString concatElements( MtsString sep )
     {
-        return _listPart.concat( sep.toJava() );
+        return _listPart.concat( sep.asJavaString() );
+    }
+    
+    // ========================================
+    
+    /**
+     * Returns the value associated with the specified key in this table, or {@link MtsNil nil} if no such mapping exists.
+     * <p>
+     * First checks if <code>key</code> is present in this table.<br/>
+     * If it is, call {@link #rawget(MtsValue) getRaw}.<br/>
+     * If it is not, look for a {@value MtsValue#__INDEX} meta tag.
+     * <p>
+     * If there is no meta tag, call {@link #rawget(MtsValue) getRaw}.<br/>
+     * If the tag is a table, repeat the operation on it.<br/>
+     * Otherwise attempt to call it with <code>this</code> and <code>key</code> as the arguments.
+     * 
+     * @see #rawget(MtsValue)
+     * @see MtsValue#__INDEX
+     */
+    @Override
+    public MtsValue get( MtsValue key, boolean useMetaTag )
+    {
+        MtsValue result = rawget( key );
+        
+        if ( result.isNil() && useMetaTag )
+            return __index( this, key );
+        
+        return result;
+    }
+    
+    private MtsValue rawget( MtsValue key )
+    {
+        assert key != null : "key cannot be null";
+        
+        if ( isEmpty() || key.isNil() )
+            return NIL;
+        
+        if ( TableListPart.isValidKey( key ) )
+        {
+            int i = key.asNumber().asJavaInt();
+            
+            if ( _listPart.contains( i ) )
+                return _listPart.get( i );
+        }
+        
+        return _hashPart.get( key );
+    }
+    
+    // ========================================
+    
+    /**
+     * Associates the specified value with the specified key in this table.
+     * If the table previously contained a mapping for the key, the old value is replaced.
+     * If the value is set to {@link MtsNil nil} the entry for that mapping is removed.
+     * <p>
+     * First checks if <code>key</code> is already present in this table.<br/>
+     * If it is, override it's associated value.<br/>
+     * If it is not, look for a {@link MtsValue#METATAG_NEWINDEX __newindex} meta tag.
+     * <p>
+     * If there is no meta tag, call {@link #rawset(MtsValue, MtsValue) setRaw}.<br/>
+     * If the tag is a table, repeat the operation on it.<br/>
+     * Otherwise attempt to call it with <code>this</code>, <code>key</code> and <code>value</code> as the arguments.
+     * 
+     * @see #rawset(MtsValue, MtsValue)
+     * @see MtsValue#METATAG_NEWINDEX
+     */
+    @Override
+    public void set( MtsValue key, MtsValue value, boolean useMetaTag )
+    {
+        if ( containsKey( key ) )
+            rawset( key, value );
+        else
+            __newindex( this, key, value );
+    }
+    
+    private void rawset( MtsValue key, MtsValue value )
+    {
+        assert key != null : "key was null";
+        checkNotNil( key, "table index is nil" );
+        
+        if ( TableListPart.isValidKey( key ) )
+        {
+            int i = key.asNumber().asJavaInt();
+            
+            if ( _listPart.contains( i ) )
+            {
+                _listPart.set( i, value );
+                
+                if ( value.isNil() )
+                {
+                    _listPart.transferOrphansTo( _hashPart );
+                }
+            }
+            
+            if ( _listPart.contains( i - 1 ) || ( i == 1 ) )
+            {
+                _listPart.add( value );
+                _listPart.collectFrom( _hashPart );
+            }
+        }
+        
+        _hashPart.set( key, value );
     }
     
     // ========================================
     
     @Override
-    public MtsString toStringMts()
+    public MtsValue __index( MtsValue table, MtsValue key )
     {
-        return valueOf( toString() );
+        MtsValue tag = getMetaTag( __INDEX );
+        
+        if ( tag.isNil() )
+            return NIL;
+        if ( tag.isFunction() )
+            return tag.call( this, key );
+        
+        return tag.get( key );
+    }
+    
+    @Override
+    public void __newindex( MtsValue table, MtsValue key, MtsValue value )
+    {
+        MtsValue tag = getMetaTag( __NEWINDEX );
+        
+        if ( tag.isNil() )
+            rawset( key, value );
+        else if ( tag.isFunction() )
+            tag.call( this, key, value );
+        else
+            tag.set( key, value );
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsNumber getLength()
+    {
+        return valueOf( listSize() );
     }
     
     // ========================================
@@ -350,18 +348,24 @@ public class MtsTable extends MtsMetaTableValue
         return MtsType.TABLE;
     }
     
-    @Override
-    public MtsBoolean equalsMts( MtsValue x )
-    {
-        return valueOf( this == x );
-    }
-    
     // ========================================
+    
+    @Override
+    public MtsString toMtsString()
+    {
+        return valueOf( toString() );
+    }
     
     @Override
     public int hashCode()
     {
         return super.hashCode();
+    }
+    
+    @Override
+    public MtsBoolean isMtsEqual( MtsValue x )
+    {
+        return valueOf( this == x );
     }
     
     // ========================================

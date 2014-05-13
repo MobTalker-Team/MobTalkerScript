@@ -1,0 +1,17 @@
+local callCounter = 0;
+
+local function Ackermann( m, n )
+	callCounter = callCounter + 1;
+
+	if ( m == 0 ) then
+		return n + 1;
+	else if ( n == 0 ) then
+		return Ackermann( m - 1, 1 );
+	else
+		return Ackermann( m - 1, Ackermann( m, n - 1 ) );
+	end  
+end
+
+local m, n = 3, 10;
+
+print( "Result for {m},{n}: " .. Ackermann( m, n ) .. " ({callCounter} calls)" );

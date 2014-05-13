@@ -33,9 +33,7 @@ public class ClassAdapter
     public static ClassAdapter forClass( Class<?> c )
     {
         if ( !checkClass( c ) )
-            throw new IllegalArgumentException( "Class has no "
-                                                + MtsAccessibleClass.class.getName()
-                                                + " annotation!" );
+            throw new IllegalArgumentException( c.getSimpleName() + " is not a valid class!" );
         
         ClassAdapter mapper = _mappers.get( c );
         if ( mapper == null )
@@ -148,7 +146,7 @@ public class ClassAdapter
         }
         
         Class<?> returnType = m.getReturnType();
-        if ( returnType != MtsVarArgs.class )
+        if ( !isMtsValueClass( returnType ) && ( returnType != Void.TYPE ) )
             return false;
         
         return true;

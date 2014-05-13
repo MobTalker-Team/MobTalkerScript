@@ -252,11 +252,15 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             MtsValue f = args.get( 0 );
             MtsVarArgs callArgs = args.subArgs( 1 );
             
-            MtsVarArgs result;
+            MtsValue result;
             try
             {
-                MtsVarArgs callResults = f.call( callArgs );
-                result = new MtsVarArgs( TRUE, callResults );
+                MtsValue callResults = f.call( callArgs );
+                
+                if ( callResults.isVarArgs() )
+                    result = new MtsVarArgs( TRUE, callResults.asVarArgs() );
+                else
+                    result = new MtsVarArgs( TRUE, callResults );
             }
             catch ( ScriptRuntimeException ex )
             {

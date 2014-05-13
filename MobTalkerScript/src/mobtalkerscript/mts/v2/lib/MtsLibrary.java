@@ -6,7 +6,7 @@ import mobtalkerscript.mts.v2.value.*;
 public abstract class MtsLibrary extends MtsFunction
 {
     @Override
-    public final MtsVarArgs call( MtsVarArgs args )
+    public final MtsValue call( MtsVarArgs args )
     {
         switch ( args.count() )
         {

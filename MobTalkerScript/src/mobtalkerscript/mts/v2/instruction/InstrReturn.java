@@ -1,5 +1,6 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import mobtalkerscript.mts.v2.value.*;
 
 public final class InstrReturn extends MtsInstruction
@@ -18,7 +19,15 @@ public final class InstrReturn extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.push( new MtsVarArgs( frame.pop( _count ) ) );
+        MtsValue result;
+        if ( _count == 0 )
+            result = EMPTY_VARARGS;
+        else if ( _count == 1 )
+            result = frame.pop();
+        else
+            result = new MtsVarArgs( frame.pop( _count ) );
+        
+        frame.push( result );
     }
     
     @Override

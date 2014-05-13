@@ -35,14 +35,14 @@ public abstract class MtsMetaTableValue extends MtsValue
     // ========================================
     
     @Override
-    public MtsVarArgs call( MtsVarArgs args )
+    public MtsValue call( MtsVarArgs args )
     {
         return __call( args );
     }
     
     // ========================================
     
-    public MtsVarArgs __call( MtsVarArgs args )
+    public MtsValue __call( MtsVarArgs args )
     {
         MtsValue tag = getMetaTag( __CALL );
         

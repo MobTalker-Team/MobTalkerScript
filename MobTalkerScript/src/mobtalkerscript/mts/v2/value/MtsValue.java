@@ -321,27 +321,27 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     // ========================================
     
-    public final MtsVarArgs call()
+    public final MtsValue call()
     {
         return call( MtsValue.EMPTY_VARARGS );
     }
     
-    public final MtsVarArgs call( MtsValue arg )
+    public final MtsValue call( MtsValue arg )
     {
         return call( new MtsVarArgs( arg ) );
     }
     
-    public final MtsVarArgs call( MtsValue arg1, MtsValue arg2 )
+    public final MtsValue call( MtsValue arg1, MtsValue arg2 )
     {
         return call( new MtsVarArgs( arg1, arg2 ) );
     }
     
-    public final MtsVarArgs call( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+    public final MtsValue call( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
         return call( new MtsVarArgs( arg1, arg2, arg3 ) );
     }
     
-    public MtsVarArgs call( MtsVarArgs args )
+    public MtsValue call( MtsVarArgs args )
     {
         throw new ScriptRuntimeException( "attempt to call a %s value", getType() );
     }

@@ -1,5 +1,6 @@
 package mobtalkerscript.mts.v2.instruction;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import mobtalkerscript.mts.v2.value.*;
 
 public final class InstrCallFunc extends MtsInstruction
@@ -32,10 +33,21 @@ public final class InstrCallFunc extends MtsInstruction
         if ( _nReturn == 0 )
             return;
         
-        MtsVarArgs results = result.asVarArgs();
-        for ( int i = 0; i < _nReturn; i++ )
+        if ( result.isVarArgs() )
         {
-            frame.push( results.get( i ) );
+            MtsVarArgs results = result.asVarArgs();
+            for ( int i = 0; i < _nReturn; i++ )
+            {
+                frame.push( results.get( i ) );
+            }
+        }
+        else
+        {
+            frame.push( result );
+            for ( int i = 1; i < _nReturn; i++ )
+            {
+                frame.push( NIL );
+            }
         }
     }
     

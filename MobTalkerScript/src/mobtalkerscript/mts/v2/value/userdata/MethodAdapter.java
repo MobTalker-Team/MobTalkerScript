@@ -25,13 +25,15 @@ public class MethodAdapter extends MtsFunction
     
     // ========================================
     
+    private static final Object[] EMPTY_INVOKEARGS = new Object[0];
+    
     private Object[] convertCallArgs( MtsVarArgs args )
     {
         if ( _nParams == -1 )
             return new Object[] { args.subArgs( 1 ) };
         if ( _nParams == 0 )
-            return null; // This is allowed by Method.invoke(Object, Object...)
-            
+            return EMPTY_INVOKEARGS;
+        
         Object[] result = new Object[_nParams];
         for ( int i = 1; i <= _nParams; i++ )
         {
@@ -41,7 +43,7 @@ public class MethodAdapter extends MtsFunction
     }
     
     @Override
-    public MtsVarArgs call( MtsVarArgs args )
+    public MtsValue call( MtsVarArgs args )
     {
         Object instance = args.get( 0 ).asObject().asJavaObject();
         Object[] callArgs = convertCallArgs( args );
@@ -64,7 +66,12 @@ public class MethodAdapter extends MtsFunction
             throw new ScriptRuntimeException( ex.getMessage() );
         }
         
-        return (MtsVarArgs) result;
+        if ( result == null )
+            return EMPTY_VARARGS;
+        if ( result instanceof MtsVarArgs )
+            return (MtsVarArgs) result;
+        
+        return new MtsVarArgs( (MtsValue) result );
     }
     
 }

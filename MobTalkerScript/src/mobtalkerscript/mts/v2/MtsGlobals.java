@@ -52,7 +52,7 @@ public class MtsGlobals extends MtsTable
     
     public MtsFunctionPrototype loadFile( Path path ) throws Exception
     {
-        checkArgument( Files.exists( path ), "Path '%s' does not exist", path );
+        checkArgument( Files.exists( path ), "Path '%s' does not exist", path.toAbsolutePath() );
         
         return load( new ANTLRFileStream( path.toString() ) );
     }

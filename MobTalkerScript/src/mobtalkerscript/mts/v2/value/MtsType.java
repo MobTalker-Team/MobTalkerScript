@@ -1,21 +1,21 @@
 package mobtalkerscript.mts.v2.value;
 
-public enum MtsType
+public final class MtsType
 {
-    NIL( "nil" ), //
-    BOOLEAN( "boolean" ),
-    NUMBER( "number" ),
-    STRING( "string" ),
-    TABLE( "table" ),
-    FUNCTION( "function" ),
-    VARARGS( "varargs" ),
-    OBJECT( "object" );
+    public static final MtsType NIL = new MtsType( "nil" );
+    public static final MtsType BOOLEAN = new MtsType( "boolean" );
+    public static final MtsType NUMBER = new MtsType( "number" );
+    public static final MtsType STRING = new MtsType( "string" );
+    public static final MtsType TABLE = new MtsType( "table" );
+    public static final MtsType FUNCTION = new MtsType( "function" );
+    public static final MtsType VARARGS = new MtsType( "varargs" );
+    public static final MtsType OBJECT = new MtsType( "userdata" );
     
     // ========================================
     
     private final String _typeName;
     
-    private MtsType( String typeName )
+    public MtsType( String typeName )
     {
         _typeName = typeName;
     }

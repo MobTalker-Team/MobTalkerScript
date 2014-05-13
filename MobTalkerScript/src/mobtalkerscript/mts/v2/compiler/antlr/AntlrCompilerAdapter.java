@@ -326,10 +326,10 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     public Void visitLocalFuncDeclrStmt( LocalFuncDeclrStmtContext ctx )
     {
         String name = ctx.Name.getText();
+        _c.declareLocal( name );
         
         visit( ctx.Body );
         
-        _c.declareLocal( name );
         _c.storeVariable( name );
         
         return null;
@@ -407,13 +407,6 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         int nArgs = 0;
         
-        if ( ctx.Method != null )
-        {
-            String name = ctx.Method.getText();
-            _c.loadMethod( name );
-            nArgs++;
-        }
-        
         if ( ctx.Arg != null )
         {
             _c.loadConstant( ctx.Arg.getText() );
@@ -425,7 +418,15 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             nArgs += ctx.Args.Exprs.size();
         }
         
-        _c.callFunction( nArgs, ctx.nReturn );
+        if ( ctx.Method != null )
+        {
+            String name = ctx.Method.getText();
+            _c.callMethod( name, nArgs, ctx.nReturn );
+        }
+        else
+        {
+            _c.callFunction( nArgs, ctx.nReturn );
+        }
         
         return null;
     }

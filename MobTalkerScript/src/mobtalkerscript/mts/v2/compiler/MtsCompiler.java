@@ -380,15 +380,6 @@ public class MtsCompiler
         addInstr( InstrStoreT() );
     }
     
-    public void loadMethod( String name )
-    {
-        CompilerLog.info( "Load Method: " + name );
-        
-        addInstr( InstrDup() );
-        loadConstant( valueOf( name ) );
-        loadFromTable();
-    }
-    
     // ========================================
     
     public void assignmentOperation( String op )
@@ -496,6 +487,13 @@ public class MtsCompiler
         CompilerLog.info( "Call Function" );
         
         addInstr( new InstrCallFunc( nArgs, nReturn ) );
+    }
+    
+    public void callMethod( String name, int nArgs, int nReturn )
+    {
+        CompilerLog.info( "Call Method: " + name );
+        
+        addInstr( new InstrCallMethod( name, nArgs, nReturn ) );
     }
     
     public void returnFunction( int nValues )

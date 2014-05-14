@@ -60,7 +60,7 @@ public class MobTalkerScript
         _G.out.println( "CAUTION: This is an alpha version software and may contain bugs and incomplete features!" );
         _G.out.println( "         Please report any bugs you may encounter to the bug tracker." );
         
-        Thread.sleep( 5000 );
+//        Thread.sleep( 5000 );
         
         // Load specified file if any
         if ( !Strings.isNullOrEmpty( options.valueOf( files ) ) )

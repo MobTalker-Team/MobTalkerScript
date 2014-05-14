@@ -1,6 +1,7 @@
 package mobtalkerscript.mts.v2.value.userdata;
 
 import static com.google.common.base.Preconditions.*;
+import static mobtalkerscript.mts.v2.value.userdata.NativeHelpers.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -24,7 +25,7 @@ public class ClassAdapter
     /**
      * Returns a mapper for the given class.
      * <p>
-     * The class needs to be public and the {@link MtsAccessibleClass} annotation must be present.
+     * The class needs to be public and the {@link MtsNativeClass} annotation must be present.
      * <p>
      * Primitives, Arrays, Interfaces and Annotations cannot have an adapter.
      * <p>
@@ -91,7 +92,7 @@ public class ClassAdapter
         if ( !Modifier.isPublic( c.getModifiers() ) )
             return false;
         
-        if ( !c.isAnnotationPresent( MtsAccessibleClass.class ) )
+        if ( !c.isAnnotationPresent( MtsNativeClass.class ) )
             return false;
         
         return true;
@@ -102,7 +103,7 @@ public class ClassAdapter
         String typeName;
         
         // For whatever reason the compiler complains when we do not cast
-        MtsAccessibleClass a = ( (AnnotatedElement) c ).getAnnotation( MtsAccessibleClass.class );
+        MtsNativeClass a = ( (AnnotatedElement) c ).getAnnotation( MtsNativeClass.class );
         typeName = a.name();
         
         if ( Strings.isNullOrEmpty( typeName ) )
@@ -135,7 +136,7 @@ public class ClassAdapter
         if ( !Modifier.isPublic( m.getModifiers() ) )
             return false;
         
-        if ( !m.isAnnotationPresent( MtsCallableMethod.class ) )
+        if ( !m.isAnnotationPresent( MtsNativeMethod.class ) )
             return false;
         
         Class<?>[] paramTypes = m.getParameterTypes();
@@ -154,29 +155,9 @@ public class ClassAdapter
     
     private static String getMethodName( Method m )
     {
-        MtsCallableMethod a = m.getAnnotation( MtsCallableMethod.class );
+        MtsNativeMethod a = m.getAnnotation( MtsNativeMethod.class );
         
         String result = a.name();
         return result == null ? m.getName() : result;
-    }
-    
-    private static int getParamCount( Method m )
-    {
-        Class<?>[] paramTypes = m.getParameterTypes();
-        
-        if ( ( paramTypes.length == 1 ) && isMtsVarargsClass( paramTypes[0] ) )
-            return -1;
-        
-        return paramTypes.length;
-    }
-    
-    private static boolean isMtsValueClass( Class<?> c )
-    {
-        return MtsValue.class.isAssignableFrom( c );
-    }
-    
-    private static boolean isMtsVarargsClass( Class<?> c )
-    {
-        return MtsVarArgs.class.isAssignableFrom( c );
     }
 }

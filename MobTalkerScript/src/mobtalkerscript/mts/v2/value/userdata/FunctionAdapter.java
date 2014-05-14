@@ -7,14 +7,14 @@ import java.lang.reflect.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class MethodAdapter extends MtsFunction
+public class FunctionAdapter extends MtsFunction
 {
     private final Method _nativeMethod;
     private final int _nParams;
     
     // ========================================
     
-    public MethodAdapter( Method nativeMethod, int nParams )
+    public FunctionAdapter( Method nativeMethod, int nParams )
     {
         checkNotNull( nativeMethod );
         checkArgument( nParams >= -1 );
@@ -30,12 +30,12 @@ public class MethodAdapter extends MtsFunction
     private Object[] convertCallArgs( MtsVarArgs args )
     {
         if ( _nParams == -1 )
-            return new Object[] { args.subArgs( 1 ) };
+            return new Object[] { args };
         if ( _nParams == 0 )
             return EMPTY_INVOKEARGS;
         
         Object[] result = new Object[_nParams];
-        for ( int i = 1; i <= _nParams; i++ )
+        for ( int i = 0; i < _nParams; i++ )
         {
             result[i] = args.get( i );
         }
@@ -45,13 +45,12 @@ public class MethodAdapter extends MtsFunction
     @Override
     public MtsValue call( MtsVarArgs args )
     {
-        Object instance = args.get( 0 ).asObject().asJavaObject();
         Object[] callArgs = convertCallArgs( args );
         
         Object result;
         try
         {
-            result = _nativeMethod.invoke( instance, callArgs );
+            result = _nativeMethod.invoke( null, callArgs );
         }
         catch ( IllegalAccessException ex )
         {

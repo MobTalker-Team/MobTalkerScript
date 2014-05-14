@@ -4,11 +4,11 @@ import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import mobtalkerscript.mts.v2.value.*;
 import mobtalkerscript.mts.v2.value.userdata.*;
 
-@MtsAccessibleClass( name = "character" )
+@MtsNativeClass( name = "character" )
 public class MtsDummyCharacter
 {
     
-    @MtsCallableMethod( name = "GetName" )
+    @MtsNativeMethod( name = "GetName" )
     public MtsString getName()
     {
         return valueOf( "FooBar" );

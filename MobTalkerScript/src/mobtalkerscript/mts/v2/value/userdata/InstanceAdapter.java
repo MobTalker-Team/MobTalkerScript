@@ -25,14 +25,6 @@ public class InstanceAdapter extends MtsObject
     // ========================================
     
     @Override
-    public MtsType getType()
-    {
-        return _classAdapter.getType();
-    }
-    
-    // ========================================
-    
-    @Override
     public MtsValue get( MtsValue key, boolean useMetaTag )
     {
         MtsValue method = _classAdapter.getMethod( key.asString().asJavaString() );
@@ -41,5 +33,13 @@ public class InstanceAdapter extends MtsObject
             return super.get( key, useMetaTag );
         
         return method;
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsType getType()
+    {
+        return _classAdapter.getType();
     }
 }

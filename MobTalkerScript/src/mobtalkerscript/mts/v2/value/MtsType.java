@@ -1,21 +1,43 @@
 package mobtalkerscript.mts.v2.value;
 
+import java.util.*;
+
+import com.google.common.collect.*;
+
 public final class MtsType
 {
-    public static final MtsType NIL = new MtsType( "nil" );
-    public static final MtsType BOOLEAN = new MtsType( "boolean" );
-    public static final MtsType NUMBER = new MtsType( "number" );
-    public static final MtsType STRING = new MtsType( "string" );
-    public static final MtsType TABLE = new MtsType( "table" );
-    public static final MtsType FUNCTION = new MtsType( "function" );
-    public static final MtsType VARARGS = new MtsType( "varargs" );
-    public static final MtsType OBJECT = new MtsType( "userdata" );
+    private static final HashMap<String, MtsType> _types = Maps.newHashMap();
+    
+    // ========================================
+    
+    public static MtsType forName( String name )
+    {
+        MtsType type = _types.get( name );
+        if ( type == null )
+        {
+            type = new MtsType( name );
+            _types.put( name, type );
+        }
+        
+        return type;
+    }
+    
+    // ========================================
+    
+    public static final MtsType NIL = forName( "nil" );
+    public static final MtsType BOOLEAN = forName( "boolean" );
+    public static final MtsType NUMBER = forName( "number" );
+    public static final MtsType STRING = forName( "string" );
+    public static final MtsType TABLE = forName( "table" );
+    public static final MtsType FUNCTION = forName( "function" );
+    public static final MtsType VARARGS = forName( "varargs" );
+    public static final MtsType OBJECT = forName( "userdata" );
     
     // ========================================
     
     private final String _typeName;
     
-    public MtsType( String typeName )
+    private MtsType( String typeName )
     {
         _typeName = typeName;
     }

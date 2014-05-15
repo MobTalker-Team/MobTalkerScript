@@ -7,11 +7,10 @@ import joptsimple.*;
 import joptsimple.internal.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.*;
-import mobtalkerscript.mts.v2.compiler.antlr.*;
-import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.lib.mobtalker.*;
 import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.mts.v2.value.userdata.*;
 import mobtalkerscript.util.logging.*;
 
 /**
@@ -38,21 +37,22 @@ public class MobTalkerScript
         MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
         MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
         
-        // Preload some classes
-        Instructions.class.getClass();
-        MtsParser.class.getClass();
-        MtsCompiler.class.getClass();
-        
         // Initialize engine
         MtsGlobals _G = new MtsGlobals();
+        _G.loadString( ";", "Preloader" );
+        
         _G.loadLibrary( new MtsMathLib() );
         _G.loadLibrary( new MtsTableLib() );
         
-        _G.loadLibrary( new ConsoleCommandLib() );
+//        _G.loadLibrary( new ConsoleCommandLib() );
+        LibraryAdapter.bindTo( new AnnotatedConsoleCommandLib( _G ), _G );
+        
         _G.loadLibrary( new MobTalkerConsoleInteractionLib( new DummyTalkingPlayer( "Console", 20 ),
                                                             new DummyTalkingEntity( "", "Creeper", 20, 0 ) ) );
         _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
-        _G.loadLibrary( new MinecraftConsoleWorldLib() );
+//        _G.loadLibrary( new MinecraftConsoleWorldLib() );
+        
+        _G.set( "World", LibraryAdapter.bind( new MinecraftConsoleWorldLib() ) );
         
         _G.out.println( "MobTalkerScript " //
                         + _G.get( "_VERSION" ).asString().asJavaString()

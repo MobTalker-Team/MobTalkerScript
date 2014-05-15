@@ -1,161 +1,102 @@
 package mobtalkerscript.mts.v2.lib.mobtalker;
 
-import mobtalkerscript.mts.v2.lib.*;
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.mts.v2.value.userdata.*;
 
-public class MinecraftConsoleWorldLib extends MtsGlobalLibrary
+public class MinecraftConsoleWorldLib
 {
-    
-    @Override
-    public void bind()
-    {
-        MtsTable lib = new MtsTable( 0, 13 );
-        
-        bindFunction( lib, "GetBiome", new GetBiome() );
-        bindFunction( lib, "GetWeather", new GetWeather() );
-        
-        bindFunction( lib, "GetID", new GetID() );
-        bindFunction( lib, "GetMoonphase", new GetMoonphase() );
-        bindFunction( lib, "GetName", new GetName() );
-        bindFunction( lib, "GetTime", new GetTime() );
-        bindFunction( lib, "GetSpawnpoint", new GetSpawnpoint() );
-        bindFunction( lib, "GetTime", new GetTime() );
-        bindFunction( lib, "IsDaytime", new IsDaytime() );
-        
-        bindFunction( lib, "GetDifficulty", new GetDifficulty() );
-        bindFunction( lib, "GetGameRule", new GetGameRule() );
-        bindFunction( lib, "GetType", new GetType() );
-        bindFunction( lib, "IsSinglePlayer", new IsSinglePlayer() );
-        
-        _G.set( "World", lib, false );
-    }
     
     // ========================================
     // Position and world dependent
     
-    private final class GetBiome extends MtsZeroArgFunction
+    @MtsNativeLibraryFunction( name = "GetBiome" )
+    public MtsString GetBiome()
     {
-        @Override
-        protected MtsValue invoke()
-        {
-            return valueOf( "Plains" );
-        }
+        return valueOf( "Plains" );
     }
     
-    private final class GetWeather extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "GetWeather" )
+    public MtsVarArgs GetWeather( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            // clear, raining, snowing,
-            return new MtsVarArgs( valueOf( "clear" ), FALSE );
-        }
+        // clear, raining, snowing,
+        return new MtsVarArgs( valueOf( "clear" ), FALSE );
     }
     
     // ========================================
     // World dependent
     
-    private final class GetID extends MtsZeroArgFunction
+    @MtsNativeLibraryFunction( name = "GetID" )
+    public MtsNumber GetID()
     {
-        @Override
-        protected MtsValue invoke()
-        {
-            return ZERO;
-        }
+        return ZERO;
     }
     
-    private final class GetMoonphase extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "GetMoonphase" )
+    public MtsNumber GetMoonphase( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return ZERO;
-        }
+        return ZERO;
     }
     
-    private final class GetName extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "GetName" )
+    public MtsString GetName( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return valueOf( "Overworld" );
-        }
+        return valueOf( "Overworld" );
     }
     
-    private final class GetSpawnpoint extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "GetSpawnpoint" )
+    public MtsVarArgs GetSpawnpoint( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return new MtsVarArgs( ZERO, ZERO, ZERO );
-        }
+        return new MtsVarArgs( ZERO, ZERO, ZERO );
     }
     
-    private final class GetTime extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "GetTime" )
+    public MtsNumber GetTime( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return ZERO;
-        }
+        return ZERO;
     }
     
-    private final class IsDaytime extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "IsDaytime" )
+    public MtsBoolean IsDaytime( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return TRUE;
-        }
+        return TRUE;
     }
     
     // ========================================
     // World independent
     
-    private final class GetDifficulty extends MtsZeroArgFunction
+    @MtsNativeLibraryFunction( name = "GetDifficulty" )
+    public MtsVarArgs GetDifficulty()
     {
-        @Override
-        protected MtsValue invoke()
-        {
-            // peaceful, easy, normal, hard
-            return new MtsVarArgs( valueOf( "peaceful" ), FALSE );
-        }
+        // peaceful, easy, normal, hard
+        return new MtsVarArgs( valueOf( "peaceful" ), FALSE );
     }
     
-    private final class GetGameRule extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "GetGameRule" )
+    public MtsBoolean GetGameRule( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-//             ("doFireTick", "true");
-//             ("mobGriefing", "true");
-//             ("keepInventory", "false");
-//             ("doMobSpawning", "true");
-//             ("doMobLoot", "true");
-//             ("doTileDrops", "true");
-//             ("commandBlockOutput", "true");
-//             ("naturalRegeneration", "true");
-//             ("doDaylightCycle", "true");
-            return FALSE;
-        }
+//         ("doFireTick", "true");
+//         ("mobGriefing", "true");
+//         ("keepInventory", "false");
+//         ("doMobSpawning", "true");
+//         ("doMobLoot", "true");
+//         ("doTileDrops", "true");
+//         ("commandBlockOutput", "true");
+//         ("naturalRegeneration", "true");
+//         ("doDaylightCycle", "true");
+        return FALSE;
     }
     
-    private final class GetType extends MtsOneArgFunction
+    @MtsNativeLibraryFunction( name = "GetType" )
+    public MtsString GetType( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            // Default, Flat, LargeBiomes
-            return valueOf( "Default" );
-        }
+        // default, flat, largebiomes
+        return valueOf( "default" );
     }
     
-    private final class IsSinglePlayer extends MtsZeroArgFunction
+    @MtsNativeLibraryFunction( name = "GetType" )
+    public MtsBoolean IsSinglePlayer()
     {
-        @Override
-        protected MtsValue invoke()
-        {
-            return TRUE;
-        }
+        return TRUE;
     }
 }

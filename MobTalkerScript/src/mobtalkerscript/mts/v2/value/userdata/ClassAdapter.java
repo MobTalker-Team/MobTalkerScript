@@ -61,7 +61,7 @@ public class ClassAdapter
         
         _mappedClass = mappedClass;
         
-        _type = createType( mappedClass );
+        _type = getType( mappedClass );
         _methods = createMethodAdapters( mappedClass );
     }
     
@@ -98,20 +98,27 @@ public class ClassAdapter
         return true;
     }
     
-    private static MtsType createType( Class<?> c )
+    private static MtsType getType( Class<?> c )
     {
-        String typeName;
-        
-        // For whatever reason the compiler complains when we do not cast
-        MtsNativeClass a = ( (AnnotatedElement) c ).getAnnotation( MtsNativeClass.class );
-        typeName = a.name();
-        
-        if ( Strings.isNullOrEmpty( typeName ) )
+        for ( Field f : c.getDeclaredFields() )
         {
-            typeName = c.getSimpleName();
+            if ( Modifier.isStatic( f.getModifiers() )
+                 && Modifier.isPublic( f.getModifiers() )
+                 && ( f.getType() == MtsType.class )
+                 && f.isAnnotationPresent( MtsNativeType.class ) )
+            {
+                try
+                {
+                    return (MtsType) f.get( null );
+                }
+                catch ( Exception ex )
+                {
+                    throw Throwables.propagate( ex );
+                }
+            }
         }
         
-        return new MtsType( typeName );
+        throw new RuntimeException();
     }
     
     private static Map<String, MethodAdapter> createMethodAdapters( Class<?> c )
@@ -124,8 +131,7 @@ public class ClassAdapter
                 continue;
             
             String name = getMethodName( m );
-            int nParams = getParamCount( m );
-            methods.put( name, new MethodAdapter( m, nParams ) );
+            methods.put( name, new MethodAdapter( m ) );
         }
         
         return methods;

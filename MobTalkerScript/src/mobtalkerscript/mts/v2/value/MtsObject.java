@@ -31,7 +31,7 @@ public abstract class MtsObject extends MtsValue
     }
     
     @Override
-    public MtsObject asObject()
+    public MtsObject asUserdata()
     {
         return this;
     }
@@ -45,12 +45,19 @@ public abstract class MtsObject extends MtsValue
     @Override
     public MtsBoolean isMtsEqual( MtsValue x )
     {
-        return x.isObject() ? valueOf( x.asObject().equals( _value ) ) : FALSE;
+        return x.isObject() ? valueOf( x.asUserdata().equals( _value ) ) : FALSE;
     }
     
     public Object asJavaObject()
     {
         return _value;
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public <T> T asNative() throws ClassCastException
+    {
+        return (T) _value;
     }
     
     // ========================================

@@ -22,9 +22,14 @@ public class LibraryAdapter
     
     // ========================================
     
-    /**
-     */
-    public static void bindLibrary( Object library, MtsTable table )
+    public static MtsTable bind( Object library )
+    {
+        MtsTable libHolder = new MtsTable();
+        bindTo( library, libHolder );
+        return libHolder;
+    }
+    
+    public static void bindTo( Object library, MtsTable table )
     {
         Class<?> c = library.getClass();
         
@@ -38,10 +43,22 @@ public class LibraryAdapter
             _mappers.put( c, mapper );
         }
         
-        for ( Entry<String, Method> entry : mapper._methods.entrySet() )
+        for ( Entry<String, Method> entry : mapper.getMethods() )
         {
-            LibraryFunctionAdapter adapter = new LibraryFunctionAdapter( library, entry.getValue() );
-            table.set( entry.getKey(), adapter, false );
+            String name = entry.getKey();
+            Method method = entry.getValue();
+            
+            JavaMethodAdapter adapter;
+            if ( Modifier.isStatic( method.getModifiers() ) )
+            {
+                adapter = new FunctionAdapter( method );
+            }
+            else
+            {
+                adapter = new LibraryMethodAdapter( library, method );
+            }
+            
+            table.set( name, adapter, false );
         }
     }
     
@@ -54,7 +71,14 @@ public class LibraryAdapter
     private LibraryAdapter( Class<?> mappedClass )
     {
         checkNotNull( mappedClass );
-        _methods = getMethods( mappedClass );
+        _methods = getValidMethods( mappedClass );
+    }
+    
+    // ========================================
+    
+    public Set<Entry<String, Method>> getMethods()
+    {
+        return _methods.entrySet();
     }
     
     // ========================================
@@ -70,7 +94,7 @@ public class LibraryAdapter
         return true;
     }
     
-    private static Map<String, Method> getMethods( Class<?> c )
+    private static Map<String, Method> getValidMethods( Class<?> c )
     {
         Map<String, Method> methods = Maps.newHashMap();
         
@@ -91,7 +115,7 @@ public class LibraryAdapter
         if ( !Modifier.isPublic( m.getModifiers() ) )
             return false;
         
-        if ( !m.isAnnotationPresent( MtsNativeFunction.class ) )
+        if ( !m.isAnnotationPresent( MtsNativeLibraryFunction.class ) )
             return false;
         
         Class<?>[] paramTypes = m.getParameterTypes();
@@ -110,7 +134,7 @@ public class LibraryAdapter
     
     private static String getMethodName( Method m )
     {
-        MtsNativeFunction a = m.getAnnotation( MtsNativeFunction.class );
+        MtsNativeLibraryFunction a = m.getAnnotation( MtsNativeLibraryFunction.class );
         
         String result = a.name();
         return result == null ? m.getName() : result;

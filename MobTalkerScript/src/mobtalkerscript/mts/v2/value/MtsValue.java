@@ -132,6 +132,14 @@ public abstract class MtsValue implements Comparable<MtsValue>
         return false;
     }
     
+    /**
+     * Checks if this value is of the given type.
+     */
+    public boolean is( MtsType type )
+    {
+        return getType().equals( type );
+    }
+    
     // ========================================
     
     /**
@@ -165,7 +173,12 @@ public abstract class MtsValue implements Comparable<MtsValue>
     /**
      * Equivalent to a Java typecast to {@link MtsObject}.
      */
-    public MtsObject asObject()
+    public MtsObject asUserdata()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.OBJECT + ", got " + getType() );
+    }
+    
+    public <T> T asNative()
     {
         throw new ScriptRuntimeException( "Expected " + MtsType.OBJECT + ", got " + getType() );
     }

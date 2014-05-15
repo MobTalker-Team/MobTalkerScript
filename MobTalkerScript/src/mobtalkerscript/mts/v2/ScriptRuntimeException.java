@@ -80,4 +80,12 @@ public class ScriptRuntimeException extends RuntimeException
         return s.toString();
     }
     
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        return createStackTrace();
+    }
+    
 }

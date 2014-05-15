@@ -1,74 +1,38 @@
 package mobtalkerscript.mts.v2.value.userdata;
 
-import static com.google.common.base.Preconditions.*;
-
 import java.lang.reflect.*;
 
-import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public class FunctionAdapter extends MtsFunction
+public class FunctionAdapter extends JavaMethodAdapter
 {
-    private final Method _nativeMethod;
-    private final int _nParams;
-    
-    // ========================================
-    
-    public FunctionAdapter( Method nativeMethod, int nParams )
+    public FunctionAdapter( Method method )
     {
-        checkNotNull( nativeMethod );
-        checkArgument( nParams >= -1 );
-        
-        _nativeMethod = nativeMethod;
-        _nParams = nParams;
+        super( method );
     }
     
     // ========================================
     
-    private static final Object[] EMPTY_INVOKEARGS = new Object[0];
-    
-    private Object[] convertCallArgs( MtsVarArgs args )
+    @Override
+    protected Object getCallInstance( MtsVarArgs args )
     {
-        if ( _nParams == -1 )
-            return new Object[] { args };
-        if ( _nParams == 0 )
-            return EMPTY_INVOKEARGS;
-        
-        Object[] result = new Object[_nParams];
-        for ( int i = 0; i < _nParams; i++ )
-        {
-            result[i] = args.get( i );
-        }
-        return result;
+        return null;
     }
     
     @Override
-    public MtsValue call( MtsVarArgs args )
+    protected Object[] getCallArguments( MtsVarArgs args, int nParams )
     {
-        Object[] callArgs = convertCallArgs( args );
+        if ( nParams == -1 )
+            return new Object[] { args };
+        if ( nParams == 0 )
+            return EMPTY_CALLARGS;
         
-        Object result;
-        try
+        Object[] result = new Object[nParams];
+        for ( int i = 0; i < nParams; i++ )
         {
-            result = _nativeMethod.invoke( null, callArgs );
-        }
-        catch ( IllegalAccessException ex )
-        {
-            throw new Error( ex );
-        }
-        catch ( IllegalArgumentException ex )
-        {
-            throw new ScriptEngineException( ex );
-        }
-        catch ( InvocationTargetException ex )
-        {
-            throw new ScriptRuntimeException( ex.getMessage() );
+            result[i] = args.get( i );
         }
         
-        if ( result == null )
-            return EMPTY_VARARGS;
-        
-        return (MtsValue) result;
+        return result;
     }
-    
 }

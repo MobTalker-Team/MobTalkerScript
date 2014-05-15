@@ -21,6 +21,7 @@ public class MobTalkerScript
     public static void main( String[] args ) throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
+        MtsCompiler.loadString( ";", "" );
         
         // Options
         OptionParser parser = new OptionParser();
@@ -39,7 +40,6 @@ public class MobTalkerScript
         
         // Initialize engine
         MtsGlobals _G = new MtsGlobals();
-        _G.loadString( ";", "Preloader" );
         
         _G.loadLibrary( new MtsMathLib() );
         _G.loadLibrary( new MtsTableLib() );
@@ -74,7 +74,7 @@ public class MobTalkerScript
             MtsFunctionPrototype fileChunk = null;
             try
             {
-                fileChunk = _G.loadFile( path );
+                fileChunk = MtsCompiler.loadFile( path );
             }
             catch ( MtsSyntaxError ex )
             {
@@ -99,7 +99,7 @@ public class MobTalkerScript
         // Interactive loop
         for ( ;; )
         {
-            Thread.sleep( 1 );
+            Thread.sleep( 100 );
             
             _G.out.print( "> " );
             String line = _G.in.readLine();
@@ -110,7 +110,7 @@ public class MobTalkerScript
             MtsFunctionPrototype chunk;
             try
             {
-                chunk = _G.loadString( line, "stdin" );
+                chunk = MtsCompiler.loadString( line, "stdin" );
             }
             catch ( Exception ex )
             {
@@ -118,7 +118,14 @@ public class MobTalkerScript
                 continue;
             }
             
-            new MtsClosure( chunk, _G ).call();
+            try
+            {
+                new MtsClosure( chunk, _G ).call();
+            }
+            catch ( ScriptRuntimeException ex )
+            {
+                _G.err.println( ex.createStackTrace() );
+            }
         }
     }
     

@@ -1,21 +1,99 @@
 package mobtalkerscript.mts.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Strings.*;
 import static mobtalkerscript.mts.v2.compiler.CompilerConstants.*;
 import static mobtalkerscript.mts.v2.instruction.Instructions.*;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import static mobtalkerscript.util.logging.MtsLog.*;
 
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
 
 import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.compiler.antlr.*;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.value.*;
 
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.*;
+
 public class MtsCompiler
 {
+    public static MtsFunctionPrototype loadFile( String path ) throws Exception
+    {
+        return loadFile( Paths.get( path ) );
+    }
+    
+    public static MtsFunctionPrototype loadFile( File file ) throws Exception
+    {
+        return loadFile( file.toPath() );
+    }
+    
+    public static MtsFunctionPrototype loadFile( Path path ) throws Exception
+    {
+        checkArgument( Files.exists( path ), "Path '%s' does not exist", path.toAbsolutePath() );
+        
+        return load( new ANTLRFileStream( path.toString() ) );
+    }
+    
+    // ========================================
+    
+    public static MtsFunctionPrototype loadString( String chunk, String source ) throws Exception
+    {
+        checkArgument( !isNullOrEmpty( chunk ), "chunk cannot be null or empty" );
+        
+        ANTLRInputStream stream = new ANTLRInputStream( chunk );
+        stream.name = source;
+        
+        return load( stream );
+    }
+    
+    // ========================================
+    
+    public static MtsFunctionPrototype load( ANTLRInputStream stream ) throws Exception
+    {
+        // Lex it
+        MtsLexer lexer = new MtsLexer( stream );
+        lexer.setTokenFactory( new CommonTokenFactory( false ) );
+        TokenStream tokens = new UnbufferedTokenStream<Token>( lexer );
+        
+        // Parse it
+        MtsParser parser = new MtsParser( tokens );
+        parser.removeErrorListeners();
+        parser.addErrorListener( new MtsAntlrErrorListener() );
+        parser.setErrorHandler( new MtsErrorStrategy() );
+        
+        // TODO: SLL doesn't seem to work, look further into it.
+        parser.getInterpreter().setPredictionMode( PredictionMode.LL_EXACT_AMBIG_DETECTION );
+        
+        ChunkContext chunk;
+        try
+        {
+            chunk = parser.chunk();
+        }
+        catch ( MtsSyntaxError ex )
+        {
+//        throw new NullPointerException( "cannot be null" );
+            throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
+        }
+        
+        // Compile it
+        MtsCompiler compiler = new MtsCompiler( tokens.getSourceName(),
+                                                chunk.getStart().getLine(),
+                                                chunk.getStop().getLine() );
+        
+        AntlrCompilerAdapter adapter = new AntlrCompilerAdapter( compiler );
+        adapter.compile( chunk );
+        
+        return compiler.compile();
+    }
+    
+    // ========================================
     
     private final FunctionState _mainFunction;
     private FunctionState _currentFunction;
@@ -486,14 +564,14 @@ public class MtsCompiler
     {
         CompilerLog.info( "Call Function" );
         
-        addInstr( new InstrCallFunc( nArgs, nReturn ) );
+        addInstr( new InstrCallF( nArgs, nReturn ) );
     }
     
     public void callMethod( String name, int nArgs, int nReturn )
     {
         CompilerLog.info( "Call Method: " + name );
         
-        addInstr( new InstrCallMethod( name, nArgs, nReturn ) );
+        addInstr( new InstrCallM( name, nArgs, nReturn ) );
     }
     
     public void returnFunction( int nValues )

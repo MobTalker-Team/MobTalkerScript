@@ -82,7 +82,7 @@ public class MtsPackageLib extends MtsGlobalLibrary
                     MtsFunctionPrototype p;
                     try
                     {
-                        p = _G.loadFile( path );
+                        p = MtsCompiler.loadFile( path );
                     }
                     catch ( MtsSyntaxError ex )
                     {

@@ -16,7 +16,7 @@ public class MethodAdapter extends JavaMethodAdapter
     @Override
     protected Object getCallInstance( MtsVarArgs args )
     {
-        return args.get( 0 );
+        return args.get( 0 ).asUserdata().asJavaObject();
     }
     
     @Override

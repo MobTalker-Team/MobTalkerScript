@@ -3,14 +3,14 @@ package mobtalkerscript.mts.v2.instruction;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public final class InstrCallFunc extends MtsInstruction
+public final class InstrCallF extends MtsInstruction
 {
     private final int _nArgs;
     private final int _nReturn;
     
     // ========================================
     
-    public InstrCallFunc( int nArgs, int nReturn )
+    public InstrCallF( int nArgs, int nReturn )
     {
         _nArgs = nArgs;
         _nReturn = nReturn;

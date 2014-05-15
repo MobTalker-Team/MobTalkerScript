@@ -1,6 +1,7 @@
 package mobtalkerscript.mts.v2.lib;
 
 import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.value.*;
 
 public final class MtsBaseLib extends MtsGlobalLibrary
@@ -225,7 +226,7 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             MtsFunctionPrototype p;
             try
             {
-                p = getGlobals().loadString( args.get( 0 ).asString().asJavaString(), "string" );
+                p = MtsCompiler.loadString( args.get( 0 ).asString().asJavaString(), "string" );
             }
             catch ( Exception ex )
             {

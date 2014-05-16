@@ -58,7 +58,7 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             if ( !MtsBoolean.isTrue( arg1 ) )
             {
                 String msg = arg2.isNil() ? "assertion failed!" : arg2.toMtsString().asJavaString();
-                throw new ScriptRuntimeException( msg );
+                throw new ScriptRuntimeException( 1, msg );
             }
             
             return NIL;

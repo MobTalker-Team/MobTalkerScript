@@ -9,9 +9,10 @@ import java.util.Map.Entry;
 
 import mobtalkerscript.mts.v2.value.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
-public class LibraryAdapter
+/* package */class LibraryAdapter
 {
     private static final Map<Class<?>, LibraryAdapter> _mappers;
     
@@ -22,11 +23,38 @@ public class LibraryAdapter
     
     // ========================================
     
+    public static LibraryAdapter getMapper( Class<?> c )
+    {
+        LibraryAdapter mapper = _mappers.get( c );
+        if ( mapper == null )
+        {
+            mapper = new LibraryAdapter( c );
+            _mappers.put( c, mapper );
+        }
+        return mapper;
+    }
+    
+    public static MtsTable bind( Class<?> library )
+    {
+        MtsTable libHolder = new MtsTable();
+        bindTo( library, libHolder );
+        return libHolder;
+    }
+    
     public static MtsTable bind( Object library )
     {
         MtsTable libHolder = new MtsTable();
         bindTo( library, libHolder );
         return libHolder;
+    }
+    
+    public static void bindTo( Class<?> library, MtsTable table )
+    {
+        if ( !checkClass( library ) )
+            throw new IllegalArgumentException( library.getSimpleName() + " is not a valid class!" );
+        
+        LibraryAdapter mapper = getMapper( library );
+        mapper.createAndBindAdapter( null, table );
     }
     
     public static void bindTo( Object library, MtsTable table )
@@ -36,14 +64,30 @@ public class LibraryAdapter
         if ( !checkClass( c ) )
             throw new IllegalArgumentException( c.getSimpleName() + " is not a valid class!" );
         
-        LibraryAdapter mapper = _mappers.get( c );
-        if ( mapper == null )
-        {
-            mapper = new LibraryAdapter( c );
-            _mappers.put( c, mapper );
-        }
+        LibraryAdapter mapper = getMapper( c );
+        mapper.createAndBindAdapter( library, table );
+    }
+    
+    // ========================================
+    
+    private final Map<String, Method> _methods;
+    private final Map<String, MtsValue> _fields;
+    
+    // ========================================
+    
+    private LibraryAdapter( Class<?> mappedClass )
+    {
+        checkNotNull( mappedClass );
         
-        for ( Entry<String, Method> entry : mapper.getMethods() )
+        _methods = getMethods( mappedClass );
+        _fields = getFields( mappedClass );
+    }
+    
+    // ========================================
+    
+    public void createAndBindAdapter( Object instance, MtsTable t )
+    {
+        for ( Entry<String, Method> entry : _methods.entrySet() )
         {
             String name = entry.getKey();
             Method method = entry.getValue();
@@ -53,32 +97,25 @@ public class LibraryAdapter
             {
                 adapter = new FunctionAdapter( method );
             }
+            else if ( instance != null )
+            {
+                adapter = new LibraryMethodAdapter( instance, method );
+            }
             else
             {
-                adapter = new LibraryMethodAdapter( library, method );
+                throw new IllegalArgumentException( "A static library cannot contain an annotated non-static method!" );
             }
             
-            table.set( name, adapter, false );
+            t.set( name, adapter, false );
         }
-    }
-    
-    // ========================================
-    
-    private final Map<String, Method> _methods;
-    
-    // ========================================
-    
-    private LibraryAdapter( Class<?> mappedClass )
-    {
-        checkNotNull( mappedClass );
-        _methods = getValidMethods( mappedClass );
-    }
-    
-    // ========================================
-    
-    public Set<Entry<String, Method>> getMethods()
-    {
-        return _methods.entrySet();
+        
+        for ( Entry<String, MtsValue> field : _fields.entrySet() )
+        {
+            String name = field.getKey();
+            MtsValue value = field.getValue();
+            
+            t.set( name, value );
+        }
     }
     
     // ========================================
@@ -94,49 +131,37 @@ public class LibraryAdapter
         return true;
     }
     
-    private static Map<String, Method> getValidMethods( Class<?> c )
+    private static Map<String, Method> getMethods( Class<?> c )
     {
         Map<String, Method> methods = Maps.newHashMap();
         
-        for ( Method m : c.getMethods() )
+        for ( Method m : getAnnotatedMethods( c ) )
         {
-            if ( !checkMethodSignature( m ) )
-                continue;
-            
-            String name = getMethodName( m );
-            methods.put( name, m );
+            methods.put( getMethodName( m ), m );
         }
         
         return methods;
     }
     
-    private static boolean checkMethodSignature( Method m )
+    private static Map<String, MtsValue> getFields( Class<?> c )
     {
-        if ( !Modifier.isPublic( m.getModifiers() ) )
-            return false;
+        Map<String, MtsValue> fields = Maps.newHashMap();
         
-        if ( !m.isAnnotationPresent( MtsNativeLibraryFunction.class ) )
-            return false;
-        
-        Class<?>[] paramTypes = m.getParameterTypes();
-        for ( Class<?> paramType : paramTypes )
+        for ( Field f : getAnnotatedFields( c ) )
         {
-            if ( !isMtsValueClass( paramType ) )
-                return false;
+            if ( !Modifier.isFinal( f.getModifiers() ) )
+                continue;
+            
+            try
+            {
+                fields.put( getFieldName( f ), (MtsValue) f.get( null ) );
+            }
+            catch ( Exception ex )
+            {
+                throw Throwables.propagate( ex );
+            }
         }
         
-        Class<?> returnType = m.getReturnType();
-        if ( !isMtsValueClass( returnType ) && ( returnType != Void.TYPE ) )
-            return false;
-        
-        return true;
-    }
-    
-    private static String getMethodName( Method m )
-    {
-        MtsNativeLibraryFunction a = m.getAnnotation( MtsNativeLibraryFunction.class );
-        
-        String result = a.name();
-        return result == null ? m.getName() : result;
+        return fields;
     }
 }

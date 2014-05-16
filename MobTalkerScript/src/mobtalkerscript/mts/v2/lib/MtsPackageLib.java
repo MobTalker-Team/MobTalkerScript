@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.lib;
 
+import static mobtalkerscript.util.MtsCheck.*;
+
 import java.nio.file.*;
 import java.util.*;
 
@@ -46,9 +48,6 @@ public class MtsPackageLib extends MtsGlobalLibrary
     public void bind()
     {
         bindFunction( _G, "require", new Require() );
-        
-//        MtsTable lib = new MtsTable( 0, 1 );
-//        env.set( "Package", lib );
     }
     
     // ========================================
@@ -58,9 +57,7 @@ public class MtsPackageLib extends MtsGlobalLibrary
         @Override
         protected MtsValue invoke( MtsValue arg )
         {
-            checkString( arg, 1 );
-            
-            MtsString libName = arg.asString();
+            String libName = checkString( arg, 0 );
             MtsValue lib = _loadedPackages.get( libName );
             
             if ( !lib.isNil() )
@@ -68,13 +65,12 @@ public class MtsPackageLib extends MtsGlobalLibrary
             
             for ( String pathPattern : _searchPaths )
             {
-                
-                Path path = Paths.get( pathPattern.replace( "?", libName.asJavaString() ) );
+                Path path = Paths.get( pathPattern.replace( "?", libName ) );
                 
                 _G.out.println( "Searching path '"
                                 + path.toString()
                                 + " for module '"
-                                + libName.asJavaString()
+                                + libName
                                 + "'" );
                 
                 if ( Files.exists( path ) )
@@ -100,7 +96,7 @@ public class MtsPackageLib extends MtsGlobalLibrary
                 }
             }
             
-            throw new ScriptRuntimeException( "module '%s' not found", libName.asJavaString() );
+            throw new ScriptRuntimeException( "module '%s' not found", libName );
         }
     }
 }

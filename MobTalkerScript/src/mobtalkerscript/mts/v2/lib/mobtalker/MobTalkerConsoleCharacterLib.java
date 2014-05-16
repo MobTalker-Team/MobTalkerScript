@@ -39,7 +39,7 @@ public class MobTalkerConsoleCharacterLib extends MtsGlobalLibrary
 //                c.set( "SoundPath", EMPTY_STRING );
 //            }
             
-            return InstanceAdapter.forInstance( new MtsDummyCharacter() );
+            return MtsNatives.wrapInstance( new MtsDummyCharacter() );
         }
         
     }

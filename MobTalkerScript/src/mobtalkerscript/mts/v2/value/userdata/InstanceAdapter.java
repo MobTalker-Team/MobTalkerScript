@@ -4,19 +4,11 @@ import mobtalkerscript.mts.v2.value.*;
 
 public class InstanceAdapter extends MtsObject
 {
-    public static InstanceAdapter forInstance( Object instance )
-    {
-        ClassAdapter classAdapter = ClassAdapter.forClass( instance.getClass() );
-        return new InstanceAdapter( classAdapter, instance );
-    }
-    
-    // ========================================
-    
     private final ClassAdapter _classAdapter;
     
     // ========================================
     
-    private InstanceAdapter( ClassAdapter classAdapter, Object value )
+    /* package */InstanceAdapter( ClassAdapter classAdapter, Object value )
     {
         super( value );
         _classAdapter = classAdapter;

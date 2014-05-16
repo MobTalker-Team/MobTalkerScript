@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Target( ElementType.METHOD )
 public @interface MtsNativeFunction
 {
-    String name();
+    String name() default "";
 }

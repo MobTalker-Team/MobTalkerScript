@@ -11,16 +11,10 @@ import mobtalkerscript.mts.v2.value.*;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
-public class ClassAdapter
+/* package */class ClassAdapter
 {
-    private static final Map<Class<?>, ClassAdapter> _mappers;
     
-    static
-    {
-        _mappers = Maps.newHashMap();
-    }
-    
-    // ========================================
+    private static final Map<Class<?>, ClassAdapter> _mappers = Maps.newHashMap();
     
     /**
      * Returns a mapper for the given class.
@@ -31,9 +25,9 @@ public class ClassAdapter
      * <p>
      * Adapters are created lazily and this method will return the same adapter for the same class in subsequent calls.
      */
-    public static ClassAdapter forClass( Class<?> c )
+    public static ClassAdapter get( Class<?> c )
     {
-        if ( !checkClass( c ) )
+        if ( !ClassAdapter.checkClass( c ) )
             throw new IllegalArgumentException( c.getSimpleName() + " is not a valid class!" );
         
         ClassAdapter mapper = _mappers.get( c );
@@ -118,52 +112,18 @@ public class ClassAdapter
             }
         }
         
-        throw new RuntimeException();
+        return MtsType.forName( getClassName( c ) );
     }
     
     private static Map<String, MethodAdapter> createMethodAdapters( Class<?> c )
     {
         Map<String, MethodAdapter> methods = Maps.newHashMap();
         
-        for ( Method m : c.getMethods() )
+        for ( Method m : getAnnotatedMethods( c ) )
         {
-            if ( !checkMethodSignature( m ) )
-                continue;
-            
-            String name = getMethodName( m );
-            methods.put( name, new MethodAdapter( m ) );
+            methods.put( getMethodName( m ), new MethodAdapter( m ) );
         }
         
         return methods;
-    }
-    
-    private static boolean checkMethodSignature( Method m )
-    {
-        if ( !Modifier.isPublic( m.getModifiers() ) )
-            return false;
-        
-        if ( !m.isAnnotationPresent( MtsNativeMethod.class ) )
-            return false;
-        
-        Class<?>[] paramTypes = m.getParameterTypes();
-        for ( Class<?> paramType : paramTypes )
-        {
-            if ( !isMtsValueClass( paramType ) )
-                return false;
-        }
-        
-        Class<?> returnType = m.getReturnType();
-        if ( !isMtsValueClass( returnType ) && ( returnType != Void.TYPE ) )
-            return false;
-        
-        return true;
-    }
-    
-    private static String getMethodName( Method m )
-    {
-        MtsNativeMethod a = m.getAnnotation( MtsNativeMethod.class );
-        
-        String result = a.name();
-        return result == null ? m.getName() : result;
     }
 }

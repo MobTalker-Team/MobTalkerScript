@@ -6,17 +6,16 @@ import mobtalkerscript.mts.v2.value.userdata.*;
 
 public class MinecraftConsoleWorldLib
 {
-    
     // ========================================
     // Position and world dependent
     
-    @MtsNativeLibraryFunction( name = "GetBiome" )
+    @MtsNativeFunction
     public MtsString GetBiome()
     {
         return valueOf( "Plains" );
     }
     
-    @MtsNativeLibraryFunction( name = "GetWeather" )
+    @MtsNativeFunction
     public MtsVarArgs GetWeather( MtsValue arg )
     {
         // clear, raining, snowing,
@@ -26,37 +25,37 @@ public class MinecraftConsoleWorldLib
     // ========================================
     // World dependent
     
-    @MtsNativeLibraryFunction( name = "GetID" )
+    @MtsNativeFunction
     public MtsNumber GetID()
     {
         return ZERO;
     }
     
-    @MtsNativeLibraryFunction( name = "GetMoonphase" )
+    @MtsNativeFunction
     public MtsNumber GetMoonphase( MtsValue arg )
     {
         return ZERO;
     }
     
-    @MtsNativeLibraryFunction( name = "GetName" )
+    @MtsNativeFunction
     public MtsString GetName( MtsValue arg )
     {
         return valueOf( "Overworld" );
     }
     
-    @MtsNativeLibraryFunction( name = "GetSpawnpoint" )
+    @MtsNativeFunction
     public MtsVarArgs GetSpawnpoint( MtsValue arg )
     {
         return new MtsVarArgs( ZERO, ZERO, ZERO );
     }
     
-    @MtsNativeLibraryFunction( name = "GetTime" )
+    @MtsNativeFunction
     public MtsNumber GetTime( MtsValue arg )
     {
         return ZERO;
     }
     
-    @MtsNativeLibraryFunction( name = "IsDaytime" )
+    @MtsNativeFunction
     public MtsBoolean IsDaytime( MtsValue arg )
     {
         return TRUE;
@@ -65,14 +64,14 @@ public class MinecraftConsoleWorldLib
     // ========================================
     // World independent
     
-    @MtsNativeLibraryFunction( name = "GetDifficulty" )
+    @MtsNativeFunction
     public MtsVarArgs GetDifficulty()
     {
         // peaceful, easy, normal, hard
         return new MtsVarArgs( valueOf( "peaceful" ), FALSE );
     }
     
-    @MtsNativeLibraryFunction( name = "GetGameRule" )
+    @MtsNativeFunction
     public MtsBoolean GetGameRule( MtsValue arg )
     {
 //         ("doFireTick", "true");
@@ -87,14 +86,14 @@ public class MinecraftConsoleWorldLib
         return FALSE;
     }
     
-    @MtsNativeLibraryFunction( name = "GetType" )
+    @MtsNativeFunction
     public MtsString GetType( MtsValue arg )
     {
         // default, flat, largebiomes
         return valueOf( "default" );
     }
     
-    @MtsNativeLibraryFunction( name = "GetType" )
+    @MtsNativeFunction
     public MtsBoolean IsSinglePlayer()
     {
         return TRUE;

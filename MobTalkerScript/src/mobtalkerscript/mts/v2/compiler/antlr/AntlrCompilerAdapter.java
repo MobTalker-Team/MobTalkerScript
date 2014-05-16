@@ -101,8 +101,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         CompilerLog.info( "Enter Chunk" );
         
-        visitChildren( ctx );
-        _c.returnFunction( 0 );
+        if ( ctx.getChild( 0 ) instanceof ExprContext )
+        {
+            visitChildren( ctx );
+            _c.returnFunction( 1 );
+        }
+        else
+        {
+            visitChildren( ctx );
+            _c.returnFunction( 0 );
+        }
         
         CompilerLog.info( "Exit Chunk" );
         return null;

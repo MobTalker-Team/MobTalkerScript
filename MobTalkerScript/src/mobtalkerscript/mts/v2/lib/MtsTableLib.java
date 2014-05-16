@@ -1,5 +1,6 @@
 package mobtalkerscript.mts.v2.lib;
 
+import static mobtalkerscript.util.MtsCheck.*;
 import mobtalkerscript.mts.v2.value.*;
 
 public final class MtsTableLib extends MtsLibrary

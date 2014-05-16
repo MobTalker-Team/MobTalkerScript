@@ -10,7 +10,7 @@ public class MtsDummyCharacter
     @MtsNativeType
     public static final MtsType TYPE = MtsType.forName( "character" );
     
-    @MtsNativeMethod( name = "GetName" )
+    @MtsNativeFunction
     public MtsString getName()
     {
         return valueOf( "FooBar" );

@@ -17,7 +17,7 @@ public class AnnotatedConsoleCommandLib
     
     // ========================================
     
-    @MtsNativeLibraryFunction( name = Constants.FunctionNames.COMMAND_SAY )
+    @MtsNativeFunction( name = Constants.FunctionNames.COMMAND_SAY )
     public void ShowText( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
         StringBuilder s = new StringBuilder();
@@ -43,7 +43,7 @@ public class AnnotatedConsoleCommandLib
     
     // ========================================
     
-    @MtsNativeLibraryFunction( name = Constants.FunctionNames.COMMAND_SHOW )
+    @MtsNativeFunction( name = Constants.FunctionNames.COMMAND_SHOW )
     public void ShowSprite( MtsVarArgs args )
     {
         MtsValue characterArg = args.get( 0 );
@@ -118,7 +118,7 @@ public class AnnotatedConsoleCommandLib
     
     // ========================================
     
-    @MtsNativeLibraryFunction( name = Constants.FunctionNames.COMMAND_MENU )
+    @MtsNativeFunction( name = Constants.FunctionNames.COMMAND_MENU )
     public MtsValue ShowMenu( MtsVarArgs args )
     {
         if ( !args.get( 0 ).isNil() )

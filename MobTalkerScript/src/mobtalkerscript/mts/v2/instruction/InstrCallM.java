@@ -5,7 +5,7 @@ import mobtalkerscript.mts.v2.value.*;
 
 public final class InstrCallM extends MtsInstruction
 {
-    private final String _method;
+    private final MtsString _method;
     private final int _nArgs;
     private final int _nReturn;
     
@@ -13,7 +13,7 @@ public final class InstrCallM extends MtsInstruction
     
     public InstrCallM( String method, int nArgs, int nReturn )
     {
-        _method = method;
+        _method = valueOf( method );
         _nArgs = nArgs;
         _nReturn = nReturn;
     }

@@ -311,13 +311,13 @@ import com.google.common.collect.*;
     /**
      * NOTE: The indices are 1 based.
      */
-    public MtsString concat( String sep, int from, int to )
+    public String concat( String sep, int from, int to )
     {
         from--; // Adjust Lua index to Java.
         to--; // Adjust Lua index to Java.
         
         if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
-            return EMPTY_STRING;
+            return "";
         
         StringBuilder s = new StringBuilder( _entries[from].toMtsString().asJavaString() );
         for ( int i = from + 1; i <= to; i++ )
@@ -325,18 +325,18 @@ import com.google.common.collect.*;
             s.append( sep ).append( _entries[i].toMtsString().asJavaString() );
         }
         
-        return valueOf( s.toString() );
+        return s.toString();
     }
     
     /**
      * NOTE: The index is 1 based.
      */
-    public MtsString concat( String sep, int from )
+    public String concat( String sep, int from )
     {
         return concat( sep, from, _limit );
     }
     
-    public MtsString concat( String sep )
+    public String concat( String sep )
     {
         return concat( sep, 0, _limit );
     }

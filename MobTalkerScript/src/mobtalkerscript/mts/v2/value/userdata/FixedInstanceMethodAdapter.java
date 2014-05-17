@@ -6,13 +6,13 @@ import java.lang.reflect.*;
 
 import mobtalkerscript.mts.v2.value.*;
 
-public class LibraryMethodAdapter extends JavaMethodAdapter
+/* package */class FixedInstanceMethodAdapter extends JavaMethodAdapter
 {
     private final Object _instance;
     
     // ========================================
     
-    public LibraryMethodAdapter( Object instance, Method method )
+    public FixedInstanceMethodAdapter( Object instance, Method method )
     {
         super( method );
         checkNotNull( instance );

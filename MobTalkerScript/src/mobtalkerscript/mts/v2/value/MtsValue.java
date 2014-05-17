@@ -93,9 +93,9 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Checks if this value is a {@link MtsObject}.
+     * Checks if this value is a {@link MtsUserdata}.
      */
-    public boolean isObject()
+    public boolean isUserdata()
     {
         return false;
     }
@@ -134,10 +134,20 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     /**
      * Checks if this value is of the given type.
+     * <p>
+     * If this fails and this type is a table, this method tries to compare the Metatables of this value and the of the given
+     * type, if any.
      */
     public boolean is( MtsType type )
     {
-        return getType().equals( type );
+        if ( getType().equals( type ) )
+            return true;
+        
+        // Try metatable comparison
+        if ( isTable() && type.hasMetaTable() && hasMetaTable() )
+            return type.getMetaTable().equals( getMetaTable() );
+        
+        return false;
     }
     
     // ========================================
@@ -171,16 +181,16 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Equivalent to a Java typecast to {@link MtsObject}.
+     * Equivalent to a Java typecast to {@link MtsUserdata}.
      */
-    public MtsObject asUserdata()
+    public MtsUserdata asUserdata()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.OBJECT + ", got " + getType() );
+        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
     }
     
     public <T> T asNative()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.OBJECT + ", got " + getType() );
+        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
     }
     
     /**
@@ -233,20 +243,22 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public boolean hasMetaTable()
     {
-        return false;
+        return getType().hasMetaTable();
     }
     
     public MtsTable getMetaTable()
     {
-        return null;
+        return getType().getMetaTable();
     }
     
     public void setMetaTable( MtsValue table )
-    {}
+    {
+        new ScriptRuntimeException( "attempt to set metatable of a %s value", getType() );
+    }
     
     public boolean hasMetaTag( MtsString tag )
     {
-        return false;
+        return hasMetaTable() && getMetaTable().containsKey( tag );
     }
     
     public final MtsValue getMetaTag( MtsString tag )
@@ -280,6 +292,22 @@ public abstract class MtsValue implements Comparable<MtsValue>
      * @throws ScriptRuntimeException If this value cannot be indexed.
      */
     public MtsValue get( MtsValue key, boolean useMetaTag )
+    {
+        if ( !useMetaTag )
+            throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
+        
+        MtsValue tag = getMetaTag( __INDEX );
+        
+        if ( tag.isNil() )
+            __index( key );
+        
+        if ( tag.isFunction() )
+            return tag.call( this, key );
+        
+        return tag.get( key );
+    }
+    
+    public MtsValue __index( MtsValue key )
     {
         throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
     }
@@ -329,6 +357,21 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public void set( MtsValue key, MtsValue value, boolean useMetaTag )
     {
+        if ( !useMetaTag )
+            throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
+        
+        MtsValue tag = getMetaTag( __NEWINDEX );
+        
+        if ( tag.isNil() )
+            __newindex( key, value );
+        else if ( tag.isFunction() )
+            tag.call( this, key, value );
+        else
+            tag.set( key, value );
+    }
+    
+    public void __newindex( MtsValue key, MtsValue value )
+    {
         throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
     }
     
@@ -355,6 +398,16 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     public MtsValue call( MtsVarArgs args )
+    {
+        MtsValue tag = getMetaTag( __CALL );
+        
+        if ( tag.isNil() )
+            return __call( args );
+        
+        return tag.call( this, args );
+    }
+    
+    public MtsValue __call( MtsVarArgs args )
     {
         throw new ScriptRuntimeException( "attempt to call a %s value", getType() );
     }

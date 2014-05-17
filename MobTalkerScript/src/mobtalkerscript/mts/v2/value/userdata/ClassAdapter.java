@@ -5,6 +5,7 @@ import static mobtalkerscript.mts.v2.value.userdata.NativeHelpers.*;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 import mobtalkerscript.mts.v2.value.*;
 
@@ -74,6 +75,11 @@ import com.google.common.collect.*;
     public MethodAdapter getMethod( String method )
     {
         return _methods.get( method );
+    }
+    
+    public Set<Entry<String, MethodAdapter>> getMethods()
+    {
+        return _methods.entrySet();
     }
     
     // ========================================

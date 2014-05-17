@@ -36,19 +36,19 @@ import com.google.common.collect.*;
     
     public static MtsTable bind( Class<?> library )
     {
-        MtsTable libHolder = new MtsTable();
-        bindTo( library, libHolder );
+        MtsTable libHolder = new MtsTable( 0, 0 );
+        bind( library, libHolder );
         return libHolder;
     }
     
     public static MtsTable bind( Object library )
     {
-        MtsTable libHolder = new MtsTable();
-        bindTo( library, libHolder );
+        MtsTable libHolder = new MtsTable( 0, 0 );
+        bind( library, libHolder );
         return libHolder;
     }
     
-    public static void bindTo( Class<?> library, MtsTable table )
+    public static void bind( Class<?> library, MtsTable table )
     {
         if ( !checkClass( library ) )
             throw new IllegalArgumentException( library.getSimpleName() + " is not a valid class!" );
@@ -57,7 +57,7 @@ import com.google.common.collect.*;
         mapper.createAndBindAdapter( null, table );
     }
     
-    public static void bindTo( Object library, MtsTable table )
+    public static void bind( Object library, MtsTable table )
     {
         Class<?> c = library.getClass();
         
@@ -87,7 +87,11 @@ import com.google.common.collect.*;
     
     public void createAndBindAdapter( Object instance, MtsTable t )
     {
-        for ( Entry<String, Method> entry : _methods.entrySet() )
+        Set<Entry<String, Method>> methods = _methods.entrySet();
+        
+        t.ensureHashCapacity( methods.size() );
+        
+        for ( Entry<String, Method> entry : methods )
         {
             String name = entry.getKey();
             Method method = entry.getValue();
@@ -99,7 +103,7 @@ import com.google.common.collect.*;
             }
             else if ( instance != null )
             {
-                adapter = new LibraryMethodAdapter( instance, method );
+                adapter = new FixedInstanceMethodAdapter( instance, method );
             }
             else
             {

@@ -12,6 +12,13 @@ public class MtsNatives
     
     // ========================================
     
+    public static MtsTable asMetatable( Object instance )
+    {
+        return LibraryAdapter.bind( instance );
+    }
+    
+    // ========================================
+    
     public static MtsTable createLibrary( Class<?> library )
     {
         return LibraryAdapter.bind( library );
@@ -24,11 +31,11 @@ public class MtsNatives
     
     public static void createLibrary( Class<?> library, MtsTable table )
     {
-        LibraryAdapter.bindTo( library, table );
+        LibraryAdapter.bind( library, table );
     }
     
     public static void createLibrary( Object library, MtsTable table )
     {
-        LibraryAdapter.bindTo( library, table );
+        LibraryAdapter.bind( library, table );
     }
 }

@@ -47,6 +47,18 @@ public class MtsTable extends MtsMetaTableValue
         return count() == 0;
     }
     
+    public void ensureHashCapacity( int capacity )
+    {
+        _hashPart.ensureCapacity( capacity );
+    }
+    
+    public void ensureListCapacity( int capacity )
+    {
+        _listPart.ensureCapacity( capacity );
+    }
+    
+    // ========================================
+    
     public boolean containsKey( MtsValue key )
     {
         return !isEmpty() && ( _listPart.contains( key ) || !_hashPart.get( key ).isNil() );
@@ -137,18 +149,17 @@ public class MtsTable extends MtsMetaTableValue
      * If <tt>key</tt> is not part of the sequence of this table a simple {@link #rawset(MtsValue, MtsValue) setRaw} is
      * performed.
      */
-    public void insert( MtsValue key, MtsValue value )
+    public void insert( MtsNumber index, MtsValue value )
     {
-        checkNotNull( key );
-        
-        if ( _listPart.contains( key ) )
+        if ( _listPart.contains( index ) )
         {
-            int i = key.asNumber().asJavaInt();
-            _listPart.insert( i, value );
+            _listPart.insert( index.asJavaInt(), value );
             _listPart.collectFrom( _hashPart );
         }
-        
-        rawset( key, value );
+        else
+        {
+            set( index, value );
+        }
     }
     
     /**
@@ -171,24 +182,36 @@ public class MtsTable extends MtsMetaTableValue
         return _hashPart.remove( key );
     }
     
+    public MtsValue remove( int i )
+    {
+        if ( !_listPart.contains( i ) )
+            return NIL;
+        
+        MtsValue removed = _listPart.remove( i );
+        
+        _listPart.transferOrphansTo( _hashPart );
+        
+        return removed;
+    }
+    
     public MtsValue removeLast()
     {
         return _listPart.removeLast();
     }
     
-    public MtsString concatElements( MtsString sep, MtsNumber from, MtsNumber to )
+    public MtsString concatList( String sep, int from, int to )
     {
-        return _listPart.concat( sep.asJavaString(), from.asJavaInt(), to.asJavaInt() );
+        return valueOf( _listPart.concat( sep, from, to ) );
     }
     
-    public MtsString concatElements( MtsString sep, MtsNumber from )
+    public MtsString concatList( String sep, int from )
     {
-        return _listPart.concat( sep.asJavaString(), from.asJavaInt() );
+        return valueOf( _listPart.concat( sep, from ) );
     }
     
-    public MtsString concatElements( MtsString sep )
+    public MtsString concatList( String sep )
     {
-        return _listPart.concat( sep.asJavaString() );
+        return valueOf( _listPart.concat( sep ) );
     }
     
     // ========================================
@@ -213,7 +236,7 @@ public class MtsTable extends MtsMetaTableValue
         MtsValue result = rawget( key );
         
         if ( result.isNil() && useMetaTag )
-            return __index( this, key );
+            return super.get( key, true );
         
         return result;
     }
@@ -259,8 +282,8 @@ public class MtsTable extends MtsMetaTableValue
     {
         if ( containsKey( key ) )
             rawset( key, value );
-        else
-            __newindex( this, key, value );
+        else if ( useMetaTag )
+            super.set( key, value, true );
     }
     
     private void rawset( MtsValue key, MtsValue value )
@@ -296,29 +319,15 @@ public class MtsTable extends MtsMetaTableValue
     // ========================================
     
     @Override
-    public MtsValue __index( MtsValue table, MtsValue key )
+    public MtsValue __index( MtsValue key )
     {
-        MtsValue tag = getMetaTag( __INDEX );
-        
-        if ( tag.isNil() )
-            return NIL;
-        if ( tag.isFunction() )
-            return tag.call( this, key );
-        
-        return tag.get( key );
+        return NIL;
     }
     
     @Override
-    public void __newindex( MtsValue table, MtsValue key, MtsValue value )
+    public void __newindex( MtsValue key, MtsValue value )
     {
-        MtsValue tag = getMetaTag( __NEWINDEX );
-        
-        if ( tag.isNil() )
-            rawset( key, value );
-        else if ( tag.isFunction() )
-            tag.call( this, key, value );
-        else
-            tag.set( key, value );
+        rawset( key, value );
     }
     
     // ========================================
@@ -364,9 +373,15 @@ public class MtsTable extends MtsMetaTableValue
     }
     
     @Override
+    public boolean equals( Object obj )
+    {
+        return obj == this;
+    }
+    
+    @Override
     public MtsBoolean isMtsEqual( MtsValue x )
     {
-        return valueOf( this == x );
+        return valueOf( equals( x ) );
     }
     
     // ========================================

@@ -1,5 +1,6 @@
 package mobtalkerscript;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import static mobtalkerscript.mts.v2.value.userdata.MtsNatives.*;
 
 import java.nio.file.*;
@@ -43,15 +44,19 @@ public class MobTalkerScript
         MtsGlobals _G = new MtsGlobals();
         
         _G.set( "Math", createLibrary( MtsMathLib.class ) );
-        _G.loadLibrary( new MtsTableLib() );
+        _G.set( "Table", createLibrary( MtsTableLib.class ) );
+        
+        MtsTable stringLib = createLibrary( MtsStringLib.class );
+        MtsTable stringMT = new MtsTable( 0, 1 );
+        stringMT.set( __INDEX, stringLib );
+        MtsType.STRING.setMetaTable( stringMT );
         
 //        _G.loadLibrary( new ConsoleCommandLib() );
         createLibrary( new AnnotatedConsoleCommandLib( _G ), _G );
         
         _G.loadLibrary( new MobTalkerConsoleInteractionLib( new DummyTalkingPlayer( "Console", 20 ),
                                                             new DummyTalkingEntity( "", "Creeper", 20, 0 ) ) );
-        _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
-//        _G.loadLibrary( new MinecraftConsoleWorldLib() );
+        _G.set( "Character", createLibrary( MobTalkerConsoleCharacterLib.class ) );
         
         _G.set( "World", createLibrary( new MinecraftConsoleWorldLib() ) );
         

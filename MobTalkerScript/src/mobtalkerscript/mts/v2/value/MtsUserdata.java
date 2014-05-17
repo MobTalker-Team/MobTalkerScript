@@ -1,12 +1,12 @@
 package mobtalkerscript.mts.v2.value;
 
-public abstract class MtsObject extends MtsValue
+public class MtsUserdata extends MtsValue
 {
     protected final Object _value;
     
     // ========================================
     
-    protected MtsObject( Object value )
+    protected MtsUserdata( Object value )
     {
         _value = value;
     }
@@ -19,19 +19,19 @@ public abstract class MtsObject extends MtsValue
         if ( !hasMetaTag( __TOSTRING ) )
             return super.toMtsString();
         
-        return getMetaTag( __TOSTRING ).call( this ).get( 0 ).asString();
+        return getMetaTag( __TOSTRING ).call( this ).asString();
     }
     
     // ========================================
     
     @Override
-    public boolean isObject()
+    public boolean isUserdata()
     {
         return true;
     }
     
     @Override
-    public MtsObject asUserdata()
+    public MtsUserdata asUserdata()
     {
         return this;
     }
@@ -39,13 +39,13 @@ public abstract class MtsObject extends MtsValue
     @Override
     public MtsType getType()
     {
-        return MtsType.OBJECT;
+        return MtsType.USERDATA;
     }
     
     @Override
     public MtsBoolean isMtsEqual( MtsValue x )
     {
-        return x.isObject() ? valueOf( x.asUserdata().equals( _value ) ) : FALSE;
+        return x.isUserdata() ? valueOf( x.asUserdata().equals( _value ) ) : FALSE;
     }
     
     public Object asJavaObject()
@@ -71,9 +71,9 @@ public abstract class MtsObject extends MtsValue
     @Override
     public boolean equals( Object obj )
     {
-        if ( obj instanceof MtsObject )
+        if ( obj instanceof MtsUserdata )
         {
-            Object other = ( (MtsObject) obj ).asJavaObject();
+            Object other = ( (MtsUserdata) obj ).asJavaObject();
             
             return _value == other;
         }

@@ -19,7 +19,7 @@ public class MtsCheck
     
     public static void checkType( MtsValue value, int i, MtsType expected )
     {
-        if ( value.getType() != expected )
+        if ( !value.is( expected ) )
         {
             // TODO
             throw new BadArgumentException( "(%s expected, got %s)", expected, value.getType() );

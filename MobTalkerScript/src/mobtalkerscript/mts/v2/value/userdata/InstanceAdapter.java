@@ -2,7 +2,7 @@ package mobtalkerscript.mts.v2.value.userdata;
 
 import mobtalkerscript.mts.v2.value.*;
 
-public class InstanceAdapter extends MtsObject
+public class InstanceAdapter extends MtsUserdata
 {
     private final ClassAdapter _classAdapter;
     
@@ -19,9 +19,16 @@ public class InstanceAdapter extends MtsObject
     @Override
     public MtsValue get( MtsValue key, boolean useMetaTag )
     {
-        MtsValue method = _classAdapter.getMethod( key.asString().asJavaString() );
+        if ( !useMetaTag )
+            return super.get( key, useMetaTag );
         
-        if ( !useMetaTag || ( method == null ) )
+        MtsValue method = null;
+        if ( key.isString() )
+        {
+            method = _classAdapter.getMethod( key.asString().asJavaString() );
+        }
+        
+        if ( method == null )
             return super.get( key, useMetaTag );
         
         return method;

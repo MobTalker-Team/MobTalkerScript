@@ -4,7 +4,7 @@ import java.lang.reflect.*;
 
 import mobtalkerscript.mts.v2.value.*;
 
-public class MethodAdapter extends JavaMethodAdapter
+/* package */class MethodAdapter extends JavaMethodAdapter
 {
     public MethodAdapter( Method method )
     {

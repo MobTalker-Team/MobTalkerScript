@@ -1,162 +1,89 @@
 package mobtalkerscript.mts.v2.lib;
 
-import mobtalkerscript.mts.v2.value.*;
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
+import static mobtalkerscript.util.MtsCheck.*;
 
-public final class MtsTableLib extends MtsLibrary
+import java.util.*;
+
+import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.mts.v2.value.userdata.*;
+
+public final class MtsTableLib
 {
-    private static final MtsJavaFunction Concat = new Concat();
-    private static final MtsJavaFunction Count = new Count();
-    private static final MtsJavaFunction Insert = new Insert();
-    private static final MtsJavaFunction Remove = new Remove();
-    
-    @Override
-    public MtsValue bind( MtsString name, MtsValue env )
+    @MtsNativeFunction
+    public static MtsString concat( MtsValue arg1, MtsValue arg2, MtsValue arg3, MtsValue arg4 )
     {
-        MtsTable lib = new MtsTable( 1, 5 );
+        MtsTable table = checkTable( arg1, 0 );
+        String sep = arg2.isNil() ? "" : checkString( arg2, 1 );
         
-        bindFunction( lib, "Concat", Concat );
-        bindFunction( lib, "Count", Count );
-        bindFunction( lib, "Insert", Insert );
-        bindFunction( lib, "Random", new Random() );
-        bindFunction( lib, "Remove", Remove );
+        if ( arg3.isNil() )
+            return table.concatList( sep );
         
-        env.set( "table", lib );
-        return NIL;
+        int from = checkInteger( arg3, 2 );
+        
+        if ( arg4.isNil() )
+            return table.concatList( sep, from );
+        
+        int to = checkInteger( arg4, 3 );
+        
+        return table.concatList( sep, from, to );
     }
     
-    // ========================================
-    
-    private static final class Concat extends MtsFourArgFunction
+    @MtsNativeFunction
+    public static MtsNumber count( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
-            checkTable( arg1, 1 );
-            
-            if ( arg2.isNil() )
-                arg2 = EMPTY_STRING;
-            
-            checkString( arg2, 2 );
-            
-            return arg1.asTable().concatElements( arg2.asString() );
-        }
-        
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
-        {
-            checkTable( arg1, 1 );
-            
-            if ( arg2.isNil() )
-                arg2 = EMPTY_STRING;
-            
-            checkString( arg2, 2 );
-            checkNumber( arg3, 3 );
-            
-            return arg1.asTable().concatElements( arg2.asString(), arg3.asNumber() );
-        }
-        
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3, MtsValue arg4 )
-        {
-            checkTable( arg1, 1 );
-            
-            if ( arg2.isNil() )
-                arg2 = EMPTY_STRING;
-            
-            checkString( arg2, 2 );
-            checkNumber( arg3, 3 );
-            checkNumber( arg4, 4 );
-            
-            return arg1.asTable().concatElements( arg2.asString(), arg3.asNumber(), arg4.asNumber() );
-        }
+        return valueOf( checkTable( arg1, 0 ).count() );
     }
     
-    // ========================================
-    
-    private static final class Count extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static void insert( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkTable( arg1, 1 );
-            
-            return valueOf( arg1.asTable().count() );
-        }
+        MtsTable table = checkTable( arg1, 0 );
+        
+        if ( arg3.isNil() )
+            table.add( arg2 );
+        
+        checkNumber( arg2, 1 );
+        
+        table.insert( arg2.asNumber(), arg3 );
     }
     
-    // ========================================
+    private static final Random rnd = new Random();
     
-    private static final class Insert extends MtsThreeArgFunction
+    @MtsNativeFunction
+    public static MtsValue random( MtsVarArgs args )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
-            checkTable( arg1, 1 );
-            
-            arg1.asTable().add( arg2 );
+        if ( args.isEmpty() )
             return NIL;
-        }
         
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+        if ( args.count() > 1 )
+            return args.get( rnd.nextInt( args.count() ) );
+        
+        MtsValue arg1 = args.get( 0 );
+        if ( arg1.isTable() )
         {
-            checkTable( arg1, 1 );
-            checkNumber( arg2, 2 );
+            MtsTable t = arg1.asTable();
             
-            arg1.asTable().insert( arg2, arg3 );
-            return NIL;
-        }
-    }
-    
-    // ========================================
-    
-    private static final class Random extends MtsJavaFunction
-    {
-        private final java.util.Random rnd = new java.util.Random();
-        
-        @Override
-        protected MtsValue invoke( MtsVarArgs args )
-        {
-            if ( args.isEmpty() )
+            if ( t.listSize() == 0 )
                 return NIL;
             
-            if ( args.count() > 1 )
-                return args.get( rnd.nextInt( args.count() ) );
-            
-            MtsValue arg1 = args.get( 0 );
-            if ( arg1.isTable() )
-            {
-                MtsTable t = arg1.asTable();
-                
-                if ( t.listSize() == 0 )
-                    return NIL;
-                
-                MtsNumber k = valueOf( rnd.nextInt( t.listSize() ) );
-                return t.get( k );
-            }
-            
-            return arg1;
+            MtsNumber k = valueOf( rnd.nextInt( t.listSize() ) );
+            return t.get( k );
         }
+        
+        return arg1;
     }
     
     // ========================================
     
-    private static final class Remove extends MtsTwoArgFunction
+    @MtsNativeFunction
+    public static MtsValue remove( MtsValue arg1, MtsValue arg2 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkTable( arg1, 1 );
-            
-            return arg1.asTable().removeLast();
-        }
+        MtsTable table = checkTable( arg1, 0 );
         
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
-            checkTable( arg1, 1 );
-            
-            return arg1.asTable().remove( arg2 );
-        }
+        if ( arg2.isNil() )
+            return table.removeLast();
+        
+        return table.remove( checkInteger( arg2, 1 ) );
     }
 }

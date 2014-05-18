@@ -1,26 +1,19 @@
 package mobtalkerscript.mts.v2;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.base.Strings.*;
+import static mobtalkerscript.mts.v2.value.userdata.MtsNatives.*;
 
 import java.io.*;
-import java.nio.file.*;
 
-import mobtalkerscript.mts.v2.compiler.*;
-import mobtalkerscript.mts.v2.compiler.antlr.*;
-import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
 
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
-
 public class MtsGlobals extends MtsTable
 {
-    
     public PrintStream out = System.out;
     public BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
     public PrintStream err = System.err;
+    
+    // ========================================
     
     // ========================================
     
@@ -29,6 +22,14 @@ public class MtsGlobals extends MtsTable
         super( 16, 1024 );
         
         loadLibrary( new MtsBaseLib() );
+        
+        set( "Math", createLibrary( MtsMathLib.class ), false );
+        set( "Table", createLibrary( MtsTableLib.class ), false );
+        
+        MtsTable stringLib = createLibrary( MtsStringLib.class );
+        MtsTable stringMT = new MtsTable( 0, 1 );
+        stringMT.set( __INDEX, stringLib );
+        MtsType.STRING.setMetaTable( stringMT );
     }
     
     // ========================================
@@ -37,78 +38,4 @@ public class MtsGlobals extends MtsTable
     {
         lib.call( EMPTY_STRING, this );
     }
-    
-    // ========================================
-    
-    public MtsFunctionPrototype loadFile( String path ) throws Exception
-    {
-        return loadFile( Paths.get( path ) );
-    }
-    
-    public MtsFunctionPrototype loadFile( File file ) throws Exception
-    {
-        return loadFile( file.toPath() );
-    }
-    
-    public MtsFunctionPrototype loadFile( Path path ) throws Exception
-    {
-        checkArgument( Files.exists( path ), "Path '%s' does not exist", path );
-        
-        return load( new ANTLRFileStream( path.toString() ) );
-    }
-    
-    // ========================================
-    
-    public MtsFunctionPrototype loadString( String chunk, String source ) throws Exception
-    {
-        checkArgument( !isNullOrEmpty( chunk ), "chunk cannot be null or empty" );
-        
-        ANTLRInputStream stream = new ANTLRInputStream( chunk );
-        stream.name = source;
-        
-        return load( stream );
-    }
-    
-    // ========================================
-    
-    public MtsFunctionPrototype load( ANTLRInputStream stream ) throws Exception
-    {
-        // Lex it
-        MtsLexer lexer = new MtsLexer( stream );
-        lexer.setTokenFactory( new CommonTokenFactory( false ) );
-        TokenStream tokens = new UnbufferedTokenStream<Token>( lexer );
-        
-        // Parse it
-        MtsParser parser = new MtsParser( tokens );
-        parser.removeErrorListeners();
-        parser.addErrorListener( new MtsAntlrErrorListener() );
-        parser.setErrorHandler( new MtsErrorStrategy() );
-        
-        // TODO: SLL doesn't seem to work, look further into it.
-        parser.getInterpreter().setPredictionMode( PredictionMode.LL_EXACT_AMBIG_DETECTION );
-        
-        ChunkContext chunk;
-        try
-        {
-            chunk = parser.chunk();
-        }
-        catch ( MtsSyntaxError ex )
-        {
-//            throw new NullPointerException( "cannot be null" );
-            throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
-        }
-        
-        // Compile it
-        MtsCompiler compiler = new MtsCompiler( tokens.getSourceName(),
-                                                chunk.getStart().getLine(),
-                                                chunk.getStop().getLine() );
-        
-        AntlrCompilerAdapter adapter = new AntlrCompilerAdapter( compiler );
-        adapter.compile( chunk );
-        
-        return compiler.compile();
-    }
-    
-    // ========================================
-    
 }

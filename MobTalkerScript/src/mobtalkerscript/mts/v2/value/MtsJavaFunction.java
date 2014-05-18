@@ -8,12 +8,12 @@ import mobtalkerscript.mts.v2.*;
 public abstract class MtsJavaFunction extends MtsFunction
 {
     @Override
-    public final MtsVarArgs call( MtsVarArgs args )
+    public final MtsValue call( MtsVarArgs args )
     {
         try
         {
             MtsValue result = invoke( args );
-            return result.isVarArgs() ? result.asVarArgs() : new MtsVarArgs( result );
+            return result.isVarArgs() ? result.asVarArgs() : MtsVarArgs.of( result );
         }
         catch ( ScriptRuntimeException ex )
         {

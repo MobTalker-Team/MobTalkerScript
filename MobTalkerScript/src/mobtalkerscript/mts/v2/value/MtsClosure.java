@@ -39,7 +39,7 @@ public final class MtsClosure extends MtsFunction
     // ========================================
     
     @Override
-    public MtsVarArgs call( MtsVarArgs args )
+    public MtsValue call( MtsVarArgs args )
     {
         MtsFrame frame = new MtsFrame( this, args, _externals );
         try

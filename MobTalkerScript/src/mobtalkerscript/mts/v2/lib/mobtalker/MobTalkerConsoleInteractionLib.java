@@ -1,5 +1,6 @@
 package mobtalkerscript.mts.v2.lib.mobtalker;
 
+import static mobtalkerscript.util.MtsCheck.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;

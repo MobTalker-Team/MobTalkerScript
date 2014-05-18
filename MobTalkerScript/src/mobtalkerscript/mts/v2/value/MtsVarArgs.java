@@ -4,72 +4,64 @@ import java.util.*;
 
 import com.google.common.collect.*;
 
-public class MtsVarArgs extends MtsValue
+public abstract class MtsVarArgs extends MtsValue
 {
-    private final List<MtsValue> _values;
-    
-    // ========================================
-    
-    public MtsVarArgs( MtsValue value )
+    public static MtsVarArgs of( MtsValue value )
     {
-        this( Collections.singletonList( value ) );
+        return new EvaluatedVarArgs( Collections.singletonList( value ) );
     }
     
-    public MtsVarArgs( MtsValue e1, MtsValue e2 )
+    public static MtsVarArgs of( MtsValue e1, MtsValue e2 )
     {
-        this( ImmutableList.of( e1, e2 ) );
+        return new EvaluatedVarArgs( ImmutableList.of( e1, e2 ) );
     }
     
-    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3 )
+    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3 )
     {
-        this( ImmutableList.of( e1, e2, e3 ) );
+        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3 ) );
     }
     
-    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4 )
+    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4 )
     {
-        this( ImmutableList.of( e1, e2, e3, e4 ) );
+        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4 ) );
     }
     
-    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5 )
+    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5 )
     {
-        this( ImmutableList.of( e1, e2, e3, e4, e5 ) );
+        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4, e5 ) );
     }
     
-    public MtsVarArgs( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5, MtsValue e6 )
+    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5, MtsValue e6 )
     {
-        this( ImmutableList.of( e1, e2, e3, e4, e5, e6 ) );
+        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4, e5, e6 ) );
     }
     
-    public MtsVarArgs( MtsValue[] values )
+    public static MtsVarArgs of( MtsValue[] values )
     {
-        this( Arrays.asList( values ) );
+        return new EvaluatedVarArgs( Arrays.asList( values ) );
     }
     
-    public MtsVarArgs( List<MtsValue> values )
+    public static MtsVarArgs of( List<MtsValue> values )
     {
-        _values = values;
+        return new EvaluatedVarArgs( values );
     }
     
-    public MtsVarArgs( MtsValue first, MtsVarArgs rest )
+    public static MtsVarArgs of( MtsValue first, MtsVarArgs rest )
     {
-        ArrayList<MtsValue> values = Lists.newArrayListWithCapacity( rest.count() + 1 );
-        values.add( first );
-        values.addAll( rest._values );
+        if ( rest instanceof EvaluatedVarArgs )
+            return new EvaluatedVarArgs( first, (EvaluatedVarArgs) rest );
         
-        _values = values;
+        return EMPTY_VARARGS;
     }
     
     // ========================================
-    
-    public MtsVarArgs subArgs( int start, int end )
-    {
-        return new MtsVarArgs( _values.subList( start, Math.min( end, _values.size() ) ) );
-    }
     
     public MtsVarArgs subArgs( int start )
     {
-        return subArgs( start, _values.size() );
+        return subArgs( start, count() );
     }
+    
+    public abstract MtsVarArgs subArgs( int start, int end );
     
     // ========================================
     
@@ -77,20 +69,15 @@ public class MtsVarArgs extends MtsValue
      * Returns the value at index <code>i</code> (zero based) or <code>nil</code>, if the index does not exist.
      */
     @Override
-    public MtsValue get( int i )
-    {
-        return i < count() ? _values.get( i ) : NIL;
-    }
+    public abstract MtsValue get( int i );
     
-    public int count()
-    {
-        return _values.size();
-    }
+    public abstract int count();
     
-    public boolean isEmpty()
-    {
-        return _values.isEmpty();
-    }
+    public abstract boolean isEmpty();
+    
+    // ========================================
+    
+    public abstract MtsValue[] toArray();
     
     // ========================================
     
@@ -115,14 +102,8 @@ public class MtsVarArgs extends MtsValue
     // ========================================
     
     @Override
-    public int hashCode()
-    {
-        return _values.hashCode();
-    }
-    
-    @Override
     public String toString()
     {
-        return getType() + _values.toString();
+        return getType().getName();
     }
 }

@@ -1,327 +1,183 @@
 package mobtalkerscript.mts.v2.lib;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
+import static mobtalkerscript.util.MtsCheck.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.mts.v2.value.userdata.*;
 
-public final class MtsMathLib extends MtsLibrary
+public final class MtsMathLib
 {
-    private static final MtsNumber PI = valueOf( Math.PI );
-    private static final MtsNumber E = valueOf( Math.E );
+    @MtsNativeField
+    public static final MtsNumber PI = valueOf( Math.PI );
     
-    private static final MtsJavaFunction Abs = new Abs();
-    private static final MtsJavaFunction Ceil = new Ceil();
-    private static final MtsJavaFunction Cos = new Cos();
-    private static final MtsJavaFunction CosH = new CosH();
-    private static final MtsJavaFunction Floor = new Floor();
-    private static final MtsJavaFunction Log = new Log();
-    private static final MtsJavaFunction Log10 = new Log10();
-    private static final MtsJavaFunction Max = new Max();
-    private static final MtsJavaFunction Min = new Min();
-    private static final MtsJavaFunction Pow = new Pow();
-    private static final MtsJavaFunction Round = new Round();
-    private static final MtsJavaFunction Sin = new Sin();
-    private static final MtsJavaFunction SinH = new SinH();
-    private static final MtsJavaFunction Sign = new Sign();
-    private static final MtsJavaFunction Sqrt = new Sqrt();
-    private static final MtsJavaFunction Tan = new Tan();
-    private static final MtsJavaFunction TanH = new TanH();
-    private static final MtsJavaFunction ToDegrees = new ToDegrees();
-    private static final MtsJavaFunction ToRadians = new ToRadians();
+    @MtsNativeField
+    public static final MtsNumber E = valueOf( Math.E );
+    
+    @MtsNativeField
+    public static final MtsNumber Epsilon = valueOf( Double.longBitsToDouble( 0x3ca0000000000000L ) );
     
     // ========================================
     
-    @Override
-    public MtsValue bind( MtsString name, MtsValue env )
+    @MtsNativeFunction
+    public static MtsNumber abs( MtsValue arg1 )
     {
-        MtsTable math = new MtsTable( 0, 20 );
+        return valueOf( Math.abs( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber ceil( MtsValue arg1 )
+    {
+        return valueOf( Math.ceil( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber cos( MtsValue arg1 )
+    {
+        return valueOf( Math.cos( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber cosH( MtsValue arg1 )
+    {
+        return valueOf( Math.cosh( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber floor( MtsValue arg1 )
+    {
+        return valueOf( Math.floor( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber log( MtsValue arg1 )
+    {
+        return valueOf( Math.log( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber log10( MtsValue arg1 )
+    {
+        return valueOf( Math.log10( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber max( MtsVarArgs args )
+    {
+        if ( args.isEmpty() )
+            throw new BadArgumentException( "got no value" );
         
-        math.set( "PI", PI, false );
-        math.set( "E", E, false );
+        double result = checkNumber( args, 0 );
         
-        bindFunction( math, "Abs", Abs );
-        bindFunction( math, "Ceil", Ceil );
-        bindFunction( math, "Cos", Cos );
-        bindFunction( math, "CosH", CosH );
-        bindFunction( math, "Floor", Floor );
-        bindFunction( math, "Log", Log );
-        bindFunction( math, "Log10", Log10 );
-        bindFunction( math, "Max", Max );
-        bindFunction( math, "Min", Min );
-        bindFunction( math, "Pow", Pow );
-        bindFunction( math, "Random", new Random() );
-        bindFunction( math, "Round", Round );
-        bindFunction( math, "Sin", Sin );
-        bindFunction( math, "SinH", SinH );
-        bindFunction( math, "Sign", Sign );
-        bindFunction( math, "Sqrt", Sqrt );
-        bindFunction( math, "Tan", Tan );
-        bindFunction( math, "TanH", TanH );
-        bindFunction( math, "ToDegrees", ToDegrees );
-        bindFunction( math, "ToRadians", ToRadians );
-        
-        env.set( "Math", math );
-        
-        return NIL;
-    }
-    
-    // ========================================
-    
-    private static final class Abs extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
+        for ( int i = 1; i < args.count(); i++ )
         {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.abs( arg1.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class Ceil extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.ceil( arg1.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class Cos extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.cos( arg1.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class CosH extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.cosh( arg1.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class Floor extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.floor( arg1.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class Log extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.log( arg1.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class Log10 extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.log10( arg1.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class Max extends MtsJavaFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsVarArgs args )
-        {
-            if ( args.isEmpty() )
-                throw new BadArgumentException( "got no value" );
-            
-            double result = args.get( 0 ).asNumber().asJavaDouble();
-            
-            for ( int i = 1; i < args.count(); i++ )
-            {
-                double n = args.get( i ).asNumber().asJavaDouble();
-                result = Math.max( result, n );
-            }
-            
-            return valueOf( result );
-        }
-    }
-    
-    private static final class Min extends MtsJavaFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsVarArgs args )
-        {
-            if ( args.isEmpty() )
-                throw new BadArgumentException( "got no value" );
-            
-            double result = args.get( 0 ).asNumber().asJavaDouble();
-            
-            for ( int i = 1; i < args.count(); i++ )
-            {
-                double n = args.get( i ).asNumber().asJavaDouble();
-                result = Math.min( result, n );
-            }
-            
-            return valueOf( result );
-        }
-    }
-    
-    private static final class Pow extends MtsTwoArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
-            checkNumber( arg1, 1 );
-            checkNumber( arg2, 2 );
-            
-            return valueOf( Math.pow( arg1.asNumber().asJavaDouble(), arg2.asNumber().asJavaDouble() ) );
-        }
-    }
-    
-    private static final class Random extends MtsTwoArgFunction
-    {
-        private final java.util.Random _rnd = new java.util.Random();
-        
-        @Override
-        protected MtsValue invoke()
-        {
-            return valueOf( _rnd.nextDouble() );
+            result = Math.max( result, checkNumber( args, i ) );
         }
         
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
+        return valueOf( result );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber min( MtsVarArgs args )
+    {
+        if ( args.isEmpty() )
+            throw new BadArgumentException( "got no value" );
+        
+        double result = checkNumber( args, 0 );
+        
+        for ( int i = 1; i < args.count(); i++ )
         {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( _rnd.nextInt( (int) arg1.asNumber().asJavaDouble() ) );
+            result = Math.min( result, checkNumber( args, i ) );
         }
         
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
-            checkNumber( arg1, 1 );
-            checkNumber( arg2, 2 );
-            
-            int a = (int) arg1.asNumber().asJavaDouble();
-            int b = (int) arg2.asNumber().asJavaDouble();
-            
-            return valueOf( a + _rnd.nextInt( b ) );
-        }
+        return valueOf( result );
     }
     
-    private static final class Round extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static MtsNumber pow( MtsValue arg1, MtsValue arg2 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.round( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( Math.pow( checkNumber( arg1, 0 ), checkNumber( arg2, 1 ) ) );
     }
     
-    private static final class Sin extends MtsOneArgFunction
+    private static final java.util.Random _rnd = new java.util.Random();
+    
+    @MtsNativeFunction
+    public static MtsNumber random( MtsValue arg1, MtsValue arg2 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
+        if ( arg2.isNil() )
         {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.sin( arg1.asNumber().asJavaDouble() ) );
+            if ( arg1.isNil() )
+                return random();
+            return random( arg1 );
         }
+        
+        int a = checkInteger( arg1, 0 );
+        int b = checkInteger( arg2, 1 );
+        
+        return valueOf( a + _rnd.nextInt( b ) );
     }
     
-    private static final class SinH extends MtsOneArgFunction
+    private static MtsNumber random( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.sinh( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( _rnd.nextInt( checkInteger( arg1, 0 ) ) );
     }
     
-    private static final class Sign extends MtsOneArgFunction
+    private static MtsNumber random()
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.signum( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( _rnd.nextDouble() );
     }
     
-    private static final class Sqrt extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static MtsNumber round( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.sqrt( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( Math.round( checkNumber( arg1, 0 ) ) );
     }
     
-    private static final class Tan extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static MtsNumber sin( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.tan( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( Math.sin( checkNumber( arg1, 0 ) ) );
     }
     
-    private static final class TanH extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static MtsNumber sinH( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.tanh( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( Math.sinh( checkNumber( arg1, 0 ) ) );
     }
     
-    private static final class ToDegrees extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static MtsNumber sign( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.toDegrees( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( Math.signum( checkNumber( arg1, 0 ) ) );
     }
     
-    private static final class ToRadians extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static MtsNumber sqrt( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            checkNumber( arg1, 1 );
-            
-            return valueOf( Math.toRadians( arg1.asNumber().asJavaDouble() ) );
-        }
+        return valueOf( Math.sqrt( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber tan( MtsValue arg1 )
+    {
+        return valueOf( Math.tan( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber tanH( MtsValue arg1 )
+    {
+        return valueOf( Math.tanh( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber toDegrees( MtsValue arg1 )
+    {
+        return valueOf( Math.toDegrees( checkNumber( arg1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsNumber toRadians( MtsValue arg1 )
+    {
+        return valueOf( Math.toRadians( checkNumber( arg1, 0 ) ) );
     }
 }

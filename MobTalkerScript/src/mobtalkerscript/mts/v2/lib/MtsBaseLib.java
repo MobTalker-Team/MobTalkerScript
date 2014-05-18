@@ -1,6 +1,8 @@
 package mobtalkerscript.mts.v2.lib;
 
+import static mobtalkerscript.util.MtsCheck.*;
 import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.value.*;
 
 public final class MtsBaseLib extends MtsGlobalLibrary
@@ -56,7 +58,7 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             if ( !MtsBoolean.isTrue( arg1 ) )
             {
                 String msg = arg2.isNil() ? "assertion failed!" : arg2.toMtsString().asJavaString();
-                throw new ScriptRuntimeException( msg );
+                throw new ScriptRuntimeException( 1, msg );
             }
             
             return NIL;
@@ -101,7 +103,7 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             checkTable( arg1, 1 );
             
             MtsTable.Entry next = arg1.asTable().getNext( arg2 );
-            return next == null ? EMPTY_VARARGS : new MtsVarArgs( next.getKey(), next.getValue() );
+            return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
         }
     }
     
@@ -225,7 +227,7 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             MtsFunctionPrototype p;
             try
             {
-                p = getGlobals().loadString( args.get( 0 ).asString().asJavaString(), "string" );
+                p = MtsCompiler.loadString( args.get( 0 ).asString().asJavaString(), "string" );
             }
             catch ( Exception ex )
             {
@@ -252,15 +254,19 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             MtsValue f = args.get( 0 );
             MtsVarArgs callArgs = args.subArgs( 1 );
             
-            MtsVarArgs result;
+            MtsValue result;
             try
             {
-                MtsVarArgs callResults = f.call( callArgs );
-                result = new MtsVarArgs( TRUE, callResults );
+                MtsValue callResults = f.call( callArgs );
+                
+                if ( callResults.isVarArgs() )
+                    result = MtsVarArgs.of( TRUE, callResults.asVarArgs() );
+                else
+                    result = MtsVarArgs.of( TRUE, callResults );
             }
             catch ( ScriptRuntimeException ex )
             {
-                result = new MtsVarArgs( FALSE, valueOf( ex.getMessage() ) );
+                result = MtsVarArgs.of( FALSE, valueOf( ex.getMessage() ) );
             }
             
             return result;

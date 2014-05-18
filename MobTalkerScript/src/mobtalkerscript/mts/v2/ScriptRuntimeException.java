@@ -70,14 +70,22 @@ public class ScriptRuntimeException extends RuntimeException
         
         MtsStackTraceElement first = _stackTrace.get( _level );
         
-        s.append( first.getLocation() ).append( ": " ).append( getMessage() ).append( "\n" );
+        s.append( first.getLocation() ).append( ": " ).append( getMessage() );
         
         for ( int i = _level + 1; i < _stackTrace.size(); i++ )
         {
-            s.append( _stackTrace.get( i ).toString() ).append( "\n" );
+            s.append( "\n" ).append( _stackTrace.get( i ).toString() );
         }
         
         return s.toString();
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        return createStackTrace();
     }
     
 }

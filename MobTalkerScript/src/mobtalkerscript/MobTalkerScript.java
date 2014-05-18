@@ -1,5 +1,8 @@
 package mobtalkerscript;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
+import static mobtalkerscript.mts.v2.value.userdata.MtsNatives.*;
+
 import java.nio.file.*;
 import java.util.logging.*;
 
@@ -7,8 +10,6 @@ import joptsimple.*;
 import joptsimple.internal.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.*;
-import mobtalkerscript.mts.v2.compiler.antlr.*;
-import mobtalkerscript.mts.v2.instruction.*;
 import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.lib.mobtalker.*;
 import mobtalkerscript.mts.v2.value.*;
@@ -22,6 +23,7 @@ public class MobTalkerScript
     public static void main( String[] args ) throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
+        MtsCompiler.loadString( ";", "" );
         
         // Options
         OptionParser parser = new OptionParser();
@@ -38,21 +40,24 @@ public class MobTalkerScript
         MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
         MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
         
-        // Preload some classes
-        Instructions.class.getClass();
-        MtsParser.class.getClass();
-        MtsCompiler.class.getClass();
-        
         // Initialize engine
         MtsGlobals _G = new MtsGlobals();
-        _G.loadLibrary( new MtsMathLib() );
-        _G.loadLibrary( new MtsTableLib() );
         
-        _G.loadLibrary( new ConsoleCommandLib() );
+        _G.set( "Math", createLibrary( MtsMathLib.class ) );
+        _G.set( "Table", createLibrary( MtsTableLib.class ) );
+        
+        MtsTable stringLib = createLibrary( MtsStringLib.class );
+        MtsTable stringMT = new MtsTable( 0, 1 );
+        stringMT.set( __INDEX, stringLib );
+        MtsType.STRING.setMetaTable( stringMT );
+        
+//        _G.loadLibrary( new ConsoleCommandLib() );
+        createLibrary( new ConsoleCommandLib( _G ), _G );
+        
         _G.loadLibrary( new MobTalkerConsoleInteractionLib( new DummyTalkingPlayer( "Console", 20 ),
                                                             new DummyTalkingEntity( "", "Creeper", 20, 0 ) ) );
-        _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
-        _G.loadLibrary( new MinecraftConsoleWorldLib() );
+        
+        _G.set( "World", createLibrary( new MinecraftConsoleWorldLib() ) );
         
         _G.out.println( "MobTalkerScript " //
                         + _G.get( "_VERSION" ).asString().asJavaString()
@@ -72,7 +77,7 @@ public class MobTalkerScript
             MtsFunctionPrototype fileChunk = null;
             try
             {
-                fileChunk = _G.loadFile( path );
+                fileChunk = MtsCompiler.loadFile( path );
             }
             catch ( MtsSyntaxError ex )
             {
@@ -97,18 +102,16 @@ public class MobTalkerScript
         // Interactive loop
         for ( ;; )
         {
-            Thread.sleep( 1 );
-            
             _G.out.print( "> " );
             String line = _G.in.readLine();
             
-            if ( line.startsWith( "exit" ) )
+            if ( line.trim().equals( "exit" ) )
                 break;
             
             MtsFunctionPrototype chunk;
             try
             {
-                chunk = _G.loadString( line, "stdin" );
+                chunk = MtsCompiler.loadString( line, "stdin" );
             }
             catch ( Exception ex )
             {
@@ -116,7 +119,21 @@ public class MobTalkerScript
                 continue;
             }
             
-            new MtsClosure( chunk, _G ).call();
+            try
+            {
+                MtsValue result = new MtsClosure( chunk, _G ).call();
+                Thread.sleep( 100 );
+                
+                if ( ( result.isVarArgs() && ( result.asVarArgs().count() > 0 ) )
+                     || ( !result.isNil() && !result.isVarArgs() ) )
+                {
+                    _G.out.println( result );
+                }
+            }
+            catch ( ScriptRuntimeException ex )
+            {
+                _G.err.println( ex.createStackTrace() );
+            }
         }
     }
     

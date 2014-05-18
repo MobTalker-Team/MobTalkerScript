@@ -86,7 +86,7 @@ public final class MtsFrame
     /**
      * Executes the instructions given until an instruction signals a frame exit and returns the top of the stack.
      */
-    public MtsVarArgs run()
+    public MtsValue run()
     {
         List<MtsInstruction> instructions = _closure.getPrototype().getInstructions();
         
@@ -95,7 +95,7 @@ public final class MtsFrame
             EngineLog.finest( "Stack: " + formatStack() );
         }
         
-        for ( ;; )
+        for ( ;; _ip++ )
         {
             MtsInstruction instr = instructions.get( _ip );
             
@@ -115,18 +115,17 @@ public final class MtsFrame
             
             if ( instr.exits() )
                 break;
-            
-            _ip++;
         }
         
         MtsValue result = pop();
         
         assert stackIsEmpty()
         /*   */: "Stack was not emptied! " + formatStack();
-        assert result.isVarArgs()
-        /*   */: "Return value is not of type VarArgs, but " + result.getType() + "!";
+//        assert result.isVarArgs()
+//        /*   */: "Return value is not of type VarArgs, but " + result.getType() + "!";
         
-        return result.asVarArgs();
+//        return result.asVarArgs();
+        return result;
     }
     
     private String formatStack()

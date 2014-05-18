@@ -166,7 +166,7 @@ Identifier
 
 /* Parser Rules */
 chunk
-    : block EOF
+    : ( block | expr ) EOF
     ;
 
 block

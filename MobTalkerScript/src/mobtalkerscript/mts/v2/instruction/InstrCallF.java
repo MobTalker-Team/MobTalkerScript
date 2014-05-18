@@ -30,6 +30,11 @@ public final class InstrCallF extends MtsInstruction
         MtsValue target = frame.pop();
         MtsValue result = target.call( MtsVarArgs.of( args ) );
         
+        if ( result instanceof MtsTailcall )
+        {
+            ( (MtsTailcall) result ).eval();
+        }
+        
         if ( _nReturn == 0 )
             return;
         

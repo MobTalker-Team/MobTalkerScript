@@ -12,6 +12,20 @@ local function Ackermann( m, n )
 	end  
 end
 
-local m, n = 3, 10;
+local function Fibonacci( n )
+	callCounter = callCounter + 1;
+	
+	if ( n == 0 ) then return 0; end
+	if ( n == 1 ) then return 1; end
+	return Fibonacci( n - 1 ) + Fibonacci( n - 2 );
+end
 
-print( "Result for {m},{n}: " .. Ackermann( m, n ) .. " ({callCounter} calls)" );
+local function TailCall( n )
+	if ( n == 0 ) then
+		print( "done!" ); 
+	else
+		return TailCall( n - 1 );
+	end
+end
+
+TailCall( 10000000 );

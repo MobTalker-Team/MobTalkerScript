@@ -1,6 +1,5 @@
 package mobtalkerscript;
 
-import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import static mobtalkerscript.mts.v2.value.userdata.MtsNatives.*;
 
 import java.nio.file.*;
@@ -42,14 +41,6 @@ public class MobTalkerScript
         
         // Initialize engine
         MtsGlobals _G = new MtsGlobals();
-        
-        _G.set( "Math", createLibrary( MtsMathLib.class ) );
-        _G.set( "Table", createLibrary( MtsTableLib.class ) );
-        
-        MtsTable stringLib = createLibrary( MtsStringLib.class );
-        MtsTable stringMT = new MtsTable( 0, 1 );
-        stringMT.set( __INDEX, stringLib );
-        MtsType.STRING.setMetaTable( stringMT );
         
 //        _G.loadLibrary( new ConsoleCommandLib() );
         createLibrary( new ConsoleCommandLib( _G ), _G );

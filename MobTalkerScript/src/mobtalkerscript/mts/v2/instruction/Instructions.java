@@ -225,6 +225,11 @@ public class Instructions
         return ( count < _return.length ) ? _return[count] : new InstrReturn( count );
     }
     
+    public static InstrTailcall InstrTailcall( int nArgs, int nReturn )
+    {
+        return new InstrTailcall( nArgs, nReturn );
+    }
+    
     // ========================================
     
     public static InstrNeg InstrNeg()

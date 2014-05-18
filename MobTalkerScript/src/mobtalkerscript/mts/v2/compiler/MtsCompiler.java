@@ -458,6 +458,14 @@ public class MtsCompiler
         addInstr( InstrStoreT() );
     }
     
+    public void loadMethod( String name )
+    {
+        CompilerLog.info( "Load Method: " + name );
+        
+        int index = _currentFunction.getConstantIndex( valueOf( name ) );
+        addInstr( new InstrLoadM( index ) );
+    }
+    
     // ========================================
     
     public void assignmentOperation( String op )
@@ -567,18 +575,18 @@ public class MtsCompiler
         addInstr( new InstrCallF( nArgs, nReturn ) );
     }
     
-    public void callMethod( String name, int nArgs, int nReturn )
-    {
-        CompilerLog.info( "Call Method: " + name );
-        
-        addInstr( new InstrCallM( name, nArgs, nReturn ) );
-    }
-    
     public void returnFunction( int nValues )
     {
         CompilerLog.info( "Return Function" );
         
         addInstr( InstrReturn( nValues ) );
+    }
+    
+    public void tailCall( int nArgs, int nReturn )
+    {
+        CompilerLog.info( "Tailcall Function" );
+        
+        addInstr( InstrTailcall( nArgs, nReturn ) );
     }
     
     // ========================================

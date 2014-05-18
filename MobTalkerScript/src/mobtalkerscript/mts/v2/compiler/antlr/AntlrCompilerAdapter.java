@@ -25,6 +25,7 @@ import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ConditionalOpExprContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ElseIfBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprContext;
+import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.ExprListContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FieldDefContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncBodyContext;
 import mobtalkerscript.mts.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
@@ -415,6 +416,13 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         int nArgs = 0;
         
+        if ( ctx.Method != null )
+        {
+            String name = ctx.Method.getText();
+            _c.loadMethod( name );
+            nArgs++;
+        }
+        
         if ( ctx.Arg != null )
         {
             _c.loadConstant( ctx.Arg.getText() );
@@ -426,10 +434,9 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             nArgs += ctx.Args.Exprs.size();
         }
         
-        if ( ctx.Method != null )
+        if ( isTailcall( ctx ) )
         {
-            String name = ctx.Method.getText();
-            _c.callMethod( name, nArgs, ctx.nReturn );
+            _c.tailCall( nArgs, ctx.nReturn );
         }
         else
         {
@@ -437,6 +444,14 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         }
         
         return null;
+    }
+    
+    private static boolean isTailcall( CallArgsContext ctx )
+    {
+        return ( ctx.getParent() instanceof CallContext )
+               && ( ctx.getParent().getParent() instanceof CallExprContext )
+               && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
+               && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
     }
     
     @Override

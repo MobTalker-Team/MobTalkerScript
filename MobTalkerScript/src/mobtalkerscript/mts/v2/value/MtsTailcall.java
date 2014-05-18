@@ -2,25 +2,25 @@ package mobtalkerscript.mts.v2.value;
 
 public class MtsTailcall extends MtsVarArgs
 {
-    private MtsFunction _func;
+    private MtsValue _target;
     private MtsVarArgs _args;
     private final int _nResults;
     private MtsValue _result;
     
     // ========================================
     
-    public MtsTailcall( MtsFunction func, MtsVarArgs args, int nResults )
+    public MtsTailcall( MtsValue target, MtsVarArgs args, int nResults )
     {
-        _func = func;
+        _target = target;
         _args = args;
         _nResults = nResults;
     }
     
     // ========================================
     
-    public MtsFunction getFunction()
+    public MtsValue getTarget()
     {
-        return _func;
+        return _target;
     }
     
     public MtsVarArgs getArguments()
@@ -77,17 +77,17 @@ public class MtsTailcall extends MtsVarArgs
     
     // ========================================
     
-    private void eval()
+    public void eval()
     {
-        MtsValue result = _func.call( _args );
+        MtsValue result = _target.call( _args );
         
         while ( result instanceof MtsTailcall )
         {
             MtsTailcall next = (MtsTailcall) result;
-            result = next.getFunction().call( next.getArguments() );
+            result = next.getTarget().call( next.getArguments() );
         }
         
-        _func = null;
+        _target = null;
         _args = null;
         _result = result;
     }

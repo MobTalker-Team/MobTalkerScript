@@ -19,7 +19,7 @@ public class MinecraftConsoleWorldLib
     public MtsVarArgs GetWeather( MtsValue arg )
     {
         // clear, raining, snowing,
-        return new MtsVarArgs( valueOf( "clear" ), FALSE );
+        return MtsVarArgs.of( valueOf( "clear" ), FALSE );
     }
     
     // ========================================
@@ -46,7 +46,7 @@ public class MinecraftConsoleWorldLib
     @MtsNativeFunction
     public MtsVarArgs GetSpawnpoint( MtsValue arg )
     {
-        return new MtsVarArgs( ZERO, ZERO, ZERO );
+        return MtsVarArgs.of( ZERO, ZERO, ZERO );
     }
     
     @MtsNativeFunction
@@ -68,7 +68,7 @@ public class MinecraftConsoleWorldLib
     public MtsVarArgs GetDifficulty()
     {
         // peaceful, easy, normal, hard
-        return new MtsVarArgs( valueOf( "peaceful" ), FALSE );
+        return MtsVarArgs.of( valueOf( "peaceful" ), FALSE );
     }
     
     @MtsNativeFunction

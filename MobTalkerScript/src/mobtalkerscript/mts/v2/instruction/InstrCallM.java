@@ -33,7 +33,7 @@ public final class InstrCallM extends MtsInstruction
         }
         args[0] = target;
         
-        MtsValue result = method.call( new MtsVarArgs( args ) );
+        MtsValue result = method.call( MtsVarArgs.of( args ) );
         
         if ( _nReturn == 0 )
             return;

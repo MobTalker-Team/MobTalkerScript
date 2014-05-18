@@ -28,7 +28,7 @@ public final class InstrCallF extends MtsInstruction
         }
         
         MtsValue target = frame.pop();
-        MtsValue result = target.call( new MtsVarArgs( args ) );
+        MtsValue result = target.call( MtsVarArgs.of( args ) );
         
         if ( _nReturn == 0 )
             return;

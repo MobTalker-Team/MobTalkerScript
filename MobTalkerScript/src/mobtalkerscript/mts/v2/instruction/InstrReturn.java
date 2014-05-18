@@ -25,7 +25,7 @@ public final class InstrReturn extends MtsInstruction
         else if ( _count == 1 )
             result = frame.pop();
         else
-            result = new MtsVarArgs( frame.pop( _count ) );
+            result = MtsVarArgs.of( frame.pop( _count ) );
         
         frame.push( result );
     }

@@ -13,7 +13,7 @@ public abstract class MtsJavaFunction extends MtsFunction
         try
         {
             MtsValue result = invoke( args );
-            return result.isVarArgs() ? result.asVarArgs() : new MtsVarArgs( result );
+            return result.isVarArgs() ? result.asVarArgs() : MtsVarArgs.of( result );
         }
         catch ( ScriptRuntimeException ex )
         {

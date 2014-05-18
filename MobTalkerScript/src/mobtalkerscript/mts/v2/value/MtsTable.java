@@ -280,8 +280,8 @@ public class MtsTable extends MtsMetaTableValue
     @Override
     public void set( MtsValue key, MtsValue value, boolean useMetaTag )
     {
-        if ( containsKey( key ) )
-            rawset( key, value );
+        if ( containsKey( key ) || !useMetaTag )
+            __newindex( key, value );
         else if ( useMetaTag )
             super.set( key, value, true );
     }

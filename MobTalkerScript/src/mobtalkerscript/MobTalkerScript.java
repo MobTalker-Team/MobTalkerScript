@@ -52,11 +52,10 @@ public class MobTalkerScript
         MtsType.STRING.setMetaTable( stringMT );
         
 //        _G.loadLibrary( new ConsoleCommandLib() );
-        createLibrary( new AnnotatedConsoleCommandLib( _G ), _G );
+        createLibrary( new ConsoleCommandLib( _G ), _G );
         
         _G.loadLibrary( new MobTalkerConsoleInteractionLib( new DummyTalkingPlayer( "Console", 20 ),
                                                             new DummyTalkingEntity( "", "Creeper", 20, 0 ) ) );
-        _G.set( "Character", createLibrary( MobTalkerConsoleCharacterLib.class ) );
         
         _G.set( "World", createLibrary( new MinecraftConsoleWorldLib() ) );
         

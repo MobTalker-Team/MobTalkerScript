@@ -18,7 +18,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public static final MtsString EMPTY_STRING = new MtsString( "" );
     
-    public static final MtsVarArgs EMPTY_VARARGS = new MtsVarArgs( Collections.<MtsValue> emptyList() );
+    public static final MtsVarArgs EMPTY_VARARGS = new EvaluatedVarArgs( Collections.<MtsValue> emptyList() );
     
     // ========================================
     
@@ -125,7 +125,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Checks if this value is a {@link MtsVarArgs}.
+     * Checks if this value is a {@link EvaluatedVarArgs}.
      */
     public boolean isVarArgs()
     {
@@ -218,7 +218,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Equivalent to a Java typecast to {@link MtsVarArgs}.
+     * Equivalent to a Java typecast to {@link EvaluatedVarArgs}.
      */
     public MtsVarArgs asVarArgs()
     {
@@ -299,7 +299,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
         MtsValue tag = getMetaTag( __INDEX );
         
         if ( tag.isNil() )
-            __index( key );
+            return __index( key );
         
         if ( tag.isFunction() )
             return tag.call( this, key );
@@ -384,17 +384,17 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public final MtsValue call( MtsValue arg )
     {
-        return call( new MtsVarArgs( arg ) );
+        return call( MtsVarArgs.of( arg ) );
     }
     
     public final MtsValue call( MtsValue arg1, MtsValue arg2 )
     {
-        return call( new MtsVarArgs( arg1, arg2 ) );
+        return call( MtsVarArgs.of( arg1, arg2 ) );
     }
     
     public final MtsValue call( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
-        return call( new MtsVarArgs( arg1, arg2, arg3 ) );
+        return call( MtsVarArgs.of( arg1, arg2, arg3 ) );
     }
     
     public MtsValue call( MtsVarArgs args )

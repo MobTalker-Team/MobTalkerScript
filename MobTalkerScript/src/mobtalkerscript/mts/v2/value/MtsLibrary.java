@@ -10,7 +10,7 @@ public abstract class MtsLibrary extends MtsFunction
         switch ( args.count() )
         {
             case 2:
-                return new MtsVarArgs( bind( args.get( 0 ).toMtsString(), args.get( 1 ) ) );
+                return MtsVarArgs.of( bind( args.get( 0 ).toMtsString(), args.get( 1 ) ) );
             default:
                 throw new ScriptRuntimeException( "wrong number of arguments for binding library (expected 2, got %s)",
                                                   args.count() );

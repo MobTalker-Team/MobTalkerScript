@@ -103,7 +103,7 @@ public final class MtsBaseLib extends MtsGlobalLibrary
             checkTable( arg1, 1 );
             
             MtsTable.Entry next = arg1.asTable().getNext( arg2 );
-            return next == null ? EMPTY_VARARGS : new MtsVarArgs( next.getKey(), next.getValue() );
+            return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
         }
     }
     
@@ -260,13 +260,13 @@ public final class MtsBaseLib extends MtsGlobalLibrary
                 MtsValue callResults = f.call( callArgs );
                 
                 if ( callResults.isVarArgs() )
-                    result = new MtsVarArgs( TRUE, callResults.asVarArgs() );
+                    result = MtsVarArgs.of( TRUE, callResults.asVarArgs() );
                 else
-                    result = new MtsVarArgs( TRUE, callResults );
+                    result = MtsVarArgs.of( TRUE, callResults );
             }
             catch ( ScriptRuntimeException ex )
             {
-                result = new MtsVarArgs( FALSE, valueOf( ex.getMessage() ) );
+                result = MtsVarArgs.of( FALSE, valueOf( ex.getMessage() ) );
             }
             
             return result;

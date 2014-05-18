@@ -572,7 +572,7 @@ public class MtsCompiler
     {
         CompilerLog.info( "Call Function" );
         
-        addInstr( new InstrCallF( nArgs, nReturn ) );
+        addInstr( new InstrCall( nArgs, nReturn ) );
     }
     
     public void returnFunction( int nValues )

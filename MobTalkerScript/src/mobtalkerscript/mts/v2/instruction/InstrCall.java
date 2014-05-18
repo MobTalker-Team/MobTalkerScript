@@ -3,14 +3,14 @@ package mobtalkerscript.mts.v2.instruction;
 import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import mobtalkerscript.mts.v2.value.*;
 
-public final class InstrCallF extends MtsInstruction
+public final class InstrCall extends MtsInstruction
 {
     private final int _nArgs;
     private final int _nReturn;
     
     // ========================================
     
-    public InstrCallF( int nArgs, int nReturn )
+    public InstrCall( int nArgs, int nReturn )
     {
         _nArgs = nArgs;
         _nReturn = nReturn;
@@ -30,9 +30,10 @@ public final class InstrCallF extends MtsInstruction
         MtsValue target = frame.pop();
         MtsValue result = target.call( MtsVarArgs.of( args ) );
         
+        // Trampoline tail calls
         if ( result instanceof MtsTailcall )
         {
-            ( (MtsTailcall) result ).eval();
+            ( (MtsTailcall) result ).execute();
         }
         
         if ( _nReturn == 0 )
@@ -67,6 +68,6 @@ public final class InstrCallF extends MtsInstruction
     @Override
     public String toString()
     {
-        return "CALLF " + _nArgs + " " + _nReturn;
+        return "CALL " + _nArgs + " " + _nReturn;
     }
 }

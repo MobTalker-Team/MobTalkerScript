@@ -44,189 +44,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     // ========================================
     
-    /**
-     * Checks if this value is a {@link MtsBoolean}.
-     */
-    public boolean isBoolean()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsNumber}.
-     */
-    public boolean isNumber()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsNumber} and an integer.
-     */
-    public boolean isInteger()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsNumber} and a decimal.
-     */
-    public boolean isDecimal()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsString}.
-     */
-    public boolean isString()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsNil}.
-     */
-    public boolean isNil()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsUserdata}.
-     */
-    public boolean isUserdata()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsClosure}.
-     */
-    public boolean isClosure()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsFunction}.
-     */
-    public boolean isFunction()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link MtsTable}.
-     */
-    public boolean isTable()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is a {@link EvaluatedVarArgs}.
-     */
-    public boolean isVarArgs()
-    {
-        return false;
-    }
-    
-    /**
-     * Checks if this value is of the given type.
-     * <p>
-     * If this fails and this type is a table, this method tries to compare the Metatables of this value and the of the given
-     * type, if any.
-     */
-    public boolean is( MtsType type )
-    {
-        if ( getType().equals( type ) )
-            return true;
-        
-        // Try metatable comparison
-        if ( isTable() && type.hasMetaTable() && hasMetaTable() )
-            return type.getMetaTable().equals( getMetaTable() );
-        
-        return false;
-    }
-    
-    // ========================================
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsBoolean}.
-     */
-    public MtsBoolean asBoolean()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.BOOLEAN + ", got " + getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsNumber}.
-     * <p>
-     * If this value is a string an automatic coercion into a number is attempted.
-     */
-    public MtsNumber asNumber()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.NUMBER + ", got " + getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsString}.
-     * <p>
-     * If this value is a number it is automatically coerced to a string.
-     */
-    public MtsString asString()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.STRING + ", got " + getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsUserdata}.
-     */
-    public MtsUserdata asUserdata()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
-    }
-    
-    public <T> T asNative()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsClosure}.
-     */
-    public MtsClosure asClosure()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.FUNCTION + ", got " + getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsFunction}.
-     */
-    public MtsFunction asFunction()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.FUNCTION + ", got " + getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsTable}.
-     */
-    public MtsTable asTable()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.TABLE + ", got " + getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link EvaluatedVarArgs}.
-     */
-    public MtsVarArgs asVarArgs()
-    {
-        throw new ScriptRuntimeException( "Expected " + MtsType.VARARGS + ", got " + getType() );
-    }
-    
-    // ========================================
-    
     public static final MtsString __INDEX = valueOf( "__index" );
     public static final MtsString __NEWINDEX = valueOf( "__newindex" );
     public static final MtsString __LENGTH = valueOf( "__len" );
@@ -485,6 +302,199 @@ public abstract class MtsValue implements Comparable<MtsValue>
     // ========================================
     
     /**
+     * Checks if this value is a {@link MtsBoolean}.
+     */
+    public boolean isBoolean()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsNumber}.
+     */
+    public boolean isNumber()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsNumber} and an integer.
+     */
+    public boolean isInteger()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsNumber} and a decimal.
+     */
+    public boolean isDecimal()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsString}.
+     */
+    public boolean isString()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsNil}.
+     */
+    public boolean isNil()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsUserdata}.
+     */
+    public boolean isUserdata()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsClosure}.
+     */
+    public boolean isClosure()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsFunction}.
+     */
+    public boolean isFunction()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link MtsTable}.
+     */
+    public boolean isTable()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is a {@link EvaluatedVarArgs}.
+     */
+    public boolean isVarArgs()
+    {
+        return false;
+    }
+    
+    /**
+     * Checks if this value is of the given type.
+     * <p>
+     * If this fails and this type is a table, this method tries to compare the Metatables of this value and the of the given
+     * type, if any.
+     */
+    public boolean is( MtsType type )
+    {
+        if ( getType().equals( type ) )
+            return true;
+        
+        // Try metatable comparison
+        if ( isTable() && type.hasMetaTable() && hasMetaTable() )
+            return type.getMetaTable().equals( getMetaTable() );
+        
+        return false;
+    }
+    
+    // ========================================
+    
+    /**
+     * Equivalent to a Java typecast to {@link MtsBoolean}.
+     */
+    public MtsBoolean asBoolean()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.BOOLEAN + ", got " + getType() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link MtsNumber}.
+     * <p>
+     * If this value is a string an automatic coercion into a number is attempted.
+     */
+    public MtsNumber asNumber()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.NUMBER + ", got " + getType() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link MtsString}.
+     * <p>
+     * If this value is a number it is automatically coerced to a string.
+     */
+    public MtsString asString()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.STRING + ", got " + getType() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link MtsUserdata}.
+     */
+    public MtsUserdata asUserdata()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
+    }
+    
+    public <T> T asNative()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link MtsClosure}.
+     */
+    public MtsClosure asClosure()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.FUNCTION + ", got " + getType() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link MtsFunction}.
+     */
+    public MtsFunction asFunction()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.FUNCTION + ", got " + getType() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link MtsTable}.
+     */
+    public MtsTable asTable()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.TABLE + ", got " + getType() );
+    }
+    
+    /**
+     * Equivalent to a Java typecast to {@link EvaluatedVarArgs}.
+     */
+    public MtsVarArgs asVarArgs()
+    {
+        throw new ScriptRuntimeException( "Expected " + MtsType.VARARGS + ", got " + getType() );
+    }
+    
+    // ========================================
+    
+    public MtsBoolean toMtsBoolean()
+    {
+        return TRUE;
+    }
+    
+    public MtsNumber toMtsNumber() throws NumberFormatException
+    {
+        throw new NumberFormatException( "attempt to convert " + getType() + " to " + MtsType.NUMBER );
+    }
+    
+    /**
      * Converts this value to an {@link MtsString}.
      * <p>
      * Equivalent to Java's toString().
@@ -494,11 +504,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
     public MtsString toMtsString()
     {
         return valueOf( toString() );
-    }
-    
-    public MtsBoolean toMtsBoolean()
-    {
-        return TRUE;
     }
     
     // ========================================

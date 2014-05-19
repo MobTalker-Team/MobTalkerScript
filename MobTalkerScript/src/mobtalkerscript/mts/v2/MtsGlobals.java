@@ -19,10 +19,9 @@ public class MtsGlobals extends MtsTable
     
     public MtsGlobals()
     {
-        super( 16, 1024 );
+        super( 0, 1024 );
         
-        loadLibrary( new MtsBaseLib() );
-        
+        createLibrary( new MtsBaseLib( this ), this );
         set( "Math", createLibrary( MtsMathLib.class ), false );
         set( "Table", createLibrary( MtsTableLib.class ), false );
         
@@ -30,7 +29,14 @@ public class MtsGlobals extends MtsTable
         MtsTable stringMT = new MtsTable( 0, 1 );
         stringMT.set( __INDEX, stringLib );
         MtsType.STRING.setMetaTable( stringMT );
+        
+        PackageLib = new MtsPackageLib( this );
+        createLibrary( PackageLib, this );
     }
+    
+    // ========================================
+    
+    public final MtsPackageLib PackageLib;
     
     // ========================================
     
@@ -38,4 +44,7 @@ public class MtsGlobals extends MtsTable
     {
         lib.call( EMPTY_STRING, this );
     }
+    
+    // ========================================
+    
 }

@@ -332,9 +332,8 @@ import mobtalkerscript.mts.v2.value.MtsTable.Entry;
      * Each entry is a Key-Value mapping as well as a bucket.
      * Values with the same hash are appended to each other in single-linked list style.
      */
-    private static class HashEntry extends Entry
+    private static final class HashEntry extends Entry
     {
-        
         /**
          * Hash of the key when this entry was created.
          */

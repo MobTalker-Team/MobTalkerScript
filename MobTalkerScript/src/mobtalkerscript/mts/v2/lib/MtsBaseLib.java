@@ -1,276 +1,193 @@
 package mobtalkerscript.mts.v2.lib;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import static mobtalkerscript.util.MtsCheck.*;
 import mobtalkerscript.mts.v2.*;
 import mobtalkerscript.mts.v2.compiler.*;
 import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.mts.v2.value.userdata.*;
 
-public final class MtsBaseLib extends MtsGlobalLibrary
+public final class MtsBaseLib
 {
-    private static final MtsJavaFunction Assert = new Assert();
-    private static final MtsJavaFunction Error = new Error();
-    private static final MtsJavaFunction INext = new INext();
-    private static final MtsJavaFunction Next = new Next();
-    private static final MtsJavaFunction PCall = new PCall();
-    private static final MtsJavaFunction RawGet = new RawGet();
-    private static final MtsJavaFunction RawSet = new RawSet();
-    private static final MtsJavaFunction GetMetaTable = new GetMetaTable();
-    private static final MtsJavaFunction SetMetaTable = new SetMetaTable();
-    private static final MtsJavaFunction ToNumber = new ToNumber();
-    private static final MtsJavaFunction ToString = new ToString();
-    private static final MtsJavaFunction TypeOf = new TypeOf();
-    
-    // ========================================
-    
-    @Override
-    protected void bind()
+    public MtsBaseLib( MtsGlobals g )
     {
-        _G.set( "_G", _G, false );
-        _G.set( "_VERSION", valueOf( "2.0.0-alpha" ), false );
-        
-        bindFunction( "assert", Assert );
-        bindFunction( "error", Error );
-        bindFunction( "next", Next );
-        bindFunction( "inext", INext );
-        bindFunction( "print", new Print() );
-        bindFunction( "rawget", RawGet );
-        bindFunction( "rawset", RawSet );
-        bindFunction( "typeof", TypeOf );
-        
-        bindFunction( "getmetatable", GetMetaTable );
-        bindFunction( "setmetatable", SetMetaTable );
-        
-        bindFunction( "pcall", PCall );
-        
-        bindFunction( "LoadString", new LoadString() );
-        
-        bindFunction( "ToNumber", ToNumber );
-        bindFunction( "ToString", ToString );
+        _G = g;
     }
     
     // ========================================
     
-    private static final class Assert extends MtsTwoArgFunction
+    @MtsNativeField
+    public final MtsGlobals _G;
+    
+    @MtsNativeField
+    public static final MtsValue _VERSION = valueOf( "2.0.0-alpha" );
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "assert" )
+    public void assertMts( MtsValue arg1, MtsValue arg2 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        if ( !MtsBoolean.isTrue( arg1 ) )
         {
-            if ( !MtsBoolean.isTrue( arg1 ) )
-            {
-                String msg = arg2.isNil() ? "assertion failed!" : arg2.toMtsString().asJavaString();
-                throw new ScriptRuntimeException( 1, msg );
-            }
-            
+            String msg = arg2.isNil() ? "assertion failed!" : arg2.toMtsString().asJavaString();
+            throw new ScriptRuntimeException( msg );
+        }
+    }
+    
+    @MtsNativeFunction( name = "error" )
+    public void error( MtsValue arg1, MtsValue arg2 )
+    {
+        if ( arg2.isNil() )
+            throw new ScriptRuntimeException( arg1.toMtsString().asJavaString() );
+        else
+            throw new ScriptRuntimeException( arg2.asNumber().asJavaInt(),
+                                              arg1.toMtsString().asJavaString() );
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "inext" )
+    public MtsValue INext( MtsValue arg1, MtsValue arg2 )
+    {
+        checkTable( arg1, 1 );
+        
+        MtsTable.Entry next = arg1.asTable().getINext( arg2.asNumber() );
+        return next == null ? EMPTY_VARARGS : next.getKey();
+    }
+    
+    @MtsNativeFunction( name = "next" )
+    public MtsValue Next( MtsValue arg1, MtsValue arg2 )
+    {
+        checkTable( arg1, 1 );
+        
+        MtsTable.Entry next = arg1.asTable().getNext( arg2 );
+        return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "print" )
+    public void Print( MtsVarArgs args )
+    {
+        if ( args.count() > 0 )
+        {
+            MtsString str = MtsString.concat( args );
+            _G.out.println( str.asJavaString() );
+        }
+        else
+        {
+            _G.out.println();
+        }
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "rawget" )
+    public MtsValue RawGet( MtsValue arg1, MtsValue arg2 )
+    {
+        return checkTable( arg1, 0 ).get( arg2, false );
+    }
+    
+    @MtsNativeFunction( name = "rawset" )
+    public void RawSet( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+    {
+        checkTable( arg1, 0 ).set( arg2, arg3, false );
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "GetMetaTable" )
+    public MtsTable GetMetaTable( MtsValue arg )
+    {
+        MtsTable t = checkTable( arg, 0 );
+        return t.getMetaTable();
+    }
+    
+    @MtsNativeFunction( name = "SetMetaTable" )
+    public MtsTable SetMetaTable( MtsValue arg1, MtsValue arg2 )
+    {
+        MtsTable t = checkTable( arg1, 0 );
+        t.setMetaTable( arg2 );
+        return t;
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "toNumber" )
+    public MtsValue ToNumber( MtsValue arg1 )
+    {
+        try
+        {
+            return arg1.toMtsNumber();
+        }
+        catch ( NumberFormatException ex )
+        {
             return NIL;
         }
     }
     
-    private static final class Error extends MtsTwoArgFunction
+    @MtsNativeFunction( name = "toString" )
+    public MtsString ToString( MtsValue arg1 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
+        return arg1.toMtsString();
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "typeof" )
+    public MtsString TypeOf( MtsValue arg1 )
+    {
+        return valueOf( arg1.getType().getName() );
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = "LoadString" )
+    public MtsFunction LoadString( MtsVarArgs args )
+    {
+        MtsFunctionPrototype p;
+        try
         {
-            throw new ScriptRuntimeException( arg1.toMtsString().asJavaString() );
+            p = MtsCompiler.loadString( checkString( args, 0 ), "string" );
+        }
+        catch ( Exception ex )
+        {
+            throw new ScriptRuntimeException( "Unable to load string: %s", ex.getMessage() );
         }
         
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        MtsValue env = args.get( 1 );
+        if ( env.isNil() )
         {
-            throw new ScriptRuntimeException( arg2.asNumber().asJavaInt(),
-                                              arg1.toMtsString().asJavaString() );
+            env = _G;
         }
+        
+        return new MtsClosure( p, env );
     }
     
     // ========================================
     
-    private static final class INext extends MtsTwoArgFunction
+    @MtsNativeFunction( name = "pcall" )
+    public MtsValue PCall( MtsVarArgs args )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        MtsValue f = args.get( 0 );
+        MtsVarArgs callArgs = args.subArgs( 1 );
+        
+        MtsValue result;
+        try
         {
-            checkTable( arg1, 1 );
+            MtsValue callResults = f.call( callArgs );
             
-            MtsTable.Entry next = arg1.asTable().getINext( arg2.asNumber() );
-            return next == null ? EMPTY_VARARGS : next.getKey();
-        }
-    }
-    
-    private static final class Next extends MtsTwoArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
-            checkTable( arg1, 1 );
-            
-            MtsTable.Entry next = arg1.asTable().getNext( arg2 );
-            return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
-        }
-    }
-    
-    // ========================================
-    
-    private final class Print extends MtsJavaFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsVarArgs args )
-        {
-            if ( args.count() > 0 )
-            {
-                MtsString str = MtsString.concat( args );
-                getGlobals().out.println( str.asJavaString() );
-            }
+            if ( callResults.isVarArgs() )
+                result = MtsVarArgs.of( TRUE, callResults.asVarArgs() );
             else
-            {
-                getGlobals().out.println();
-            }
-            
-            return EMPTY_VARARGS;
+                result = MtsVarArgs.of( TRUE, callResults );
         }
-    }
-    
-    // ========================================
-    
-    private static final class RawGet extends MtsTwoArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
+        catch ( ScriptRuntimeException ex )
         {
-            checkTable( arg1, 1 );
-            
-            return arg1.asTable().get( arg2, false );
+            result = MtsVarArgs.of( FALSE, valueOf( ex.getMessage() ) );
         }
-    }
-    
-    private static final class RawSet extends MtsThreeArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
-        {
-            checkTable( arg1, 1 );
-            
-            arg1.asTable().set( arg2, arg3, false );
-            
-            return EMPTY_VARARGS;
-        }
-    }
-    
-    // ========================================
-    
-    private static final class GetMetaTable extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            MtsTable t = checkTable( arg, 0 );
-            return t.getMetaTable();
-        }
-    }
-    
-    private static final class SetMetaTable extends MtsTwoArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
-            MtsTable t = checkTable( arg1, 0 );
-            t.setMetaTable( arg2 );
-            return arg1;
-        }
-    }
-    
-    // ========================================
-    
-    private static final class ToNumber extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            if ( arg1.isNumber() )
-                return arg1;
-            if ( arg1.isString() )
-                return MtsNumber.parse( arg1.asString() );
-            if ( arg1.isBoolean() )
-                return MtsNumber.parse( arg1.asBoolean() );
-            
-            return EMPTY_VARARGS;
-        }
-    }
-    
-    private static final class ToString extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            return arg1.toMtsString();
-        }
-    }
-    
-    // ========================================
-    
-    private static final class TypeOf extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1 )
-        {
-            return valueOf( arg1.getType().getName() );
-        }
-    }
-    
-    // ========================================
-    
-    private final class LoadString extends MtsJavaFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsVarArgs args )
-        {
-            checkString( args.get( 0 ), 0 );
-            
-            MtsFunctionPrototype p;
-            try
-            {
-                p = MtsCompiler.loadString( args.get( 0 ).asString().asJavaString(), "string" );
-            }
-            catch ( Exception ex )
-            {
-                throw new ScriptRuntimeException( "Unable to load string: %s", ex.getMessage() );
-            }
-            
-            MtsValue env = args.get( 1 );
-            if ( env.isNil() )
-            {
-                env = getGlobals();
-            }
-            
-            return new MtsClosure( p, env );
-        }
-    }
-    
-    // ========================================
-    
-    private static final class PCall extends MtsJavaFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsVarArgs args )
-        {
-            MtsValue f = args.get( 0 );
-            MtsVarArgs callArgs = args.subArgs( 1 );
-            
-            MtsValue result;
-            try
-            {
-                MtsValue callResults = f.call( callArgs );
-                
-                if ( callResults.isVarArgs() )
-                    result = MtsVarArgs.of( TRUE, callResults.asVarArgs() );
-                else
-                    result = MtsVarArgs.of( TRUE, callResults );
-            }
-            catch ( ScriptRuntimeException ex )
-            {
-                result = MtsVarArgs.of( FALSE, valueOf( ex.getMessage() ) );
-            }
-            
-            return result;
-        }
+        
+        return result;
     }
     
 }

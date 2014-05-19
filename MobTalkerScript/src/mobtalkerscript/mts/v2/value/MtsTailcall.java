@@ -34,7 +34,7 @@ public class MtsTailcall extends MtsVarArgs
     public MtsVarArgs subArgs( int start, int end )
     {
         if ( _result == null )
-            execute();
+            evaluate();
         
         if ( _result.isVarArgs() )
             return _result.asVarArgs().subArgs( start, end );
@@ -46,7 +46,7 @@ public class MtsTailcall extends MtsVarArgs
     public MtsValue get( int i )
     {
         if ( _result == null )
-            execute();
+            evaluate();
         
         return _result.get( i );
     }
@@ -55,7 +55,7 @@ public class MtsTailcall extends MtsVarArgs
     public MtsValue[] toArray()
     {
         if ( _result == null )
-            execute();
+            evaluate();
         
         if ( _result.isVarArgs() )
             return _result.asVarArgs().toArray();
@@ -77,7 +77,10 @@ public class MtsTailcall extends MtsVarArgs
     
     // ========================================
     
-    public void execute()
+    /**
+     * Executes this tail call and any subsequent returned tail calls.
+     */
+    public void evaluate()
     {
         MtsValue result = _target.call( _args );
         

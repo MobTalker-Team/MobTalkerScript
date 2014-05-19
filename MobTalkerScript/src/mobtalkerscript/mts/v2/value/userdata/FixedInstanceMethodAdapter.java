@@ -12,9 +12,9 @@ import mobtalkerscript.mts.v2.value.*;
     
     // ========================================
     
-    public FixedInstanceMethodAdapter( Object instance, Method method )
+    public FixedInstanceMethodAdapter( Object instance, Method method, String name )
     {
-        super( method );
+        super( method, name );
         checkNotNull( instance );
         
         if ( !method.getDeclaringClass().isAssignableFrom( instance.getClass() ) )

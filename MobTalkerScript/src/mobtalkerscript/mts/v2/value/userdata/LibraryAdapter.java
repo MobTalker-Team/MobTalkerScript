@@ -71,7 +71,7 @@ import com.google.common.collect.*;
     // ========================================
     
     private final Map<String, Method> _methods;
-    private final Map<String, MtsValue> _fields;
+    private final Map<String, Field> _fields;
     
     // ========================================
     
@@ -99,11 +99,11 @@ import com.google.common.collect.*;
             JavaMethodAdapter adapter;
             if ( Modifier.isStatic( method.getModifiers() ) )
             {
-                adapter = new FunctionAdapter( method );
+                adapter = new FunctionAdapter( method, name );
             }
             else if ( instance != null )
             {
-                adapter = new FixedInstanceMethodAdapter( instance, method );
+                adapter = new FixedInstanceMethodAdapter( instance, method, name );
             }
             else
             {
@@ -113,10 +113,21 @@ import com.google.common.collect.*;
             t.set( name, adapter, false );
         }
         
-        for ( Entry<String, MtsValue> field : _fields.entrySet() )
+        for ( Entry<String, Field> entry : _fields.entrySet() )
         {
-            String name = field.getKey();
-            MtsValue value = field.getValue();
+            String name = entry.getKey();
+            Field field = entry.getValue();
+            
+            MtsValue value;
+            try
+            {
+                // if the field is static, the instance is ignored without an exception.
+                value = (MtsValue) field.get( instance );
+            }
+            catch ( Exception ex )
+            {
+                throw Throwables.propagate( ex );
+            }
             
             t.set( name, value );
         }
@@ -147,23 +158,13 @@ import com.google.common.collect.*;
         return methods;
     }
     
-    private static Map<String, MtsValue> getFields( Class<?> c )
+    private static Map<String, Field> getFields( Class<?> c )
     {
-        Map<String, MtsValue> fields = Maps.newHashMap();
+        Map<String, Field> fields = Maps.newHashMap();
         
         for ( Field f : getAnnotatedFields( c ) )
         {
-            if ( !Modifier.isFinal( f.getModifiers() ) )
-                continue;
-            
-            try
-            {
-                fields.put( getFieldName( f ), (MtsValue) f.get( null ) );
-            }
-            catch ( Exception ex )
-            {
-                throw Throwables.propagate( ex );
-            }
+            fields.put( getFieldName( f ), f );
         }
         
         return fields;

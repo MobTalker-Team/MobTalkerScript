@@ -70,7 +70,7 @@ import com.google.common.base.*;
         for ( Field f : c.getFields() )
         {
             if ( Modifier.isPublic( f.getModifiers() )
-                 && Modifier.isStatic( f.getModifiers() )
+                 && Modifier.isFinal( f.getModifiers() )
                  && isMtsValueClass( f.getType() )
                  && f.isAnnotationPresent( MtsNativeField.class ) )
             {

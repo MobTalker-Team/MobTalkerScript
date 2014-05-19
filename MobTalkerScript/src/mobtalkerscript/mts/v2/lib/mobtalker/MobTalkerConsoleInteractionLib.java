@@ -1,19 +1,22 @@
 package mobtalkerscript.mts.v2.lib.mobtalker;
 
+import static mobtalkerscript.mts.v2.value.MtsValue.*;
 import static mobtalkerscript.util.MtsCheck.*;
 import mobtalkerscript.mts.v2.*;
-import mobtalkerscript.mts.v2.lib.*;
 import mobtalkerscript.mts.v2.value.*;
+import mobtalkerscript.mts.v2.value.userdata.*;
 
-public class MobTalkerConsoleInteractionLib extends MtsGlobalLibrary
+public class MobTalkerConsoleInteractionLib
 {
+    private final MtsGlobals _G;
     private final DummyTalkingPlayer _player;
     private final DummyTalkingEntity _entity;
     
     // ========================================
     
-    public MobTalkerConsoleInteractionLib( DummyTalkingPlayer player, DummyTalkingEntity entity )
+    public MobTalkerConsoleInteractionLib( MtsGlobals g, DummyTalkingPlayer player, DummyTalkingEntity entity )
     {
+        _G = g;
         _player = player;
         _entity = entity;
     }
@@ -32,227 +35,151 @@ public class MobTalkerConsoleInteractionLib extends MtsGlobalLibrary
     
     // ========================================
     
-    @Override
-    public void bind()
+    @MtsNativeFunction
+    public MtsValue GetPlayerName()
     {
-        // Player
-        bindFunction( "GetPlayerName", new GetPlayerName() );
-        bindFunction( "GetPlayerGameMode", new GetPlayerGameMode() );
-        
-        bindFunction( "HurtPlayer", new HurtPlayer() );
-        
-        bindFunction( "GetPlayerItemCount", new GetPlayerItemCount() );
-        bindFunction( "TakePlayerItem", new TakePlayerItem() );
-        bindFunction( "GivePlayerItem", new GivePlayerItem() );
-        
-        // Entity
-        bindFunction( "GetEntityName", new GetEntityName() );
-        bindFunction( "SetEntityName", new SetEntityName() );
-        
-        bindFunction( "GetEntityType", new GetEntityType() );
-        
-        bindFunction( "GetEntityHealth", new GetEntityHealth() );
-        bindFunction( "SetEntityHealth", new SetEntityHealth() );
-        
-        bindFunction( "GetEntityMaxHealth", new GetEntityMaxHealth() );
-        bindFunction( "SetEntityMaxHealth", new SetEntityMaxHealth() );
-        
-        bindFunction( "GetLoveLevel", new GetLoveLevel() );
-        bindFunction( "SetLoveLevel", new SetLoveLevel() );
+        return valueOf( getPlayer().getName() );
+    }
+    
+    @MtsNativeFunction
+    public static MtsValue GetPlayerGameMode()
+    {
+        return valueOf( "peaceful" );
     }
     
     // ========================================
     
-    private final class GetPlayerName extends MtsZeroArgFunction
+    @MtsNativeFunction
+    public MtsValue HurtPlayer( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke()
-        {
-            return valueOf( getPlayer().getName() );
-        }
-    }
-    
-    private static final class GetPlayerGameMode extends MtsZeroArgFunction
-    {
-        @Override
-        protected MtsValue invoke()
-        {
-            return valueOf( "peaceful" );
-        }
+        checkNumber( arg, 1 );
+        
+        _G.out.println( "You were hurt for " + arg.asNumber().toString() + " damage!" );
+        
+        return EMPTY_VARARGS;
     }
     
     // ========================================
     
-    private class HurtPlayer extends MtsOneArgFunction
+    @MtsNativeFunction
+    public static MtsValue GetPlayerItemCount( MtsValue arg1, MtsValue arg2 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            checkNumber( arg, 1 );
-            
-            _G.out.println( "You were hurt for " + arg.asNumber().toString() + " damage!" );
-            
-            return EMPTY_VARARGS;
-        }
-    }
-    
-    // ========================================
-    
-    private class GetPlayerItemCount extends MtsTwoArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2 )
-        {
 //            int id = checkInteger( arg1, 0 );
 //            int meta = arg2.isNil() ? 0 : checkInteger( arg2, 1 );
-            
-            return valueOf( 42 );
-        }
+        
+        return valueOf( 42 );
     }
     
-    private class TakePlayerItem extends MtsThreeArgFunction
+    @MtsNativeFunction
+    public MtsValue TakePlayerItem( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
-        {
-            int id = checkInteger( arg1, 0 );
-            int count = arg2.isNil() ? 0 : checkInteger( arg2, 1 );
-            int meta = arg3.isNil() ? 0 : checkInteger( arg3, 2 );
-            
-            StringBuilder s = new StringBuilder( 32 );
-            s.append( "Taking " ).append( count ).append( "x " );
-            
-            s.append( id );
-            if ( meta != 0 )
-                s.append( ":" ).append( meta );
-            
-            s.append( " from " ).append( getPlayer().getName() );
-            
-            return TRUE;
-        }
+        int id = checkInteger( arg1, 0 );
+        int count = arg2.isNil() ? 0 : checkInteger( arg2, 1 );
+        int meta = arg3.isNil() ? 0 : checkInteger( arg3, 2 );
+        
+        StringBuilder s = new StringBuilder( 32 );
+        s.append( "Taking " ).append( count ).append( "x " );
+        
+        s.append( id );
+        if ( meta != 0 )
+            s.append( ":" ).append( meta );
+        
+        s.append( " from " ).append( getPlayer().getName() );
+        
+        return TRUE;
     }
     
-    private class GivePlayerItem extends MtsThreeArgFunction
+    @MtsNativeFunction
+    public MtsValue GivePlayerItem( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
-        {
-            int id = checkInteger( arg1, 0 );
-            int count = arg2.isNil() ? 0 : checkInteger( arg2, 1 );
-            int meta = arg3.isNil() ? 0 : checkInteger( arg3, 2 );
-            
-            StringBuilder s = new StringBuilder( 32 );
-            s.append( "Giving " ).append( getPlayer().getName() ).append( " " );
-            s.append( count ).append( "x " );
-            
-            s.append( id );
-            if ( meta != 0 )
-                s.append( ":" ).append( meta );
-            
-            return TRUE;
-        }
-    }
-    
-// ========================================
-    
-    private final class GetEntityName extends MtsZeroArgFunction
-    {
-        @Override
-        protected MtsValue invoke()
-        {
-            return valueOf( getEntity().getName() );
-        }
-    }
-    
-    private final class SetEntityName extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            getEntity().setName( checkString( arg, 0 ) );
-            return EMPTY_VARARGS;
-        }
+        int id = checkInteger( arg1, 0 );
+        int count = arg2.isNil() ? 0 : checkInteger( arg2, 1 );
+        int meta = arg3.isNil() ? 0 : checkInteger( arg3, 2 );
+        
+        StringBuilder s = new StringBuilder( 32 );
+        s.append( "Giving " ).append( getPlayer().getName() ).append( " " );
+        s.append( count ).append( "x " );
+        
+        s.append( id );
+        if ( meta != 0 )
+            s.append( ":" ).append( meta );
+        
+        return TRUE;
     }
     
     // ========================================
     
-    private final class GetEntityType extends MtsOneArgFunction
+    @MtsNativeFunction
+    public MtsValue GetEntityName()
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return valueOf( getEntity().getType() );
-        }
+        return valueOf( getEntity().getName() );
+    }
+    
+    @MtsNativeFunction
+    public MtsValue SetEntityName( MtsValue arg )
+    {
+        getEntity().setName( checkString( arg, 0 ) );
+        return EMPTY_VARARGS;
     }
     
     // ========================================
     
-    private final class GetEntityHealth extends MtsOneArgFunction
+    @MtsNativeFunction
+    public MtsValue GetEntityType( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return valueOf( getEntity().getHealth() );
-        }
-    }
-    
-    private final class SetEntityHealth extends MtsOneArgFunction
-    {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            DummyTalkingEntity entity = getEntity();
-            double value = checkNumber( arg, 0 );
-            
-            if ( value >= entity.getMaxHealth() )
-                throw new ScriptEngineException( "new health must be lower then or equal to max health" );
-            
-            entity.setHealth( value );
-            
-            return EMPTY_VARARGS;
-        }
+        return valueOf( getEntity().getType() );
     }
     
     // ========================================
     
-    private final class GetEntityMaxHealth extends MtsOneArgFunction
+    @MtsNativeFunction
+    public MtsValue GetEntityHealth( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return valueOf( getEntity().getMaxHealth() );
-        }
+        return valueOf( getEntity().getHealth() );
     }
     
-    private final class SetEntityMaxHealth extends MtsOneArgFunction
+    @MtsNativeFunction
+    public MtsValue SetEntityHealth( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            getEntity().setMaxHealth( checkNumber( arg, 0 ) );
-            return EMPTY_VARARGS;
-        }
+        DummyTalkingEntity entity = getEntity();
+        double value = checkNumber( arg, 0 );
+        
+        if ( value >= entity.getMaxHealth() )
+            throw new ScriptEngineException( "new health must be lower then or equal to max health" );
+        
+        entity.setHealth( value );
+        
+        return EMPTY_VARARGS;
     }
     
     // ========================================
     
-    private final class GetLoveLevel extends MtsOneArgFunction
+    @MtsNativeFunction
+    public MtsValue GetEntityMaxHealth( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            return valueOf( getEntity().getLoveLevel( null ) );
-        }
+        return valueOf( getEntity().getMaxHealth() );
     }
     
-    private final class SetLoveLevel extends MtsOneArgFunction
+    @MtsNativeFunction
+    public MtsValue SetEntityMaxHealth( MtsValue arg )
     {
-        @Override
-        protected MtsValue invoke( MtsValue arg )
-        {
-            getEntity().setLoveLevel( null, checkNumber( arg, 0 ) );
-            return EMPTY_VARARGS;
-        }
+        getEntity().setMaxHealth( checkNumber( arg, 0 ) );
+        return EMPTY_VARARGS;
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction
+    public MtsValue GetLoveLevel( MtsValue arg )
+    {
+        return valueOf( getEntity().getLoveLevel( null ) );
+    }
+    
+    @MtsNativeFunction
+    public MtsValue SetLoveLevel( MtsValue arg )
+    {
+        getEntity().setLoveLevel( null, checkNumber( arg, 0 ) );
+        return EMPTY_VARARGS;
     }
     
 }

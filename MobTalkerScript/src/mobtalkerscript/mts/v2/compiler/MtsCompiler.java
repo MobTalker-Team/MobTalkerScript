@@ -109,7 +109,7 @@ public class MtsCompiler
     
     public MtsCompiler( String sourceName, int sourceLineStart, int sourceLineEnd )
     {
-        _mainFunction = new FunctionState( null, "main", sourceName, sourceLineStart, sourceLineEnd );
+        _mainFunction = new FunctionState( null, null, sourceName, sourceLineStart, sourceLineEnd );
         _mainFunction.addExternal( new ExternalDescription( ENV, 0, 0, true ) );
         
         _currentFunction = _mainFunction;

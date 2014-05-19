@@ -22,6 +22,8 @@ public class MobTalkerScript
     public static void main( String[] args ) throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
+        
+        // Initialize the parser
         MtsCompiler.loadString( ";", "" );
         
         // Options
@@ -39,16 +41,16 @@ public class MobTalkerScript
         MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
         MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
         
-        // Initialize engine
+        // Initialize globals
         MtsGlobals _G = new MtsGlobals();
         
-//        _G.loadLibrary( new ConsoleCommandLib() );
-        createLibrary( new ConsoleCommandLib( _G ), _G );
-        
-        _G.loadLibrary( new MobTalkerConsoleInteractionLib( new DummyTalkingPlayer( "Console", 20 ),
-                                                            new DummyTalkingEntity( "", "Creeper", 20, 0 ) ) );
-        
+        // Initialize Minecraft/MobTalker libraries
         _G.set( "World", createLibrary( new MinecraftConsoleWorldLib() ) );
+        createLibrary( new ConsoleCommandLib( _G ), _G );
+        createLibrary( new MobTalkerConsoleInteractionLib( _G,
+                                                           new DummyTalkingPlayer( "Console", 20 ),
+                                                           new DummyTalkingEntity( "", "Creeper", 20, 0 ) ),
+                       _G );
         
         _G.out.println( "MobTalkerScript " //
                         + _G.get( "_VERSION" ).asString().asJavaString()
@@ -63,7 +65,7 @@ public class MobTalkerScript
             
             _G.out.println( "Loading file '" + path + "'" );
             
-            _G.loadLibrary( new MtsPackageLib( Paths.get( path ).getParent().toString() ) );
+            _G.PackageLib.setBasePath( Paths.get( path ).getParent().toString() );
             
             MtsFunctionPrototype fileChunk = null;
             try
@@ -78,16 +80,20 @@ public class MobTalkerScript
             {
                 ex.printStackTrace();
             }
-            Thread.sleep( 1 );
             
             if ( fileChunk != null )
             {
-                new MtsClosure( fileChunk, _G ).call();
+                try
+                {
+                    new MtsClosure( fileChunk, _G ).call();
+                    Thread.sleep( 100 );
+                }
+                catch ( ScriptRuntimeException ex )
+                {
+                    _G.err.println( ex.createStackTrace() );
+                    Thread.sleep( 100 );
+                }
             }
-        }
-        else
-        {
-            _G.loadLibrary( new MtsPackageLib() );
         }
         
         // Interactive loop
@@ -104,9 +110,10 @@ public class MobTalkerScript
             {
                 chunk = MtsCompiler.loadString( line, "stdin" );
             }
-            catch ( Exception ex )
+            catch ( MtsSyntaxError ex )
             {
-                ex.printStackTrace( _G.err );
+                _G.err.println( ex.getMessage() );
+                Thread.sleep( 100 );
                 continue;
             }
             
@@ -124,6 +131,7 @@ public class MobTalkerScript
             catch ( ScriptRuntimeException ex )
             {
                 _G.err.println( ex.createStackTrace() );
+                Thread.sleep( 100 );
             }
         }
     }

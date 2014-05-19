@@ -6,9 +6,9 @@ import mobtalkerscript.mts.v2.value.*;
 
 /* package */class FunctionAdapter extends JavaMethodAdapter
 {
-    public FunctionAdapter( Method method )
+    public FunctionAdapter( Method method, String name )
     {
-        super( method );
+        super( method, name );
     }
     
     // ========================================

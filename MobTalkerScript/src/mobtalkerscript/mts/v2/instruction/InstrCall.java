@@ -31,9 +31,10 @@ public final class InstrCall extends MtsInstruction
         MtsValue result = target.call( MtsVarArgs.of( args ) );
         
         // Trampoline tail calls
+        // Need to be executed explicitly to make sure that 0 return value tail calls are evaluated.
         if ( result instanceof MtsTailcall )
         {
-            ( (MtsTailcall) result ).execute();
+            ( (MtsTailcall) result ).evaluate();
         }
         
         if ( _nReturn == 0 )

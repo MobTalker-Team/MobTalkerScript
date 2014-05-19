@@ -17,19 +17,26 @@ import com.google.common.base.*;
     // ========================================
     
     private final Method _method;
+    private final String _name;
     private final int _nParams;
     
     // ========================================
     
-    protected JavaMethodAdapter( Method method )
+    protected JavaMethodAdapter( Method method, String name )
     {
         checkNotNull( method );
         
         _method = method;
+        _name = name;
         _nParams = getParamCount( method );
     }
     
     // ========================================
+    
+    public String getName()
+    {
+        return _name;
+    }
     
     protected abstract Object getCallInstance( MtsVarArgs args );
     
@@ -48,17 +55,23 @@ import com.google.common.base.*;
         {
             result = _method.invoke( instance, convertedArgs );
         }
-        catch ( IllegalAccessException ex )
-        {
-            throw new Error( ex );
-        }
-        catch ( IllegalArgumentException ex )
-        {
-            throw new ScriptEngineException( ex );
-        }
         catch ( InvocationTargetException ex )
         {
-            throw Throwables.propagate( ex.getTargetException() );
+            if ( ex.getCause() instanceof ScriptRuntimeException )
+            {
+                ScriptRuntimeException srex = (ScriptRuntimeException) ex.getCause();
+                MtsStackTraceElement e = new MtsStackTraceElement( _name );
+                srex.addStackTraceElement( e );
+                throw srex;
+            }
+            else
+            {
+                throw Throwables.propagate( ex.getCause() );
+            }
+        }
+        catch ( Exception ex )
+        {
+            throw new ScriptEngineException( ex );
         }
         
         if ( result == null )

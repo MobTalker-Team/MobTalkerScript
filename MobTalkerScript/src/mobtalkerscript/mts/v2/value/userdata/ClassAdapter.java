@@ -127,7 +127,8 @@ import com.google.common.collect.*;
         
         for ( Method m : getAnnotatedMethods( c ) )
         {
-            methods.put( getMethodName( m ), new MethodAdapter( m ) );
+            String name = getMethodName( m );
+            methods.put( name, new MethodAdapter( m, name ) );
         }
         
         return methods;

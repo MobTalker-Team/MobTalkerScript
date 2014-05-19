@@ -68,13 +68,12 @@ public class ScriptRuntimeException extends RuntimeException
     {
         StringBuilder s = new StringBuilder();
         
-        MtsStackTraceElement first = _stackTrace.get( _level );
+        s.append( "Exception: " ).append( getMessage() ).append( "\n" );
+        s.append( "Stack traceback:" );
         
-        s.append( first.getLocation() ).append( ": " ).append( getMessage() );
-        
-        for ( int i = _level + 1; i < _stackTrace.size(); i++ )
+        for ( int i = _level; i < _stackTrace.size(); i++ )
         {
-            s.append( "\n" ).append( _stackTrace.get( i ).toString() );
+            s.append( "\n\t" ).append( _stackTrace.get( i ).toString() );
         }
         
         return s.toString();

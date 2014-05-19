@@ -32,7 +32,7 @@ public class MtsStackTraceElement
     {
         return _fileName == null ? //
                 "[Java]"
-                : ( _fileName + ":" + _position.Line + ":" + _position.Coloum );
+                : ( _fileName + ":" + _position.Line /* + ":" + _position.Coloum */);
     }
     
     public String getFunctionName()
@@ -43,6 +43,18 @@ public class MtsStackTraceElement
     @Override
     public String toString()
     {
-        return getLocation() + ": in " + getFunctionName();
+        StringBuilder s = new StringBuilder();
+        s.append( getLocation() ).append( ": in " );
+        
+        if ( _functionName == null )
+        {
+            s.append( "main chunk" );
+        }
+        else
+        {
+            s.append( "function '" ).append( getFunctionName() ).append( "'" );
+        }
+        
+        return s.toString();
     }
 }

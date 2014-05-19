@@ -1,3 +1,10 @@
+local function Foo(x)
+	error("Test!");
+	return x*x;
+end
+
+Foo("a");
+
 local callCounter = 0;
 
 local function Ackermann( m, n )
@@ -27,5 +34,3 @@ local function TailCall( n )
 		return TailCall( n - 1 );
 	end
 end
-
-TailCall( 10000000 );

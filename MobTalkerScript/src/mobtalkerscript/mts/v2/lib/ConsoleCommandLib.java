@@ -30,7 +30,7 @@ public class ConsoleCommandLib
         
         s.append( arg2.asString() );
         
-        if ( !arg3.asBoolean().toJava() )
+        if ( !arg3.asBoolean().toJavaValue() )
             s.append( " \u25BA" );
         else
             s.append( " \u25A0" );

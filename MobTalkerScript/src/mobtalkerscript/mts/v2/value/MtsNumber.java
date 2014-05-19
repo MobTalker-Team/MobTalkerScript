@@ -1,5 +1,7 @@
 package mobtalkerscript.mts.v2.value;
 
+import mobtalkerscript.mts.v2.*;
+
 import com.google.common.math.*;
 
 public final class MtsNumber extends MtsValue
@@ -50,7 +52,7 @@ public final class MtsNumber extends MtsValue
     
     public static MtsNumber parse( MtsBoolean b )
     {
-        return b.toJava() ? ONE : ZERO;
+        return b.toJavaValue() ? ONE : ZERO;
     }
     
     // ========================================
@@ -161,6 +163,26 @@ public final class MtsNumber extends MtsValue
     // ========================================
     
     @Override
+    protected MtsBoolean doIsLess( MtsValue other )
+    {
+        if ( !other.isNumber() )
+            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
+        
+        return valueOf( _value < other.asNumber().asJavaDouble() );
+    }
+    
+    @Override
+    protected MtsBoolean doIsLessOrEqual( MtsValue other )
+    {
+        if ( !other.isNumber() )
+            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
+        
+        return valueOf( _value <= other.asNumber().asJavaDouble() );
+    }
+    
+    // ========================================
+    
+    @Override
     public boolean isNumber()
     {
         return true;
@@ -188,12 +210,6 @@ public final class MtsNumber extends MtsValue
         return (int) _value;
     }
     
-    @Override
-    public MtsType getType()
-    {
-        return MtsType.NUMBER;
-    }
-    
     // ========================================
     
     @Override
@@ -202,13 +218,12 @@ public final class MtsNumber extends MtsValue
         return valueOf( toString() );
     }
     
+    // ========================================
+    
     @Override
-    public String toString()
+    public MtsType getType()
     {
-        if ( isInteger() )
-            return Integer.toString( (int) _value );
-        else
-            return Double.toString( _value );
+        return MtsType.NUMBER;
     }
     
     // ========================================
@@ -223,6 +238,15 @@ public final class MtsNumber extends MtsValue
     }
     
     // ========================================
+    
+    @Override
+    public String toString()
+    {
+        if ( isInteger() )
+            return Integer.toString( (int) _value );
+        else
+            return Double.toString( _value );
+    }
     
     @Override
     public int hashCode()

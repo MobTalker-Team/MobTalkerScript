@@ -5,7 +5,7 @@ import mobtalkerscript.mts.v2.*;
 public abstract class MtsLibrary extends MtsFunction
 {
     @Override
-    public final MtsValue call( MtsVarArgs args )
+    protected final MtsValue doCall( MtsVarArgs args )
     {
         switch ( args.count() )
         {

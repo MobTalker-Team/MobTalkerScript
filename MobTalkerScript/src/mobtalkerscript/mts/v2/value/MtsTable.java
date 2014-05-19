@@ -216,6 +216,12 @@ public class MtsTable extends MtsMetaTableValue
     
     // ========================================
     
+    @Override
+    public MtsValue doGet( MtsValue key )
+    {
+        return rawget( key );
+    }
+    
     /**
      * Returns the value associated with the specified key in this table, or {@link MtsNil nil} if no such mapping exists.
      * <p>
@@ -230,17 +236,6 @@ public class MtsTable extends MtsMetaTableValue
      * @see #rawget(MtsValue)
      * @see MtsValue#__INDEX
      */
-    @Override
-    public MtsValue get( MtsValue key, boolean useMetaTag )
-    {
-        MtsValue result = rawget( key );
-        
-        if ( result.isNil() && useMetaTag )
-            return super.get( key, true );
-        
-        return result;
-    }
-    
     private MtsValue rawget( MtsValue key )
     {
         assert key != null : "key cannot be null";
@@ -278,12 +273,9 @@ public class MtsTable extends MtsMetaTableValue
      * @see MtsValue#METATAG_NEWINDEX
      */
     @Override
-    public void set( MtsValue key, MtsValue value, boolean useMetaTag )
+    protected void doSet( MtsValue key, MtsValue value )
     {
-        if ( containsKey( key ) || !useMetaTag )
-            __newindex( key, value );
-        else if ( useMetaTag )
-            super.set( key, value, true );
+        rawset( key, value );
     }
     
     private void rawset( MtsValue key, MtsValue value )
@@ -319,21 +311,7 @@ public class MtsTable extends MtsMetaTableValue
     // ========================================
     
     @Override
-    public MtsValue __index( MtsValue key )
-    {
-        return NIL;
-    }
-    
-    @Override
-    public void __newindex( MtsValue key, MtsValue value )
-    {
-        rawset( key, value );
-    }
-    
-    // ========================================
-    
-    @Override
-    public MtsNumber getLength()
+    protected MtsNumber doGetLength()
     {
         return valueOf( listSize() );
     }
@@ -364,24 +342,6 @@ public class MtsTable extends MtsMetaTableValue
     public MtsString toMtsString()
     {
         return valueOf( toString() );
-    }
-    
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
-    
-    @Override
-    public boolean equals( Object obj )
-    {
-        return obj == this;
-    }
-    
-    @Override
-    public MtsBoolean isMtsEqual( MtsValue x )
-    {
-        return valueOf( equals( x ) );
     }
     
     // ========================================

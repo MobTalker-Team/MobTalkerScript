@@ -1,9 +1,17 @@
 package mobtalkerscript.mts.v2.instruction;
 
 import mobtalkerscript.mts.v2.*;
+import mobtalkerscript.mts.v2.value.*;
 
 public abstract class MtsInstruction
 {
+    public static MtsValue getMetaTag( MtsValue a, MtsValue b, MtsString key )
+    {
+        MtsValue tag = a.getMetaTag( key );
+        return tag.isNil() ? b.getMetaTag( key ) : tag;
+    }
+    
+    // ========================================
     
     public abstract void execute( MtsFrame frame );
     

@@ -66,14 +66,6 @@ public class MtsBoolean extends MtsValue
     // ========================================
     
     @Override
-    public MtsString toMtsString()
-    {
-        return _stringValue;
-    }
-    
-    // ========================================
-    
-    @Override
     public boolean isBoolean()
     {
         return true;
@@ -85,18 +77,26 @@ public class MtsBoolean extends MtsValue
         return MtsType.BOOLEAN;
     }
     
-    @Override
-    public MtsBoolean isMtsEqual( MtsValue x )
-    {
-        return valueOf( this == x );
-    }
-    
     // ========================================
     
-    public boolean toJava()
+    @Override
+    public MtsString toMtsString()
+    {
+        return _stringValue;
+    }
+    
+    @Override
+    public MtsBoolean toMtsBoolean()
+    {
+        return this;
+    }
+    
+    public boolean toJavaValue()
     {
         return _value;
     }
+    
+    // ========================================
     
     @Override
     public String toString()
@@ -113,8 +113,6 @@ public class MtsBoolean extends MtsValue
     @Override
     public boolean equals( Object o )
     {
-        // Since we can rely on the fact that there are exactly one object for true and false,
-        // we just have to check the references.
         return o == this;
     }
     

@@ -229,7 +229,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public static final MtsString __INDEX = valueOf( "__index" );
     public static final MtsString __NEWINDEX = valueOf( "__newindex" );
-    public static final MtsString __LEN = valueOf( "__len" );
+    public static final MtsString __LENGTH = valueOf( "__len" );
     public static final MtsString __CALL = valueOf( "__call" );
     public static final MtsString __EQ = valueOf( "__eq" );
     public static final MtsString __LT = valueOf( "__lt" );
@@ -291,28 +291,25 @@ public abstract class MtsValue implements Comparable<MtsValue>
      * @return The result of the lookup for a value for <code>key</code>.
      * @throws ScriptRuntimeException If this value cannot be indexed.
      */
-    public MtsValue get( MtsValue key, boolean useMetaTag )
+    public final MtsValue get( MtsValue key, boolean useMetaTag )
     {
         if ( !useMetaTag )
-            throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
+            return doGet( key );
         
         MtsValue tag = getMetaTag( __INDEX );
         
         if ( tag.isNil() )
-            return __index( key );
-        
+            return doGet( key );
         if ( tag.isFunction() )
             return tag.call( this, key );
         
-        return tag.get( key );
+        return tag.get( key ).get();
     }
     
-    public MtsValue __index( MtsValue key )
+    protected MtsValue doGet( MtsValue key )
     {
         throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
     }
-    
-    // ========================================
     
     /**
      * Differs from {@link #get(MtsValue)} in that it always returns <code>this</code> when <code>i</code> is <code>1</code> and
@@ -323,6 +320,11 @@ public abstract class MtsValue implements Comparable<MtsValue>
     public MtsValue get( int i )
     {
         return i == 0 ? this : NIL;
+    }
+    
+    public final MtsValue get()
+    {
+        return get( 0 );
     }
     
     // ========================================
@@ -355,22 +357,26 @@ public abstract class MtsValue implements Comparable<MtsValue>
      * @param value The value to set for key.
      * @param useMetaTag Specifies if the {@value #__NEWINDEX} meta tag should be used.
      */
-    public void set( MtsValue key, MtsValue value, boolean useMetaTag )
+    public final void set( MtsValue key, MtsValue value, boolean useMetaTag )
     {
-        if ( !useMetaTag )
-            throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
-        
-        MtsValue tag = getMetaTag( __NEWINDEX );
-        
-        if ( tag.isNil() )
-            __newindex( key, value );
-        else if ( tag.isFunction() )
-            tag.call( this, key, value );
+        if ( useMetaTag )
+        {
+            MtsValue tag = getMetaTag( __NEWINDEX );
+            
+            if ( tag.isNil() )
+                doSet( key, value );
+            else if ( tag.isFunction() )
+                tag.call( this, key, value );
+            else
+                tag.set( key, value );
+        }
         else
-            tag.set( key, value );
+        {
+            doSet( key, value );
+        }
     }
     
-    public void __newindex( MtsValue key, MtsValue value )
+    protected void doSet( MtsValue key, MtsValue value )
     {
         throw new ScriptRuntimeException( "attempt to index a %s value", getType() );
     }
@@ -402,21 +408,78 @@ public abstract class MtsValue implements Comparable<MtsValue>
         MtsValue tag = getMetaTag( __CALL );
         
         if ( tag.isNil() )
-            return __call( args );
+            return doCall( args );
         
         return tag.call( this, args );
     }
     
-    public MtsValue __call( MtsVarArgs args )
+    protected MtsValue doCall( MtsVarArgs args )
     {
         throw new ScriptRuntimeException( "attempt to call a %s value", getType() );
     }
     
     // ========================================
     
-    public MtsNumber getLength()
+    public final MtsNumber getLength()
+    {
+        MtsValue tag = getMetaTag( __LENGTH );
+        
+        if ( tag.isNil() )
+            return doGetLength();
+        
+        return tag.call( this ).get().asNumber();
+    }
+    
+    protected MtsNumber doGetLength()
     {
         throw new ScriptRuntimeException( "attempt to get length of a %s value", getType() );
+    }
+    
+    // ========================================
+    
+    public final MtsBoolean isEqual( MtsValue other )
+    {
+        MtsValue tag = getMetaTag( __EQ );
+        
+        if ( tag.isNil() )
+            return doIsEqual( other );
+        
+        return tag.call( this ).get().toMtsBoolean();
+    }
+    
+    protected MtsBoolean doIsEqual( MtsValue other )
+    {
+        return valueOf( equals( other ) );
+    }
+    
+    public final MtsBoolean isLess( MtsValue other )
+    {
+        MtsValue tag = getMetaTag( __LT );
+        
+        if ( tag.isNil() )
+            return doIsLess( other );
+        
+        return tag.call( this ).get().toMtsBoolean();
+    }
+    
+    protected MtsBoolean doIsLess( MtsValue other )
+    {
+        throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
+    }
+    
+    public final MtsBoolean isLessOrEqual( MtsValue other )
+    {
+        MtsValue tag = getMetaTag( __LTE );
+        
+        if ( tag.isNil() )
+            return doIsLessOrEqual( other );
+        
+        return tag.call( this ).get().toMtsBoolean();
+    }
+    
+    protected MtsBoolean doIsLessOrEqual( MtsValue other )
+    {
+        throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
     }
     
     // ========================================
@@ -433,6 +496,11 @@ public abstract class MtsValue implements Comparable<MtsValue>
         return valueOf( toString() );
     }
     
+    public MtsBoolean toMtsBoolean()
+    {
+        return TRUE;
+    }
+    
     // ========================================
     
     @Override
@@ -447,17 +515,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
      * Returns the type of this value.
      */
     public abstract MtsType getType();
-    
-    /**
-     * Equivalent to Java's equals(Object).
-     * 
-     * @param x The value to compare this value with.
-     * @return {@link #TRUE} if both values are equal, {@link #FALSE} otherwise.
-     */
-    public MtsBoolean isMtsEqual( MtsValue x )
-    {
-        return valueOf( equals( x ) );
-    }
     
     // ========================================
     

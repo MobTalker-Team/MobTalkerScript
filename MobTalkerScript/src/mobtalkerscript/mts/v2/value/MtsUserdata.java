@@ -42,12 +42,6 @@ public class MtsUserdata extends MtsValue
         return MtsType.USERDATA;
     }
     
-    @Override
-    public MtsBoolean isMtsEqual( MtsValue x )
-    {
-        return x.isUserdata() ? valueOf( x.asUserdata().equals( _value ) ) : FALSE;
-    }
-    
     public Object asJavaObject()
     {
         return _value;

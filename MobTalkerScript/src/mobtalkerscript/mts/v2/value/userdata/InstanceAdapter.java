@@ -17,21 +17,15 @@ public class InstanceAdapter extends MtsUserdata
     // ========================================
     
     @Override
-    public MtsValue get( MtsValue key, boolean useMetaTag )
+    protected MtsValue doGet( MtsValue key )
     {
-        if ( !useMetaTag )
-            return super.get( key, useMetaTag );
-        
         MtsValue method = null;
         if ( key.isString() )
         {
             method = _classAdapter.getMethod( key.asString().asJavaString() );
         }
         
-        if ( method == null )
-            return super.get( key, useMetaTag );
-        
-        return method;
+        return method == null ? NIL : method;
     }
     
     // ========================================

@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.*;
 
 import java.util.*;
 
+import mobtalkerscript.mts.v2.*;
+
 import com.google.common.collect.*;
 
 public class MtsString extends MtsValue
@@ -130,12 +132,6 @@ public class MtsString extends MtsValue
         return valueOf( _value.concat( x.toMtsString().asJavaString() ) );
     }
     
-    @Override
-    public MtsNumber getLength()
-    {
-        return valueOf( _value.length() );
-    }
-    
     public MtsString intern()
     {
         if ( !CACHE.containsKey( _value ) )
@@ -147,6 +143,32 @@ public class MtsString extends MtsValue
         {
             return this;
         }
+    }
+    
+    // ========================================
+    
+    @Override
+    protected MtsBoolean doIsLess( MtsValue other )
+    {
+        if ( !other.isString() )
+            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
+        
+        return valueOf( _value.compareTo( other.asString().asJavaString() ) < 0 );
+    }
+    
+    @Override
+    protected MtsBoolean doIsLessOrEqual( MtsValue other )
+    {
+        if ( !other.isString() )
+            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
+        
+        return valueOf( _value.compareTo( other.asString().asJavaString() ) <= 0 );
+    }
+    
+    @Override
+    protected MtsNumber doGetLength()
+    {
+        return valueOf( _value.length() );
     }
     
     // ========================================
@@ -199,6 +221,8 @@ public class MtsString extends MtsValue
     {
         if ( obj == this )
             return true;
+        if ( obj == null )
+            return false;
         if ( !( obj instanceof MtsString ) )
             return false;
         

@@ -27,17 +27,6 @@ public class MtsNil extends MtsValue
     
     // ========================================
     
-    public Object toJavaValue()
-    {
-        return null;
-    }
-    
-    @Override
-    public MtsBoolean isMtsEqual( MtsValue x )
-    {
-        return valueOf( x.isNil() );
-    }
-    
     @Override
     public MtsString toMtsString()
     {
@@ -45,9 +34,34 @@ public class MtsNil extends MtsValue
     }
     
     @Override
+    public MtsBoolean toMtsBoolean()
+    {
+        return FALSE;
+    }
+    
+    public Object toJavaValue()
+    {
+        return null;
+    }
+    
+    // ========================================
+    
+    @Override
     public String toString()
     {
         return "nil";
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return 0;
+    }
+    
+    @Override
+    public boolean equals( Object obj )
+    {
+        return obj == this;
     }
     
 }

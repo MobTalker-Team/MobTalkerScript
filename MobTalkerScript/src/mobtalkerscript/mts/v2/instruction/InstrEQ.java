@@ -5,9 +5,9 @@ import mobtalkerscript.mts.v2.value.*;
 public class InstrEQ extends MtsComparisonInstruction
 {
     @Override
-    protected MtsValue compare( MtsValue a, MtsValue b )
+    protected MtsBoolean compare( MtsValue a, MtsValue b )
     {
-        return a.isMtsEqual( b );
+        return a.isEqual( b );
     }
     
     @Override

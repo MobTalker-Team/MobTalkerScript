@@ -260,7 +260,7 @@ import com.google.common.collect.*;
         
         System.arraycopy( _entries, i + 1, _entries, i, _limit - i - 1 );
         
-        _limit--;
+        --_limit;
         return old;
     }
     

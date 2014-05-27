@@ -90,6 +90,11 @@ public abstract class MtsValue implements Comparable<MtsValue>
         return get( valueOf( key ) );
     }
     
+    public final MtsValue get( String key, boolean useMetaTag )
+    {
+        return get( valueOf( key ), useMetaTag );
+    }
+    
     public final MtsValue get( MtsValue key )
     {
         return get( key, true );

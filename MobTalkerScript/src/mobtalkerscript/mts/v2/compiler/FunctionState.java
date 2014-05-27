@@ -451,6 +451,19 @@ public class FunctionState
     
     // ========================================
     
+    private int calculateMaxStackSize()
+    {
+        int curStackSize = 0;
+        int maxStackSize = 0;
+        for ( MtsInstruction instr : _instructions )
+        {
+            curStackSize += instr.stackSizeChange();
+            maxStackSize = Math.max( curStackSize, maxStackSize );
+        }
+        
+        return maxStackSize;
+    }
+    
     public MtsFunctionPrototype createPrototype()
     {
         // Ensure that we are in the proper state
@@ -465,21 +478,13 @@ public class FunctionState
                 throw new IllegalStateException( "unknown label '" + label.getKey() + "'" );
         }
         
-        int curStackSize = 0;
-        int maxStackSize = 0;
-        for ( MtsInstruction instr : _instructions )
-        {
-            curStackSize += instr.stackSizeChange();
-            maxStackSize = Math.max( curStackSize, maxStackSize );
-        }
-        
-        MtsFunctionPrototype p = new MtsFunctionPrototype( Lists.newArrayList( _instructions ),
-                                                           maxStackSize,
-                                                           Lists.newArrayList( _constants ),
-                                                           Lists.newArrayList( _externals ),
-                                                           _locals,
+        MtsFunctionPrototype p = new MtsFunctionPrototype( ImmutableList.copyOf( _instructions ),
+                                                           calculateMaxStackSize(),
+                                                           ImmutableList.copyOf( _constants ),
+                                                           ImmutableList.copyOf( _externals ),
+                                                           ImmutableList.copyOf( _locals ),
                                                            _name,
-                                                           _lineNumbers,
+                                                           ImmutableList.copyOf( _lineNumbers ),
                                                            _sourceFile,
                                                            _sourceLineStart,
                                                            _sourceLineEnd );

@@ -220,14 +220,24 @@ public class Instructions
     
     // ========================================
     
-    public static InstrReturn InstrReturn( int count )
+    public static InstrNewTable InstrNewTable( int listElements, int hashPairs )
     {
-        return ( count < _return.length ) ? _return[count] : new InstrReturn( count );
+        return new InstrNewTable( listElements, hashPairs );
     }
     
-    public static InstrTailcall InstrTailcall( int nArgs, int nReturn )
+    public static InstrLoadT InstrLoadT()
     {
-        return new InstrTailcall( nArgs, nReturn );
+        return _loadT;
+    }
+    
+    public static InstrLoadM InstrLoadM( int index )
+    {
+        return new InstrLoadM( index );
+    }
+    
+    public static InstrStoreT InstrStoreT()
+    {
+        return _storeT;
     }
     
     // ========================================
@@ -307,19 +317,26 @@ public class Instructions
         return _pop;
     }
     
-    public static InstrNewTable InstrNewTable( int listElements, int hashPairs )
+    // ========================================
+    
+    public static InstrClosure InstrClosure( int index )
     {
-        return new InstrNewTable( listElements, hashPairs );
+        return new InstrClosure( index );
     }
     
-    public static InstrLoadT InstrLoadT()
+    public static InstrCall InstrCall( int nArgs, int nReturn )
     {
-        return _loadT;
+        return new InstrCall( nArgs, nReturn );
     }
     
-    public static InstrStoreT InstrStoreT()
+    public static InstrReturn InstrReturn( int count )
     {
-        return _storeT;
+        return ( count < _return.length ) ? _return[count] : new InstrReturn( count );
+    }
+    
+    public static InstrTailcall InstrTailcall( int nArgs, int nReturn )
+    {
+        return new InstrTailcall( nArgs, nReturn );
     }
     
     // ========================================

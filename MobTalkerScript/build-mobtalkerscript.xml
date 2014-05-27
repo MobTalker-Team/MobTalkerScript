@@ -29,7 +29,7 @@
 		</javac>
 
 		<!-- Build the jar -->
-		<zip destfile="${MobTalker2.libraries.location}/MobTalkerScript-${version.major}.${version.minor}.${version.patch}.jar">
+		<zip destfile="${MobTalker2.libraries.location}/MobTalkerScript-${version.major}.${version.minor}.${version.patch}-standalone.jar">
 			<fileset dir="${bin}" />
 			<fileset dir="${res}" />
 			<zipfileset excludes="META-INF/*" src="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />

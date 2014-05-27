@@ -9,7 +9,7 @@ import com.google.common.collect.*;
 
 public class InstrClosure extends MtsIndexedInstruction
 {
-    public InstrClosure( int prototype )
+    /* package */InstrClosure( int prototype )
     {
         super( prototype );
     }

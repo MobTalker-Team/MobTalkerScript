@@ -19,9 +19,6 @@ public final class MtsBaseLib
     @MtsNativeField
     public final MtsGlobals _G;
     
-    @MtsNativeField
-    public static final MtsValue _VERSION = valueOf( "2.0.0-alpha" );
-    
     // ========================================
     
     @MtsNativeFunction( name = "assert" )

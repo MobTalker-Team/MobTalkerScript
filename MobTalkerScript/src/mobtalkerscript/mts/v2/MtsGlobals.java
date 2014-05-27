@@ -15,11 +15,15 @@ public class MtsGlobals extends MtsTable
     
     // ========================================
     
+    public static final MtsValue VERSION = valueOf( "2.0.1-alpha" );
+    
     // ========================================
     
     public MtsGlobals()
     {
         super( 0, 1024 );
+        
+        set( "_VERSION", VERSION );
         
         createLibrary( new MtsBaseLib( this ), this );
         set( "Math", createLibrary( MtsMathLib.class ), false );

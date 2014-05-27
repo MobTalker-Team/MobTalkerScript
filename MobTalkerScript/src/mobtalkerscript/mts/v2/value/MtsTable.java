@@ -172,11 +172,7 @@ public class MtsTable extends MtsMetaTableValue
         if ( _listPart.contains( key ) )
         {
             int i = key.asNumber().asJavaInt();
-            MtsValue removed = _listPart.remove( i );
-            
-            _listPart.transferOrphansTo( _hashPart );
-            
-            return removed;
+            return _listPart.remove( i );
         }
         
         return _hashPart.remove( key );
@@ -187,11 +183,7 @@ public class MtsTable extends MtsMetaTableValue
         if ( !_listPart.contains( i ) )
             return NIL;
         
-        MtsValue removed = _listPart.remove( i );
-        
-        _listPart.transferOrphansTo( _hashPart );
-        
-        return removed;
+        return _listPart.remove( i );
     }
     
     public MtsValue removeLast()

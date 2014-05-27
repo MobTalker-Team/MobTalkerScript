@@ -21,6 +21,8 @@ public class MobTalkerScript
 {
     public static void main( String[] args ) throws Exception
     {
+        System.out.print( "Loading...\r" );
+        
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
         
         // Initialize the parser

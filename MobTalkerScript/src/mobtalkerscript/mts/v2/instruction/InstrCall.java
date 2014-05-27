@@ -10,7 +10,7 @@ public final class InstrCall extends MtsInstruction
     
     // ========================================
     
-    public InstrCall( int nArgs, int nReturn )
+    /* package */InstrCall( int nArgs, int nReturn )
     {
         _nArgs = nArgs;
         _nReturn = nReturn;

@@ -463,7 +463,7 @@ public class MtsCompiler
         CompilerLog.info( "Load Method: " + name );
         
         int index = _currentFunction.getConstantIndex( valueOf( name ) );
-        addInstr( new InstrLoadM( index ) );
+        addInstr( InstrLoadM( index ) );
     }
     
     // ========================================
@@ -562,7 +562,7 @@ public class MtsCompiler
         List<FunctionState> childs = _currentFunction.getChilds();
         int index = childs.size() - 1;
         
-        addInstr( new InstrClosure( index ) );
+        addInstr( InstrClosure( index ) );
     }
     
     /**
@@ -572,7 +572,7 @@ public class MtsCompiler
     {
         CompilerLog.info( "Call Function" );
         
-        addInstr( new InstrCall( nArgs, nReturn ) );
+        addInstr( InstrCall( nArgs, nReturn ) );
     }
     
     public void returnFunction( int nValues )
@@ -605,17 +605,17 @@ public class MtsCompiler
     
     public static MtsString parseString( String s )
     {
-        return MtsValue.valueOf( stripHyphen( s ) );
+        return valueOf( stripHyphen( s ) );
     }
     
     public static MtsBoolean parseBoolean( String s )
     {
-        return MtsValue.valueOf( Boolean.parseBoolean( s ) );
+        return valueOf( Boolean.parseBoolean( s ) );
     }
     
     public static MtsNumber parseNumber( String s )
     {
-        return MtsValue.valueOf( Double.parseDouble( s ) );
+        return valueOf( Double.parseDouble( s ) );
     }
     
     // ========================================

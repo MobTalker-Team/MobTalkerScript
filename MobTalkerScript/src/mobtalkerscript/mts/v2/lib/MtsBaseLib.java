@@ -49,7 +49,7 @@ public final class MtsBaseLib
         checkTable( arg1, 1 );
         
         MtsTable.Entry next = arg1.asTable().getINext( arg2.asNumber() );
-        return next == null ? EMPTY_VARARGS : next.getKey();
+        return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
     }
     
     @MtsNativeFunction( name = "next" )

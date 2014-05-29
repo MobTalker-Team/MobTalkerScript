@@ -21,6 +21,7 @@ import mobtalkerscript.mts.v2.value.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
+import org.apache.commons.lang3.*;
 
 public class MtsCompiler
 {
@@ -615,7 +616,21 @@ public class MtsCompiler
     
     public static MtsNumber parseNumber( String s )
     {
-        return valueOf( Double.parseDouble( s ) );
+        String input = s;
+        if ( StringUtils.startsWithIgnoreCase( input, "0x" )
+             && ( StringUtils.lastIndexOfIgnoreCase( input, "p" ) < 0 ) )
+        {
+            input = input + "p0";
+        }
+        
+        try
+        {
+            return valueOf( Double.parseDouble( input ) );
+        }
+        catch ( NumberFormatException ex )
+        {
+            throw new NumberFormatException( s );
+        }
     }
     
     // ========================================

@@ -44,6 +44,8 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     // ========================================
     
+    public static final MtsString __METATABLE = valueOf( "__metatable" );
+    
     public static final MtsString __INDEX = valueOf( "__index" );
     public static final MtsString __NEWINDEX = valueOf( "__newindex" );
     public static final MtsString __LENGTH = valueOf( "__len" );

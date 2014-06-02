@@ -97,6 +97,10 @@ public final class MtsBaseLib
     public MtsTable GetMetaTable( MtsValue arg )
     {
         MtsTable t = checkTable( arg, 0 );
+        
+        if ( t.hasMetaTag( __METATABLE ) )
+            throw new ScriptRuntimeException( "cannot retrieve a protected metatable" );
+        
         return t.getMetaTable();
     }
     
@@ -104,6 +108,10 @@ public final class MtsBaseLib
     public MtsTable SetMetaTable( MtsValue arg1, MtsValue arg2 )
     {
         MtsTable t = checkTable( arg1, 0 );
+        
+        if ( t.hasMetaTag( __METATABLE ) )
+            throw new ScriptRuntimeException( "cannot change a protected metatable" );
+        
         t.setMetaTable( arg2 );
         return t;
     }

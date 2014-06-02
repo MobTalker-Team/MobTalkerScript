@@ -56,7 +56,7 @@ public class MtsCompiler
     
     // ========================================
     
-    public static MtsFunctionPrototype load( ANTLRInputStream stream ) throws Exception
+    public static MtsFunctionPrototype load( ANTLRInputStream stream ) throws IOException, MtsSyntaxError
     {
         // Lex it
         MtsLexer lexer = new MtsLexer( stream );
@@ -79,7 +79,6 @@ public class MtsCompiler
         }
         catch ( MtsSyntaxError ex )
         {
-//        throw new NullPointerException( "cannot be null" );
             throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
         }
         

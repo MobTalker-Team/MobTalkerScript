@@ -10,7 +10,7 @@ import mobtalkerscript.mts.v2.value.MtsTable.Entry;
 /**
  * Basically a HashMap specifically tailored for MobTalkerScript.
  */
-/* package */final class TableHashPart
+/* package */final class TableHashPart implements Iterable<Entry>
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
     private static final float LOAD_FACTOR = 0.75f;
@@ -349,6 +349,52 @@ import mobtalkerscript.mts.v2.value.MtsTable.Entry;
             super( k, v );
             hash = h;
             next = n;
+        }
+    }
+    
+    // ========================================
+    
+    @Override
+    public Iterator<Entry> iterator()
+    {
+        return new HashIterator( this );
+    }
+    
+    // ========================================
+    
+    private static class HashIterator implements Iterator<Entry>
+    {
+        private final TableHashPart _hashPart;
+        private Entry _next;
+        
+        public HashIterator( TableHashPart hashPart )
+        {
+            _hashPart = hashPart;
+            _next = _hashPart.getFirst();
+        }
+        
+        @Override
+        public boolean hasNext()
+        {
+            return _next != null;
+        }
+        
+        @Override
+        public Entry next()
+        {
+            if ( _next == null )
+                throw new NoSuchElementException();
+            
+            Entry entry = _next;
+            _next = _hashPart.getNext( entry.getKey() );
+            
+            return entry;
+        }
+        
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
         }
     }
 }

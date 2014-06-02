@@ -96,6 +96,11 @@ public class MtsBoolean extends MtsValue
         return _value;
     }
     
+    public boolean isTrue()
+    {
+        return _value;
+    }
+    
     // ========================================
     
     @Override

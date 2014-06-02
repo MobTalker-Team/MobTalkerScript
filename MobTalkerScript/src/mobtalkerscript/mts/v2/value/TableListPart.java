@@ -370,11 +370,6 @@ import com.google.common.collect.*;
     
     // ========================================
     
-    public Iterable<MtsValue> iterableView()
-    {
-        return Iterables.unmodifiableIterable( Arrays.asList( _entries ) );
-    }
-    
     @Override
     public Iterator<MtsValue> iterator()
     {

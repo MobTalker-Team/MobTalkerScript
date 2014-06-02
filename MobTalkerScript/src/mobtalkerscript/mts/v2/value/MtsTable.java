@@ -3,8 +3,6 @@ package mobtalkerscript.mts.v2.value;
 import static com.google.common.base.Preconditions.*;
 import static mobtalkerscript.util.MtsCheck.*;
 
-import java.util.*;
-
 /**
  * A table is at its core an associative array. Values are stored and retrieved by keys, that are either {@link MtsNumber
  * numbers} or {@link MtsString strings}.
@@ -340,12 +338,12 @@ public class MtsTable extends MtsMetaTableValue
     
     public Iterable<MtsValue> listView()
     {
-        return _listPart.iterableView();
+        return _listPart;
     }
     
-    public Iterator<MtsValue> listIterator()
+    public Iterable<Entry> entryView()
     {
-        return _listPart.iterator();
+        return _hashPart;
     }
     
     // ========================================
@@ -362,7 +360,7 @@ public class MtsTable extends MtsMetaTableValue
          */
         protected MtsValue value;
         
-        Entry( MtsValue k, MtsValue v )
+        protected Entry( MtsValue k, MtsValue v )
         {
             key = k;
             value = v;
@@ -384,4 +382,6 @@ public class MtsTable extends MtsMetaTableValue
             return key.toString() + "=" + value.toString();
         }
     }
+    
+    // ========================================
 }

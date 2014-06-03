@@ -122,17 +122,19 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public final MtsValue get( MtsValue key, boolean useMetaTag )
     {
-        if ( !useMetaTag )
-            return doGet( key );
+        MtsValue result = doGet( key );
         
-        MtsValue tag = getMetaTag( __INDEX );
+        if ( result.isNil() && useMetaTag )
+        {
+            MtsValue tag = getMetaTag( __INDEX );
+            
+            if ( tag.isFunction() )
+                result = tag.call( this, key );
+            else if ( !tag.isNil() )
+                result = tag.get( key ).get();
+        }
         
-        if ( tag.isNil() )
-            return doGet( key );
-        if ( tag.isFunction() )
-            return tag.call( this, key );
-        
-        return tag.get( key ).get();
+        return result;
     }
     
     protected MtsValue doGet( MtsValue key )

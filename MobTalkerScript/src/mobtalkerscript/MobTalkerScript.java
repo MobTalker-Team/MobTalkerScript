@@ -1,18 +1,18 @@
 package mobtalkerscript;
 
-import static mobtalkerscript.mts.v2.value.userdata.MtsNatives.*;
+import static mobtalkerscript.v2.value.userdata.MtsNatives.*;
 
 import java.nio.file.*;
 import java.util.logging.*;
 
 import joptsimple.*;
 import joptsimple.internal.*;
-import mobtalkerscript.mts.v2.*;
-import mobtalkerscript.mts.v2.compiler.*;
-import mobtalkerscript.mts.v2.lib.*;
-import mobtalkerscript.mts.v2.lib.mobtalker.*;
-import mobtalkerscript.mts.v2.value.*;
 import mobtalkerscript.util.logging.*;
+import mobtalkerscript.v2.*;
+import mobtalkerscript.v2.compiler.*;
+import mobtalkerscript.v2.lib.*;
+import mobtalkerscript.v2.lib.mobtalker.*;
+import mobtalkerscript.v2.value.*;
 
 /**
  * Intended to be the entry point for an interactive shell for MobTalkerScript.

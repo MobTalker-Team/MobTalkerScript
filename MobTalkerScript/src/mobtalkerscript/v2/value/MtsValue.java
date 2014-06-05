@@ -428,7 +428,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsBoolean asBoolean()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.BOOLEAN + ", got " + getType() );
+        throw new WrongTypeException( MtsType.BOOLEAN, getType() );
     }
     
     /**
@@ -438,7 +438,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsNumber asNumber()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.NUMBER + ", got " + getType() );
+        throw new WrongTypeException( MtsType.NUMBER, getType() );
     }
     
     /**
@@ -448,7 +448,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsString asString()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.STRING + ", got " + getType() );
+        throw new WrongTypeException( MtsType.STRING, getType() );
     }
     
     /**
@@ -456,12 +456,12 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsUserdata asUserdata()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
+        throw new WrongTypeException( MtsType.USERDATA, getType() );
     }
     
     public <T> T asNative()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.USERDATA + ", got " + getType() );
+        throw new WrongTypeException( MtsType.USERDATA, getType() );
     }
     
     /**
@@ -469,7 +469,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsClosure asClosure()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.FUNCTION + ", got " + getType() );
+        throw new WrongTypeException( MtsType.FUNCTION, getType() );
     }
     
     /**
@@ -477,7 +477,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsFunction asFunction()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.FUNCTION + ", got " + getType() );
+        throw new WrongTypeException( MtsType.FUNCTION, getType() );
     }
     
     /**
@@ -485,7 +485,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsTable asTable()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.TABLE + ", got " + getType() );
+        throw new WrongTypeException( MtsType.TABLE, getType() );
     }
     
     /**
@@ -493,7 +493,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public MtsVarArgs asVarArgs()
     {
-        throw new ScriptRuntimeException( "Expected " + MtsType.VARARGS + ", got " + getType() );
+        throw new WrongTypeException( MtsType.VARARGS, getType() );
     }
     
     // ========================================

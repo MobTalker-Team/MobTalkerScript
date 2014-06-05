@@ -21,12 +21,10 @@ public class MtsCheck
         return value;
     }
     
-    // ========================================
-    
     public static MtsValue checkNotNil( MtsValue value, int i )
     {
         if ( value.isNil() )
-            throw new BadArgumentException( "(value expected, got %s)", value.getType() );
+            throw new ScriptRuntimeException( "bad argument #%s (value expected, got %s)", i, value.getType() );
         
         return value;
     }
@@ -36,44 +34,24 @@ public class MtsCheck
         return checkNotNil( args.get( i ), i );
     }
     
-    public static void checkType( MtsValue value, int i, MtsType expected )
+    // ========================================
+    
+    public static MtsValue checkType( MtsValue value, int i, MtsType expected )
     {
         if ( !value.is( expected ) )
-        {
-            // TODO
-            throw new BadArgumentException( "(%s expected, got %s)", expected, value.getType() );
-        }
+            throw new BadArgumentException( i, expected, value.getType() );
+        
+        return value;
     }
     
-    public static void checkType( MtsValue value, int i, MtsType... expected )
-    {
-        for ( MtsType t : expected )
-        {
-            if ( t == value.getType() )
-                return;
-        }
-        
-        StringBuilder msg = new StringBuilder();
-        msg.append( "(" );
-        
-        msg.append( expected[0].getName() );
-        int to = expected.length - 1;
-        for ( int j = 1; j < to; j++ )
-        {
-            msg.append( ", " ).append( expected[j].getName() );
-        }
-        msg.append( "or " ).append( expected[to].getName() );
-        msg.append( " expected, got %s)" );
-        
-        throw new BadArgumentException( msg.toString(), value.getType() );
-    }
+    // ========================================
     
     public static MtsTable checkTable( MtsValue value, int i )
     {
-        if ( value.getType() == MtsType.TABLE )
+        if ( value.isTable() )
             return value.asTable();
         
-        throw new BadArgumentException( "(%s expected, got %s)", MtsType.TABLE.getName(), value.getType() );
+        throw new BadArgumentException( i, MtsType.TABLE, value.getType() );
     }
     
     public static MtsTable checkTable( MtsVarArgs args, int i )
@@ -81,12 +59,24 @@ public class MtsCheck
         return checkTable( args.get( i ), i );
     }
     
+    // ========================================
+    
     public static String checkString( MtsValue value, int i )
     {
-        if ( ( value.getType() == MtsType.STRING ) || ( value.getType() == MtsType.NUMBER ) )
+        if ( value.isString() )
             return value.asString().asJavaString();
         
-        throw new BadArgumentException( "(%s expected, got %s)", MtsType.STRING.getName(), value.getType() );
+        throw new BadArgumentException( i, MtsType.STRING, value.getType() );
+    }
+    
+    public static String checkString( MtsValue value, int i, String fallback )
+    {
+        if ( value.isNil() )
+            return fallback;
+        if ( value.isString() )
+            return value.asString().asJavaString();
+        
+        throw new BadArgumentException( i, MtsType.STRING, value.getType() );
     }
     
     public static String checkString( MtsVarArgs args, int i )
@@ -94,12 +84,19 @@ public class MtsCheck
         return checkString( args.get( i ), i );
     }
     
+    public static String checkString( MtsVarArgs args, int i, String fallback )
+    {
+        return checkString( args.get( i ), i );
+    }
+    
+    // ========================================
+    
     public static double checkNumber( MtsValue value, int i )
     {
-        if ( ( value.getType() == MtsType.NUMBER ) || ( value.getType() == MtsType.STRING ) )
+        if ( value.isNumber() )
             return value.asNumber().asJavaDouble();
         
-        throw new ScriptRuntimeException( "(%s expected, got %s)", MtsType.NUMBER.getName(), value.getType() );
+        throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
     }
     
     public static double checkNumber( MtsVarArgs args, int i )
@@ -107,16 +104,36 @@ public class MtsCheck
         return checkNumber( args.get( i ), i );
     }
     
+    // ========================================
+    
     public static int checkInteger( MtsValue value, int i )
     {
-        if ( ( value.getType() == MtsType.NUMBER ) || ( value.getType() == MtsType.STRING ) )
+        if ( value.isNumber() )
             return value.asNumber().asJavaInt();
         
-        throw new ScriptRuntimeException( "(%s expected, got %s)", MtsType.NUMBER.getName(), value.getType() );
+        throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
+    }
+    
+    public static int checkInteger( MtsValue value, int i, int fallback )
+    {
+        if ( value.isNil() )
+            return fallback;
+        if ( value.isNumber() )
+            return value.asNumber().asJavaInt();
+        
+        throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
     }
     
     public static int checkInteger( MtsVarArgs args, int i )
     {
         return checkInteger( args.get( i ), i );
     }
+    
+    public static int checkInteger( MtsVarArgs args, int i, int fallback )
+    {
+        return checkInteger( args.get( i ), i, fallback );
+    }
+    
+    // ========================================
+    
 }

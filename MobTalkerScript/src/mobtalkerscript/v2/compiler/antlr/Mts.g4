@@ -176,27 +176,27 @@ block
 stmt
     : ';'
     # BlankStmt
-    | assignExpr ';'
+    | assignExpr
     # AssignmentStmt
     | 'local' NameList=nameList ( '=' ExprList=exprList )?
     # LocalVarDeclrStmt
-    | call ';'
+    | call
     # CallStmt
     | command
     # CommandStmt
-    | 'jump' Target=Identifier ';'
+    | 'jump' Target=Identifier 
     # GotoStmt
     | '::' Name=Identifier '::'
     # LabelStmt
-    | 'break' ';'
+    | 'break'
     # BreakStmt
-    | 'return' ExprList=exprList? ';'
+    | 'return' ExprList=exprList? 
     # ReturnStmt
     | 'do' Block=block 'end'
     # NestedBlock
     | 'while' Condition=expr 'do' Block=block 'end'
     # WhileLoop
-    | 'repeat' Block=block 'until' Condition=expr ';'
+    | 'repeat' Block=block 'until' Condition=expr
     # RepeatLoop
     | 'if' Condition=expr 'then' Block=block ElseIfs+=elseIfBody* Else=elseBody? 'end'
     # IfThenElse
@@ -299,7 +299,7 @@ fieldDef
     ;
     
 elseIfBody
-    : ( 'elseif' | 'else if' ) Condition=expr 'then' Block=block
+    : ELSEIF Condition=expr 'then' Block=block
     ;
 
 elseBody
@@ -323,20 +323,20 @@ funcBody
     ;
 
 command
-    : 'say' Group=expr? Text=exprList IsLast='as conclusion'? ';'
+    : 'say' Group=expr? Text=exprList IsLast='as conclusion'?
       # CommandSay
     | 'show' Group=expr 
              Path+=expr+ 
              ( 'at' Position=expr )? 
              ( 'offset' Offset=exprList )? 
-             /*( 'with' Effect=exprList )?*/ ';'
+             /*( 'with' Effect=exprList )?*/
       # CommandShow
     | 'scene' Path+=expr+ 
     		  ( 'as' Mode=expr )? 
-    		  /*( 'with' exprList )?*/ ';'
+    		  /*( 'with' exprList )?*/
       # CommandScene
     | 'hide' ( Group=expr | Scene='scene' )
-    	     /*( 'with' exprList )?*/ ';'
+    	     /*( 'with' exprList )?*/
       # CommandHide
     | 'menu' Caption=expr? Options+=commandMenuOption+ 'end'
 	  # CommandMenu

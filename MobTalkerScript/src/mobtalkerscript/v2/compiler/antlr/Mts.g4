@@ -323,28 +323,23 @@ funcBody
     ;
 
 command
-    : 'say' Character=expr? Text=exprList IsLast='as conclusion'? ';'
-    # CommandSay
-    | 'show' Character=expr 
-            Path+=expr+ 
-            ( 'at' Position=expr )? 
-            ( 'offset' Offset=exprList )? 
-            /*( 'with' Effect=exprList )?*/ ';'
-    # CommandShow
-    | 'scene' Path+=expr+ ( 'as' Mode=expr )? /*( 'with' exprList )?*/ ';'
-    # CommandScene
-    | 'hide' Group=expr /*( 'with' exprList )?*/ ';'
-    # CommandHide
-//    | 'play music' exprList ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-//      # PlayMusicCommandStmt
-//    | 'play sound' expr ( 'fadeout' expr )? ( 'fadein' expr )? ';'
-//      # PlaySoundCommandStmt
-//    | 'stop music' ( 'fadeout' expr )? ';'
-//      # StopMusicCommandStmt
-//    | 'pause' expr? ';'
-//      # PauseCommandStmt
+    : 'say' Group=expr? Text=exprList IsLast='as conclusion'? ';'
+      # CommandSay
+    | 'show' Group=expr 
+             Path+=expr+ 
+             ( 'at' Position=expr )? 
+             ( 'offset' Offset=exprList )? 
+             /*( 'with' Effect=exprList )?*/ ';'
+      # CommandShow
+    | 'scene' Path+=expr+ 
+    		  ( 'as' Mode=expr )? 
+    		  /*( 'with' exprList )?*/ ';'
+      # CommandScene
+    | 'hide' ( Group=expr | Scene='scene' )
+    	     /*( 'with' exprList )?*/ ';'
+      # CommandHide
     | 'menu' Caption=expr? Options+=commandMenuOption+ 'end'
-    # CommandMenu
+	  # CommandMenu
     ;
 
 commandMenuOption

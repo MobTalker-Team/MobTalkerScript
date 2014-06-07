@@ -9,7 +9,54 @@ import java.util.*;
 
 import mobtalkerscript.v2.*;
 import mobtalkerscript.v2.compiler.*;
-import mobtalkerscript.v2.compiler.antlr.MtsParser.*;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.AssignExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.BooleanLiteralContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CallArgsContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CallContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CallExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CommandHideContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CommandMenuContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CommandSayContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CommandSceneContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.CommandShowContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ConditionalOpExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ElseBodyContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ElseIfBodyContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ExprListContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.FieldDefContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.FuncBodyContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.FuncDeclrStmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.FuncNameContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.GenericForLoopContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.GotoStmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.IfThenElseContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.LabelStmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ListFieldContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.LocalFuncDeclrStmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.LocalVarDeclrStmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.LogicalOpExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.NameFieldAccessContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.NameKeyFieldContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.NameListContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.NestedBlockContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.NullLiteralContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.NumberLiteralContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.NumericForLoopContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.RepeatLoopContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ReturnStmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.SimpleAssignmentStmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.StmtContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.StringLiteralContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.TableCtorContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.UnaryOpExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.VarExprContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.VarExprListContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.VarSuffixContext;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.WhileLoopContext;
 import mobtalkerscript.v2.value.*;
 
 import org.antlr.v4.runtime.*;
@@ -89,10 +136,10 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Constants.FunctionNames.COMMAND_SAY );
         
-        if ( ctx.Character == null )
+        if ( ctx.Group == null )
             _c.loadNil();
         else
-            visit( ctx.Character );
+            visit( ctx.Group );
         
         visitSingleOrCreateTable( ctx.Text.Exprs );
         
@@ -108,7 +155,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Constants.FunctionNames.COMMAND_SHOW );
         
-        visit( ctx.Character );
+        visit( ctx.Group );
         visitSingleOrCreateTable( ctx.Path );
         
         if ( ctx.Position == null )
@@ -161,7 +208,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Constants.FunctionNames.COMMAND_HIDE );
         
-        visit( ctx.Group );
+        if ( ctx.Group != null )
+            visit( ctx.Group );
+        else if ( ctx.Scene != null )
+            _c.loadConstant( ctx.Scene.getText() );
+        else
+            throw new AssertionError();
         
         _c.callFunction( 1, 0 );
         

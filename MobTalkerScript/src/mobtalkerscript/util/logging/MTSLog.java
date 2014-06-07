@@ -28,6 +28,9 @@ public final class MtsLog
         CompilerLog = new MtsLog( Logger.getLogger( logger.getName() + ".Compiler" ) );
         EngineLog = new MtsLog( Logger.getLogger( logger.getName() + ".Engine" ) );
         
+        CompilerLog.getLogger().setUseParentHandlers( true );
+        EngineLog.getLogger().setUseParentHandlers( true );
+        
         CompilerLog.setLevel( Level.parse( System.getProperty( "mts.log.compiler", "OFF" ) ) );
         EngineLog.setLevel( Level.parse( System.getProperty( "mts.log.engine", "OFF" ) ) );
     }
@@ -48,6 +51,11 @@ public final class MtsLog
     public void setLevel( Level level )
     {
         _log.setLevel( level );
+    }
+    
+    public Logger getLogger()
+    {
+        return _log;
     }
     
     // ========================================

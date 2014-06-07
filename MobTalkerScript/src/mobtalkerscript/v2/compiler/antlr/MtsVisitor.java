@@ -1,4 +1,4 @@
-// Generated from Mts.g4 by ANTLR 4.1
+// Generated from Mts.g4 by ANTLR 4.2.2
 package mobtalkerscript.v2.compiler.antlr;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
@@ -68,18 +68,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitAssignmentStmt(@NotNull MtsParser.AssignmentStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#CommandStmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCommandStmt(@NotNull MtsParser.CommandStmtContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#BinaryOpExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBinaryOpExpr(@NotNull MtsParser.BinaryOpExprContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#CommandStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommandStmt(@NotNull MtsParser.CommandStmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#CallStmt}.
@@ -110,18 +110,18 @@ public interface MtsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBlankStmt(@NotNull MtsParser.BlankStmtContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link MtsParser#CommandMenu}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCommandMenu(@NotNull MtsParser.CommandMenuContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link MtsParser#CommandShow}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCommandShow(@NotNull MtsParser.CommandShowContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link MtsParser#CommandMenu}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommandMenu(@NotNull MtsParser.CommandMenuContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link MtsParser#ReturnStmt}.

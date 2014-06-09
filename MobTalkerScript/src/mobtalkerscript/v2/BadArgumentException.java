@@ -9,6 +9,11 @@ public class BadArgumentException extends ScriptRuntimeException
         super( msg, args );
     }
     
+    public BadArgumentException( int argIndex, String msg, Object... args )
+    {
+        super( "bad argument #" + argIndex + " (" + msg + ")", args );
+    }
+    
     public BadArgumentException( MtsType expected, MtsType actual )
     {
         super( "bad argument (%s expected, got %s)", expected, actual );

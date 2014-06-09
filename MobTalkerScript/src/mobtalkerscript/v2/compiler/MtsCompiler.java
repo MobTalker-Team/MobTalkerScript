@@ -15,7 +15,7 @@ import java.util.regex.*;
 
 import mobtalkerscript.v2.*;
 import mobtalkerscript.v2.compiler.antlr.*;
-import mobtalkerscript.v2.compiler.antlr.MtsParser.*;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.v2.instruction.*;
 import mobtalkerscript.v2.value.*;
 
@@ -37,8 +37,7 @@ public class MtsCompiler
     
     public static MtsFunctionPrototype loadFile( Path path ) throws Exception
     {
-        checkArgument( Files.exists( path ), "Path '%s' does not exist", path.toAbsolutePath() );
-        
+        path = path.toRealPath();
         return load( new ANTLRFileStream( path.toString() ) );
     }
     
@@ -545,7 +544,7 @@ public class MtsCompiler
      */
     public void exitConditionalBlock()
     {
-        _currentFunction.setPendingJump();
+        _currentFunction.setPendingJump( 1 );
     }
     
     // ========================================

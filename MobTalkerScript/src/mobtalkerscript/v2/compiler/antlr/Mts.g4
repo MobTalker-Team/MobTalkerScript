@@ -90,11 +90,11 @@ POW_ASSIGN      : '^=' ;
 CONCAT_ASSIGN   : '.=' ;
 
 LineComment
-    : '--' ~[\r\n]* -> channel( HIDDEN )
+    : '--' ~[\r\n]* -> skip
     ;
 
 BlockComment
-    : '--[[' .*? ']]' -> channel( HIDDEN )
+    : '--[[' .*? ']]' -> skip
     ;
 
 NULL

@@ -851,7 +851,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         int nExprs = exprs.size();
         
-        for ( int i = 0; i < nExprs; i++ )
+        for ( int i = 0; i < exprs.size(); i++ )
         {
             ExprContext exprCtx = exprs.get( i );
             

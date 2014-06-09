@@ -148,6 +148,12 @@ public class MtsString extends MtsValue
     // ========================================
     
     @Override
+    protected MtsValue doGet( MtsValue key )
+    {
+        return NIL;
+    }
+    
+    @Override
     protected MtsBoolean doIsLess( MtsValue other )
     {
         if ( !other.isString() )

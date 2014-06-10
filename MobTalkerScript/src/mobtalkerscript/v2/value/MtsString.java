@@ -1,0 +1,247 @@
+package mobtalkerscript.v2.value;
+
+import static com.google.common.base.Preconditions.*;
+
+import java.util.*;
+
+import mobtalkerscript.v2.*;
+
+import com.google.common.collect.*;
+
+public class MtsString extends MtsValue
+{
+    private static final HashMap<String, MtsString> CACHE = Maps.newHashMapWithExpectedSize( 2 << 10 );
+    
+    public static MtsString of( String s )
+    {
+        checkNotNull( s );
+        
+        if ( s.length() == 0 )
+            return EMPTY_STRING;
+        
+        MtsString result = CACHE.get( s );
+        
+        if ( ( result == null ) )
+        {
+            if ( s.length() <= 32 )
+            {
+                result = new MtsString( s );
+                CACHE.put( s, result );
+            }
+            else
+            {
+                return new MtsString( s );
+            }
+        }
+        
+        return result;
+    }
+    
+    // ========================================
+    
+    public static MtsString concat( MtsValue... values )
+    {
+        if ( ( values == null ) || ( values.length == 0 ) )
+        {
+            return EMPTY_STRING;
+        }
+        else if ( values.length == 1 )
+        {
+            return values[0].toMtsString();
+        }
+        else if ( values.length > 2 )
+        {
+            StringBuilder sb = new StringBuilder();
+            for ( MtsValue value : values )
+            {
+                sb.append( value.toMtsString().asJavaString() );
+            }
+            return valueOf( sb.toString() );
+        }
+        else
+        {
+            return values[0].toMtsString().concat( values[1] );
+        }
+    }
+    
+    public static MtsString concat( MtsVarArgs values )
+    {
+        if ( ( values == null ) || values.isEmpty() )
+            return EMPTY_STRING;
+        
+        int elements = values.count();
+        if ( elements == 1 )
+        {
+            return values.get( 0 ).toMtsString();
+        }
+        else if ( elements > 2 )
+        {
+            StringBuilder sb = new StringBuilder();
+            for ( int i = 0; i < values.count(); i++ )
+            {
+                MtsValue value = values.get( i );
+                sb.append( value.toMtsString().asJavaString() );
+            }
+            return valueOf( sb.toString() );
+        }
+        else
+        {
+            return values.get( 0 ).toMtsString().concat( values.get( 1 ) );
+        }
+    }
+    
+    public static MtsString concat( Iterable<MtsValue> values )
+    {
+        if ( ( values == null ) )
+            return EMPTY_STRING;
+        
+        Iterator<MtsValue> iter = values.iterator();
+        
+        if ( !iter.hasNext() )
+            return EMPTY_STRING;
+        
+        MtsValue value = iter.next();
+        if ( !iter.hasNext() )
+            return value.toMtsString();
+        
+        StringBuilder s = new StringBuilder( value.toMtsString().asJavaString() );
+        while ( iter.hasNext() )
+        {
+            value = iter.next();
+            s.append( value.toMtsString().asJavaString() );
+        }
+        
+        return valueOf( s.toString() );
+    }
+    
+    // ========================================
+    
+    private final String _value;
+    
+    // ========================================
+    
+    /* package */MtsString( String value )
+    {
+        _value = value;
+    }
+    
+    // ========================================
+    
+    public MtsString concat( MtsValue x )
+    {
+        return valueOf( _value.concat( x.toMtsString().asJavaString() ) );
+    }
+    
+    public MtsString intern()
+    {
+        if ( !CACHE.containsKey( _value ) )
+        {
+            CACHE.put( _value, this );
+            return this;
+        }
+        else
+        {
+            return this;
+        }
+    }
+    
+    // ========================================
+    
+    @Override
+    protected MtsValue doGet( MtsValue key )
+    {
+        return NIL;
+    }
+    
+    @Override
+    protected MtsBoolean doIsLess( MtsValue other )
+    {
+        if ( !other.isString() )
+            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
+        
+        return valueOf( _value.compareTo( other.asString().asJavaString() ) < 0 );
+    }
+    
+    @Override
+    protected MtsBoolean doIsLessOrEqual( MtsValue other )
+    {
+        if ( !other.isString() )
+            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
+        
+        return valueOf( _value.compareTo( other.asString().asJavaString() ) <= 0 );
+    }
+    
+    @Override
+    protected MtsNumber doGetLength()
+    {
+        return valueOf( _value.length() );
+    }
+    
+    // ========================================
+    
+    @Override
+    public boolean isString()
+    {
+        return true;
+    }
+    
+    @Override
+    public MtsString asString()
+    {
+        return this;
+    }
+    
+    public String asJavaString()
+    {
+        return _value;
+    }
+    
+    @Override
+    public MtsType getType()
+    {
+        return MtsType.STRING;
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsString toMtsString()
+    {
+        return this;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return _value;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return _value.hashCode();
+    }
+    
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj == this )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( !( obj instanceof MtsString ) )
+            return false;
+        
+        return ( (MtsString) obj ).asJavaString().equals( _value );
+    }
+    
+    @Override
+    public int compareTo( MtsValue o )
+    {
+        if ( !o.isString() )
+            return 0;
+        
+        return _value.compareTo( o.asString().asJavaString() );
+    }
+    
+}

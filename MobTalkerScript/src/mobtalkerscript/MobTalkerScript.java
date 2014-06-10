@@ -1,16 +1,18 @@
 package mobtalkerscript;
 
+import static mobtalkerscript.v2.value.userdata.MtsNatives.*;
+
+import java.nio.file.*;
 import java.util.logging.*;
 
 import joptsimple.*;
 import joptsimple.internal.*;
-import mobtalkerscript.mts.v2.*;
-import mobtalkerscript.mts.v2.compiler.*;
-import mobtalkerscript.mts.v2.instruction.*;
-import mobtalkerscript.mts.v2.lib.*;
-import mobtalkerscript.mts.v2.lib.mobtalker.*;
-import mobtalkerscript.mts.v2.value.*;
 import mobtalkerscript.util.logging.*;
+import mobtalkerscript.v2.*;
+import mobtalkerscript.v2.compiler.*;
+import mobtalkerscript.v2.lib.*;
+import mobtalkerscript.v2.lib.mobtalker.*;
+import mobtalkerscript.v2.value.*;
 
 /**
  * Intended to be the entry point for an interactive shell for MobTalkerScript.
@@ -19,7 +21,12 @@ public class MobTalkerScript
 {
     public static void main( String[] args ) throws Exception
     {
+        System.out.print( "Loading...\r" );
+        
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
+        
+        // Initialize the parser
+        MtsCompiler.loadString( ";", "" );
         
         // Options
         OptionParser parser = new OptionParser();
@@ -36,20 +43,19 @@ public class MobTalkerScript
         MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
         MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
         
-        // Preload some classes
-        Instructions.class.getClass();
-        
-        // Initialize engine
+        // Initialize globals
         MtsGlobals _G = new MtsGlobals();
-        _G.loadLibrary( new MtsMathLib() );
-        _G.loadLibrary( new MtsTableLib() );
         
-        _G.loadLibrary( new ConsoleCommandLib() );
-        _G.loadLibrary( new MobTalkerConsoleBaseLib( "Console", 0 ) );
-        _G.loadLibrary( new MobTalkerConsoleCharacterLib() );
+        // Initialize Minecraft/MobTalker libraries
+        _G.set( "World", createLibrary( new MinecraftConsoleWorldLib() ) );
+        createLibrary( new ConsoleCommandLib( _G ), _G );
+        createLibrary( new MobTalkerConsoleInteractionLib( _G,
+                                                           new DummyTalkingPlayer( "Console", 20 ),
+                                                           new DummyTalkingEntity( "", "Creeper", 20, 0 ) ),
+                       _G );
         
         _G.out.println( "MobTalkerScript " //
-                        + _G.get( "_VERSION" ).asString().toJava()
+                        + MtsGlobals.VERSION.asString().asJavaString()
                         + " Copyright (c) 2013-2014 Tobias Rummelt, mobtalker.net" );
         _G.out.println( "CAUTION: This is an alpha version software and may contain bugs and incomplete features!" );
         _G.out.println( "         Please report any bugs you may encounter to the bug tracker." );
@@ -61,10 +67,12 @@ public class MobTalkerScript
             
             _G.out.println( "Loading file '" + path + "'" );
             
+            _G.PackageLib.setBasePath( Paths.get( path ).getParent().toString() );
+            
             MtsFunctionPrototype fileChunk = null;
             try
             {
-                fileChunk = _G.loadFile( path );
+                fileChunk = MtsCompiler.loadFile( path );
             }
             catch ( MtsSyntaxError ex )
             {
@@ -75,12 +83,18 @@ public class MobTalkerScript
                 ex.printStackTrace();
             }
             
-            // Give the err stream time to print
-            Thread.sleep( 1 );
-            
             if ( fileChunk != null )
             {
-                new MtsClosure( fileChunk, _G ).call();
+                try
+                {
+                    new MtsClosure( fileChunk, _G ).call();
+                    Thread.sleep( 100 );
+                }
+                catch ( ScriptRuntimeException ex )
+                {
+                    _G.err.println( ex.createStackTrace() );
+                    Thread.sleep( 100 );
+                }
             }
         }
         
@@ -90,21 +104,37 @@ public class MobTalkerScript
             _G.out.print( "> " );
             String line = _G.in.readLine();
             
-            if ( line.startsWith( "exit" ) )
+            if ( line.trim().equals( "exit" ) )
                 break;
             
             MtsFunctionPrototype chunk;
             try
             {
-                chunk = _G.loadString( line );
+                chunk = MtsCompiler.loadString( line, "stdin" );
             }
-            catch ( Exception ex )
+            catch ( MtsSyntaxError ex )
             {
-                _G.out.println( ex.getMessage() );
+                _G.err.println( ex.getMessage() );
+                Thread.sleep( 100 );
                 continue;
             }
             
-            new MtsClosure( chunk, _G ).call();
+            try
+            {
+                MtsValue result = new MtsClosure( chunk, _G ).call();
+                Thread.sleep( 100 );
+                
+                if ( ( result.isVarArgs() && ( result.asVarArgs().count() > 0 ) )
+                     || ( !result.isNil() && !result.isVarArgs() ) )
+                {
+                    _G.out.println( result );
+                }
+            }
+            catch ( ScriptRuntimeException ex )
+            {
+                _G.err.println( ex.createStackTrace() );
+                Thread.sleep( 100 );
+            }
         }
     }
     

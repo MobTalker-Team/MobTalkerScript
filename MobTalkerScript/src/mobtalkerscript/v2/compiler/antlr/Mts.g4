@@ -212,44 +212,44 @@ stmt
 
 expr
     : '(' expr ')'
-    # SimpleExpr
+      # SimpleExpr
     | NULL 
-    # NullLiteral
+      # NullLiteral
     | BOOLEAN
-    # BooleanLiteral
+      # BooleanLiteral
     | ( INTEGER | FLOAT | HEXINTEGER | HEXFLOAT )
-    # NumberLiteral
+      # NumberLiteral
     | ( NORMALSTRING | LONGSTRING )
-    # StringLiteral
+      # StringLiteral
     | 'function' funcBody
-    # FuncDeclrExpr
+      # FuncDeclrExpr
     | varAccess
-    # SimpleExpr
+      # SimpleExpr
     | Call=call
-    # CallExpr
+      # CallExpr
     | tableCtor
-    # SimpleExpr
+      # SimpleExpr
 //    | Operator=( '++' | '--' ) expr
 //      # PrefixOpExpr
 //    | expr Operator=( '++' | '--' )
 //      # PostfixOpExpr
     | Operator=( '-' | 'not' | '#' ) Expr=expr
-    # UnaryOpExpr
+      # UnaryOpExpr
     | Left=expr Operator=( '*' | '/' | '%' | '^' ) Right=expr
-    # BinaryOpExpr
+      # BinaryOpExpr
     | Left=expr Operator=( '+' | '-'  ) Right=expr
-    # BinaryOpExpr
+      # BinaryOpExpr
     | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
-    # LogicalOpExpr
+      # LogicalOpExpr
     | Left=expr Operator=( 'and' | 'or' ) Right=expr
-    # ConditionalOpExpr
+      # ConditionalOpExpr
     | Left=expr Operator='..' Right=expr
-    # BinaryOpExpr
+      # BinaryOpExpr
     ;
 
 assignExpr
     : Targets=varExprList '=' Exprs=exprList
-    # SimpleAssignmentStmt
+      # SimpleAssignmentStmt
 //      | Target=varExpr Operator=( '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '.=' ) Expr=expr
 //        # OperatorAssignmentStmt
     ;
@@ -280,9 +280,9 @@ callArgs[int nReturn]
 
 fieldAccess
     : '[' Field=expr ']'
-    # ExprFieldAccess
+      # ExprFieldAccess
     | '.' Field=Identifier
-    # NameFieldAccess
+      # NameFieldAccess
     ;
 
 tableCtor
@@ -291,11 +291,11 @@ tableCtor
 
 fieldDef
     : '[' Key=expr ']' '=' Value=expr
-    # ExprKeyField
+      # ExprKeyField
     | Key=Identifier '=' Value=expr
-    # NameKeyField
+      # NameKeyField
     | Value=expr
-    # ListField
+      # ListField
     ;
     
 elseIfBody
@@ -323,7 +323,7 @@ funcBody
     ;
 
 command
-    : 'say' Group=expr? Text=exprList IsLast='as conclusion'?
+    : 'say' Character=expr? Text=expr IsLast='as conclusion'?
       # CommandSay
     | 'show' Group=expr 
              Path+=expr+ 

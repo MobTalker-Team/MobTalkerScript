@@ -90,7 +90,7 @@
 		</javac>
 
 		<!-- Build the jar -->
-		<zip destfile="${MobTalker2.libraries.location}/MobTalkerScript-${version}-mobtalker2.jar">
+		<zip destfile="${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib.jar">
 			<fileset dir="${bin}" />
 			<fileset dir="${res}" excludes="META-INF/*" />
 			<zipfileset excludes="META-INF/*" src="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />

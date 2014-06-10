@@ -3,8 +3,7 @@ package mobtalkerscript.v2.value;
 import static mobtalkerscript.v2.value.MtsValue.*;
 import static org.junit.Assert.*;
 import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.value.*;
-import mobtalkerscript.v2.value.MtsTable.*;
+import mobtalkerscript.v2.value.MtsTable.Entry;
 
 import org.junit.*;
 

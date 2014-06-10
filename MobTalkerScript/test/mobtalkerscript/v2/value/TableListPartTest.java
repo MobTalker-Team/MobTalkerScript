@@ -2,7 +2,6 @@ package mobtalkerscript.v2.value;
 
 import static mobtalkerscript.v2.value.MtsValue.*;
 import static org.junit.Assert.*;
-import mobtalkerscript.v2.value.*;
 
 import org.junit.*;
 

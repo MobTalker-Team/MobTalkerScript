@@ -2,59 +2,65 @@ package mobtalkerscript.v2;
 
 import mobtalkerscript.v2.compiler.*;
 
-public class MtsStackTraceElement
+public abstract class MtsStackTraceElement
 {
-    private final String _fileName;
-    private final SourcePosition _position;
-    private final String _functionName;
+    private final String _function;
     
     /**
      * For Java functions
      */
-    public MtsStackTraceElement( String functionName )
+    protected MtsStackTraceElement( String function )
     {
-        _fileName = null;
-        _position = SourcePosition.ZERO;
-        _functionName = functionName;
+        _function = function;
     }
     
-    /**
-     * For compiled function
-     */
-    public MtsStackTraceElement( String fileName, SourcePosition position, String functionName )
+    public String getFunction()
     {
-        _fileName = fileName;
-        _position = position;
-        _functionName = functionName;
+        return _function;
     }
     
-    public String getLocation()
-    {
-        return _fileName == null ? //
-                "[Java]"
-                : ( _fileName + ":" + _position.Line /* + ":" + _position.Coloum */);
-    }
-    
-    public String getFunctionName()
-    {
-        return _functionName;
-    }
+    public abstract String getSource();
     
     @Override
     public String toString()
     {
-        StringBuilder s = new StringBuilder();
-        s.append( getLocation() ).append( ": in " );
-        
-        if ( _functionName == null )
+        return getSource() + ": in function '" + getFunction() + "'";
+    }
+    
+    // ========================================
+    
+    public static class Native extends MtsStackTraceElement
+    {
+        public Native( String function )
         {
-            s.append( "main chunk" );
-        }
-        else
-        {
-            s.append( "function '" ).append( getFunctionName() ).append( "'" );
+            super( function );
         }
         
-        return s.toString();
+        @Override
+        public String getSource()
+        {
+            return "[Java]";
+        }
+    }
+    
+    // ========================================
+    
+    public static class Compiled extends MtsStackTraceElement
+    {
+        private final String _source;
+        private final SourcePosition _position;
+        
+        public Compiled( String source, SourcePosition position, String function )
+        {
+            super( function );
+            _source = source;
+            _position = position;
+        }
+        
+        @Override
+        public String getSource()
+        {
+            return _source + ":" + _position.Line;
+        }
     }
 }

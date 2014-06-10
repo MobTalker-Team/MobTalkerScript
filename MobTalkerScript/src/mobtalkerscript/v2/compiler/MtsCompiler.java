@@ -97,7 +97,7 @@ public class MtsCompiler
     private final FunctionState _mainFunction;
     private FunctionState _currentFunction;
     
-    private final String _sourceFile;
+    private final String _sourceName;
     private SourcePosition _curPosition;
     
     // ========================================
@@ -108,12 +108,12 @@ public class MtsCompiler
     
     public MtsCompiler( String sourceName, int sourceLineStart, int sourceLineEnd )
     {
-        _mainFunction = new FunctionState( null, null, sourceName, sourceLineStart, sourceLineEnd );
+        _mainFunction = new FunctionState( null, "main", sourceName, sourceLineStart, sourceLineEnd );
         _mainFunction.addExternal( new ExternalDescription( ENV, 0, 0, true ) );
         
         _currentFunction = _mainFunction;
         
-        _sourceFile = sourceName;
+        _sourceName = sourceName;
     }
     
     // ========================================
@@ -158,7 +158,7 @@ public class MtsCompiler
     {
         FunctionState child = new FunctionState( _currentFunction,
                                                  name,
-                                                 _sourceFile,
+                                                 _sourceName,
                                                  sourceLineStart,
                                                  sourceLineEnd );
         _currentFunction.addChild( child );

@@ -60,6 +60,7 @@ import mobtalkerscript.v2.compiler.antlr.MtsParser.WhileLoopContext;
 import mobtalkerscript.v2.value.*;
 
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
 
 import com.google.common.collect.*;
 
@@ -818,6 +819,34 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     
     // ========================================
     // Utilities
+    
+    @Override
+    public Void visit( ParseTree tree )
+    {
+        if ( tree instanceof ParserRuleContext )
+        {
+            ParserRuleContext ctx = (ParserRuleContext) tree;
+            int line = ctx.start.getLine();
+            int coloum = ctx.start.getCharPositionInLine();
+            _c.setSourcePosition( line, coloum );
+        }
+        
+        return super.visit( tree );
+    }
+    
+    @Override
+    public Void visitChildren( RuleNode node )
+    {
+        if ( node instanceof ParserRuleContext )
+        {
+            ParserRuleContext ctx = (ParserRuleContext) node;
+            int line = ctx.start.getLine();
+            int coloum = ctx.start.getCharPositionInLine();
+            _c.setSourcePosition( line, coloum );
+        }
+        
+        return super.visitChildren( node );
+    }
     
     /**
      * Extension to the other visit methods.

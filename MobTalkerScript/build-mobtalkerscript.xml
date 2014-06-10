@@ -7,7 +7,7 @@
 	<property name="res" value="${basedir}/res" />
 	<property name="bin" value="${basedir}/bin" />
 
-	<property name="version" value="2.0.2" />
+	<property name="version" value="2.1.0" />
 
 	<path id="classpath">
 		<pathelement location="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />

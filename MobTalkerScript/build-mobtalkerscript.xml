@@ -7,7 +7,7 @@
 	<property name="res" value="${basedir}/res" />
 	<property name="bin" value="${basedir}/bin" />
 
-	<property name="version" value="2.1.0" />
+	<property name="version" value="2.1.0-beta" />
 
 	<path id="classpath">
 		<pathelement location="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />
@@ -21,6 +21,8 @@
 			<fileset dir="${bin}" erroronmissingdir="false" />
 		</delete>
 		<mkdir dir="${bin}" />
+		
+		<antcall target="ReplaceTokens" />
 
 		<javac srcdir="${src}" destdir="${bin}" source="6" target="6" includeantruntime="false">
 			<classpath refid="classpath" />
@@ -40,7 +42,8 @@
 			<fileset dir="${bin}" />
 		</delete>
 	</target>
-	<target name="build-mobtalker2">
+	
+	<target name="build-library">
 		<delete includeemptydirs="true">
 			<fileset dir="${bin}" erroronmissingdir="false" />
 		</delete>
@@ -60,6 +63,16 @@
 		<delete includeemptydirs="true">
 			<fileset dir="${bin}" />
 		</delete>
+	</target>
+
+	<target name="ReplaceTokens">
+		<replace summary="yes" failOnNoReplacements="true" preserveLastModified="true">
+			<fileset dir="${src}/mobtalkerscript/v2/">
+				<include name="MtsGlobals.java" />
+			</fileset>
+
+			<replacefilter token="@VERSION@" value="${version}" />
+		</replace>
 	</target>
 
 </project>

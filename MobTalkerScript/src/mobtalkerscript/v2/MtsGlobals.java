@@ -15,7 +15,7 @@ public class MtsGlobals extends MtsTable
     
     // ========================================
     
-    public static final MtsValue VERSION = valueOf( "2.0.1-alpha" );
+    public static final MtsValue VERSION = valueOf( "2.1.0-beta" );
     
     // ========================================
     

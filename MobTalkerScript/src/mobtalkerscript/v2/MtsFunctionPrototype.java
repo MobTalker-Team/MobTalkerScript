@@ -24,7 +24,7 @@ public class MtsFunctionPrototype
     // Debug information
     private final String _name;
     private final List<SourcePosition> _lineNumbers;
-    private final String _sourceFile;
+    private final String _sourceName;
     private final int _sourceLineStart;
     private final int _sourceLineEnd;
     
@@ -37,7 +37,7 @@ public class MtsFunctionPrototype
                                  List<LocalDescription> locals,
                                  String name,
                                  List<SourcePosition> lineNumbers,
-                                 String sourceFile,
+                                 String sourceName,
                                  int sourceStart,
                                  int sourceEnd )
     {
@@ -56,7 +56,7 @@ public class MtsFunctionPrototype
         
         _name = name;
         _lineNumbers = lineNumbers;
-        _sourceFile = sourceFile;
+        _sourceName = sourceName;
         _sourceLineStart = sourceStart;
         _sourceLineEnd = sourceEnd;
     }
@@ -128,9 +128,9 @@ public class MtsFunctionPrototype
         return _name;
     }
     
-    public String getSourceFile()
+    public String getSource()
     {
-        return _sourceFile;
+        return _sourceName;
     }
     
     public SourcePosition getSourcePosition( int instruction )
@@ -149,7 +149,7 @@ public class MtsFunctionPrototype
         
         s.append( "function " ).append( _name ).append( '\n' );
         s.append( " source: " )
-         .append( _sourceFile )
+         .append( _sourceName )
          .append( ':' )
          .append( _sourceLineStart )
          .append( '-' )
@@ -174,7 +174,7 @@ public class MtsFunctionPrototype
         
         s.append( "function " ).append( _name ).append( '\n' );
         s.append( "  source: " )
-         .append( _sourceFile )
+         .append( _sourceName )
          .append( ':' )
          .append( _sourceLineStart )
          .append( '-' )

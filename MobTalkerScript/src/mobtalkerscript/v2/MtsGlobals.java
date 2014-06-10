@@ -15,7 +15,7 @@ public class MtsGlobals extends MtsTable
     
     // ========================================
     
-    public static final MtsValue VERSION = valueOf( "2.0.1-alpha" );
+    public static final MtsValue VERSION = valueOf( "2.1.0-beta" );
     
     // ========================================
     
@@ -29,13 +29,19 @@ public class MtsGlobals extends MtsTable
         set( "Math", createLibrary( MtsMathLib.class ), false );
         set( "Table", createLibrary( MtsTableLib.class ), false );
         
-        MtsTable stringLib = createLibrary( MtsStringLib.class );
-        MtsTable stringMT = new MtsTable( 0, 1 );
-        stringMT.set( __INDEX, stringLib );
-        MtsType.STRING.setMetaTable( stringMT );
+        createStringLib();
         
         PackageLib = new MtsPackageLib( this );
         createLibrary( PackageLib, this );
+    }
+    
+    private void createStringLib()
+    {
+        MtsTable lib = createLibrary( MtsStringLib.class );
+        MtsTable mt = new MtsTable( 0, 2 );
+        mt.set( __INDEX, lib );
+        mt.set( __METATABLE, TRUE );
+        MtsType.STRING.setMetaTable( mt );
     }
     
     // ========================================

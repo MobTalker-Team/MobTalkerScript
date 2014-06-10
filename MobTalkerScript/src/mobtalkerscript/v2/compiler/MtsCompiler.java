@@ -15,7 +15,7 @@ import java.util.regex.*;
 
 import mobtalkerscript.v2.*;
 import mobtalkerscript.v2.compiler.antlr.*;
-import mobtalkerscript.v2.compiler.antlr.MtsParser.*;
+import mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
 import mobtalkerscript.v2.instruction.*;
 import mobtalkerscript.v2.value.*;
 
@@ -37,8 +37,7 @@ public class MtsCompiler
     
     public static MtsFunctionPrototype loadFile( Path path ) throws Exception
     {
-        checkArgument( Files.exists( path ), "Path '%s' does not exist", path.toAbsolutePath() );
-        
+        path = path.toRealPath();
         return load( new ANTLRFileStream( path.toString() ) );
     }
     
@@ -98,7 +97,7 @@ public class MtsCompiler
     private final FunctionState _mainFunction;
     private FunctionState _currentFunction;
     
-    private final String _sourceFile;
+    private final String _sourceName;
     private SourcePosition _curPosition;
     
     // ========================================
@@ -109,12 +108,12 @@ public class MtsCompiler
     
     public MtsCompiler( String sourceName, int sourceLineStart, int sourceLineEnd )
     {
-        _mainFunction = new FunctionState( null, null, sourceName, sourceLineStart, sourceLineEnd );
+        _mainFunction = new FunctionState( null, "main", sourceName, sourceLineStart, sourceLineEnd );
         _mainFunction.addExternal( new ExternalDescription( ENV, 0, 0, true ) );
         
         _currentFunction = _mainFunction;
         
-        _sourceFile = sourceName;
+        _sourceName = sourceName;
     }
     
     // ========================================
@@ -159,7 +158,7 @@ public class MtsCompiler
     {
         FunctionState child = new FunctionState( _currentFunction,
                                                  name,
-                                                 _sourceFile,
+                                                 _sourceName,
                                                  sourceLineStart,
                                                  sourceLineEnd );
         _currentFunction.addChild( child );
@@ -545,7 +544,7 @@ public class MtsCompiler
      */
     public void exitConditionalBlock()
     {
-        _currentFunction.setPendingJump();
+        _currentFunction.setPendingJump( 1 );
     }
     
     // ========================================
@@ -593,14 +592,7 @@ public class MtsCompiler
     
     public static String stripHyphen( String s )
     {
-        if ( ( s.charAt( 0 ) == '"' ) && ( s.charAt( s.length() - 1 ) == '"' ) )
-        {
-            return s.substring( 1, s.length() - 1 );
-        }
-        else
-        {
-            return s;
-        }
+        return StringUtils.strip( s, "\"" );
     }
     
     public static MtsString parseString( String s )

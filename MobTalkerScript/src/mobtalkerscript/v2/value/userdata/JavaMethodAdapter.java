@@ -60,8 +60,7 @@ import com.google.common.base.*;
             if ( ex.getCause() instanceof ScriptRuntimeException )
             {
                 ScriptRuntimeException srex = (ScriptRuntimeException) ex.getCause();
-                MtsStackTraceElement e = new MtsStackTraceElement( _name );
-                srex.addStackTraceElement( e );
+                srex.addStackTraceElement( _name );
                 throw srex;
             }
             else

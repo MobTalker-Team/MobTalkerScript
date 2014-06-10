@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 
-import mobtalkerscript.v2.value.*;
-
 import org.junit.*;
 
 public class MtsTableTest

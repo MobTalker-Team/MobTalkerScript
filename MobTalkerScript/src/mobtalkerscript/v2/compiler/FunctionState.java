@@ -330,6 +330,14 @@ public class FunctionState
         jump.setTarget( currentIndex() );
     }
     
+    public void setPendingJump( int offset )
+    {
+        checkState( !_pendingJumps.isEmpty(), "There is no pending jump!" );
+        
+        PendingJump jump = _pendingJumps.remove();
+        jump.setTarget( currentIndex() + offset );
+    }
+    
     // ========================================
     
     public int getConstantIndex( MtsValue value )

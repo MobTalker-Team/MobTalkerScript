@@ -48,11 +48,11 @@ public final class MtsClosure extends MtsFunction
         }
         catch ( ScriptRuntimeException ex )
         {
-            String source = _prototype.getSourceFile();
+            String source = _prototype.getSource();
             SourcePosition pos = _prototype.getSourcePosition( frame.getInstructionPointer() );
             String name = _prototype.getName();
             
-            ex.addStackTraceElement( new MtsStackTraceElement( source, pos, name ) );
+            ex.addStackTraceElement( source, pos, name );
             
             throw ex;
         }

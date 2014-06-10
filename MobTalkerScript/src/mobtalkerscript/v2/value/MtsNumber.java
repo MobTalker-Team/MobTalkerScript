@@ -24,11 +24,17 @@ public final class MtsNumber extends MtsValue
     
     public static MtsNumber of( double value )
     {
+        if ( Double.isNaN( value ) )
+            return NaN;
+        
         return new MtsNumber( value );
     }
     
     public static MtsNumber of( int value )
     {
+        if ( ( -127 <= value ) && ( value <= 128 ) )
+            return CACHE[value + 127];
+        
         return new MtsNumber( value );
     }
     

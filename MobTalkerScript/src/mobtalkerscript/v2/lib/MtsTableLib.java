@@ -48,7 +48,7 @@ public final class MtsTableLib
         table.insert( arg2.asNumber(), arg3 );
     }
     
-    private static final Random rnd = new Random();
+    private static final Random _rnd = new Random();
     
     @MtsNativeFunction
     public static MtsValue random( MtsVarArgs args )
@@ -57,7 +57,7 @@ public final class MtsTableLib
             return NIL;
         
         if ( args.count() > 1 )
-            return args.get( rnd.nextInt( args.count() ) );
+            return args.get( _rnd.nextInt( args.count() ) );
         
         MtsValue arg1 = args.get( 0 );
         if ( arg1.isTable() )
@@ -67,7 +67,7 @@ public final class MtsTableLib
             if ( t.listSize() == 0 )
                 return NIL;
             
-            MtsNumber k = valueOf( rnd.nextInt( t.listSize() ) );
+            MtsNumber k = valueOf( _rnd.nextInt( t.listSize() ) );
             return t.get( k );
         }
         

@@ -55,7 +55,7 @@ public class MobTalkerScript
                        _G );
         
         _G.out.println( "MobTalkerScript " //
-                        + _G.get( "_VERSION" ).asString().asJavaString()
+                        + MtsGlobals.VERSION.asString().asJavaString()
                         + " Copyright (c) 2013-2014 Tobias Rummelt, mobtalker.net" );
         _G.out.println( "CAUTION: This is an alpha version software and may contain bugs and incomplete features!" );
         _G.out.println( "         Please report any bugs you may encounter to the bug tracker." );

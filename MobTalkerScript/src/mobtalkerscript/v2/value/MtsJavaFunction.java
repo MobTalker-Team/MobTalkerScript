@@ -17,9 +17,7 @@ public abstract class MtsJavaFunction extends MtsFunction
         }
         catch ( ScriptRuntimeException ex )
         {
-            String name = getClass().getSimpleName();
-            ex.addStackTraceElement( new MtsStackTraceElement( name ) );
-            
+            ex.addStackTraceElement( getClass().getSimpleName() );
             throw ex;
         }
     }

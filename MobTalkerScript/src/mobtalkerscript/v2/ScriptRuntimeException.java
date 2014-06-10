@@ -2,6 +2,8 @@ package mobtalkerscript.v2;
 
 import java.util.*;
 
+import mobtalkerscript.v2.compiler.*;
+
 import com.google.common.collect.*;
 
 /**
@@ -64,6 +66,16 @@ public class ScriptRuntimeException extends RuntimeException
         _stackTrace.add( e );
     }
     
+    public void addStackTraceElement( String source, SourcePosition position, String function )
+    {
+        _stackTrace.add( new MtsStackTraceElement.Compiled( source, position, function ) );
+    }
+    
+    public void addStackTraceElement( String function )
+    {
+        _stackTrace.add( new MtsStackTraceElement.Native( function ) );
+    }
+    
     public String createStackTrace()
     {
         StringBuilder s = new StringBuilder();
@@ -73,7 +85,7 @@ public class ScriptRuntimeException extends RuntimeException
         
         for ( int i = _level; i < _stackTrace.size(); i++ )
         {
-            s.append( "\n\t" ).append( _stackTrace.get( i ).toString() );
+            s.append( "\n  " ).append( _stackTrace.get( i ).toString() );
         }
         
         return s.toString();

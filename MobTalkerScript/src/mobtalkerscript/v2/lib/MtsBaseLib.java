@@ -48,7 +48,18 @@ public final class MtsBaseLib
     {
         checkTable( arg1, 1 );
         
-        MtsTable.Entry next = arg1.asTable().getINext( arg2.asNumber() );
+        MtsNumber prev;
+        if ( arg2.isNil() )
+        {
+            prev = ZERO;
+        }
+        else
+        {
+            checkNumber( arg2, 1 );
+            prev = arg2.asNumber();
+        }
+        
+        MtsTable.Entry next = arg1.asTable().getINext( prev );
         return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
     }
     

@@ -137,12 +137,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Constants.FunctionNames.COMMAND_SAY );
         
-        if ( ctx.Group == null )
+        if ( ctx.Character == null )
             _c.loadNil();
         else
-            visit( ctx.Group );
+            visit( ctx.Character );
         
-        visitSingleOrCreateTable( ctx.Text.Exprs );
+        visit( ctx.Text );
         
         _c.loadConstant( valueOf( ctx.IsLast != null ) );
         

@@ -102,7 +102,6 @@
 			-injars 	 ${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib-fat.jar
 			-outjars	 ${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib.jar
 			-libraryjars D:/Program Files/Java/jre7/lib/rt.jar
-			-libraryjars D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar
 			-libraryjars ${Minecraft.libraries.location}/com/google/guava/guava/14.0/guava-14.0.jar
 			-libraryjars ${Minecraft.libraries.location}/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar
 			-libraryjars ${Minecraft.libraries.location}/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar
@@ -120,6 +119,10 @@
 
 			-keep public class mobtalkerscript.** {
 			    public protected *;
+			}
+
+			-keepclassmembers class org.antlr.v4.runtime.ANTLRInputStream {
+			    public &lt;init&gt;( ... );
 			}
 
 			-keepclassmembers class * {

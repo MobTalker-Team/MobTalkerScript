@@ -76,7 +76,7 @@ public class MtsCheck
         if ( value.isString() )
             return value.asString().asJavaString();
         
-        throw new BadArgumentException( i, MtsType.STRING, value.getType() );
+        throw new BadArgumentException( i, "%s or %s expected, got %s", MtsType.STRING, MtsType.NIL, value.getType() );
     }
     
     public static String checkString( MtsVarArgs args, int i )
@@ -121,7 +121,7 @@ public class MtsCheck
         if ( value.isNumber() )
             return value.asNumber().asJavaInt();
         
-        throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
+        throw new BadArgumentException( i, "%s or %s expected, got %s", MtsType.NUMBER, MtsType.NIL, value.getType() );
     }
     
     public static int checkInteger( MtsVarArgs args, int i )
@@ -132,6 +132,15 @@ public class MtsCheck
     public static int checkInteger( MtsVarArgs args, int i, int fallback )
     {
         return checkInteger( args.get( i ), i, fallback );
+    }
+    
+    public static int checkIntegerWithMinimum( MtsValue value, int i, int min )
+    {
+        int v = checkInteger( value, i );
+        if ( v < min )
+            throw new BadArgumentException( i, "number must be equal to or greater than %s, was %s", min, value );
+        
+        return v;
     }
     
     // ========================================

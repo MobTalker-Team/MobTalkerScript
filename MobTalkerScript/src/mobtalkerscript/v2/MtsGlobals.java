@@ -26,8 +26,8 @@ public class MtsGlobals extends MtsTable
         set( "_VERSION", VERSION );
         
         createLibrary( new MtsBaseLib( this ), this );
-        set( "Math", createLibrary( MtsMathLib.class ), false );
-        set( "Table", createLibrary( MtsTableLib.class ), false );
+        set( "Math", createLibrary( MtsMathLib.class ) );
+        set( "Table", createLibrary( MtsTableLib.class ) );
         
         createStringLib();
         

@@ -22,7 +22,7 @@ public class InstrStoreET extends MtsInstruction
     {
         MtsValue table = frame.getExternal( _external ).get();
         MtsValue key = frame.getConstant( _constant );
-        table.set( key, frame.pop() );
+        table.set( key, frame.pop(), true );
     }
     
     @Override

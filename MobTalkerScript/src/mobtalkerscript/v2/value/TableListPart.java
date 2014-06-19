@@ -66,17 +66,17 @@ import java.util.*;
     /**
      * Determines if the given key resides inside the list part of this table.
      * <p>
-     * NOTE: The index is 1 based.
+     * <b>NOTE:</b> The index is 1 based.
      */
     public boolean contains( MtsValue key )
     {
-        return isValidKey( key ) && ( key.asNumber().asJavaInt() < _limit );
+        return isValidKey( key ) && ( key.asNumber().asJavaInt() <= _limit );
     }
     
     /**
      * Determines if the given key resides inside the list part of this table.
      * <p>
-     * NOTE: The index is 1 based.
+     * <b>NOTE:</b> The index is 1 based.
      */
     public boolean contains( MtsNumber key )
     {
@@ -85,12 +85,10 @@ import java.util.*;
     
     /**
      * Determines if the given index resides inside the list part of this table.
-     * <p>
-     * NOTE: The index is 1 based.
      */
     public boolean contains( int i )
     {
-        return ( 0 < i ) && ( i <= _limit );
+        return ( 0 <= i ) && ( i < _limit );
     }
     
     private int findCapacity( int target )
@@ -329,7 +327,7 @@ import java.util.*;
     {
         MtsValue[] t = _entries;
         MtsValue value;
-        int i = _limit;
+        int i = _limit + 1;
         while ( ( i < t.length ) && ( ( value = t[i] ) != null ) )
         {
             t[i] = null;

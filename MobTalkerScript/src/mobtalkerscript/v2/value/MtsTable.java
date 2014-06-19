@@ -193,6 +193,12 @@ public class MtsTable extends MtsMetaTableValue
         return _listPart.removeLast();
     }
     
+    public void clear()
+    {
+        _listPart.clear();
+        _hashPart.clear();
+    }
+    
     public MtsString concatList( String sep, int from, int to )
     {
         return valueOf( _listPart.concat( sep, from, to ) );
@@ -293,7 +299,7 @@ public class MtsTable extends MtsMetaTableValue
                 }
             }
             
-            if ( _listPart.contains( i - 1 ) || ( i == 1 ) )
+            if ( _listPart.contains( i - 1 ) || ( i == 0 ) )
             {
                 _listPart.add( value );
                 _listPart.collectFrom( _hashPart );

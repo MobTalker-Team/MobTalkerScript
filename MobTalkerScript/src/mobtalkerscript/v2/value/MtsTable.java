@@ -68,7 +68,7 @@ public class MtsTable extends MtsMetaTableValue
     public Entry getFirstEntry()
     {
         if ( _listPart.length() > 0 )
-            return new Entry( MtsValue.ONE, _listPart.get( 1 ) );
+            return new Entry( MtsValue.ONE, _listPart.get( 0 ) );
         
         return _hashPart.getFirst();
     }
@@ -90,7 +90,8 @@ public class MtsTable extends MtsMetaTableValue
         
         if ( TableListPart.isValidKey( key ) )
         {
-            int i = key.asNumber().asJavaInt();
+            // Adjust MTS to Java index
+            int i = key.asNumber().asJavaInt() - 1;
             
             if ( _listPart.contains( i++ ) )
             {
@@ -106,7 +107,7 @@ public class MtsTable extends MtsMetaTableValue
     
     public Entry getINext( MtsNumber key )
     {
-        int i = key.asNumber().asJavaInt() + 1;
+        int i = key.asNumber().asJavaInt();
         
         if ( _listPart.contains( i ) )
             return new Entry( valueOf( i ), _listPart.get( i ) );
@@ -151,7 +152,10 @@ public class MtsTable extends MtsMetaTableValue
     {
         if ( _listPart.contains( index ) )
         {
-            _listPart.insert( index.asJavaInt(), value );
+            // Adjust MTS to Java index
+            int i = index.asJavaInt() - 1;
+            
+            _listPart.insert( i, value );
             _listPart.collectFrom( _hashPart );
         }
         else
@@ -235,7 +239,8 @@ public class MtsTable extends MtsMetaTableValue
         
         if ( TableListPart.isValidKey( key ) )
         {
-            int i = key.asNumber().asJavaInt();
+            // Adjust MTS to Java index
+            int i = key.asNumber().asJavaInt() - 1;
             
             if ( _listPart.contains( i ) )
                 return _listPart.get( i );
@@ -275,7 +280,8 @@ public class MtsTable extends MtsMetaTableValue
         
         if ( TableListPart.isValidKey( key ) )
         {
-            int i = key.asNumber().asJavaInt();
+            // Adjust MTS to Java index
+            int i = key.asNumber().asJavaInt() - 1;
             
             if ( _listPart.contains( i ) )
             {

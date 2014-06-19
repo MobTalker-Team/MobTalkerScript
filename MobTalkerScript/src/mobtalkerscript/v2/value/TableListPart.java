@@ -4,8 +4,6 @@ import static mobtalkerscript.v2.value.MtsValue.*;
 
 import java.util.*;
 
-import com.google.common.collect.*;
-
 /**
  * An Array-backed list specifically tailored for MobTalkerScript.
  * <p>
@@ -149,13 +147,9 @@ import com.google.common.collect.*;
     
     /**
      * Inserts a value at the given index and shifts subsequent entries up.
-     * <p>
-     * NOTE: The index is 1 based.
      */
     public void insert( int i, MtsValue value )
     {
-        i--; // Adjust Lua index to Java.
-        
         if ( _limit < i )
             throw new ArrayIndexOutOfBoundsException( i );
         
@@ -193,13 +187,9 @@ import com.google.common.collect.*;
     
     /**
      * Sets the value of a specified index
-     * <p>
-     * NOTE: The index is 1 based.
      */
     public MtsValue set( int i, MtsValue value )
     {
-        i--; // Adjust Lua index to Java.
-        
         if ( _limit <= i )
             throw new ArrayIndexOutOfBoundsException( i );
         
@@ -224,11 +214,12 @@ import com.google.common.collect.*;
     /**
      * Removes an entry from this list, shifting subsequent entries down.
      * <p>
-     * NOTE: The index is 1 based.
+     * <b>NOTE:</b> Indices are 1 based.
      */
     public MtsValue remove( MtsNumber key )
     {
-        int i = key.asJavaInt();
+        // Adjust MTS to Java index
+        int i = key.asJavaInt() - 1;
         
         if ( !contains( i ) )
             throw new IllegalArgumentException( "key is not part of this list" );
@@ -238,22 +229,15 @@ import com.google.common.collect.*;
     
     /**
      * Removes an entry from this list, shifting subsequent entries down.
-     * <p>
-     * NOTE: The index is 1 based.
      */
     public MtsValue remove( int i )
     {
-        i--; // Adjust Lua index to Java.
-        
         if ( _limit <= i )
             throw new ArrayIndexOutOfBoundsException( i );
         
         return doRemove( i );
     }
     
-    /**
-     * NOTE: Index is 0 based.
-     */
     private MtsValue doRemove( int i )
     {
         MtsValue old = _entries[i];
@@ -288,34 +272,23 @@ import com.google.common.collect.*;
     // Retrieval
     
     /**
-     * NOTE: The index is 1 based.
+     * <b>NOTE:</b> Indices are 1 based.
      */
     public MtsValue get( MtsNumber key )
     {
-        return get( key.asJavaInt() );
+        return get( key.asJavaInt() - 1 );
     }
     
-    /**
-     * NOTE: The index is 1 based.
-     */
     public MtsValue get( int i )
     {
-        i--; // Adjust Lua index to Java.
-        
         if ( ( i < 0 ) || ( _limit <= i ) )
-            throw new ArrayIndexOutOfBoundsException( i + 1 );
+            throw new ArrayIndexOutOfBoundsException( i );
         
         return _entries[i];
     }
     
-    /**
-     * NOTE: The indices are 1 based.
-     */
     public String concat( String sep, int from, int to )
     {
-        from--; // Adjust Lua index to Java.
-        to--; // Adjust Lua index to Java.
-        
         if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
             return "";
         
@@ -328,9 +301,6 @@ import com.google.common.collect.*;
         return s.toString();
     }
     
-    /**
-     * NOTE: The index is 1 based.
-     */
     public String concat( String sep, int from )
     {
         return concat( sep, from, _limit );
@@ -373,7 +343,7 @@ import com.google.common.collect.*;
     @Override
     public Iterator<MtsValue> iterator()
     {
-        return Iterators.forArray( _entries );
+        return new ListIterator( this );
     }
     
     // ========================================
@@ -382,5 +352,41 @@ import com.google.common.collect.*;
     public String toString()
     {
         return Arrays.toString( _entries );
+    }
+    
+    // ========================================
+    
+    private static class ListIterator implements Iterator<MtsValue>
+    {
+        private final TableListPart _listPart;
+        private int _next;
+        
+        public ListIterator( TableListPart listPart )
+        {
+            _listPart = listPart;
+            _next = 0;
+        }
+        
+        @Override
+        public boolean hasNext()
+        {
+            return _next < _listPart.length();
+        }
+        
+        @Override
+        public MtsValue next()
+        {
+            if ( !hasNext() )
+                throw new NoSuchElementException();
+            
+            MtsValue result = _listPart.get( _next++ );
+            return result;
+        }
+        
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 }

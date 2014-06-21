@@ -559,8 +559,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             return null;
         }
         
-        List<ListFieldContext> listFields =
-                                            Lists.newArrayListWithExpectedSize( ( ctx.FieldDefs.size() + 1 ) / 2 );
+        List<ListFieldContext> listFields = Lists.newArrayListWithExpectedSize( ( ctx.FieldDefs.size() + 1 ) / 2 );
         int hashPairs = 0;
         
         for ( FieldDefContext fieldDef : ctx.FieldDefs )
@@ -576,7 +575,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             }
         }
         
-        visit( listFields );
+        visit( Lists.reverse( listFields ) );
         
         _c.createTable( listFields.size(), hashPairs );
         

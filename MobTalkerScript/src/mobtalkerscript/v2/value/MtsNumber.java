@@ -224,6 +224,12 @@ public final class MtsNumber extends MtsValue
         return valueOf( toString() );
     }
     
+    @Override
+    public MtsNumber toMtsNumber() throws NumberFormatException
+    {
+        return this;
+    }
+    
     // ========================================
     
     @Override

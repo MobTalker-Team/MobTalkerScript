@@ -211,6 +211,14 @@ public class MtsString extends MtsValue
     }
     
     @Override
+    public MtsNumber toMtsNumber() throws NumberFormatException
+    {
+        return valueOf( Double.parseDouble( _value ) );
+    }
+    
+    // ========================================
+    
+    @Override
     public String toString()
     {
         return _value;

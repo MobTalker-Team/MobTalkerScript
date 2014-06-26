@@ -1,6 +1,5 @@
 package mobtalkerscript.v2.instruction;
 
-import static mobtalkerscript.v2.value.MtsValue.*;
 import mobtalkerscript.v2.*;
 import mobtalkerscript.v2.value.*;
 
@@ -17,16 +16,8 @@ import mobtalkerscript.v2.value.*;
     {
         if ( x.isNumber() )
             return x.asNumber();
-        
         if ( x.isString() )
-        {
-            try
-            {
-                return valueOf( Double.parseDouble( x.asString().asJavaString() ) );
-            }
-            catch ( NumberFormatException ex )
-            {}
-        }
+            return x.toMtsNumber();
         
         throw new ScriptRuntimeException( "attempt to perform arithmetic on a %s value", x.getType() );
     }

@@ -44,7 +44,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( name = "inext" )
-    public MtsValue INext( MtsValue arg1, MtsValue arg2 )
+    public MtsValue inext( MtsValue arg1, MtsValue arg2 )
     {
         checkTable( arg1, 1 );
         
@@ -64,7 +64,7 @@ public final class MtsBaseLib
     }
     
     @MtsNativeFunction( name = "next" )
-    public MtsValue Next( MtsValue arg1, MtsValue arg2 )
+    public MtsValue next( MtsValue arg1, MtsValue arg2 )
     {
         checkTable( arg1, 1 );
         
@@ -75,7 +75,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( name = "print" )
-    public void Print( MtsVarArgs args )
+    public void print( MtsVarArgs args )
     {
         if ( args.count() > 0 )
         {
@@ -91,21 +91,21 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( name = "rawget" )
-    public MtsValue RawGet( MtsValue arg1, MtsValue arg2 )
+    public MtsValue rawGet( MtsValue arg1, MtsValue arg2 )
     {
         return checkTable( arg1, 0 ).get( arg2, false );
     }
     
     @MtsNativeFunction( name = "rawset" )
-    public void RawSet( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+    public void rawSet( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
         checkTable( arg1, 0 ).set( arg2, arg3, false );
     }
     
     // ========================================
     
-    @MtsNativeFunction( name = "GetMetaTable" )
-    public MtsTable GetMetaTable( MtsValue arg )
+    @MtsNativeFunction( name = "GetMetatable" )
+    public MtsTable getMetaTable( MtsValue arg )
     {
         MtsTable t = checkTable( arg, 0 );
         
@@ -115,8 +115,8 @@ public final class MtsBaseLib
         return t.getMetaTable();
     }
     
-    @MtsNativeFunction( name = "SetMetaTable" )
-    public MtsTable SetMetaTable( MtsValue arg1, MtsValue arg2 )
+    @MtsNativeFunction( name = "SetMetatable" )
+    public MtsTable setMetaTable( MtsValue arg1, MtsValue arg2 )
     {
         MtsTable t = checkTable( arg1, 0 );
         
@@ -130,7 +130,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( name = "toNumber" )
-    public MtsValue ToNumber( MtsValue arg1 )
+    public MtsValue toNumber( MtsValue arg1 )
     {
         try
         {
@@ -143,7 +143,7 @@ public final class MtsBaseLib
     }
     
     @MtsNativeFunction( name = "toString" )
-    public MtsString ToString( MtsValue arg1 )
+    public MtsString toString( MtsValue arg1 )
     {
         return arg1.toMtsString();
     }
@@ -151,7 +151,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( name = "typeof" )
-    public MtsString TypeOf( MtsValue arg1 )
+    public MtsString typeOf( MtsValue arg1 )
     {
         return valueOf( arg1.getType().getName() );
     }
@@ -159,7 +159,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( name = "LoadString" )
-    public MtsFunction LoadString( MtsVarArgs args )
+    public MtsFunction loadString( MtsVarArgs args )
     {
         MtsFunctionPrototype p;
         try
@@ -183,7 +183,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( name = "pcall" )
-    public MtsValue PCall( MtsVarArgs args )
+    public MtsValue pCall( MtsVarArgs args )
     {
         MtsValue f = args.get( 0 );
         MtsVarArgs callArgs = args.subArgs( 1 );

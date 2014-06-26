@@ -111,7 +111,8 @@ NORMALSTRING
 
 fragment 
 EscapeSequence
-    : '\\' [abfnrtvz$"\\]
+//    : '\\' [abfnrtvz$"\\]
+    : '\\' [nt"\\]
     ;
     
 LONGSTRING

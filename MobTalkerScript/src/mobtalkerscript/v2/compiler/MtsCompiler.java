@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
 
+import mobtalkerscript.util.*;
 import mobtalkerscript.v2.*;
 import mobtalkerscript.v2.compiler.antlr.*;
 import mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
@@ -590,14 +591,24 @@ public class MtsCompiler
     
     // ========================================
     
-    public static String stripHyphen( String s )
+    private static String stripHyphen( String s )
     {
         return StringUtils.strip( s, "\"" );
     }
     
+    private static String unescape( String s )
+    {
+        return StringEscapeUtil.unescape( s );
+    }
+    
+    public static String cleanString( String s )
+    {
+        return unescape( stripHyphen( s ) );
+    }
+    
     public static MtsString parseString( String s )
     {
-        return valueOf( stripHyphen( s ) );
+        return valueOf( cleanString( s ) );
     }
     
     public static MtsBoolean parseBoolean( String s )
@@ -626,12 +637,11 @@ public class MtsCompiler
     
     // ========================================
     
-    private static final Pattern _interpolationPattern =
-                                                         Pattern.compile( "(?<!\\\\)\\{([_a-zA-Z][_a-zA-Z0-9]*)\\}" );
+    private static final Pattern _interpolationPattern = Pattern.compile( "(?<!\\\\)\\{([_a-zA-Z][_a-zA-Z0-9]*)\\}" );
     
     public void interpolateString( String s )
     {
-        s = stripHyphen( s );
+        s = cleanString( s );
         Matcher matcher = _interpolationPattern.matcher( s );
         
         int start = 0;

@@ -7,7 +7,7 @@
 	<property name="res" value="${basedir}/../res" />
 	<property name="bin" value="${basedir}/../bin" />
 
-	<property name="version" value="2.1.1-beta" />
+	<property name="version" value="2.2.1-beta" />
 
 	<taskdef resource="proguard/ant/task.properties" classpath="D:/Program Files Other/ProGuard/lib/proguard.jar" />
 

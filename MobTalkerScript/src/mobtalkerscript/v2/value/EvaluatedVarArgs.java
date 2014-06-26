@@ -45,7 +45,10 @@ import com.google.common.collect.*;
     @Override
     public MtsValue get( int i )
     {
-        return i < count() ? _values.get( i ) : NIL;
+        if ( ( i < 0 ) || ( count() <= i ) )
+            return NIL;
+        
+        return _values.get( i );
     }
     
     @Override

@@ -8,7 +8,7 @@ public class InstrLoadT extends MtsInstruction
     public void execute( MtsFrame frame )
     {
         MtsValue key = frame.pop();
-        frame.push( frame.pop().get( key ) );
+        frame.push( frame.pop().get( key, true ) );
     }
     
     @Override

@@ -93,13 +93,13 @@ public final class MtsBaseLib
     @MtsNativeFunction( name = "rawget" )
     public MtsValue rawGet( MtsValue arg1, MtsValue arg2 )
     {
-        return checkTable( arg1, 0 ).get( arg2, false );
+        return checkTable( arg1, 0 ).get( arg2 );
     }
     
     @MtsNativeFunction( name = "rawset" )
     public void rawSet( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
-        checkTable( arg1, 0 ).set( arg2, arg3, false );
+        checkTable( arg1, 0 ).set( arg2, arg3 );
     }
     
     // ========================================

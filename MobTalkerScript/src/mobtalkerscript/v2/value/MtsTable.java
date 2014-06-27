@@ -96,7 +96,7 @@ public class MtsTable extends MtsMetaTableValue
             if ( _listPart.contains( i++ ) )
             {
                 if ( _listPart.contains( i ) )
-                    return new Entry( valueOf( i ), _listPart.get( i ) );
+                    return new Entry( valueOf( i + 1 ), _listPart.get( i ) );
                 else
                     return _hashPart.getFirst();
             }

@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.lib.mobtalker;
+package mobtalkerscript.v2.lib.console.mobtalker;
 
 import com.google.common.base.*;
 

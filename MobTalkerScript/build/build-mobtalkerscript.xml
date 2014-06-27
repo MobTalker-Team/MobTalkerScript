@@ -72,9 +72,16 @@
 			-optimizations !code/allocation/variable
 			-optimizationpasses 6
 
+			-dontnote com.google.common.**
+			-dontnote joptsimple.**
+			-dontnote org.antlr.v4.runtime.misc.**
+			-dontnote org.apache.commons.lang3.**
+			
 			-dontwarn javax.annotation.**
 			-dontwarn javax.inject.**
 			-dontwarn sun.misc.Unsafe
+			
+			-keepnames class mobtalkerscript.** {}
 
 			-keepclassmembers class * {
 			    @mobtalkerscript.v2.value.userdata.* *;
@@ -110,29 +117,37 @@
 			-optimizations !code/allocation/variable
 			-optimizationpasses 6
 
+			-dontnote org.antlr.v4.runtime.misc.**
+			
 			-dontwarn javax.annotation.**
 			-dontwarn javax.inject.**
 			-dontwarn sun.misc.Unsafe
 
-			-keep public class mobtalkerscript.** {
+			-keep
+			 public class mobtalkerscript.util.**,
+			              mobtalkerscript.v2.*,
+                          mobtalkerscript.v2.compiler.**,
+                          mobtalkerscript.v2.instruction.**,
+                          mobtalkerscript.v2.lib.*,
+                          mobtalkerscript.v2.value.** 
+			{
 			    public protected *;
 			}
 
-			-keepclassmembers class org.antlr.v4.runtime.ANTLRInputStream {
-			    public &lt;init&gt;( ... );
-			}
-
-			-keepclassmembers class * {
+			-keepclassmembers 
+			 class mobtalkerscript.v2.lib.** 
+			{
 			    @mobtalkerscript.v2.value.userdata.* *;
 			}
 
-			-keepclasseswithmembers public class * {
-			    public static void main(java.lang.String[]);
-			}
+			-keep, allowshrinking 
+			 class org.antlr.v4.** 
+			{}
 
-			-keepclassmembers enum * {
-			    public static **[] values();
-			    public static ** valueOf(java.lang.String);
+			-keepclassmembers 
+			 class org.antlr.v4.runtime.ANTLRInputStream 
+			{
+			    public &lt;init&gt;( ... );
 			}
 		</proguard>
 

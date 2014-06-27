@@ -11,7 +11,8 @@ import mobtalkerscript.util.logging.*;
 import mobtalkerscript.v2.*;
 import mobtalkerscript.v2.compiler.*;
 import mobtalkerscript.v2.lib.*;
-import mobtalkerscript.v2.lib.mobtalker.*;
+import mobtalkerscript.v2.lib.console.*;
+import mobtalkerscript.v2.lib.console.mobtalker.*;
 import mobtalkerscript.v2.value.*;
 
 /**

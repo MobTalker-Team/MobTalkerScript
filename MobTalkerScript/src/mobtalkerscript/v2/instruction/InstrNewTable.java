@@ -32,7 +32,7 @@ public class InstrNewTable extends MtsInstruction
         {
             MtsValue v = frame.pop();
             MtsValue k = frame.pop();
-            t.set( k, v );
+            t.set( k, v, true );
         }
         
         frame.push( t );

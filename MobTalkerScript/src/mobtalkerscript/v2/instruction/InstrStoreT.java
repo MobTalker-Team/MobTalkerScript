@@ -9,7 +9,7 @@ public class InstrStoreT extends MtsInstruction
     {
         MtsValue key = frame.pop();
         MtsValue t = frame.pop();
-        t.set( key, frame.pop() );
+        t.set( key, frame.pop(), true );
     }
     
     @Override

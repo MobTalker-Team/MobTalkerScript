@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.lib.mobtalker;
+package mobtalkerscript.v2.lib.console.mobtalker;
 
 public class DummyTalkingPlayer extends DummyInteractableEntity implements ITalkingPlayer
 {

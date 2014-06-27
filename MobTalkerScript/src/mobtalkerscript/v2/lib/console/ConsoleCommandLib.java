@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.lib;
+package mobtalkerscript.v2.lib.console;
 
 import static mobtalkerscript.v2.value.MtsValue.*;
 import mobtalkerscript.v2.*;

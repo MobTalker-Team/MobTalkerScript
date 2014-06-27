@@ -2096,14 +2096,14 @@ public class MtsParser extends Parser {
 		}
 	}
 	public static class CommandSayContext extends CommandContext {
-		public ExprContext Group;
-		public ExprListContext Text;
+		public ExprContext Character;
+		public ExprContext Text;
 		public Token IsLast;
-		public ExprListContext exprList() {
-			return getRuleContext(ExprListContext.class,0);
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
 		}
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
 		}
 		public CommandSayContext(CommandContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2147,11 +2147,11 @@ public class MtsParser extends Parser {
 				switch ( getInterpreter().adaptivePredict(_input,28,_ctx) ) {
 				case 1:
 					{
-					setState(310); ((CommandSayContext)_localctx).Group = expr(0);
+					setState(310); ((CommandSayContext)_localctx).Character = expr(0);
 					}
 					break;
 				}
-				setState(313); ((CommandSayContext)_localctx).Text = exprList();
+				setState(313); ((CommandSayContext)_localctx).Text = expr(0);
 				setState(315);
 				_la = _input.LA(1);
 				if (_la==CMD_SAY_LAST) {
@@ -2710,8 +2710,8 @@ public class MtsParser extends Parser {
 		"\5\60\31\2\u0131\u0130\3\2\2\2\u0131\u0132\3\2\2\2\u0132\u0133\3\2\2\2"+
 		"\u0133\u0134\7\"\2\2\u0134\u0135\5\4\3\2\u0135\u0136\7\t\2\2\u0136)\3"+
 		"\2\2\2\u0137\u0139\7\25\2\2\u0138\u013a\5\b\5\2\u0139\u0138\3\2\2\2\u0139"+
-		"\u013a\3\2\2\2\u013a\u013b\3\2\2\2\u013b\u013d\5\62\32\2\u013c\u013e\7"+
-		"\26\2\2\u013d\u013c\3\2\2\2\u013d\u013e\3\2\2\2\u013e\u0169\3\2\2\2\u013f"+
+		"\u013a\3\2\2\2\u013a\u013b\3\2\2\2\u013b\u013d\5\b\5\2\u013c\u013e\7\26"+
+		"\2\2\u013d\u013c\3\2\2\2\u013d\u013e\3\2\2\2\u013e\u0169\3\2\2\2\u013f"+
 		"\u0140\7\27\2\2\u0140\u0142\5\b\5\2\u0141\u0143\5\b\5\2\u0142\u0141\3"+
 		"\2\2\2\u0143\u0144\3\2\2\2\u0144\u0142\3\2\2\2\u0144\u0145\3\2\2\2\u0145"+
 		"\u0148\3\2\2\2\u0146\u0147\7\30\2\2\u0147\u0149\5\b\5\2\u0148\u0146\3"+

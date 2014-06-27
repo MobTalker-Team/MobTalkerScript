@@ -5,7 +5,7 @@ import static mobtalkerscript.v2.value.MtsValue.*;
 import java.util.*;
 
 import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.value.MtsTable.*;
+import mobtalkerscript.v2.value.MtsTable.Entry;
 
 /**
  * Basically a HashMap specifically tailored for MobTalkerScript.
@@ -323,7 +323,19 @@ import mobtalkerscript.v2.value.MtsTable.*;
     @Override
     public String toString()
     {
-        return Arrays.toString( _entries );
+        Iterator<Entry> iterator = iterator();
+        if ( !iterator.hasNext() )
+            return "[]";
+        
+        StringBuilder s = new StringBuilder();
+        s.append( "[" ).append( iterator.next() );
+        while ( iterator.hasNext() )
+        {
+            s.append( ", " ).append( iterator.next() );
+        }
+        s.append( "]" );
+        
+        return s.toString();
     }
     
     // ========================================

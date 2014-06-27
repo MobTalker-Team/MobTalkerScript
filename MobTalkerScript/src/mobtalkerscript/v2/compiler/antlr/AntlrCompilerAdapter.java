@@ -137,12 +137,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Constants.FunctionNames.COMMAND_SAY );
         
-        if ( ctx.Group == null )
+        if ( ctx.Character == null )
             _c.loadNil();
         else
-            visit( ctx.Group );
+            visit( ctx.Character );
         
-        visitSingleOrCreateTable( ctx.Text.Exprs );
+        visit( ctx.Text );
         
         _c.loadConstant( valueOf( ctx.IsLast != null ) );
         
@@ -559,8 +559,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             return null;
         }
         
-        List<ListFieldContext> listFields =
-                                            Lists.newArrayListWithExpectedSize( ( ctx.FieldDefs.size() + 1 ) / 2 );
+        List<ListFieldContext> listFields = Lists.newArrayListWithExpectedSize( ( ctx.FieldDefs.size() + 1 ) / 2 );
         int hashPairs = 0;
         
         for ( FieldDefContext fieldDef : ctx.FieldDefs )
@@ -576,7 +575,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             }
         }
         
-        visit( listFields );
+        visit( Lists.reverse( listFields ) );
         
         _c.createTable( listFields.size(), hashPairs );
         

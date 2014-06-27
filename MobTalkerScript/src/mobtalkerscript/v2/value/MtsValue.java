@@ -104,7 +104,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public final MtsValue get( MtsValue key )
     {
-        return get( key, true );
+        return get( key, false );
     }
     
     /**
@@ -160,19 +160,28 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     // ========================================
     
+    /**
+     * Same as calling {@link #set(String, MtsValue, boolean) set(key, value, false)}
+     */
     public final void set( String key, MtsValue value )
     {
-        set( key, value, true );
+        set( key, value, false );
     }
     
+    /**
+     * Same as calling {@link #set(MtsValue, MtsValue, boolean) set(valueOf(key), value, useMetaTag)}
+     */
     public final void set( String key, MtsValue value, boolean useMetaTag )
     {
         set( valueOf( key ), value, useMetaTag );
     }
     
+    /**
+     * Same as calling {@link #set(MtsValue, MtsValue, boolean) set(key, value, false)}
+     */
     public final void set( MtsValue key, MtsValue value )
     {
-        set( key, value, true );
+        set( key, value, false );
     }
     
     /**

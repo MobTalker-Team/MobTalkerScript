@@ -9,7 +9,6 @@ import org.junit.*;
 
 public class MtsTableTest
 {
-    
     private MtsTable _table;
     
     @Before
@@ -19,174 +18,73 @@ public class MtsTableTest
     }
     
     @Test
-    public void testCount()
+    public void testHashGetSet()
     {
-        assertEquals( 0, _table.count() );
+        // Hash part
+        _table.set( valueOf( "a" ), valueOf( "foo" ) );
         
-        _table.set( valueOf( 0 ), valueOf( "a" ) );
+        assertTrue( _table.containsKey( valueOf( "a" ) ) );
         assertEquals( 1, _table.count() );
+        assertEquals( valueOf( "foo" ), _table.get( valueOf( "a" ) ) );
+        assertEquals( valueOf( "foo" ), _table.get( "a" ) );
         
-        _table.set( valueOf( 3 ), valueOf( "b" ) );
-        assertEquals( 2, _table.count() );
+        _table.set( valueOf( "a" ), valueOf( "bar" ) );
+        assertEquals( 1, _table.count() );
+        assertEquals( valueOf( "bar" ), _table.get( valueOf( "a" ) ) );
+        assertEquals( valueOf( "bar" ), _table.get( "a" ) );
         
-        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
-        assertEquals( 3, _table.count() );
+        Random rnd = new Random();
+        for ( int i = 0; i < 100; i++ )
+        {
+            _table.set( valueOf( "" + ( (char) i + 65 ) ), valueOf( rnd.nextInt() ) );
+        }
+        assertEquals( 101, _table.count() );
+        for ( int i = 0; i < 100; i++ )
+        {
+            assertTrue( _table.containsKey( valueOf( "" + ( (char) i + 65 ) ) ) );
+        }
         
-        _table.set( valueOf( "foo" ), valueOf( "e" ) );
-        assertEquals( 4, _table.count() );
+        _table.set( valueOf( "b" ), valueOf( "lorom" ) );
+        assertEquals( 102, _table.count() );
+        assertTrue( _table.containsKey( valueOf( "b" ) ) );
+        assertEquals( valueOf( "lorom" ), _table.get( valueOf( "b" ) ) );
         
-        _table.set( valueOf( 1 ), valueOf( "c" ) );
-        assertEquals( 5, _table.count() );
-        
-        _table.set( valueOf( 1 ), NIL );
-        assertEquals( 4, _table.count() );
-        
-        _table.set( valueOf( 0.1 ), NIL );
-        assertEquals( 3, _table.count() );
+        _table.set( valueOf( "b" ), NIL );
+        assertEquals( 101, _table.count() );
+        assertFalse( _table.containsKey( valueOf( "b" ) ) );
+        assertEquals( NIL, _table.get( valueOf( "b" ) ) );
+        _table.clear();
     }
     
     @Test
-    public void testListSize()
+    public void testListGetSet()
     {
-        assertEquals( 0, _table.listSize() );
-        
-        _table.set( valueOf( 0 ), valueOf( "a" ) );
-        assertEquals( 0, _table.listSize() );
-        
-        _table.set( valueOf( 1 ), valueOf( "a" ) );
+        // List part
+        _table.set( ONE, valueOf( "a" ) );
+        assertTrue( _table.containsKey( ONE ) );
         assertEquals( 1, _table.listSize() );
         
-        _table.set( valueOf( 3 ), valueOf( "b" ) );
-        assertEquals( 1, _table.listSize() );
-        
-        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
-        assertEquals( 1, _table.listSize() );
-        
-        _table.set( valueOf( "foo" ), valueOf( "e" ) );
-        assertEquals( 1, _table.listSize() );
-        
-        _table.set( valueOf( 2 ), valueOf( "c" ) );
-        assertEquals( 3, _table.listSize() );
-        
-        _table.set( valueOf( 2 ), NIL );
-        assertEquals( 1, _table.listSize() );
-        
-        _table.set( valueOf( 0.1 ), NIL );
-        assertEquals( 1, _table.listSize() );
-    }
-    
-    @Test
-    public void testIsEmpty()
-    {
-        assertTrue( _table.isEmpty() );
-        
-        _table.set( valueOf( "x" ), valueOf( 1 ) );
-        
-        assertFalse( _table.isEmpty() );
-    }
-    
-    @Test
-    public void testContainsKey()
-    {
-        assertFalse( _table.containsKey( valueOf( 2 ) ) );
-        assertFalse( _table.containsKey( valueOf( "foo" ) ) );
-        assertFalse( _table.containsKey( valueOf( 0.1 ) ) );
-        
-        _table.set( valueOf( 1 ), valueOf( "a" ) );
-        _table.set( valueOf( 3 ), valueOf( "b" ) );
-        _table.set( valueOf( 2 ), valueOf( "c" ) );
-        
-        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
-        _table.set( valueOf( "foo" ), valueOf( "e" ) );
-        
+        _table.set( valueOf( 2 ), valueOf( "b" ) );
         assertTrue( _table.containsKey( valueOf( 2 ) ) );
-        assertTrue( _table.containsKey( valueOf( "foo" ) ) );
-        assertTrue( _table.containsKey( valueOf( 0.1 ) ) );
-    }
-    
-    @Test
-    public void testGetFirstEntry()
-    {
-        assertNull( _table.getFirstEntry() );
+        assertEquals( 2, _table.listSize() );
         
-        _table.set( valueOf( "foo" ), valueOf( "e" ) );
-        assertEquals( valueOf( "e" ), _table.getFirstEntry().getValue() );
+        _table.set( valueOf( 3 ), TRUE );
+        _table.set( valueOf( 4 ), TRUE );
+        _table.set( valueOf( 5 ), TRUE );
+        _table.set( valueOf( 6 ), TRUE );
+        assertEquals( 6, _table.listSize() );
         
-        _table.set( valueOf( 1 ), valueOf( "a" ) );
-        assertEquals( valueOf( "a" ), _table.getFirstEntry().getValue() );
+        _table.set( valueOf( 6 ), NIL );
+        assertFalse( _table.containsKey( valueOf( 6 ) ) );
+        assertEquals( 5, _table.listSize() );
         
-        _table.set( valueOf( 0 ), valueOf( "d" ) );
-        assertEquals( valueOf( "a" ), _table.getFirstEntry().getValue() );
+        _table.set( valueOf( 3 ), NIL );
+        assertEquals( 2, _table.listSize() );
+        assertTrue( _table.containsKey( valueOf( 5 ) ) );
         
-        _table.set( valueOf( 2 ), valueOf( "b" ) );
-        assertEquals( valueOf( "a" ), _table.getFirstEntry().getValue() );
-        
-        _table.set( valueOf( 1 ), valueOf( "c" ) );
-        assertEquals( valueOf( "c" ), _table.getFirstEntry().getValue() );
-        
-        _table.remove( valueOf( 1 ) );
-        assertEquals( valueOf( "b" ), _table.getFirstEntry().getValue() );
-    }
-    
-    @Test
-    public void testGetEntryAfter()
-    {
-        assertNull( _table.getNext( NIL ) );
-        
-        _table.set( valueOf( 0 ), valueOf( "a" ) );
-        assertEquals( valueOf( 0 ), _table.getNext( NIL ).getKey() );
-        assertNull( _table.getNext( valueOf( 0 ) ) );
-        
-        _table.set( valueOf( 2 ), valueOf( "b" ) );
-        _table.set( valueOf( 1 ), valueOf( "c" ) );
-        _table.set( valueOf( 0 ), valueOf( "e" ) );
-        
-        assertEquals( valueOf( 1 ), _table.getNext( NIL ).getKey() );
-        assertEquals( valueOf( 2 ), _table.getNext( valueOf( 1 ) ).getKey() );
-        assertNotNull( _table.getNext( valueOf( 2 ) ) );
-        
-        _table.set( valueOf( 0.1 ), valueOf( "e" ) );
-        _table.set( valueOf( "foo" ), valueOf( "f" ) );
-        _table.set( valueOf( "foo" ), valueOf( "g" ) );
-        
-        assertEquals( valueOf( 1 ), _table.getNext( NIL ).getKey() );
-        assertEquals( valueOf( 2 ), _table.getNext( valueOf( 1 ) ).getKey() );
-        assertNotNull( _table.getNext( valueOf( 2 ) ) );
-    }
-    
-    @Test
-    public void testset()
-    {
-        _table.set( valueOf( 0 ), valueOf( "a" ) );
-        _table.set( valueOf( 2 ), valueOf( "b" ) );
-        _table.set( valueOf( 1 ), valueOf( "c" ) );
-        _table.set( valueOf( 0 ), valueOf( "e" ) );
-        
-        _table.set( valueOf( 0.1 ), valueOf( "e" ) );
-        _table.set( valueOf( "foo" ), valueOf( "f" ) );
-        _table.set( valueOf( "foo" ), valueOf( "g" ) );
-        
-        assertEquals( valueOf( "e" ), _table.get( valueOf( 0 ) ) );
-        assertEquals( valueOf( "g" ), _table.get( valueOf( "foo" ) ) );
-    }
-    
-    @Test
-    public void testget()
-    {
-        assertEquals( NIL, _table.get( valueOf( 2 ) ) );
-        assertEquals( NIL, _table.get( valueOf( "foo" ) ) );
-        assertEquals( NIL, _table.get( valueOf( 0.1 ) ) );
-        
-        _table.set( valueOf( 0 ), valueOf( "a" ) );
-        _table.set( valueOf( 2 ), valueOf( "b" ) );
-        _table.set( valueOf( 1 ), valueOf( "c" ) );
-        
-        _table.set( valueOf( 0.1 ), valueOf( "d" ) );
-        _table.set( valueOf( "foo" ), valueOf( "e" ) );
-        
-        assertEquals( valueOf( "b" ), _table.get( valueOf( 2 ) ) );
-        assertEquals( valueOf( "e" ), _table.get( valueOf( "foo" ) ) );
-        assertEquals( valueOf( "d" ), _table.get( valueOf( 0.1 ) ) );
+        _table.set( valueOf( 3 ), TRUE );
+        assertEquals( 5, _table.listSize() );
+        assertTrue( _table.containsKey( valueOf( 5 ) ) );
     }
     
 //    @Test

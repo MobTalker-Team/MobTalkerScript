@@ -60,7 +60,7 @@ public class MtsPackageLib
     // ========================================
     
     @MtsNativeFunction( name = "require" )
-    public MtsValue Require( MtsValue arg )
+    public MtsValue require( MtsValue arg )
     {
         String libName = checkString( arg, 0 );
         MtsValue lib = _loadedPackages.get( libName );

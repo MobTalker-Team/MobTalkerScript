@@ -67,7 +67,7 @@ public final class MtsTableLib
             if ( t.listSize() == 0 )
                 return NIL;
             
-            MtsNumber k = valueOf( _rnd.nextInt( t.listSize() ) );
+            MtsNumber k = valueOf( _rnd.nextInt( t.listSize() ) + 1 );
             return t.get( k );
         }
         

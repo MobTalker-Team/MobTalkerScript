@@ -104,7 +104,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public final MtsValue get( MtsValue key )
     {
-        return get( key, true );
+        return get( key, false );
     }
     
     /**

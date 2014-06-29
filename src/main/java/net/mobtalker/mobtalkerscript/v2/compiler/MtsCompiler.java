@@ -1,11 +1,11 @@
-package mobtalkerscript.v2.compiler;
+package net.mobtalker.mobtalkerscript.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Strings.*;
-import static mobtalkerscript.util.logging.MtsLog.*;
-import static mobtalkerscript.v2.compiler.CompilerConstants.*;
-import static mobtalkerscript.v2.instruction.Instructions.*;
-import static mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
+import static net.mobtalker.mobtalkerscript.v2.compiler.CompilerConstants.*;
+import static net.mobtalker.mobtalkerscript.v2.instruction.Instructions.*;
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -13,12 +13,12 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
 
-import mobtalkerscript.util.*;
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.compiler.antlr.*;
-import mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
-import mobtalkerscript.v2.instruction.*;
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.util.*;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.antlr.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
+import net.mobtalker.mobtalkerscript.v2.instruction.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;

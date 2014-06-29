@@ -1,4 +1,4 @@
 /**
  * @author Tobsen
  */
-package mobtalkerscript.v2;
+package net.mobtalker.mobtalkerscript.v2;

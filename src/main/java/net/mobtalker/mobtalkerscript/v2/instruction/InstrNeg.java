@@ -1,13 +1,11 @@
-package mobtalkerscript.v2.instruction;
-
-import static mobtalkerscript.v2.instruction.MtsArithmeticInstruction.*;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
 public class InstrNeg extends MtsInstruction
 {
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.push( coerce( frame.pop() ).neg() );
+        frame.push( MtsArithmeticInstruction.coerce( frame.pop() ).neg() );
     }
     
     @Override

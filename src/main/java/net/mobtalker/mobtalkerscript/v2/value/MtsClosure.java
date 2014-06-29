@@ -1,12 +1,12 @@
-package mobtalkerscript.v2.value;
+package net.mobtalker.mobtalkerscript.v2.value;
 
 import static com.google.common.base.Preconditions.*;
 
 import java.util.*;
 
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.compiler.*;
-import mobtalkerscript.v2.instruction.*;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.*;
+import net.mobtalker.mobtalkerscript.v2.instruction.*;
 
 public final class MtsClosure extends MtsFunction
 {

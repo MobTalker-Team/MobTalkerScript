@@ -1,4 +1,4 @@
-package mobtalkerscript.v2;
+package net.mobtalker.mobtalkerscript.v2;
 
 /**
  * Thrown when a script engine encounters an internal error.

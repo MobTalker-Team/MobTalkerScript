@@ -1,6 +1,6 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.*;
 
 public final class InstrLoadL extends MtsIndexedInstruction
 {

@@ -1,6 +1,6 @@
-package mobtalkerscript.v2;
+package net.mobtalker.mobtalkerscript.v2;
 
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 public class WrongTypeException extends ScriptRuntimeException
 {

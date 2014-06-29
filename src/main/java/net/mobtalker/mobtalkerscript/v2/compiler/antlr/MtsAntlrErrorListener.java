@@ -1,8 +1,8 @@
-package mobtalkerscript.v2.compiler.antlr;
+package net.mobtalker.mobtalkerscript.v2.compiler.antlr;
 
 import java.nio.file.*;
 
-import mobtalkerscript.v2.compiler.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.*;
 
 import org.antlr.v4.runtime.*;
 

@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
 /* package */abstract class MtsIndexedInstruction extends MtsInstruction
 {

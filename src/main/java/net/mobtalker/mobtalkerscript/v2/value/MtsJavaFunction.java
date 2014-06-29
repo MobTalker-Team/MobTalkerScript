@@ -1,6 +1,6 @@
-package mobtalkerscript.v2.value;
+package net.mobtalker.mobtalkerscript.v2.value;
 
-import mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.*;
 
 /**
  * Base class for functions implemented in Java. Takes care of handling runtime exceptions.

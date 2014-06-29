@@ -1,8 +1,8 @@
-package mobtalkerscript.v2.value.userdata;
+package net.mobtalker.mobtalkerscript.v2.value.userdata;
 
 import java.lang.reflect.*;
 
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 /* package */class FunctionAdapter extends JavaMethodAdapter
 {

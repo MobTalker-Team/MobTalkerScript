@@ -4,4 +4,4 @@
  * @author Tobsen
  * 
  */
-package mobtalkerscript.v2.bytecode;
+package net.mobtalker.mobtalkerscript.v2.bytecode;

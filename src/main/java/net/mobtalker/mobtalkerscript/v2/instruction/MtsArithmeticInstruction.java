@@ -1,7 +1,7 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 /* package */abstract class MtsArithmeticInstruction extends MtsInstruction
 {

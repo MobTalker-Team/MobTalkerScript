@@ -1,6 +1,6 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import static mobtalkerscript.v2.value.MtsBoolean.*;
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 /**
  * Jump instruction that only jumps if the top of the stack is not true.

@@ -1,7 +1,7 @@
-package mobtalkerscript.util;
+package net.mobtalker.mobtalkerscript.util;
 
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 public class MtsCheck
 {

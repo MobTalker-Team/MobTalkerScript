@@ -1,6 +1,6 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import static mobtalkerscript.v2.value.MtsBoolean.*;
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 public final class InstrAnd extends MtsJumpInstruction
 {

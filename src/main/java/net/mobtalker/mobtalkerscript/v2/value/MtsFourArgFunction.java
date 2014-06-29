@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.value;
+package net.mobtalker.mobtalkerscript.v2.value;
 
 public abstract class MtsFourArgFunction extends MtsThreeArgFunction
 {

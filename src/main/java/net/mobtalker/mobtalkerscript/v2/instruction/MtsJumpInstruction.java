@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
 import static com.google.common.base.Preconditions.*;
 

@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
 public class InstrLabel extends MtsInstruction
 {

@@ -1,4 +1,4 @@
-package mobtalkerscript.util;
+package net.mobtalker.mobtalkerscript.util;
 
 import java.util.*;
 
@@ -105,10 +105,7 @@ public class Queue<T>
     
     public T poll()
     {
-        if ( isEmpty() )
-        {
-            throw new NoSuchElementException( "Queue is empty" );
-        }
+        if ( isEmpty() ) { throw new NoSuchElementException( "Queue is empty" ); }
         
         _head = incrIndex( _head );
         
@@ -117,10 +114,7 @@ public class Queue<T>
     
     public T peek()
     {
-        if ( isEmpty() )
-        {
-            throw new NoSuchElementException( "Queue is empty" );
-        }
+        if ( isEmpty() ) { throw new NoSuchElementException( "Queue is empty" ); }
         
         return _array[_head];
     }

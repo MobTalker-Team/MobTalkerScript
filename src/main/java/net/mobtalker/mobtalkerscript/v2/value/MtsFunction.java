@@ -1,5 +1,4 @@
-package mobtalkerscript.v2.value;
-
+package net.mobtalker.mobtalkerscript.v2.value;
 
 /**
  * @author Chimaine

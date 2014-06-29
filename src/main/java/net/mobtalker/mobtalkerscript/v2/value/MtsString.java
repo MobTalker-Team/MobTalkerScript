@@ -1,10 +1,10 @@
-package mobtalkerscript.v2.value;
+package net.mobtalker.mobtalkerscript.v2.value;
 
 import static com.google.common.base.Preconditions.*;
 
 import java.util.*;
 
-import mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.*;
 
 import com.google.common.collect.*;
 

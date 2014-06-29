@@ -1,7 +1,7 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import static mobtalkerscript.v2.value.MtsValue.*;
-import mobtalkerscript.v2.value.*;
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 public final class FrameValue
 {

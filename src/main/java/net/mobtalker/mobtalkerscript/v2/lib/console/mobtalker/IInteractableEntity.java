@@ -1,5 +1,4 @@
-package mobtalkerscript.v2.lib.console.mobtalker;
-
+package net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker;
 
 public interface IInteractableEntity
 {

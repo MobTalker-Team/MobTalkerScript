@@ -1,12 +1,12 @@
-package mobtalkerscript.v2.value.userdata;
+package net.mobtalker.mobtalkerscript.v2.value.userdata;
 
 import static com.google.common.base.Preconditions.*;
-import static mobtalkerscript.v2.value.userdata.NativeHelpers.*;
+import static net.mobtalker.mobtalkerscript.v2.value.userdata.NativeHelpers.*;
 
 import java.lang.reflect.*;
 
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import com.google.common.base.*;
 

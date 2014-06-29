@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.compiler;
+package net.mobtalker.mobtalkerscript.v2.compiler;
 
 import org.antlr.v4.runtime.*;
 

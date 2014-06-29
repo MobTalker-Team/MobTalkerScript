@@ -1,9 +1,9 @@
-package mobtalkerscript.v2.value.userdata;
+package net.mobtalker.mobtalkerscript.v2.value.userdata;
 
 import java.lang.reflect.*;
 import java.util.*;
 
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import org.apache.commons.lang3.*;
 

@@ -1,6 +1,6 @@
-package mobtalkerscript.v2.value;
+package net.mobtalker.mobtalkerscript.v2.value;
 
-import mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.*;
 
 public abstract class MtsLibrary extends MtsFunction
 {

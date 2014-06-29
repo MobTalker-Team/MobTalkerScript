@@ -1,6 +1,6 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import static mobtalkerscript.v2.value.MtsString.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 public class InstrConcat extends MtsInstruction
 {
@@ -18,7 +18,7 @@ public class InstrConcat extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.push( concat( frame.pop( _count ) ) );
+        frame.push( MtsString.concat( frame.pop( _count ) ) );
     }
     
     @Override

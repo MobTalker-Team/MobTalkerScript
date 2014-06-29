@@ -1,11 +1,11 @@
-package mobtalkerscript.v2.value;
+package net.mobtalker.mobtalkerscript.v2.value;
 
-import static mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.util.*;
 
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.value.MtsTable.Entry;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
 
 /**
  * Basically a HashMap specifically tailored for MobTalkerScript.

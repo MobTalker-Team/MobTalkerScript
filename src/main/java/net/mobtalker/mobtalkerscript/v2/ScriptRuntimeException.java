@@ -1,8 +1,8 @@
-package mobtalkerscript.v2;
+package net.mobtalker.mobtalkerscript.v2;
 
 import java.util.*;
 
-import mobtalkerscript.v2.compiler.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.*;
 
 import com.google.common.collect.*;
 

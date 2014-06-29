@@ -1,4 +1,4 @@
-package mobtalkerscript.util.logging;
+package net.mobtalker.mobtalkerscript.util.logging;
 
 import java.io.*;
 import java.util.logging.*;

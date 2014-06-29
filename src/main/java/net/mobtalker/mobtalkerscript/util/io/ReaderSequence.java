@@ -1,4 +1,4 @@
-package mobtalkerscript.util.io;
+package net.mobtalker.mobtalkerscript.util.io;
 
 import java.io.*;
 import java.util.*;
@@ -29,10 +29,7 @@ public class ReaderSequence extends Reader
     @SuppressWarnings( "resource" )
     public int read( char[] cbuf, int off, int len ) throws IOException
     {
-        if ( _readers.isEmpty() )
-        {
-            return -1;
-        }
+        if ( _readers.isEmpty() ) { return -1; }
         
         int readTotal = 0;
         

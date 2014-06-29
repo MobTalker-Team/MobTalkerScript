@@ -1,14 +1,14 @@
-package mobtalkerscript.v2.lib;
+package net.mobtalker.mobtalkerscript.v2.lib;
 
-import static mobtalkerscript.util.MtsCheck.*;
+import static net.mobtalker.mobtalkerscript.util.MtsCheck.*;
 
 import java.nio.file.*;
 import java.util.*;
 
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.compiler.*;
-import mobtalkerscript.v2.value.*;
-import mobtalkerscript.v2.value.userdata.*;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.userdata.*;
 
 import com.google.common.collect.*;
 

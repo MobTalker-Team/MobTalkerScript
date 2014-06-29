@@ -1,12 +1,12 @@
-package mobtalkerscript.v2.lib;
+package net.mobtalker.mobtalkerscript.v2.lib;
 
-import static mobtalkerscript.util.MtsCheck.*;
-import static mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.util.MtsCheck.*;
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.util.*;
 
-import mobtalkerscript.v2.value.*;
-import mobtalkerscript.v2.value.userdata.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.userdata.*;
 
 public final class MtsTableLib
 {

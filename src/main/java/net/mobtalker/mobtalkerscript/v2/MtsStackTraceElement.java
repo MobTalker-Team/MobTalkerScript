@@ -1,6 +1,6 @@
-package mobtalkerscript.v2;
+package net.mobtalker.mobtalkerscript.v2;
 
-import mobtalkerscript.v2.compiler.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.*;
 
 public abstract class MtsStackTraceElement
 {

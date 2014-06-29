@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.compiler;
+package net.mobtalker.mobtalkerscript.v2.compiler;
 
 /**
  * Stores information about a compiling loop block, e.g. references to different instructions.

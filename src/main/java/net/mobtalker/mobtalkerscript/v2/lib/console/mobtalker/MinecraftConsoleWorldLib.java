@@ -1,8 +1,8 @@
-package mobtalkerscript.v2.lib.console.mobtalker;
+package net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker;
 
-import static mobtalkerscript.v2.value.MtsValue.*;
-import mobtalkerscript.v2.value.*;
-import mobtalkerscript.v2.value.userdata.*;
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.userdata.*;
 
 public class MinecraftConsoleWorldLib
 {

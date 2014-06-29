@@ -1,7 +1,7 @@
-package mobtalkerscript.v2.compiler;
+package net.mobtalker.mobtalkerscript.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
-import mobtalkerscript.v2.instruction.*;
+import net.mobtalker.mobtalkerscript.v2.instruction.*;
 
 /**
  * Wrapper around a {@link MtsJumpInstruction} whose target instruction is not yet determined.

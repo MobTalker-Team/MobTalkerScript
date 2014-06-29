@@ -1,4 +1,4 @@
-package mobtalkerscript.v2;
+package net.mobtalker.mobtalkerscript.v2;
 
 /**
  * Thrown when a parser encounters an error

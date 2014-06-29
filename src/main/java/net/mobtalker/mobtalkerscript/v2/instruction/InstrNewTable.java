@@ -1,6 +1,6 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import com.google.common.collect.*;
 

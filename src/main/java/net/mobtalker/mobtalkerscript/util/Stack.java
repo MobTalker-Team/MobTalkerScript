@@ -1,4 +1,4 @@
-package mobtalkerscript.util;
+package net.mobtalker.mobtalkerscript.util;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package mobtalkerscript.v2.value.userdata;
+package net.mobtalker.mobtalkerscript.v2.value.userdata;
 
 import java.lang.annotation.*;
 

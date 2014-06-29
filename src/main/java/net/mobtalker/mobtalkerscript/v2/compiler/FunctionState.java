@@ -1,16 +1,16 @@
-package mobtalkerscript.v2.compiler;
+package net.mobtalker.mobtalkerscript.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
-import static mobtalkerscript.v2.instruction.Instructions.*;
+import static net.mobtalker.mobtalkerscript.v2.instruction.Instructions.*;
 
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.Queue;
 
-import mobtalkerscript.util.Stack;
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.instruction.*;
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.util.Stack;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.instruction.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import com.google.common.collect.*;
 

@@ -1,11 +1,11 @@
-package mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2.instruction;
 
-import static mobtalkerscript.util.logging.MtsLog.*;
+import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 
 import java.util.*;
 
-import mobtalkerscript.v2.*;
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;

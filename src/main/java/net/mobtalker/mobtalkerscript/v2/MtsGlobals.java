@@ -1,11 +1,11 @@
-package mobtalkerscript.v2;
+package net.mobtalker.mobtalkerscript.v2;
 
-import static mobtalkerscript.v2.value.userdata.MtsNatives.*;
+import static net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNatives.*;
 
 import java.io.*;
 
-import mobtalkerscript.v2.lib.*;
-import mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.lib.*;
+import net.mobtalker.mobtalkerscript.v2.value.*;
 
 public class MtsGlobals extends MtsTable
 {

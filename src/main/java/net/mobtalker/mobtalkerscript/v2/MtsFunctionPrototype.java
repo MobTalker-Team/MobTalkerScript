@@ -2,13 +2,13 @@ package net.mobtalker.mobtalkerscript.v2;
 
 import static com.google.common.base.Preconditions.*;
 
-import java.util.*;
+import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v2.compiler.*;
-import net.mobtalker.mobtalkerscript.v2.instruction.*;
-import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.compiler.SourcePosition;
+import net.mobtalker.mobtalkerscript.v2.instruction.MtsInstruction;
+import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
 public class MtsFunctionPrototype
 {
@@ -142,78 +142,105 @@ public class MtsFunctionPrototype
     
     // ========================================
     
+    private void printLocals( StringBuilder s, String prefix, boolean full )
+    {
+        s.append( '\n' ).append( prefix );
+        s.append( "locals: " ).append( _locals.size() );
+        
+        if ( full )
+        {
+            for ( LocalDescription descr : _locals )
+            {
+                s.append( '\n' ).append( prefix ).append( "    " );
+                s.append( "[" ).append( descr.getIndex() ).append( "] " ).append( descr.getName() );
+            }
+        }
+    }
+    
+    private void printExternals( StringBuilder s, String prefix, boolean full )
+    {
+        s.append( '\n' ).append( prefix );
+        s.append( "externals: " ).append( _externals.size() );
+        
+        if ( full )
+        {
+            for ( ExternalDescription descr : _externals )
+            {
+                s.append( '\n' ).append( prefix ).append( "    " );
+                s.append( "[" ).append( descr.getIndex() ).append( "] " ).append( descr.getName() );
+            }
+        }
+    }
+    
+    private void printConstants( StringBuilder s, String prefix, boolean full )
+    {
+        s.append( '\n' ).append( prefix );
+        s.append( "constants: " ).append( _constants.size() );
+        
+        if ( full )
+        {
+            for ( int i = 0; i < _constants.size(); i++ )
+            {
+                MtsValue constant = _constants.get( i );
+                s.append( '\n' ).append( prefix ).append( "    " );
+                s.append( "[" ).append( i ).append( "] " ).append( constant );
+            }
+        }
+    }
+    
+    private void printInstructions( StringBuilder s, String prefix, boolean full )
+    {
+        s.append( '\n' ).append( prefix );
+        s.append( "instructions: " ).append( _instructions.size() );
+        
+        if ( full )
+        {
+            for ( int i = 0; i < _instructions.size(); i++ )
+            {
+                MtsInstruction instr = _instructions.get( i );
+                s.append( '\n' ).append( prefix ).append( "    " );
+                s.append( "[" ).append( i ).append( "] " ).append( instr );
+            }
+        }
+    }
+    
     @Override
     public String toString()
     {
-        StringBuilder s = new StringBuilder();
-        
-        s.append( "function " ).append( _name ).append( '\n' );
-        s.append( " source: " )
-         .append( _sourceName )
-         .append( ':' )
-         .append( _sourceLineStart )
-         .append( '-' )
-         .append( _sourceLineEnd )
-         .append( '\n' );
-        s.append( " stack: " ).append( _maxStackSize ).append( '\n' );
-        s.append( " locals: " ).append( getLocalCount() ).append( '\n' );
-        s.append( " externals: " ).append( getExternalCount() ).append( '\n' );
-        s.append( " constants: " ).append( getConstantCount() ).append( '\n' );
-        s.append( " stacksize: " ).append( _maxStackSize ).append( '\n' );
-        s.append( " instructions: " ).append( _instructions.size() );
-        
-        return s.toString();
-    }
-    
-    public String toString( boolean full )
-    {
-        if ( !full )
-            return toString();
-        
-        StringBuilder s = new StringBuilder();
-        
-        s.append( "function " ).append( _name ).append( '\n' );
-        s.append( "  source: " )
-         .append( _sourceName )
-         .append( ':' )
-         .append( _sourceLineStart )
-         .append( '-' )
-         .append( _sourceLineEnd )
-         .append( '\n' );
-        s.append( "  stack: " ).append( _maxStackSize ).append( '\n' );
-        s.append( "  locals: " ).append( getLocalCount() ).append( '\n' );
-        s.append( "  externals: " ).append( getExternalCount() ).append( '\n' );
-        s.append( "  constants: " ).append( getConstantCount() );
-        for ( int i = 0; i < getConstantCount(); i++ )
-        {
-            s.append( '\n' );
-            s.append( "    [" ).append( i ).append( "] " );
-            s.append( getConstant( i ) );
-        }
-        s.append( '\n' );
-        
-        s.append( "  instructions: " ).append( _instructions.size() );
-        for ( int i = 0; i < _instructions.size(); i++ )
-        {
-            s.append( '\n' );
-            s.append( "    [" ).append( i ).append( "] " );
-            s.append( _instructions.get( i ) );
-        }
-        s.append( '\n' );
-        
-        return s.toString();
+        return toString( "", false, false );
     }
     
     public String toString( boolean full, boolean includeChildren )
     {
-        if ( !includeChildren )
-            return toString( full );
+        return toString( "", full, includeChildren );
+    }
+    
+    /* package */String toString( String prefix, boolean full, boolean includeChildren )
+    {
+        StringBuilder s = new StringBuilder();
         
-        StringBuilder s = new StringBuilder( toString( full ) );
-        for ( MtsFunctionPrototype child : _nestedPrototypes )
+        s.append( "function: " ).append( _name ).append( '\n' );
+        s.append( "    source: " )
+         .append( _sourceName )
+         .append( ':' )
+         .append( _sourceLineStart )
+         .append( '-' )
+         .append( _sourceLineEnd )
+         .append( '\n' );
+        s.append( "    stacksize: " ).append( _maxStackSize );
+        
+        printLocals( s, "    " + prefix, full );
+        printExternals( s, "    " + prefix, full );
+        printConstants( s, "    " + prefix, full );
+        printInstructions( s, "    " + prefix, full );
+        
+        if ( includeChildren )
         {
-            s.append( '\n' );
-            s.append( child.toString( full, true ) );
+            for ( MtsFunctionPrototype child : _nestedPrototypes )
+            {
+                s.append( "\n\n" );
+                s.append( child.toString( prefix + "    ", full, true ) );
+            }
         }
         
         return s.toString();

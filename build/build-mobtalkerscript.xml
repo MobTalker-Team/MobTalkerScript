@@ -1,23 +1,45 @@
 <?xml version="1.0" ?>
 <project name="MobTalkerScript" default="build-standalone">
-	<property name="Minecraft.libraries.location" value="${basedir}/../../../Minecraft-1_6/forge/mcp/jars/libraries" />
-	<property name="MobTalker2.libraries.location" value="${basedir}/../../../lib" />
-
-	<property name="src" value="${basedir}/../src" />
-	<property name="res" value="${basedir}/../res" />
+	<property name="src" value="${basedir}/../src/main/java" />
+	<property name="res" value="${basedir}/../src/main/resources" />
 	<property name="tmp" value="${basedir}/../tmp" />
 	<property name="bin" value="${basedir}/../bin" />
+	<property name="lib" value="${basedir}/../../lib" />
 
-	<property name="version" value="2.2.1-beta" />
+	<property name="output" value="${lib}" />
+
+	<property name="version" value="2.2.2-beta" />
+
+	<property name="name.base" value="MobTalkerScript" />
+	<property name="name.lib" value="${name.base}-${version}-lib.jar" />
+	<property name="name.lib.fat" value="${name.base}-${version}-lib-fat.jar" />
 
 	<taskdef resource="proguard/ant/task.properties" classpath="D:/Program Files Other/ProGuard/lib/proguard.jar" />
 
 	<path id="classpath">
 		<pathelement location="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />
-		<pathelement location="${Minecraft.libraries.location}/com/google/guava/guava/14.0/guava-14.0.jar" />
-		<pathelement location="${Minecraft.libraries.location}/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar" />
-		<pathelement location="${Minecraft.libraries.location}/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" />
+		<pathelement location="${lib}/guava-16.0.jar" />
+		<pathelement location="${lib}/jopt-simple-4.6.jar" />
+		<pathelement location="${lib}/commons-lang3-3.2.1.jar" />
 	</path>
+
+	<target name="build-library">
+		<antcall target="clean" />
+		<antcall target="copy-src" />
+		<antcall target="replace-tokens" />
+		<antcall target="compile" />
+
+		<!-- Build the jar -->
+		<zip destfile="${output}/${name.lib.fat}">
+			<fileset dir="${bin}" />
+			<fileset dir="${res}" excludes="META-INF/**" />
+			<zipfileset excludes="META-INF/**" src="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />
+		</zip>
+
+		<antcall target="proguard-lib" />
+
+		<antcall target="clean" />
+	</target>
 
 	<target name="build-standalone">
 		<antcall target="clean" />
@@ -30,9 +52,9 @@
 			<fileset dir="${bin}" />
 			<fileset dir="${res}" />
 			<zipfileset src="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" excludes="META-INF/**" />
-			<zipfileset excludes="META-INF/**" src="${Minecraft.libraries.location}/com/google/guava/guava/14.0/guava-14.0.jar" />
-			<zipfileset excludes="META-INF/**" src="${Minecraft.libraries.location}/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar" />
-			<zipfileset excludes="META-INF/**,templates/**" src="${Minecraft.libraries.location}/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" />
+			<zipfileset excludes="META-INF/**" src="${lib}/guava-16.0.jar" />
+			<zipfileset excludes="META-INF/**" src="${lib}/jopt-simple-4.6.jar" />
+			<zipfileset excludes="META-INF/**,templates/**" src="${lib}/commons-lang3-3.2.1.jar" />
 		</zip>
 
 		<antcall target="proguard-standalone" />
@@ -40,22 +62,58 @@
 		<antcall target="clean" />
 	</target>
 
-	<target name="build-library">
-		<antcall target="clean" />
-		<antcall target="copy-src" />
-		<antcall target="replace-tokens" />
-		<antcall target="compile" />
+	<target name="proguard-lib">
+		<delete file="${output}/${name.lib}" failonerror="no" />
 
-		<!-- Build the jar -->
-		<zip destfile="${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib-fat.jar">
-			<fileset dir="${bin}" />
-			<fileset dir="${res}" excludes="META-INF/**" />
-			<zipfileset excludes="META-INF/**" src="D:/Program Files Other/ANTLR 4/antlr-runtime-4.2.jar" />
-		</zip>
+		<proguard>
+			-injars 	 ${lib}/${name.lib.fat}
+			-outjars	 ${lib}/${name.lib}
+			-libraryjars D:/Program Files/Java/jre7/lib/rt.jar
+			-libraryjars ${lib}/guava-16.0.jar
+			-libraryjars ${lib}/jopt-simple-4.6.jar
+			-libraryjars ${lib}/commons-lang3-3.2.1.jar
 
-		<antcall target="proguard-lib" />
+			-target 1.7
+			-dontobfuscate
+			
+			-optimizations !code/allocation/variable
+			-optimizationpasses 6
 
-		<antcall target="clean" />
+			-dontnote org.antlr.v4.runtime.misc.**
+			
+			-dontwarn javax.annotation.**
+			-dontwarn javax.inject.**
+			-dontwarn sun.misc.Unsafe
+
+			-keep
+			 public class net.mobtalker.mobtalkerscript.util.**,
+						  net.mobtalker.mobtalkerscript.v2.*,
+					      net.mobtalker.mobtalkerscript.v2.compiler.**,
+			              net.mobtalker.mobtalkerscript.v2.instruction.**,
+			              net.mobtalker.mobtalkerscript.v2.lib.*,
+			              net.mobtalker.mobtalkerscript.v2.value.** 
+			{
+			    public protected *;
+			}
+
+			-keepclassmembers 
+			 class net.mobtalker.mobtalkerscript.v2.lib.** 
+			{
+			    @net.mobtalker.mobtalkerscript.v2.value.userdata.* *;
+			}
+
+			-keep, allowshrinking 
+			 class org.antlr.v4.** 
+			{}
+
+			-keepclassmembers 
+			 class org.antlr.v4.runtime.ANTLRInputStream 
+			{
+			    public &lt;init&gt;( ... );
+			}
+		</proguard>
+
+		<delete file="${lib}/${name.lib.fat}" />
 	</target>
 
 	<target name="proguard-standalone">
@@ -100,60 +158,6 @@
 		<delete file="${MobTalker2.libraries.location}/MobTalkerScript-${version}-standalone-fat.jar" />
 	</target>
 
-	<target name="proguard-lib">
-		<delete file="${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib.jar" failonerror="no" />
-
-		<proguard>
-			-injars 	 ${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib-fat.jar
-			-outjars	 ${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib.jar
-			-libraryjars D:/Program Files/Java/jre7/lib/rt.jar
-			-libraryjars ${Minecraft.libraries.location}/com/google/guava/guava/14.0/guava-14.0.jar
-			-libraryjars ${Minecraft.libraries.location}/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar
-			-libraryjars ${Minecraft.libraries.location}/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar
-
-			-target 1.6
-			-dontobfuscate
-			
-			-optimizations !code/allocation/variable
-			-optimizationpasses 6
-
-			-dontnote org.antlr.v4.runtime.misc.**
-			
-			-dontwarn javax.annotation.**
-			-dontwarn javax.inject.**
-			-dontwarn sun.misc.Unsafe
-
-			-keep
-			 public class mobtalkerscript.util.**,
-			              mobtalkerscript.v2.*,
-                          mobtalkerscript.v2.compiler.**,
-                          mobtalkerscript.v2.instruction.**,
-                          mobtalkerscript.v2.lib.*,
-                          mobtalkerscript.v2.value.** 
-			{
-			    public protected *;
-			}
-
-			-keepclassmembers 
-			 class mobtalkerscript.v2.lib.** 
-			{
-			    @mobtalkerscript.v2.value.userdata.* *;
-			}
-
-			-keep, allowshrinking 
-			 class org.antlr.v4.** 
-			{}
-
-			-keepclassmembers 
-			 class org.antlr.v4.runtime.ANTLRInputStream 
-			{
-			    public &lt;init&gt;( ... );
-			}
-		</proguard>
-
-		<delete file="${MobTalker2.libraries.location}/MobTalkerScript-${version}-lib-fat.jar" />
-	</target>
-
 	<target name="clean">
 		<delete includeemptydirs="true">
 			<fileset dir="${tmp}" erroronmissingdir="false" />
@@ -169,7 +173,7 @@
 
 	<target name="replace-tokens">
 		<replace summary="yes" failOnNoReplacements="true" preserveLastModified="true">
-			<fileset dir="${tmp}/mobtalkerscript/v2/">
+			<fileset dir="${tmp}/net/mobtalker/mobtalkerscript/v2/">
 				<include name="MtsGlobals.java" />
 			</fileset>
 
@@ -180,7 +184,7 @@
 	<target name="compile">
 		<mkdir dir="${bin}" />
 
-		<javac srcdir="${tmp}" destdir="${bin}" source="6" target="6" includeantruntime="false">
+		<javac srcdir="${tmp}" destdir="${bin}" source="7" target="7" includeantruntime="false">
 			<classpath refid="classpath" />
 		</javac>
 	</target>

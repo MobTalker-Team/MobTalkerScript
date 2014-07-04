@@ -1,10 +1,10 @@
 package net.mobtalker.mobtalkerscript.v2.compiler;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
 public class TreePattern implements ITreePattern
 {
@@ -12,6 +12,7 @@ public class TreePattern implements ITreePattern
     
     // ========================================
     
+    @SafeVarargs
     public TreePattern( Class<? extends ParserRuleContext>... pattern )
     {
         _pattern = Lists.newArrayList( pattern );

@@ -10,7 +10,6 @@ import joptsimple.internal.*;
 import mobtalkerscript.util.logging.*;
 import mobtalkerscript.v2.*;
 import mobtalkerscript.v2.compiler.*;
-import mobtalkerscript.v2.lib.*;
 import mobtalkerscript.v2.lib.console.*;
 import mobtalkerscript.v2.lib.console.mobtalker.*;
 import mobtalkerscript.v2.value.*;
@@ -47,13 +46,13 @@ public class MobTalkerScript
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
         
-        // Initialize Minecraft/MobTalker libraries
-        _G.set( "World", createLibrary( new MinecraftConsoleWorldLib() ) );
+        // Create libraries
         createLibrary( new ConsoleCommandLib( _G ), _G );
-        createLibrary( new MobTalkerConsoleInteractionLib( _G,
-                                                           new DummyTalkingPlayer( "Console", 20 ),
-                                                           new DummyTalkingEntity( "", "Creeper", 20, 0 ) ),
-                       _G );
+        _G.set( "Scoreboard", createLibrary( new ScoreboardLib() ) );
+        _G.set( "Command", createLibrary( new MinecraftCommandLib() ) );
+        _G.set( "Entity", createLibrary( new InteractionEntityLib() ) );
+        _G.set( "Player", createLibrary( new InteractionPlayerLib() ) );
+        _G.set( "World", createLibrary( new InteractionWorldLib() ) );
         
         _G.out.println( "MobTalkerScript " //
                         + MtsGlobals.VERSION.asString().asJavaString()

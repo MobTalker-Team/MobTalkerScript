@@ -132,9 +132,9 @@ public class ConsoleCommandLib
         if ( nOptions < 1 )
             throw new ScriptRuntimeException( "Must have at least 1 option!" );
         
-        for ( int i = 0; i < nOptions; i++ )
+        for ( int i = 1; i <= nOptions; i++ )
         {
-            _G.out.println( "  " + ( i + 1 ) + ": " + args.get( i + 1 ).asString().asJavaString() );
+            _G.out.println( "  " + i + ": " + args.get( i ).asString().asJavaString() );
         }
         
         for ( ;; )
@@ -143,8 +143,8 @@ public class ConsoleCommandLib
             try
             {
                 String input = _G.in.readLine();
-                int choice = Integer.parseInt( input );
-                if ( ( 0 < choice ) && ( choice <= nOptions ) )
+                int choice = Integer.parseInt( input ) - 1;
+                if ( ( 0 <= choice ) && ( choice < nOptions ) )
                     return valueOf( choice );
             }
             catch ( Exception ex )

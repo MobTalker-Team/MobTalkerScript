@@ -24,9 +24,9 @@ public class MtsParser extends Parser {
 		EQUAL=45, LE=46, GE=47, NOTEQUAL=48, AND=49, OR=50, INC=51, DEC=52, ADD=53, 
 		SUB=54, MUL=55, DIV=56, MOD=57, POW=58, STR_CONCAT=59, TBL_APPEND=60, 
 		SIZEOF=61, ADD_ASSIGN=62, SUB_ASSIGN=63, MUL_ASSIGN=64, DIV_ASSIGN=65, 
-		MOD_ASSIGN=66, POW_ASSIGN=67, CONCAT_ASSIGN=68, LineComment=69, BlockComment=70, 
-		NULL=71, BOOLEAN=72, NORMALSTRING=73, LONGSTRING=74, INTEGER=75, FLOAT=76, 
-		HEXINTEGER=77, HEXFLOAT=78, Identifier=79;
+		MOD_ASSIGN=66, POW_ASSIGN=67, CONCAT_ASSIGN=68, NULL=69, BOOLEAN=70, NORMALSTRING=71, 
+		LONGSTRING=72, INTEGER=73, FLOAT=74, HEXINTEGER=75, HEXFLOAT=76, BlockComment=77, 
+		LineComment=78, Identifier=79;
 	public static final String[] tokenNames = {
 		"<INVALID>", "WS", "'local'", "'function'", "'label'", "'jump'", "'return'", 
 		"'end'", "'do'", "'if'", "'then'", "ELSEIF", "'else'", "'while'", "'break'", 
@@ -36,8 +36,8 @@ public class MtsParser extends Parser {
 		"'='", "'>'", "'<'", "'not'", "':'", "'=='", "'<='", "'>='", "'!='", "'and'", 
 		"'or'", "'++'", "'--'", "'+'", "'-'", "'*'", "'/'", "'%'", "'^'", "'..'", 
 		"'[]'", "'#'", "'+='", "'-='", "'*='", "'/='", "'%='", "'^='", "'.='", 
-		"LineComment", "BlockComment", "'nil'", "BOOLEAN", "NORMALSTRING", "LONGSTRING", 
-		"INTEGER", "FLOAT", "HEXINTEGER", "HEXFLOAT", "Identifier"
+		"'nil'", "BOOLEAN", "NORMALSTRING", "LONGSTRING", "INTEGER", "FLOAT", 
+		"HEXINTEGER", "HEXFLOAT", "BlockComment", "LineComment", "Identifier"
 	};
 	public static final int
 		RULE_chunk = 0, RULE_block = 1, RULE_stmt = 2, RULE_expr = 3, RULE_assignExpr = 4, 
@@ -872,7 +872,7 @@ public class MtsParser extends Parser {
 				_prevctx = _localctx;
 				setState(145);
 				_la = _input.LA(1);
-				if ( !(((((_la - 75)) & ~0x3f) == 0 && ((1L << (_la - 75)) & ((1L << (INTEGER - 75)) | (1L << (FLOAT - 75)) | (1L << (HEXINTEGER - 75)) | (1L << (HEXFLOAT - 75)))) != 0)) ) {
+				if ( !(((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & ((1L << (INTEGER - 73)) | (1L << (FLOAT - 73)) | (1L << (HEXINTEGER - 73)) | (1L << (HEXFLOAT - 73)))) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				consume();
@@ -1451,7 +1451,7 @@ public class MtsParser extends Parser {
 				setState(224); match(LPAREN);
 				setState(226);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & ((1L << (NULL - 71)) | (1L << (BOOLEAN - 71)) | (1L << (NORMALSTRING - 71)) | (1L << (LONGSTRING - 71)) | (1L << (INTEGER - 71)) | (1L << (FLOAT - 71)) | (1L << (HEXINTEGER - 71)) | (1L << (HEXFLOAT - 71)) | (1L << (Identifier - 71)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (NULL - 69)) | (1L << (BOOLEAN - 69)) | (1L << (NORMALSTRING - 69)) | (1L << (LONGSTRING - 69)) | (1L << (INTEGER - 69)) | (1L << (FLOAT - 69)) | (1L << (HEXINTEGER - 69)) | (1L << (HEXFLOAT - 69)) | (1L << (Identifier - 69)))) != 0)) {
 					{
 					setState(225); ((CallArgsContext)_localctx).Args = exprList();
 					}
@@ -1584,7 +1584,7 @@ public class MtsParser extends Parser {
 			setState(240); match(LBRACE);
 			setState(252);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << LBRACK) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & ((1L << (NULL - 71)) | (1L << (BOOLEAN - 71)) | (1L << (NORMALSTRING - 71)) | (1L << (LONGSTRING - 71)) | (1L << (INTEGER - 71)) | (1L << (FLOAT - 71)) | (1L << (HEXINTEGER - 71)) | (1L << (HEXFLOAT - 71)) | (1L << (Identifier - 71)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << LBRACK) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (NULL - 69)) | (1L << (BOOLEAN - 69)) | (1L << (NORMALSTRING - 69)) | (1L << (LONGSTRING - 69)) | (1L << (INTEGER - 69)) | (1L << (FLOAT - 69)) | (1L << (HEXINTEGER - 69)) | (1L << (HEXFLOAT - 69)) | (1L << (Identifier - 69)))) != 0)) {
 				{
 				setState(241); ((TableCtorContext)_localctx).fieldDef = fieldDef();
 				((TableCtorContext)_localctx).FieldDefs.add(((TableCtorContext)_localctx).fieldDef);
@@ -2287,7 +2287,7 @@ public class MtsParser extends Parser {
 				setState(347); match(CMD_MENU);
 				setState(349);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & ((1L << (NULL - 71)) | (1L << (BOOLEAN - 71)) | (1L << (NORMALSTRING - 71)) | (1L << (LONGSTRING - 71)) | (1L << (INTEGER - 71)) | (1L << (FLOAT - 71)) | (1L << (HEXINTEGER - 71)) | (1L << (HEXFLOAT - 71)) | (1L << (Identifier - 71)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << FUNCTION) | (1L << LPAREN) | (1L << LBRACE) | (1L << NOT) | (1L << SUB) | (1L << SIZEOF))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (NULL - 69)) | (1L << (BOOLEAN - 69)) | (1L << (NORMALSTRING - 69)) | (1L << (LONGSTRING - 69)) | (1L << (INTEGER - 69)) | (1L << (FLOAT - 69)) | (1L << (HEXINTEGER - 69)) | (1L << (HEXFLOAT - 69)) | (1L << (Identifier - 69)))) != 0)) {
 					{
 					setState(348); ((CommandMenuContext)_localctx).Caption = expr(0);
 					}
@@ -2625,7 +2625,7 @@ public class MtsParser extends Parser {
 		"\27\3\27\3\30\3\30\3\30\7\30\u0172\n\30\f\30\16\30\u0175\13\30\3\31\3"+
 		"\31\3\32\3\32\3\32\7\32\u017c\n\32\f\32\16\32\u017f\13\32\3\33\3\33\3"+
 		"\33\7\33\u0184\n\33\f\33\16\33\u0187\13\33\3\33\2\3\b\34\2\4\6\b\n\f\16"+
-		"\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\2\t\5\2--88??\3\2MP\3\2KL\3"+
+		"\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\2\t\5\2--88??\3\2KN\3\2IJ\3"+
 		"\29<\3\2\678\4\2+,/\62\3\2\63\64\u01b6\28\3\2\2\2\4?\3\2\2\2\6\u0088\3"+
 		"\2\2\2\b\u009a\3\2\2\2\n\u00b0\3\2\2\2\f\u00ba\3\2\2\2\16\u00c5\3\2\2"+
 		"\2\20\u00cf\3\2\2\2\22\u00d1\3\2\2\2\24\u00d8\3\2\2\2\26\u00e0\3\2\2\2"+
@@ -2653,8 +2653,8 @@ public class MtsParser extends Parser {
 		"\u0088`\3\2\2\2\u0088e\3\2\2\2\u0088t\3\2\2\2\u0088z\3\2\2\2\u0088\u0080"+
 		"\3\2\2\2\u0088\u0084\3\2\2\2\u0089\7\3\2\2\2\u008a\u008b\b\5\1\2\u008b"+
 		"\u008c\t\2\2\2\u008c\u009b\5\b\5\b\u008d\u008e\7!\2\2\u008e\u008f\5\b"+
-		"\5\2\u008f\u0090\7\"\2\2\u0090\u009b\3\2\2\2\u0091\u009b\7I\2\2\u0092"+
-		"\u009b\7J\2\2\u0093\u009b\t\3\2\2\u0094\u009b\t\4\2\2\u0095\u0096\7\5"+
+		"\5\2\u008f\u0090\7\"\2\2\u0090\u009b\3\2\2\2\u0091\u009b\7G\2\2\u0092"+
+		"\u009b\7H\2\2\u0093\u009b\t\3\2\2\u0094\u009b\t\4\2\2\u0095\u0096\7\5"+
 		"\2\2\u0096\u009b\5(\25\2\u0097\u009b\5\22\n\2\u0098\u009b\5\24\13\2\u0099"+
 		"\u009b\5\32\16\2\u009a\u008a\3\2\2\2\u009a\u008d\3\2\2\2\u009a\u0091\3"+
 		"\2\2\2\u009a\u0092\3\2\2\2\u009a\u0093\3\2\2\2\u009a\u0094\3\2\2\2\u009a"+
@@ -2684,7 +2684,7 @@ public class MtsParser extends Parser {
 		"\u00df\7.\2\2\u00df\u00e1\7Q\2\2\u00e0\u00de\3\2\2\2\u00e0\u00e1\3\2\2"+
 		"\2\u00e1\u00e8\3\2\2\2\u00e2\u00e4\7!\2\2\u00e3\u00e5\5\62\32\2\u00e4"+
 		"\u00e3\3\2\2\2\u00e4\u00e5\3\2\2\2\u00e5\u00e6\3\2\2\2\u00e6\u00e9\7\""+
-		"\2\2\u00e7\u00e9\7K\2\2\u00e8\u00e2\3\2\2\2\u00e8\u00e7\3\2\2\2\u00e9"+
+		"\2\2\u00e7\u00e9\7I\2\2\u00e8\u00e2\3\2\2\2\u00e8\u00e7\3\2\2\2\u00e9"+
 		"\27\3\2\2\2\u00ea\u00eb\7%\2\2\u00eb\u00ec\5\b\5\2\u00ec\u00ed\7&\2\2"+
 		"\u00ed\u00f1\3\2\2\2\u00ee\u00ef\7)\2\2\u00ef\u00f1\7Q\2\2\u00f0\u00ea"+
 		"\3\2\2\2\u00f0\u00ee\3\2\2\2\u00f1\31\3\2\2\2\u00f2\u00fe\7#\2\2\u00f3"+

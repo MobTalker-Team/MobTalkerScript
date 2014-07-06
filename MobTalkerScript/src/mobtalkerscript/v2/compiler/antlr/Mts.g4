@@ -89,14 +89,6 @@ MOD_ASSIGN      : '%=' ;
 POW_ASSIGN      : '^=' ;
 CONCAT_ASSIGN   : '.=' ;
 
-LineComment
-    : '--' ~[\r\n]* -> skip
-    ;
-
-BlockComment
-    : '--[[' .*? ']]' -> skip
-    ;
-
 NULL
     : 'nil'
     ;
@@ -114,9 +106,14 @@ EscapeSequence
 //    : '\\' [abfnrtvz$"\\]
     : '\\' [nt"\\]
     ;
+
+fragment
+NestedString
+    : '[' .*? ']'
+    ;
     
 LONGSTRING
-    : '[[' .*? ']]'
+    : '[' NestedString ']'
     ;
 
 fragment 
@@ -157,6 +154,18 @@ HEXFLOAT
     : '0' [xX] HexDigit+ '.' HexDigit* HexExponentPart?
     | '0' [xX] '.' HexDigit+ HexExponentPart?
     | '0' [xX] HexDigit+ HexExponentPart
+    ;
+
+BlockComment
+    : '--[' NestedString ']' 
+      -> skip
+    ;
+
+LineComment
+    : '--'
+      ( ~( '[' | '\r' | '\n' ) ~( '\r' | '\n' )* )?
+      ( '\r\n' | '\r' | '\n'| EOF )
+      -> skip
     ;
 
 Identifier

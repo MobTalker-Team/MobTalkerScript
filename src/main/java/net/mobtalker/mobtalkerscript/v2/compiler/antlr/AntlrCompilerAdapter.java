@@ -5,9 +5,9 @@ import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v2.compiler.MtsCompiler.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
-import java.util.*;
+import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.Constants;
 import net.mobtalker.mobtalkerscript.v2.compiler.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.AssignExprContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
@@ -62,9 +62,8 @@ import net.mobtalker.mobtalkerscript.v2.value.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
-@SuppressWarnings( "unchecked" )
 public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
 {
     private static final ITreePattern TableAssignPattern;

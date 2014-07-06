@@ -9,20 +9,20 @@ import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.*;
-import java.util.logging.*;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.*;
 
-import net.mobtalker.mobtalkerscript.util.*;
+import net.mobtalker.mobtalkerscript.util.StringEscapeUtil;
 import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
-import net.mobtalker.mobtalkerscript.v2.instruction.*;
+import net.mobtalker.mobtalkerscript.v2.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
-import org.apache.commons.lang3.*;
+import org.antlr.v4.runtime.atn.PredictionMode;
+import org.apache.commons.lang3.StringUtils;
 
 public class MtsCompiler
 {
@@ -82,10 +82,13 @@ public class MtsCompiler
             throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
         }
         
+        int lineStart = chunk.getStart().getLine();
+        
+        // stop token CAN be null if the input is empty and contains only comments and EOF
+        int lineEnd = chunk.getStop() != null ? chunk.getStop().getLine() : lineStart;
+        
         // Compile it
-        MtsCompiler compiler = new MtsCompiler( tokens.getSourceName(),
-                                                chunk.getStart().getLine(),
-                                                chunk.getStop().getLine() );
+        MtsCompiler compiler = new MtsCompiler( tokens.getSourceName(), lineStart, lineEnd );
         
         AntlrCompilerAdapter adapter = new AntlrCompilerAdapter( compiler );
         adapter.compile( chunk );

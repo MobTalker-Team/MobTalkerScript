@@ -2,7 +2,7 @@
 <project name="MobTalkerScript" default="build-standalone">
 	<property name="src" value="${basedir}/../src/main/java" />
 	<property name="res" value="${basedir}/../src/main/resources" />
-	<property name="tmp" value="${basedir}/../tmp" />
+	<property name="tmp" value="${basedir}/tmp" />
 	<property name="bin" value="${basedir}/../bin" />
 	<property name="lib" value="${basedir}/../../lib" />
 

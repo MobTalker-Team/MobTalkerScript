@@ -1,0 +1,44 @@
+package net.mobtalker.mobtalkerscript.v2.instruction;
+
+import net.mobtalker.mobtalkerscript.v2.value.*;
+
+/**
+ * Jump instruction that only jumps if the top of the stack is not true.
+ */
+public final class InstrNForPrep extends MtsIndexedInstruction
+{
+    /* package */InstrNForPrep( int i )
+    {
+        super( i );
+    }
+    
+    // ========================================
+    
+    @Override
+    public void execute( MtsFrame frame )
+    {
+        MtsNumber stepVal = frame.pop().asNumber();
+        MtsNumber limitVal = frame.pop().asNumber();
+        MtsNumber loopVal = frame.pop().asNumber();
+        
+        loopVal = loopVal.sub( stepVal );
+        
+        frame.getLocal( _index ).set( loopVal );
+        frame.getLocal( _index + 1 ).set( limitVal );
+        frame.getLocal( _index + 2 ).set( stepVal );
+    }
+    
+    @Override
+    public int stackSizeChange()
+    {
+        return -3;
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        return "NFORPREP " + _index;
+    }
+}

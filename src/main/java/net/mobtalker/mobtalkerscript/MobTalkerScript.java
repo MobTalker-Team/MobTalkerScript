@@ -2,15 +2,15 @@ package net.mobtalker.mobtalkerscript;
 
 import static net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNatives.*;
 
-import java.nio.file.*;
+import java.nio.file.Paths;
 import java.util.logging.*;
 
 import joptsimple.*;
-import joptsimple.internal.*;
-import net.mobtalker.mobtalkerscript.util.logging.*;
+import joptsimple.internal.Strings;
+import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.*;
-import net.mobtalker.mobtalkerscript.v2.lib.console.*;
+import net.mobtalker.mobtalkerscript.v2.lib.console.ConsoleCommandLib;
 import net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker.*;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 
@@ -46,13 +46,13 @@ public class MobTalkerScript
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
         
-        // Initialize Minecraft/MobTalker libraries
-        _G.set( "World", createLibrary( new MinecraftConsoleWorldLib() ) );
+        // Create libraries
         createLibrary( new ConsoleCommandLib( _G ), _G );
-        createLibrary( new MobTalkerConsoleInteractionLib( _G,
-                                                           new DummyTalkingPlayer( "Console", 20 ),
-                                                           new DummyTalkingEntity( "", "Creeper", 20, 0 ) ),
-                       _G );
+        _G.set( "Scoreboard", createLibrary( new ScoreboardLib() ) );
+        _G.set( "Command", createLibrary( new MinecraftCommandLib() ) );
+        _G.set( "Entity", createLibrary( new InteractionEntityLib() ) );
+        _G.set( "Player", createLibrary( new InteractionPlayerLib() ) );
+        _G.set( "World", createLibrary( new InteractionWorldLib() ) );
         
         _G.out.println( "MobTalkerScript " //
                         + MtsGlobals.VERSION.asString().asJavaString()

@@ -740,10 +740,8 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         if ( "-".equals( ctx.Operator.getText() ) && ( ctx.Expr instanceof NumberLiteralContext ) )
         {
-            NumberLiteralContext nlCtx = new NumberLiteralContext( ctx );
-            nlCtx.addChild( new CommonToken( MtsParser.FLOAT, "-" + ctx.Expr.getText() ) );
-            
-            visit( nlCtx );
+            MtsNumber value = parseNumber( "-" + ctx.Expr.getText() );
+            _c.loadConstant( value );
         }
         else
         {

@@ -1,0 +1,64 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+version = "2.2.3-beta"
+group = "net.mobtalker.mobtalkerscript"
+archivesBaseName = "MobTalkerScript"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    library
+}
+
+dependencies {
+    library 'org.antlr:antlr4-runtime:4.2.2'
+    
+    compile 'org.antlr:antlr4-runtime:4.2.2'
+    compile 'org.apache.commons:commons-lang3:3.3.+'
+    compile 'com.google.guava:guava:17.+'
+    compile 'net.sf.jopt-simple:jopt-simple:4.6'
+    
+    testCompile 'junit:junit:4.+'
+}
+
+jar {
+    configurations.library.each {
+        from ( project.zipTree( it ) ) {
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+    
+    appendix = 'lib'
+}
+
+//task jarStandalone( type: Jar ) {
+//    configurations.compile.each {
+//        from ( project.zipTree( it ) ) {
+//            exclude 'META-INF', 'META-INF/**'
+//        }
+//    }
+//
+//    manifest {
+//        attributes( 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript' )
+//    }
+//    
+//    appendix = 'standalone'
+//}
+
+artifacts {
+    archives jar
+//    archives jarStandalone
+}
+
+task publish( type: Copy, dependsOn: assemble ) {
+    from jar.destinationDir
+    into 'release'
+    include( configurations.compile.artifacts )
+}

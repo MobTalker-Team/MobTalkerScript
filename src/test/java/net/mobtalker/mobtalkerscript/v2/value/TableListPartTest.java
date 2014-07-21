@@ -71,23 +71,23 @@ public class TableListPartTest
         assertFalse( _list.contains( ONE ) );
         
         _list.add( valueOf( "bc" ) );
-        assertTrue( _list.contains( 1 ) );
+        assertTrue( _list.contains( 0 ) );
         assertTrue( _list.contains( ONE ) );
         
         _list.removeLast();
-        assertFalse( _list.contains( 1 ) );
+        assertFalse( _list.contains( 0 ) );
         assertFalse( _list.contains( ONE ) );
         
         _list.add( valueOf( "def" ) );
-        _list.insert( 2, valueOf( "ijkl" ) );
-        assertTrue( _list.contains( 2 ) );
+        _list.insert( 1, valueOf( "ijkl" ) );
+        assertTrue( _list.contains( 1 ) );
         assertTrue( _list.contains( valueOf( 2 ) ) );
         
         _list.add( valueOf( "gh" ) );
         _list.remove( 1 );
-        assertTrue( _list.contains( 2 ) );
+        assertTrue( _list.contains( 1 ) );
         assertTrue( _list.contains( valueOf( 2 ) ) );
-        assertFalse( _list.contains( 3 ) );
+        assertFalse( _list.contains( 2 ) );
         assertFalse( _list.contains( valueOf( 3 ) ) );
         
         _list.clear();
@@ -101,19 +101,19 @@ public class TableListPartTest
     public void testAdd()
     {
         _list.add( valueOf( "a" ) );
-        assertEquals( valueOf( "a" ), _list.get( 1 ) );
+        assertEquals( valueOf( "a" ), _list.get( 0 ) );
         
         _list.add( valueOf( "bc" ) );
         _list.add( valueOf( "def" ) );
-        assertEquals( valueOf( "def" ), _list.get( 3 ) );
+        assertEquals( valueOf( "def" ), _list.get( 2 ) );
         
         _list.removeLast();
         _list.add( valueOf( "gh" ) );
-        assertEquals( valueOf( "gh" ), _list.get( 3 ) );
+        assertEquals( valueOf( "gh" ), _list.get( 2 ) );
         
         _list.insert( 2, valueOf( "ijkl" ) );
         _list.add( valueOf( "mno" ) );
-        assertEquals( valueOf( "mno" ), _list.get( 5 ) );
+        assertEquals( valueOf( "mno" ), _list.get( 4 ) );
     }
     
     @Test( expected = ArrayIndexOutOfBoundsException.class )

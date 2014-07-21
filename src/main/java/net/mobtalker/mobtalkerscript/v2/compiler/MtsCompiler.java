@@ -60,7 +60,7 @@ public class MtsCompiler
     {
         // Lex it
         MtsLexer lexer = new MtsLexer( stream );
-        lexer.setTokenFactory( new CommonTokenFactory( false ) );
+        lexer.setTokenFactory( new CommonTokenFactory( true ) );
         TokenStream tokens = new UnbufferedTokenStream<Token>( lexer );
 
         // Parse it

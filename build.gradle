@@ -10,14 +10,18 @@ targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
+    flatDir {
+        name 'localFileRepo'
+        dirs 'file://D:/Projects/Java/repo'
+    }
 }
 
 configurations {
-    library
+    packagedJars
 }
 
 dependencies {
-    library 'org.antlr:antlr4-runtime:4.2.2'
+    packagedJars 'org.antlr:antlr4-runtime:4.2.2'
     
     compile 'org.antlr:antlr4-runtime:4.2.2'
     compile 'org.apache.commons:commons-lang3:3.3.+'
@@ -28,7 +32,7 @@ dependencies {
 }
 
 jar {
-    configurations.library.each {
+    configurations.packagedJars.each {
         from ( project.zipTree( it ) ) {
             exclude 'META-INF', 'META-INF/**'
         }
@@ -54,6 +58,12 @@ jar {
 artifacts {
     archives jar
 //    archives jarStandalone
+}
+
+uploadArchives {
+    repositories {
+        add project.repositories.localFileRepo
+    }
 }
 
 task publish( type: Copy, dependsOn: assemble ) {

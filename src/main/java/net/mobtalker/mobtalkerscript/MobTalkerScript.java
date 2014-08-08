@@ -22,12 +22,12 @@ public class MobTalkerScript
     public static void main( String[] args ) throws Exception
     {
         System.out.print( "Loading...\r" );
-        
+
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-        
+
         // Initialize the parser
         MtsCompiler.loadString( ";", "" );
-        
+
         // Options
         OptionParser parser = new OptionParser();
         OptionSpec<String> compilerLogLevel = parser.accepts( "compilerLog" )
@@ -37,15 +37,15 @@ public class MobTalkerScript
                                                   .withRequiredArg()
                                                   .defaultsTo( "OFF" );
         OptionSpec<String> files = parser.nonOptions();
-        
+
         OptionSet options = parser.parse( args );
-        
+
         MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
         MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
-        
+
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
-        
+
         // Create libraries
         createLibrary( new ConsoleCommandLib( _G ), _G );
         _G.set( "Scoreboard", createLibrary( new ScoreboardLib() ) );
@@ -53,21 +53,21 @@ public class MobTalkerScript
         _G.set( "Entity", createLibrary( new InteractionEntityLib() ) );
         _G.set( "Player", createLibrary( new InteractionPlayerLib() ) );
         _G.set( "World", createLibrary( new InteractionWorldLib() ) );
-        
+
         _G.out.println( "MobTalkerScript " //
                         + MtsGlobals.VERSION.asString().asJavaString()
                         + " Copyright (c) 2013-2014 Tobias Rummelt, mobtalker.net" );
         _G.out.println( "Please report any problems or bugs you may encounter to the bug tracker." );
-        
+
         // Load specified file if any
         if ( !Strings.isNullOrEmpty( options.valueOf( files ) ) )
         {
             String path = options.valueOf( files );
-            
+
             _G.out.println( "Loading file '" + path + "'" );
-            
+
             _G.PackageLib.setBasePath( Paths.get( path ).getParent().toString() );
-            
+
             MtsFunctionPrototype fileChunk = null;
             try
             {
@@ -81,7 +81,7 @@ public class MobTalkerScript
             {
                 ex.printStackTrace();
             }
-            
+
             if ( fileChunk != null )
             {
                 try
@@ -96,16 +96,16 @@ public class MobTalkerScript
                 }
             }
         }
-        
+
         // Interactive loop
         for ( ;; )
         {
             _G.out.print( "> " );
             String line = _G.in.readLine();
-            
-            if ( line.trim().equals( "exit" ) )
+
+            if ( ( line == null ) || line.trim().equals( "exit" ) )
                 break;
-            
+
             MtsFunctionPrototype chunk;
             try
             {
@@ -117,12 +117,12 @@ public class MobTalkerScript
                 Thread.sleep( 100 );
                 continue;
             }
-            
+
             try
             {
                 MtsValue result = new MtsClosure( chunk, _G ).call();
                 Thread.sleep( 100 );
-                
+
                 if ( ( result.isVarArgs() && ( result.asVarArgs().count() > 0 ) )
                      || ( !result.isNil() && !result.isVarArgs() ) )
                 {
@@ -136,8 +136,8 @@ public class MobTalkerScript
             }
         }
     }
-    
+
     private MobTalkerScript()
     {}
-    
+
 }

@@ -1,0 +1,94 @@
+buildscript {
+    repositories { 
+        jcenter() 
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.+'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+if ( file( 'deploy.gradle' ).exists() ) {
+    apply from: 'deploy.gradle'
+}
+
+version = "2.2.3-beta"
+group = "net.mobtalker.mobtalkerscript"
+archivesBaseName = "MobTalkerScript"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    antlr
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.3'
+
+    compile 'org.antlr:antlr4-runtime:4.3'
+    compile 'org.apache.commons:commons-lang3:3.3.+'
+    compile 'com.google.guava:guava:17.+'
+    compile 'net.sf.jopt-simple:jopt-simple:4.5'
+    
+    testCompile 'junit:junit:4.+'
+}
+
+jar {
+    from 'LICENSE'
+}
+
+shadowJar {
+    from 'LICENSE'
+    exclude 'META-INF', 'META-INF/**'
+
+    appendManifest {
+        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript'
+    }
+    
+    classifier = 'standalone'
+}
+
+artifacts {
+    archives shadowJar
+}
+
+task generateAntlr( type: JavaExec ) {
+    def grammarFile = 'src/main/antlr/Mts.g4'
+    def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v2/compiler/antlr/'
+
+    main 'org.antlr.v4.Tool'
+    classpath configurations.antlr
+    
+    inputs.file grammarFile
+    outputs.files(
+        "${outputDir}/MtsParser.java",
+        "${outputDir}/MtsLexer.java",
+        "${outputDir}/MtsVisitor.java",
+        "${outputDir}/MtsBaseVisitor.java",
+        "${outputDir}/Mts.tokens",
+        "${outputDir}/MtsLexer.tokens"
+    )
+    
+    args = [ 
+        grammarFile,
+        '-o', outputDir,
+        '-package', 'net.mobtalker.mobtalkerscript.v2.compiler.antlr',
+        '-visitor',
+        '-no-listener',
+        '-encoding', 'UTF-8'
+    ]
+}
+tasks.compileJava.dependsOn generateAntlr
+
+task cleanAntlr( type: Delete ) {
+    delete generateAntlr.outputs.getFiles()
+}

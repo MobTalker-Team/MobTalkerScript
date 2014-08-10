@@ -1,5 +1,16 @@
+buildscript {
+    repositories { 
+        jcenter() 
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.+'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply from: 'deploy.gradle'
 
 version = "2.2.3-beta"
 group = "net.mobtalker.mobtalkerscript"
@@ -10,19 +21,9 @@ targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
-    flatDir {
-        name 'localFileRepo'
-        dirs 'file://D:/Projects/Java/repo'
-    }
 }
 
-configurations {
-    packagedJars
-}
-
-dependencies {
-    packagedJars 'org.antlr:antlr4-runtime:4.2.2'
-    
+dependencies {    
     compile 'org.antlr:antlr4-runtime:4.2.2'
     compile 'org.apache.commons:commons-lang3:3.3.+'
     compile 'com.google.guava:guava:17.+'
@@ -31,43 +32,19 @@ dependencies {
     testCompile 'junit:junit:4.+'
 }
 
-jar {
-    configurations.packagedJars.each {
-        from ( project.zipTree( it ) ) {
-            exclude 'META-INF', 'META-INF/**'
-        }
+jar {}
+
+shadowJar {
+    exclude 'META-INF', 'META-INF/**'
+
+    appendManifest {
+        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript'
     }
     
-    appendix = 'lib'
+    classifier = 'standalone'
 }
-
-//task jarStandalone( type: Jar ) {
-//    configurations.compile.each {
-//        from ( project.zipTree( it ) ) {
-//            exclude 'META-INF', 'META-INF/**'
-//        }
-//    }
-//
-//    manifest {
-//        attributes( 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript' )
-//    }
-//    
-//    appendix = 'standalone'
-//}
 
 artifacts {
     archives jar
-//    archives jarStandalone
-}
-
-uploadArchives {
-    repositories {
-        add project.repositories.localFileRepo
-    }
-}
-
-task publish( type: Copy, dependsOn: assemble ) {
-    from jar.destinationDir
-    into 'release'
-    include( configurations.compile.artifacts )
+    archives shadowJar
 }

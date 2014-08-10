@@ -14,38 +14,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.mobtalker.mobtalkerscript.v2.compiler;
+package net.mobtalker.mobtalkerscript.v2;
 
-/**
- * Stores information about a compiling loop block, e.g. references to different instructions.
- */
-public class LoopState
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
+
+public final class FrameValue
 {
-    private final int _firstInstrIndex;
-    private final PendingJumpCollection _breaks;
+    private MtsValue _value;
     
     // ========================================
     
-    public LoopState( int firstInstrIndex )
+    public FrameValue()
     {
-        _firstInstrIndex = firstInstrIndex;
-        _breaks = new PendingJumpCollection();
+        this( NIL );
+    }
+    
+    public FrameValue( MtsValue value )
+    {
+        _value = value;
     }
     
     // ========================================
     
-    public int firstIndex()
+    public MtsValue get()
     {
-        return _firstInstrIndex;
+        return _value;
     }
     
-    public void addBreak( PendingJump jump )
+    public void set( MtsValue value )
     {
-        _breaks.add( jump );
+        _value = value;
     }
     
-    public void setBreakTarget( int target )
+    // ========================================
+    
+    @Override
+    public String toString()
     {
-        _breaks.setTarget( target );
+        return _value.toString();
     }
 }

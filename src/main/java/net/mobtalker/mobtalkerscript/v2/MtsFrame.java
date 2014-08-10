@@ -1,14 +1,30 @@
-package net.mobtalker.mobtalkerscript.v2.instruction;
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package net.mobtalker.mobtalkerscript.v2;
 
 import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public final class MtsFrame
 {
@@ -121,8 +137,8 @@ public final class MtsFrame
         
         assert stackIsEmpty()
         /*   */: "Stack was not emptied! " + formatStack();
-//        assert result.isVarArgs()
-//        /*   */: "Return value is not of type VarArgs, but " + result.getType() + "!";
+        //        assert result.isVarArgs()
+        //        /*   */: "Return value is not of type VarArgs, but " + result.getType() + "!";
         
 //        return result.asVarArgs();
         return result;
@@ -158,8 +174,8 @@ public final class MtsFrame
         
         if ( DEBUG )
             _lastVarOrConst = result.isString() ? result.toString() : "?";
-        else
-            _lastVarOrConst = "?";
+            else
+                _lastVarOrConst = "?";
         
         return result;
     }

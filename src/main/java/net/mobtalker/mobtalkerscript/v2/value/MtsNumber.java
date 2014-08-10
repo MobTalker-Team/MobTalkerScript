@@ -1,8 +1,24 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.v2.value;
 
-import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.ScriptRuntimeException;
 
-import com.google.common.math.*;
+import com.google.common.math.DoubleMath;
 
 public final class MtsNumber extends MtsValue
 {
@@ -86,32 +102,32 @@ public final class MtsNumber extends MtsValue
     
     public MtsNumber add( MtsNumber other )
     {
-        return of( this._value + other._value );
+        return of( _value + other._value );
     }
     
     public MtsNumber sub( MtsNumber other )
     {
-        return of( this._value - other._value );
+        return of( _value - other._value );
     }
     
     public MtsNumber mul( MtsNumber other )
     {
-        return of( this._value * other._value );
+        return of( _value * other._value );
     }
     
     public MtsNumber div( MtsNumber other )
     {
-        return of( this._value / other._value );
+        return of( _value / other._value );
     }
     
     public MtsNumber mod( MtsNumber other )
     {
-        return of( this._value % other._value );
+        return of( _value % other._value );
     }
     
     public MtsNumber pow( MtsNumber other )
     {
-        return of( Math.pow( this._value, other._value ) );
+        return of( Math.pow( _value, other._value ) );
     }
     
     public MtsNumber neg()

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.util.logging;
 
 import java.io.*;
@@ -8,12 +24,16 @@ final class LoggingOutStream extends ByteArrayOutputStream
     private Logger log;
     private StringBuilder currentMessage;
     
+    // ========================================
+
     public LoggingOutStream( Logger log )
     {
         this.log = log;
-        this.currentMessage = new StringBuilder();
+        currentMessage = new StringBuilder();
     }
     
+    // ========================================
+
     @Override
     public void flush() throws IOException
     {
@@ -23,7 +43,7 @@ final class LoggingOutStream extends ByteArrayOutputStream
             super.flush();
             record = this.toString();
             super.reset();
-            
+
             currentMessage.append( record.replace( LogFormatter.LINE_SEPARATOR, "\n" ) );
             // Are we longer than just the line separator?
             int lastIdx = -1;

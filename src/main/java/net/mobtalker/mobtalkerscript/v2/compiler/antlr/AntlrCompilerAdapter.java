@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.v2.compiler.antlr;
 
 import static com.google.common.base.Preconditions.*;
@@ -7,7 +23,7 @@ import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v2.Constants;
+import net.mobtalker.mobtalkerscript.v2.Reference;
 import net.mobtalker.mobtalkerscript.v2.compiler.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.AssignExprContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
@@ -134,7 +150,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandSay( CommandSayContext ctx )
     {
-        _c.loadVariable( Constants.FunctionNames.COMMAND_SAY );
+        _c.loadVariable( Reference.FunctionNames.COMMAND_SAY );
         
         if ( ctx.Character == null )
             _c.loadNil();
@@ -153,7 +169,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandShow( CommandShowContext ctx )
     {
-        _c.loadVariable( Constants.FunctionNames.COMMAND_SHOW );
+        _c.loadVariable( Reference.FunctionNames.COMMAND_SHOW );
         
         visit( ctx.Group );
         visitSingleOrCreateTable( ctx.Path );
@@ -189,7 +205,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandScene( CommandSceneContext ctx )
     {
-        _c.loadVariable( Constants.FunctionNames.COMMAND_SCENE );
+        _c.loadVariable( Reference.FunctionNames.COMMAND_SCENE );
         
         visitSingleOrCreateTable( ctx.Path );
         
@@ -206,7 +222,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandHide( CommandHideContext ctx )
     {
-        _c.loadVariable( Constants.FunctionNames.COMMAND_HIDE );
+        _c.loadVariable( Reference.FunctionNames.COMMAND_HIDE );
         
         if ( ctx.Group != null )
             visit( ctx.Group );
@@ -223,7 +239,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitCommandMenu( CommandMenuContext ctx )
     {
-        _c.loadVariable( Constants.FunctionNames.COMMAND_MENU );
+        _c.loadVariable( Reference.FunctionNames.COMMAND_MENU );
         
         if ( ctx.Caption == null )
             _c.loadNil();
@@ -271,7 +287,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     private static boolean isMethodBody( FuncBodyContext ctx )
     {
         return ( ctx.getParent() instanceof FuncDeclrStmtContext )
-               && ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null );
+                && ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null );
     }
     
     private static List<String> getParameterNames( FuncBodyContext ctx )
@@ -454,9 +470,9 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     private static boolean isTailcall( CallArgsContext ctx )
     {
         return ( ctx.getParent() instanceof CallContext )
-               && ( ctx.getParent().getParent() instanceof CallExprContext )
-               && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
-               && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
+                && ( ctx.getParent().getParent() instanceof CallExprContext )
+                && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
+                && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
     }
     
     @Override

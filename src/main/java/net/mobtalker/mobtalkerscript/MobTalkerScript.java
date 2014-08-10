@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript;
 
 import static net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNatives.*;
@@ -22,30 +38,30 @@ public class MobTalkerScript
     public static void main( String[] args ) throws Exception
     {
         System.out.print( "Loading...\r" );
-
+        
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-
+        
         // Initialize the parser
         MtsCompiler.loadString( ";", "" );
-
+        
         // Options
         OptionParser parser = new OptionParser();
         OptionSpec<String> compilerLogLevel = parser.accepts( "compilerLog" )
-                                                    .withRequiredArg()
-                                                    .defaultsTo( "OFF" );
+                .withRequiredArg()
+                .defaultsTo( "OFF" );
         OptionSpec<String> engineLogLevel = parser.accepts( "engineLog" )
-                                                  .withRequiredArg()
-                                                  .defaultsTo( "OFF" );
+                .withRequiredArg()
+                .defaultsTo( "OFF" );
         OptionSpec<String> files = parser.nonOptions();
-
+        
         OptionSet options = parser.parse( args );
-
+        
         MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
         MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
-
+        
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
-
+        
         // Create libraries
         createLibrary( new ConsoleCommandLib( _G ), _G );
         _G.set( "Scoreboard", createLibrary( new ScoreboardLib() ) );
@@ -53,21 +69,21 @@ public class MobTalkerScript
         _G.set( "Entity", createLibrary( new InteractionEntityLib() ) );
         _G.set( "Player", createLibrary( new InteractionPlayerLib() ) );
         _G.set( "World", createLibrary( new InteractionWorldLib() ) );
-
+        
         _G.out.println( "MobTalkerScript " //
                         + MtsGlobals.VERSION.asString().asJavaString()
-                        + " Copyright (c) 2013-2014 Tobias Rummelt, mobtalker.net" );
-        _G.out.println( "Please report any problems or bugs you may encounter to the bug tracker." );
-
+                        + " Copyright (c) 2013-2014 Chimaine" );
+        _G.out.println( "This is free software licensed under the GNU General Public License version 3." );
+        
         // Load specified file if any
         if ( !Strings.isNullOrEmpty( options.valueOf( files ) ) )
         {
             String path = options.valueOf( files );
-
+            
             _G.out.println( "Loading file '" + path + "'" );
-
+            
             _G.PackageLib.setBasePath( Paths.get( path ).getParent().toString() );
-
+            
             MtsFunctionPrototype fileChunk = null;
             try
             {
@@ -81,7 +97,7 @@ public class MobTalkerScript
             {
                 ex.printStackTrace();
             }
-
+            
             if ( fileChunk != null )
             {
                 try
@@ -96,16 +112,16 @@ public class MobTalkerScript
                 }
             }
         }
-
+        
         // Interactive loop
         for ( ;; )
         {
             _G.out.print( "> " );
             String line = _G.in.readLine();
-
-            if ( ( line == null ) || line.trim().equals( "exit" ) )
+            
+            if ( ( line == null ) || line.equals( "exit" ) )
                 break;
-
+            
             MtsFunctionPrototype chunk;
             try
             {
@@ -117,14 +133,14 @@ public class MobTalkerScript
                 Thread.sleep( 100 );
                 continue;
             }
-
+            
             try
             {
                 MtsValue result = new MtsClosure( chunk, _G ).call();
                 Thread.sleep( 100 );
-
+                
                 if ( ( result.isVarArgs() && ( result.asVarArgs().count() > 0 ) )
-                     || ( !result.isNil() && !result.isVarArgs() ) )
+                        || ( !result.isNil() && !result.isVarArgs() ) )
                 {
                     _G.out.println( result );
                 }
@@ -136,8 +152,8 @@ public class MobTalkerScript
             }
         }
     }
-
+    
     private MobTalkerScript()
     {}
-
+    
 }

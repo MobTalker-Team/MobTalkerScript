@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.v2.value.userdata;
 
 import java.lang.reflect.*;
@@ -5,9 +21,9 @@ import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v2.value.*;
 
-import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.*;
+import com.google.common.base.Strings;
 
 /* package */class NativeHelpers
 {
@@ -29,12 +45,12 @@ import com.google.common.base.*;
     {
         if ( !Modifier.isPublic( m.getModifiers() ) )
         {
-//            System.out.println( "Skipping non-public method " + m.getName() );
+            //            System.out.println( "Skipping non-public method " + m.getName() );
             return false;
         }
         if ( !m.isAnnotationPresent( MtsNativeFunction.class ) )
         {
-//            System.out.println( "Skipping non-annotated method " + m.getName() );
+            //            System.out.println( "Skipping non-annotated method " + m.getName() );
             return false;
         }
         
@@ -43,10 +59,10 @@ import com.google.common.base.*;
         {
             if ( !isMtsValueClass( paramType ) )
             {
-//                System.out.println( "Skipping method "
-//                                    + m.getName()
-//                                    + " with wrong parameter type "
-//                                    + paramType.getSimpleName() );
+                //                System.out.println( "Skipping method "
+                //                                    + m.getName()
+                //                                    + " with wrong parameter type "
+                //                                    + paramType.getSimpleName() );
                 return false;
             }
         }
@@ -54,10 +70,10 @@ import com.google.common.base.*;
         Class<?> returnType = m.getReturnType();
         if ( !isMtsValueClass( returnType ) && ( returnType != Void.TYPE ) )
         {
-//            System.out.println( "Skipping method "
-//                                + m.getName()
-//                                + " with wrong return type "
-//                                + returnType.getSimpleName() );
+            //            System.out.println( "Skipping method "
+            //                                + m.getName()
+            //                                + " with wrong return type "
+            //                                + returnType.getSimpleName() );
             return false;
         }
         
@@ -70,9 +86,9 @@ import com.google.common.base.*;
         for ( Field f : c.getFields() )
         {
             if ( Modifier.isPublic( f.getModifiers() )
-                 && Modifier.isFinal( f.getModifiers() )
-                 && isMtsValueClass( f.getType() )
-                 && f.isAnnotationPresent( MtsNativeField.class ) )
+                    && Modifier.isFinal( f.getModifiers() )
+                    && isMtsValueClass( f.getType() )
+                    && f.isAnnotationPresent( MtsNativeField.class ) )
             {
                 result.add( f );
             }

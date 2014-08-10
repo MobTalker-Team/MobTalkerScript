@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.v2.value;
 
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
@@ -6,20 +22,18 @@ import java.util.*;
 
 /**
  * An Array-backed list specifically tailored for MobTalkerScript.
- * <p>
- * NOTE: The index is 1 based.
  */
 /* package */final class TableListPart implements Iterable<MtsValue>
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
-    
+
     // ========================================
-    
+
     private MtsValue[] _entries;
     private int _limit;
-    
+
     // ========================================
-    
+
     public TableListPart( int initialCapacity )
     {
         int capacity = 1;
@@ -27,13 +41,13 @@ import java.util.*;
         {
             capacity <<= 1;
         }
-        
+
         _entries = new MtsValue[capacity];
         _limit = 0;
     }
-    
+
     // ========================================
-    
+
     /**
      * Determines if the given key is valid for the list part of a table.
      */
@@ -41,10 +55,10 @@ import java.util.*;
     {
         if ( !key.isInteger() )
             return false;
-        
+
         return key.asNumber().isPositive();
     }
-    
+
     /**
      * Determines if the given key is valid for the list part of a table.
      * <p>
@@ -54,7 +68,7 @@ import java.util.*;
     {
         return key.isInteger() && key.isPositive();
     }
-    
+
     /**
      * Length of this list.
      */
@@ -62,7 +76,7 @@ import java.util.*;
     {
         return _limit;
     }
-    
+
     /**
      * Determines if the given key resides inside the list part of this table.
      * <p>
@@ -72,7 +86,7 @@ import java.util.*;
     {
         return isValidKey( key ) && ( key.asNumber().asJavaInt() <= _limit );
     }
-    
+
     /**
      * Determines if the given key resides inside the list part of this table.
      * <p>
@@ -82,7 +96,7 @@ import java.util.*;
     {
         return isValidKey( key ) && ( key.asJavaInt() <= _limit );
     }
-    
+
     /**
      * Determines if the given index resides inside the list part of this table.
      */
@@ -90,33 +104,33 @@ import java.util.*;
     {
         return ( 0 <= i ) && ( i < _limit );
     }
-    
+
     private int findCapacity( int target )
     {
         if ( target <= _entries.length )
             return _entries.length;
-        
+
         if ( target > MAXIMUM_CAPACITY )
         {
             target = MAXIMUM_CAPACITY;
         }
-        
+
         int actual = _entries.length;
         while ( actual < target )
         {
             actual <<= 1;
         }
-        
+
         return actual;
     }
-    
+
     private void resize( int newCapacity )
     {
         MtsValue[] newList = new MtsValue[newCapacity];
         System.arraycopy( _entries, 0, newList, 0, _entries.length );
         _entries = newList;
     }
-    
+
     /**
      * Ensures that this list can hold at least <tt>minCapacity</tt> entries without further resizing.
      */
@@ -127,10 +141,10 @@ import java.util.*;
             resize( findCapacity( minCapacity ) );
         }
     }
-    
+
     // ========================================
     // Adding
-    
+
     /**
      * Adds an entry to the end of this list.
      */
@@ -138,11 +152,11 @@ import java.util.*;
     {
         if ( value.isNil() )
             return;
-        
+
         ensureCapacity( _limit + 1 );
         _entries[_limit++] = value;
     }
-    
+
     /**
      * Inserts a value at the given index and shifts subsequent entries up.
      */
@@ -150,13 +164,13 @@ import java.util.*;
     {
         if ( _limit < i )
             throw new ArrayIndexOutOfBoundsException( i );
-        
+
         if ( i == _limit )
         {
             add( value );
             return;
         }
-        
+
         // Perform a special split copy if needed
         // Avoids copying the whole array and than subsequent entries again.
         int newCapacity = findCapacity( _limit + 1 );
@@ -171,7 +185,7 @@ import java.util.*;
         {
             System.arraycopy( _entries, i, _entries, i + 1, _limit - i );
         }
-        
+
         if ( value.isNil() )
         {
             _limit = i;
@@ -182,7 +196,7 @@ import java.util.*;
             _limit++;
         }
     }
-    
+
     /**
      * Sets the value of a specified index
      */
@@ -190,9 +204,9 @@ import java.util.*;
     {
         if ( _limit <= i )
             throw new ArrayIndexOutOfBoundsException( i );
-        
+
         MtsValue old = _entries[i];
-        
+
         if ( value.isNil() )
         {
             _limit = i;
@@ -202,13 +216,13 @@ import java.util.*;
         {
             _entries[i] = value;
         }
-        
+
         return old;
     }
-    
+
     // ========================================
     // Removing
-    
+
     /**
      * Removes an entry from this list, shifting subsequent entries down.
      * <p>
@@ -218,13 +232,13 @@ import java.util.*;
     {
         // Adjust MTS to Java index
         int i = key.asJavaInt() - 1;
-        
+
         if ( !contains( i ) )
             throw new IllegalArgumentException( "key is not part of this list" );
-        
+
         return doRemove( i );
     }
-    
+
     /**
      * Removes an entry from this list, shifting subsequent entries down.
      */
@@ -232,20 +246,20 @@ import java.util.*;
     {
         if ( _limit <= i )
             throw new ArrayIndexOutOfBoundsException( i );
-        
+
         return doRemove( i );
     }
-    
+
     private MtsValue doRemove( int i )
     {
         MtsValue old = _entries[i];
-        
+
         System.arraycopy( _entries, i + 1, _entries, i, _limit - i - 1 );
-        
+
         --_limit;
         return old;
     }
-    
+
     /**
      * Removes the last entry in this list.
      */
@@ -253,11 +267,11 @@ import java.util.*;
     {
         if ( _limit == 0 )
             return NIL;
-        
+
         _limit--;
         return _entries[_limit];
     }
-    
+
     /*
      * Removes every entry from this list.
      */
@@ -265,10 +279,10 @@ import java.util.*;
     {
         _limit = 0;
     }
-    
+
     // ========================================
     // Retrieval
-    
+
     /**
      * <b>NOTE:</b> Indices are 1 based.
      */
@@ -276,42 +290,42 @@ import java.util.*;
     {
         return get( key.asJavaInt() - 1 );
     }
-    
+
     public MtsValue get( int i )
     {
         if ( ( i < 0 ) || ( _limit <= i ) )
             throw new ArrayIndexOutOfBoundsException( i );
-        
+
         return _entries[i];
     }
-    
+
     public String concat( String sep, int from, int to )
     {
         if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
             return "";
-        
+
         StringBuilder s = new StringBuilder( _entries[from].toMtsString().asJavaString() );
         for ( int i = from + 1; i <= to; i++ )
         {
             s.append( sep ).append( _entries[i].toMtsString().asJavaString() );
         }
-        
+
         return s.toString();
     }
-    
+
     public String concat( String sep, int from )
     {
         return concat( sep, from, _limit );
     }
-    
+
     public String concat( String sep )
     {
         return concat( sep, 0, _limit );
     }
-    
+
     // ========================================
     // Transfer operations
-    
+
     /* package */void collectFrom( TableHashPart hashPart )
     {
         MtsValue value;
@@ -322,7 +336,7 @@ import java.util.*;
             add( value );
         }
     }
-    
+
     /* package */void transferOrphansTo( TableHashPart hashPart )
     {
         MtsValue[] t = _entries;
@@ -335,52 +349,52 @@ import java.util.*;
             hashPart.set( valueOf( ++i ), value );
         }
     }
-    
+
     // ========================================
-    
+
     @Override
     public Iterator<MtsValue> iterator()
     {
         return new ListIterator( this );
     }
-    
+
     // ========================================
-    
+
     @Override
     public String toString()
     {
         return Arrays.toString( _entries );
     }
-    
+
     // ========================================
-    
+
     private static class ListIterator implements Iterator<MtsValue>
     {
         private final TableListPart _listPart;
         private int _next;
-        
+
         public ListIterator( TableListPart listPart )
         {
             _listPart = listPart;
             _next = 0;
         }
-        
+
         @Override
         public boolean hasNext()
         {
             return _next < _listPart.length();
         }
-        
+
         @Override
         public MtsValue next()
         {
             if ( !hasNext() )
                 throw new NoSuchElementException();
-            
+
             MtsValue result = _listPart.get( _next++ );
             return result;
         }
-        
+
         @Override
         public void remove()
         {

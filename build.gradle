@@ -32,9 +32,12 @@ dependencies {
     testCompile 'junit:junit:4.+'
 }
 
-jar {}
+jar {
+    from 'LICENSE'
+}
 
 shadowJar {
+    from 'LICENSE'
     exclude 'META-INF', 'META-INF/**'
 
     appendManifest {

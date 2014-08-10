@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
@@ -5,12 +21,11 @@ import static net.mobtalker.mobtalkerscript.v2.instruction.Instructions.*;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.Queue;
 
 import net.mobtalker.mobtalkerscript.util.Stack;
 import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.instruction.*;
-import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
 
 import com.google.common.collect.*;
 
@@ -177,7 +192,7 @@ public class FunctionState
     {
         checkState( !_loops.isEmpty(), "There is no loop to break!" );
         checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                    "Last added instruction is not a jump instruction!" );
+                "Last added instruction is not a jump instruction!" );
         
         LoopState loop = _loops.peek();
         MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.getLast();
@@ -189,7 +204,7 @@ public class FunctionState
     {
         checkState( !_loops.isEmpty(), "There is no loop to exit!" );
         checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                    "Last added instruction is not a jump instruction!" );
+                "Last added instruction is not a jump instruction!" );
         
         LoopState loop = _loops.pop();
         MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.getLast();
@@ -208,9 +223,9 @@ public class FunctionState
         
         assert ( stepIndex == ( limitIndex + 1 ) ) && ( limitIndex == ( loopIndex + 1 ) )
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                              loopIndex,
-                              limitIndex,
-                              stepIndex );
+                                loopIndex,
+                                limitIndex,
+                                stepIndex );
         
         addInstruction( InstrNForPrep( loopIndex ) );
         
@@ -227,9 +242,9 @@ public class FunctionState
         
         assert ( indexIndex == ( stateIndex + 1 ) ) && ( stateIndex == ( iterIndex + 1 ) )
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                              iterIndex,
-                              stateIndex,
-                              indexIndex );
+                                iterIndex,
+                                stateIndex,
+                                indexIndex );
         
         for ( int i = 0; i < loopVars.length; i++ )
         {
@@ -237,7 +252,7 @@ public class FunctionState
             int varIndex = declareLocal( loopVar ).getIndex();
             
             assert ( varIndex - i - 1 ) == indexIndex
-            /*   */: "Loop variable indices are not consecutive!";
+                    /*   */: "Loop variable indices are not consecutive!";
         }
         
         addInstruction( InstrStoreL( indexIndex ) );
@@ -316,7 +331,7 @@ public class FunctionState
     public void markPendingJump()
     {
         checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                    "Last added instruction is not a jump instruction!" );
+                "Last added instruction is not a jump instruction!" );
         
         MtsJumpInstruction jump = (MtsJumpInstruction) _instructions.getLast();
         _pendingJumps.add( new PendingJump( jump, currentIndex() ) );
@@ -391,9 +406,9 @@ public class FunctionState
     }
     
 //    protected int getLocalIndexSilent( String name )
-//    {
-//        return _block.getLocal( name ).getIndex();
-//    }
+    //    {
+    //        return _block.getLocal( name ).getIndex();
+    //    }
     
     // ========================================
     

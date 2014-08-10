@@ -1,16 +1,28 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.v2.value;
 
 import static com.google.common.base.Preconditions.*;
-import static net.mobtalker.mobtalkerscript.util.MtsCheck.*;
+import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 
 /**
- * A table is at its core an associative array. Values are stored and retrieved by keys, that are either {@link MtsNumber
- * numbers} or {@link MtsString strings}.
- * <p>
- * Keys are always ordered, numbers naturally and before strings, also naturally.
- * 
- * @author Chimaine
- * 
+ * An associative array used to store values.
+ *
+ * It uses two storage formats; a list for storing consecutive indices and a hash map for any other value.
  */
 public class MtsTable extends MtsMetaTableValue
 {
@@ -232,7 +244,7 @@ public class MtsTable extends MtsMetaTableValue
      * If there is no meta tag, call {@link #rawget(MtsValue) getRaw}.<br/>
      * If the tag is a table, repeat the operation on it.<br/>
      * Otherwise attempt to call it with <code>this</code> and <code>key</code> as the arguments.
-     * 
+     *
      * @see #rawget(MtsValue)
      * @see MtsValue#__INDEX
      */
@@ -269,7 +281,7 @@ public class MtsTable extends MtsMetaTableValue
      * If there is no meta tag, call {@link #rawset(MtsValue, MtsValue) setRaw}.<br/>
      * If the tag is a table, repeat the operation on it.<br/>
      * Otherwise attempt to call it with <code>this</code>, <code>key</code> and <code>value</code> as the arguments.
-     * 
+     *
      * @see #rawset(MtsValue, MtsValue)
      * @see MtsValue#METATAG_NEWINDEX
      */

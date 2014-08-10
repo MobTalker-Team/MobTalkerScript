@@ -14,21 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.mobtalker.mobtalkerscript.v2.instruction;
+package net.mobtalker.mobtalkerscript.v2;
 
-import net.mobtalker.mobtalkerscript.v2.value.MtsNumber;
-
-public class InstrSub extends MtsArithmeticInstruction
+public abstract class Reference
 {
-    @Override
-    protected MtsNumber calculate( MtsNumber a, MtsNumber b )
+    public static abstract class FunctionNames
     {
-        return a.sub( b );
-    }
-    
-    @Override
-    public String toString()
-    {
-        return "SUB";
+        public static final String COMMAND_SAY = "ShowText";
+        public static final String COMMAND_MENU = "ShowMenu";
+        public static final String COMMAND_SHOW = "ShowSprite";
+        public static final String COMMAND_SCENE = "ShowScene";
+        public static final String COMMAND_HIDE = "HideTexture";
     }
 }

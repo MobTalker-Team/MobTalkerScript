@@ -287,7 +287,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     private static boolean isMethodBody( FuncBodyContext ctx )
     {
         return ( ctx.getParent() instanceof FuncDeclrStmtContext )
-                && ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null );
+               && ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null );
     }
     
     private static List<String> getParameterNames( FuncBodyContext ctx )
@@ -470,9 +470,9 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     private static boolean isTailcall( CallArgsContext ctx )
     {
         return ( ctx.getParent() instanceof CallContext )
-                && ( ctx.getParent().getParent() instanceof CallExprContext )
-                && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
-                && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
+               && ( ctx.getParent().getParent() instanceof CallExprContext )
+               && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
+               && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
     }
     
     @Override
@@ -484,6 +484,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         }
         
         ctx.Args.get( ctx.Args.size() - 1 ).nReturn = ctx.nReturn;
+        
         return visitChildren( ctx );
     }
     

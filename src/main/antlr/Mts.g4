@@ -280,7 +280,8 @@ varAccess
     : varOrExpr fieldAccess*
     ;
     
-call returns [int nReturn = 1]
+call returns [int nReturn]
+    @init { $nReturn = 1; }
     : varOrExpr Args+=callArgs[1]+
     ;
 

@@ -57,8 +57,14 @@ shadowJar {
     classifier = 'standalone'
 }
 
+task sourceJar( type: Jar ) {
+    from sourceSets.main.allSource
+    classifier = 'src'
+}
+
 artifacts {
-    archives shadowJar
+    archives shadowJar 
+    archives sourceJar
 }
 
 task generateAntlr( type: JavaExec ) {

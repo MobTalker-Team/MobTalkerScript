@@ -50,7 +50,7 @@ shadowJar {
     from 'LICENSE'
     exclude 'META-INF', 'META-INF/**'
 
-    appendManifest {
+    manifest {
         attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript'
     }
     

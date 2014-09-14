@@ -16,10 +16,13 @@
  */
 package net.mobtalker.mobtalkerscript.v2.lib.console;
 
+import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ConsoleCommandLib
 {
@@ -33,100 +36,24 @@ public class ConsoleCommandLib
     // ========================================
     
     @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SAY )
-    public void ShowText( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+    public void ShowText( MtsValue argTalker, MtsValue argText, MtsValue argIsLast )
     {
         StringBuilder s = new StringBuilder();
         
-        if ( !arg1.isNil() )
+        if ( !argTalker.isNil() )
         {
-            String name = arg1.asString().asJavaString();
+            String talker = argTalker.asString().asJavaString();
             
-            s.append( '[' ).append( name ).append( "] " );
-        }
-        
-        s.append( arg2.asString() );
-        
-        if ( !arg3.asBoolean().toJavaValue() )
-            s.append( " \u25BA" );
-        else
-            s.append( " \u25A0" );
-        
-        _G.out.println( s.toString() );
-    }
-    
-    // ========================================
-    
-    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SHOW )
-    public void ShowSprite( MtsVarArgs args )
-    {
-        MtsValue characterArg = args.get( 0 );
-        MtsValue pathArg = args.get( 1 );
-        MtsValue positionArg = args.get( 2 );
-        MtsValue offsetXArg = args.get( 3 );
-        MtsValue offsetYArg = args.get( 4 );
-        //        MtsValue effectArg = args.get( 5 );
-        
-        // Character
-        StringBuilder pathBuilder = new StringBuilder();
-        if ( characterArg.isTable() )
-        {
-            String basePath = characterArg.get( "SpritePath" ).toMtsString().asJavaString();
-            pathBuilder.append( basePath );
-        }
-        else
-        {
-            String basePath = characterArg.asString().asJavaString();
-            pathBuilder.append( basePath );
-        }
-        
-        // Path
-        if ( pathArg.isTable() )
-        {
-            for ( MtsValue pathPart : pathArg.asTable().listView() )
+            if ( !StringUtils.isWhitespace( talker ) )
             {
-                pathBuilder.append( "/" ).append( pathPart.toMtsString().asJavaString() );
+                s.append( '[' ).append( talker ).append( "] " );
             }
         }
-        else
-        {
-            pathBuilder.append( "/" ).append( pathArg.toMtsString() );
-        }
         
-        String path = pathBuilder.toString();
+        s.append( checkString( argText ) );
+        s.append( isTrue( argIsLast ) ? " \u25A0" : " \u25BA" );
         
-        if ( !path.endsWith( ".png" ) )
-        {
-            path += ".png";
-        }
-        
-        // Position
-        String position;
-        if ( positionArg.isNil() )
-        {
-            position = "center";
-        }
-        else
-        {
-            position = positionArg.toMtsString().asJavaString();
-        }
-        
-        // Offset
-        int offsetX = offsetXArg.asNumber().asJavaInt();
-        int offsetY = offsetYArg.asNumber().asJavaInt();
-        
-        // Effect
-        String effect = "none";
-        
-        _G.out.println( "Displaying sprite '"
-                + path
-                + "' at "
-                + position
-                + "["
-                + offsetX
-                + ","
-                + offsetY
-                + "] with effect '"
-                + effect + "'." );
+        _G.out.println( s.toString() );
     }
     
     // ========================================
@@ -134,23 +61,16 @@ public class ConsoleCommandLib
     @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_MENU )
     public MtsValue ShowMenu( MtsVarArgs args )
     {
-        if ( !args.get( 0 ).isNil() )
-        {
-            String caption = args.get( 0 ).asString().asJavaString();
-            _G.out.println( caption );
-        }
-        else
-        {
-            _G.out.println( "Make your choice" );
-        }
+        String caption = checkString( args, 0, "Make your choice" );
         
         int nOptions = args.count() - 1;
         if ( nOptions < 1 )
             throw new ScriptRuntimeException( "Must have at least 1 option!" );
-        
+
+        _G.out.println( caption );
         for ( int i = 1; i <= nOptions; i++ )
         {
-            _G.out.println( "  " + i + ": " + args.get( i ).asString().asJavaString() );
+            _G.out.println( "  " + i + ": " + checkString( args, i ) );
         }
         
         for ( ;; )
@@ -168,5 +88,40 @@ public class ConsoleCommandLib
                 _G.out.println( ex.getMessage() );
             }
         }
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SHOW )
+    public void ShowSprite( MtsVarArgs args )
+    {
+        String group = checkString( args, 0 );
+        String subPath = checkString( args, 1 );
+        String position = checkString( args, 2, "bottom" );
+        int offsetX = checkInteger( args, 3, 0 );
+        int offsetY = checkInteger( args, 4, 0 );
+        String effect = "none";
+        
+        _G.out.println( "Displaying sprite '" + group + "/" + subPath + "' at " + position
+                        + "[" + offsetX + "," + offsetY + "] with effect '" + effect + "'." );
+    }
+
+    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SCENE )
+    public void showScene( MtsValue argPath, MtsValue argMode )
+    {
+        String path = checkString( argPath );
+        String mode = checkString( argMode, 1, "fill" );
+        
+        _G.out.println( "Displaying scene '" + path + "' as '" + mode + "'." );
+    }
+
+    // ========================================
+
+    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_HIDE )
+    public void hideTexture( MtsValue arg1 )
+    {
+        String group = checkString( arg1, 0 );
+
+        _G.out.println( "Hiding texture '" + group + "'." );
     }
 }

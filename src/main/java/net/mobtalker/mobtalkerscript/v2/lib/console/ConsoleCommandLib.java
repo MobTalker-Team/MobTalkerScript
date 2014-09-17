@@ -18,11 +18,16 @@ package net.mobtalker.mobtalkerscript.v2.lib.console;
 
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+
+import java.util.List;
+
 import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.Lists;
 
 public class ConsoleCommandLib
 {
@@ -36,7 +41,7 @@ public class ConsoleCommandLib
     // ========================================
     
     @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SAY )
-    public void ShowText( MtsValue argTalker, MtsValue argText, MtsValue argIsLast )
+    public void showText( MtsValue argTalker, MtsValue argText, MtsValue argIsLast )
     {
         StringBuilder s = new StringBuilder();
         
@@ -59,18 +64,47 @@ public class ConsoleCommandLib
     // ========================================
     
     @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_MENU )
-    public MtsValue ShowMenu( MtsVarArgs args )
+    public MtsValue showMenu( MtsVarArgs args )
     {
-        String caption = checkString( args, 0, "Make your choice" );
+        String caption = checkString( args, 0, "" );
         
-        int nOptions = args.count() - 1;
-        if ( nOptions < 1 )
-            throw new ScriptRuntimeException( "Must have at least 1 option!" );
-
-        _G.out.println( caption );
-        for ( int i = 1; i <= nOptions; i++ )
+        MtsValue arg1 = args.get( 1 );
+        return arg1.isTable()
+                ? showMenu( caption, arg1.asTable() )
+                : showMenu( caption, args.subArgs( 1 ) );
+    }
+    
+    private MtsValue showMenu( String caption, MtsVarArgs argOptions )
+    {
+        List<String> options = Lists.newArrayListWithCapacity( argOptions.count() );
+        for ( int i = 0; i < argOptions.count(); i++ )
         {
-            _G.out.println( "  " + i + ": " + checkString( args, i ) );
+            options.add( checkString( argOptions, i ) );
+        }
+        
+        int choice = getChoice( caption, options );
+        return valueOf( choice );
+    }
+    
+    private MtsValue showMenu( String caption, MtsTable argOptions )
+    {
+        List<String> options = Lists.newArrayListWithCapacity( argOptions.count() );
+        for ( MtsValue arg : argOptions.listView() )
+        {
+            options.add( checkString( arg ) );
+        }
+        
+        int choice = getChoice( caption, options );
+        return argOptions.get( valueOf( choice ) );
+    }
+    
+    private int getChoice( String caption, List<String> options )
+    {
+        _G.out.println( caption );
+        int nOptions = options.size();
+        for ( int i = 0; i < nOptions; i++ )
+        {
+            _G.out.println( "  " + ( i + 1 ) + ": " + options.get( i ) );
         }
         
         for ( ;; )
@@ -79,9 +113,9 @@ public class ConsoleCommandLib
             try
             {
                 String input = _G.in.readLine();
-                int choice = Integer.parseInt( input ) - 1;
-                if ( ( 0 <= choice ) && ( choice < nOptions ) )
-                    return valueOf( choice );
+                int choice = Integer.parseInt( input );
+                if ( ( 0 < choice ) && ( choice <= nOptions ) )
+                    return choice;
             }
             catch ( Exception ex )
             {
@@ -93,7 +127,7 @@ public class ConsoleCommandLib
     // ========================================
     
     @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SHOW )
-    public void ShowSprite( MtsVarArgs args )
+    public void showSprite( MtsVarArgs args )
     {
         String group = checkString( args, 0 );
         String subPath = checkString( args, 1 );
@@ -105,7 +139,7 @@ public class ConsoleCommandLib
         _G.out.println( "Displaying sprite '" + group + "/" + subPath + "' at " + position
                         + "[" + offsetX + "," + offsetY + "] with effect '" + effect + "'." );
     }
-
+    
     @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SCENE )
     public void showScene( MtsValue argPath, MtsValue argMode )
     {
@@ -114,14 +148,14 @@ public class ConsoleCommandLib
         
         _G.out.println( "Displaying scene '" + path + "' as '" + mode + "'." );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_HIDE )
     public void hideTexture( MtsValue arg1 )
     {
         String group = checkString( arg1, 0 );
-
+        
         _G.out.println( "Hiding texture '" + group + "'." );
     }
 }

@@ -268,7 +268,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             }
             
             _c.loadLocal( choiceIndex );
-            _c.loadConstant( valueOf( i ) );
+            _c.loadConstant( valueOf( i + 1 ) );
             _c.logicOperation( "==" );
             _c.endIfCondition();
             visit( ctx.Options.get( i ).Block );

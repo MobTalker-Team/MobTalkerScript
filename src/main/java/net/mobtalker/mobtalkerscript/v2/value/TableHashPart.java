@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,28 +30,28 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
     private static final float LOAD_FACTOR = 0.75f;
-
+    
     // ========================================
-
+    
     private HashEntry[] _entries;
     private int _threshold;
     private int _count;
-
+    
     // ========================================
-
+    
     public TableHashPart( int initialCapacity )
     {
         int capacity = 1;
         while ( capacity < initialCapacity )
             capacity <<= 1;
-
+        
         _entries = new HashEntry[capacity];
         _threshold = (int) ( capacity * LOAD_FACTOR );
         _count = 0;
     }
-
+    
     // ========================================
-
+    
     /**
      * Applies a supplemental hash function to a given hashCode, which
      * defends against poor quality hash functions. This is critical
@@ -66,7 +66,7 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
         // number of collisions (approximately 8 at default load factor).
         return h ^ ( h >>> 20 ) ^ ( h >>> 12 ) ^ ( h >>> 7 ) ^ ( h >>> 4 );
     }
-
+    
     /**
      * Returns 0 for <code>null</code> or {@link MtsNil nil} values.
      */
@@ -74,7 +74,7 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
     {
         return ( ( o == null ) || o.isNil() ) ? 0 : hash( o.hashCode() );
     }
-
+    
     /**
      * Returns index for hash code h.
      */
@@ -82,7 +82,7 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
     {
         return h & ( length - 1 );
     }
-
+    
     /**
      * Rehashes the contents of this table into a new array with a
      * larger capacity. This method is called automatically when the
@@ -106,13 +106,13 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
             _threshold = Integer.MAX_VALUE;
             return;
         }
-
+        
         HashEntry[] newTable = new HashEntry[newCapacity];
         transferEntries( newTable );
         _entries = newTable;
         _threshold = (int) ( newCapacity * LOAD_FACTOR );
     }
-
+    
     /*
      * Expand the table if the number of mappings to be added
      * is greater than or equal to threshold. This is conservative; the
@@ -142,14 +142,14 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
             }
         }
     }
-
+    
     /**
      * Transfers all entries from current table to newTable (rehash the table).
      */
     private void transferEntries( HashEntry[] newTable )
     {
         int newCapacity = newTable.length;
-
+        
         HashEntry[] t = _entries;
         for ( int j = 0; j < t.length; j++ )
         {
@@ -169,7 +169,7 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
             }
         }
     }
-
+    
     /**
      * Contains-and-Remove
      * <p>
@@ -180,32 +180,32 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
     {
         int hash = getHashFor( key );
         int i = indexFor( hash, _entries.length );
-
+        
         HashEntry prev = _entries[i];
         HashEntry e = prev;
-
+        
         while ( e != null )
         {
             HashEntry next = e.next;
             if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
             {
                 _count--;
-
+                
                 if ( prev == e )
                     _entries[i] = next;
                 else
                     prev.next = next;
-
+                
                 return e.value;
             }
-
+            
             prev = e;
             e = next;
         }
-
+        
         return NIL;
     }
-
+    
     /**
      * Returns the value associated with the specified key in the
      * table. Returns {@link #NIL} if the table contains no mapping
@@ -214,41 +214,41 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
     public MtsValue get( MtsValue key )
     {
         int hash = getHashFor( key );
-
+        
         for ( HashEntry e = _entries[indexFor( hash, _entries.length )]; e != null; e = e.next )
         {
             if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
                 return e.value;
         }
-
+        
         return NIL;
     }
-
+    
     private void add( MtsValue key, int hash, int i, MtsValue value )
     {
         HashEntry e = _entries[i];
         _entries[i] = new HashEntry( key, hash, value, e );
         _count++;
-
+        
         if ( _count >= _threshold )
         {
             resize( 2 * _entries.length );
         }
     }
-
+    
     public MtsValue set( MtsValue key, MtsValue value )
     {
         assert key != null : "key was null";
-
+        
         if ( key.isNil() )
             throw new ScriptRuntimeException( "table index is nil" );
-
+        
         if ( value.isNil() )
             return remove( key );
-
+        
         int hash = getHashFor( key );
         int i = indexFor( hash, _entries.length );
-
+        
         for ( HashEntry entry = _entries[i]; entry != null; entry = entry.next )
         {
             if ( ( entry.hash == hash ) && Objects.equals( key, entry.key ) )
@@ -258,16 +258,16 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
                 return oldValue;
             }
         }
-
+        
         add( key, hash, i, value );
         return NIL;
     }
-
+    
     public Entry getFirst()
     {
         if ( _count == 0 )
             return null;
-
+        
         Entry e = null;
         HashEntry[] t = _entries;
         for ( int i = 0; i < t.length; i++ )
@@ -276,10 +276,10 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
             if ( e != null )
                 return e;
         }
-
+        
         return e;
     }
-
+    
     /**
      * Returns the entry that follows (in arbitrary order) the entry associated with the given key.
      * <p>
@@ -292,30 +292,30 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
     {
         if ( key.isNil() )
             return getFirst();
-
+        
         HashEntry next = null;
         int hash = getHashFor( key );
         HashEntry[] t = _entries;
-
+        
         int i = indexFor( hash, t.length );
         for ( next = t[i]; next != null; next = next.next )
         {
             if ( ( next.hash == hash ) && Objects.equals( key, next.key ) )
                 break;
         }
-
+        
         if ( next == null )
             throw new ScriptRuntimeException( "invalid key" );
-
+        
         next = next.next;
         if ( next == null )
         {
             for ( i++; ( i < t.length ) && ( next == null ); next = t[i++] );
         }
-
+        
         return next;
     }
-
+    
     public void clear()
     {
         HashEntry[] t = _entries;
@@ -323,26 +323,26 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
         {
             t[i] = null;
         }
-
+        
         _count = 0;
     }
-
+    
     // ========================================
-
+    
     public int count()
     {
         return _count;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         Iterator<Entry> iterator = iterator();
         if ( !iterator.hasNext() )
             return "[]";
-
+        
         StringBuilder s = new StringBuilder();
         s.append( "[" ).append( iterator.next() );
         while ( iterator.hasNext() )
@@ -350,12 +350,12 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
             s.append( ", " ).append( iterator.next() );
         }
         s.append( "]" );
-
+        
         return s.toString();
     }
-
+    
     // ========================================
-
+    
     /**
      * Each entry is a Key-Value mapping as well as a bucket.
      * Values with the same hash are appended to each other in single-linked list style.
@@ -366,12 +366,12 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
          * Hash of the key when this entry was created.
          */
         final int hash;
-
+        
         /**
          * The next entry in the bucket list or <code>null</code> if this entry is not a bucket.
          */
         HashEntry next;
-
+        
         HashEntry( MtsValue k, int h, MtsValue v, HashEntry n )
         {
             super( k, v );
@@ -379,46 +379,46 @@ import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
             next = n;
         }
     }
-
+    
     // ========================================
-
+    
     @Override
     public Iterator<Entry> iterator()
     {
         return new HashIterator( this );
     }
-
+    
     // ========================================
-
+    
     private static class HashIterator implements Iterator<Entry>
     {
         private final TableHashPart _hashPart;
         private Entry _next;
-
+        
         public HashIterator( TableHashPart hashPart )
         {
             _hashPart = hashPart;
             _next = _hashPart.getFirst();
         }
-
+        
         @Override
         public boolean hasNext()
         {
             return _next != null;
         }
-
+        
         @Override
         public Entry next()
         {
             if ( _next == null )
                 throw new NoSuchElementException();
-
+            
             Entry entry = _next;
             _next = _hashPart.getNext( entry.getKey() );
-
+            
             return entry;
         }
-
+        
         @Override
         public void remove()
         {

@@ -52,6 +52,19 @@ public class MtsTable extends MtsMetaTableValue
         return _listPart.length() + _hashPart.count();
     }
     
+    /**
+     * Returns the number of consecutive elements starting from index 1.
+     */
+    public int listSize()
+    {
+        return _listPart.length();
+    }
+    
+    public int tableSize()
+    {
+        return _hashPart.count();
+    }
+    
     public boolean isEmpty()
     {
         return count() == 0;
@@ -131,14 +144,6 @@ public class MtsTable extends MtsMetaTableValue
     // List Operations
     
     /**
-     * Returns the number of consecutive elements starting from index 1.
-     */
-    public int listSize()
-    {
-        return _listPart.length();
-    }
-    
-    /**
      * Adds a value to the end of the sequence of this table.
      */
     public void add( MtsValue value )
@@ -204,6 +209,8 @@ public class MtsTable extends MtsMetaTableValue
     {
         return _listPart.removeLast();
     }
+    
+    // ========================================
     
     public void clear()
     {

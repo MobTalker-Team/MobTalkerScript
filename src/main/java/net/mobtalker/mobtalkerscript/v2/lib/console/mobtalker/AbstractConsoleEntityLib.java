@@ -17,13 +17,13 @@
 package net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker;
 
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
-import net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker.MobTalkerEntityLib.DummyEntity;
+import net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker.AbstractConsoleEntityLib.DummyEntity;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
-public abstract class MobTalkerEntityLib<T extends DummyEntity>
+public abstract class AbstractConsoleEntityLib<T extends DummyEntity>
 {
-    protected MobTalkerEntityLib()
+    protected AbstractConsoleEntityLib()
     {}
     
     // ========================================

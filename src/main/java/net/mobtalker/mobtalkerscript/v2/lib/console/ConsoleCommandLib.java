@@ -40,7 +40,7 @@ public class ConsoleCommandLib
     
     // ========================================
     
-    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SAY )
+    @MtsNativeFunction( value = Reference.FunctionNames.COMMAND_SAY )
     public void showText( MtsValue argTalker, MtsValue argText, MtsValue argIsLast )
     {
         StringBuilder s = new StringBuilder();
@@ -63,7 +63,7 @@ public class ConsoleCommandLib
     
     // ========================================
     
-    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_MENU )
+    @MtsNativeFunction( value = Reference.FunctionNames.COMMAND_MENU )
     public MtsValue showMenu( MtsVarArgs args )
     {
         String caption = checkString( args, 0, "" );
@@ -126,7 +126,7 @@ public class ConsoleCommandLib
     
     // ========================================
     
-    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SHOW )
+    @MtsNativeFunction( value = Reference.FunctionNames.COMMAND_SHOW )
     public void showSprite( MtsVarArgs args )
     {
         String group = checkString( args, 0 );
@@ -140,7 +140,7 @@ public class ConsoleCommandLib
                         + "[" + offsetX + "," + offsetY + "] with effect '" + effect + "'." );
     }
     
-    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_SCENE )
+    @MtsNativeFunction( value = Reference.FunctionNames.COMMAND_SCENE )
     public void showScene( MtsValue argPath, MtsValue argMode )
     {
         String path = checkString( argPath );
@@ -151,7 +151,7 @@ public class ConsoleCommandLib
     
     // ========================================
     
-    @MtsNativeFunction( name = Reference.FunctionNames.COMMAND_HIDE )
+    @MtsNativeFunction( value = Reference.FunctionNames.COMMAND_HIDE )
     public void hideTexture( MtsValue arg1 )
     {
         String group = checkString( arg1, 0 );

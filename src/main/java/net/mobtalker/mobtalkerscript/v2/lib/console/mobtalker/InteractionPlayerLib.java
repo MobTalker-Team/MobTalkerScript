@@ -25,7 +25,7 @@ import net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker.InteractionPlayerL
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
-public class InteractionPlayerLib extends MobTalkerEntityLib<DummyPlayer>
+public class InteractionPlayerLib extends AbstractConsoleEntityLib<DummyPlayer>
 {
     private final DummyPlayer _player;
     
@@ -147,7 +147,7 @@ public class InteractionPlayerLib extends MobTalkerEntityLib<DummyPlayer>
     
     // ========================================
     
-    public static class DummyPlayer extends MobTalkerEntityLib.DummyEntity
+    public static class DummyPlayer extends AbstractConsoleEntityLib.DummyEntity
     {
         private String _gameMode;
         

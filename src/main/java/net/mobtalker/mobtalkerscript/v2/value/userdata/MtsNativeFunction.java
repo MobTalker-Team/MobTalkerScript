@@ -20,7 +20,8 @@ import java.lang.annotation.*;
 
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.METHOD )
+@Inherited
 public @interface MtsNativeFunction
 {
-    String name() default "";
+    String value() default "";
 }

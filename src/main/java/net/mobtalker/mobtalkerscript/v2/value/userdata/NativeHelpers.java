@@ -24,34 +24,36 @@ import net.mobtalker.mobtalkerscript.v2.value.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /* package */class NativeHelpers
 {
-    public static List<Method> getAnnotatedMethods( Class<?> c )
+    public static List<AnnotatedMethod> getAnnotatedMethods( Class<?> c )
     {
-        List<Method> result = new ArrayList<Method>();
+        List<AnnotatedMethod> results = Lists.newArrayList();
         for ( Method m : c.getMethods() )
         {
-            if ( checkMethodSignature( m ) )
+            AnnotatedMethod am = getAnnotatedMethod( m );
+            if ( am != null )
             {
-                result.add( m );
+                results.add( am );
             }
         }
         
-        return result;
+        return results;
     }
     
-    public static boolean checkMethodSignature( Method m )
+    public static AnnotatedMethod getAnnotatedMethod( Method m )
     {
         if ( !Modifier.isPublic( m.getModifiers() ) )
         {
-            //            System.out.println( "Skipping non-public method " + m.getName() );
-            return false;
+            System.out.println( "Skipping non-public method " + m.getName() );
+            return null;
         }
-        if ( !m.isAnnotationPresent( MtsNativeFunction.class ) )
+        if ( m.getDeclaringClass().equals( Object.class ) )
         {
-            //            System.out.println( "Skipping non-annotated method " + m.getName() );
-            return false;
+            System.out.println( "Skipping Object method " + m.getName() );
+            return null;
         }
         
         Class<?>[] paramTypes = m.getParameterTypes();
@@ -59,25 +61,54 @@ import com.google.common.base.Strings;
         {
             if ( !isMtsValueClass( paramType ) )
             {
-                //                System.out.println( "Skipping method "
-                //                                    + m.getName()
-                //                                    + " with wrong parameter type "
-                //                                    + paramType.getSimpleName() );
-                return false;
+                System.out.println( "Skipping method "
+                                    + m.getName()
+                                    + " with wrong parameter type "
+                                    + paramType.getSimpleName() );
+                return null;
             }
         }
         
         Class<?> returnType = m.getReturnType();
         if ( !isMtsValueClass( returnType ) && ( returnType != Void.TYPE ) )
         {
-            //            System.out.println( "Skipping method "
-            //                                + m.getName()
-            //                                + " with wrong return type "
-            //                                + returnType.getSimpleName() );
-            return false;
+            System.out.println( "Skipping method "
+                                + m.getName()
+                                + " with wrong return type "
+                                + returnType.getSimpleName() );
+            return null;
         }
         
-        return true;
+        MtsNativeFunction a = m.getAnnotation( MtsNativeFunction.class );
+        if ( a == null )
+        {
+            a = searchInterfaces( m, m.getDeclaringClass().getInterfaces() );
+        }
+        if ( a == null )
+        {
+            System.out.println( "Skipping non-annotated method " + m.getName() );
+            return null;
+        }
+        
+        return new AnnotatedMethod( m, getMethodName( m, a ) );
+    }
+    
+    private static MtsNativeFunction searchInterfaces( Method m, Class<?>[] ifaces )
+    {
+        for ( Class<?> iface : ifaces )
+        {
+            try
+            {
+                Method mIface = iface.getDeclaredMethod( m.getName(), m.getParameterTypes() );
+                MtsNativeFunction annotation = mIface.getAnnotation( MtsNativeFunction.class );
+                if ( annotation != null )
+                    return annotation;
+            }
+            catch ( NoSuchMethodException | SecurityException ex )
+            {}
+        }
+        
+        return null;
     }
     
     public static List<Field> getAnnotatedFields( Class<?> c )
@@ -86,9 +117,9 @@ import com.google.common.base.Strings;
         for ( Field f : c.getFields() )
         {
             if ( Modifier.isPublic( f.getModifiers() )
-                    && Modifier.isFinal( f.getModifiers() )
-                    && isMtsValueClass( f.getType() )
-                    && f.isAnnotationPresent( MtsNativeField.class ) )
+                 && Modifier.isFinal( f.getModifiers() )
+                 && isMtsValueClass( f.getType() )
+                 && f.isAnnotationPresent( MtsNativeField.class ) )
             {
                 result.add( f );
             }
@@ -100,28 +131,36 @@ import com.google.common.base.Strings;
     public static String getClassName( Class<?> c )
     {
         MtsNativeFunction a = ( (AnnotatedElement) c ).getAnnotation( MtsNativeFunction.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.name() ) )
+        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
             return c.getSimpleName().toLowerCase();
         
-        return a.name();
+        return a.value();
+    }
+    
+    public static String getMethodName( Method m, MtsNativeFunction a )
+    {
+        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+            return StringUtils.capitalize( m.getName() );
+        
+        return a.value();
     }
     
     public static String getMethodName( Method m )
     {
         MtsNativeFunction a = m.getAnnotation( MtsNativeFunction.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.name() ) )
+        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
             return StringUtils.capitalize( m.getName() );
         
-        return a.name();
+        return a.value();
     }
     
     public static String getFieldName( Field f )
     {
         MtsNativeField a = f.getAnnotation( MtsNativeField.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.name() ) )
+        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
             return StringUtils.capitalize( f.getName() );
         
-        return a.name();
+        return a.value();
     }
     
     public static int getParamCount( Method m )

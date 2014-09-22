@@ -17,11 +17,11 @@
 package net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker;
 
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker.MobTalkerEntityLib.DummyEntity;
+import net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker.AbstractConsoleEntityLib.DummyEntity;
 import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
-public class InteractionEntityLib extends MobTalkerEntityLib<DummyEntity>
+public class InteractionEntityLib extends AbstractConsoleEntityLib<DummyEntity>
 {
     private final DummyEntity _entity;
     

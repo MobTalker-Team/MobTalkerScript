@@ -47,10 +47,7 @@ public class MtsPackageLib
         _G = g;
         _loadedPackages = new MtsTable( 0, 1 );
         _basePath = basePath;
-        _searchPaths = Lists.newArrayList( "/?.mts",
-                                           "/?.script",
-                                           "/lib/?.mts",
-                "/lib/?.script" );
+        _searchPaths = Lists.newArrayList( "/?", "/lib/?" );
     }
     
     // ========================================
@@ -75,7 +72,7 @@ public class MtsPackageLib
     
     // ========================================
     
-    @MtsNativeFunction( name = "require" )
+    @MtsNativeFunction( "require" )
     public MtsValue require( MtsValue arg )
     {
         String libName = checkString( arg, 0 );
@@ -89,11 +86,7 @@ public class MtsPackageLib
             pathPattern = _basePath + pathPattern;
             Path path = Paths.get( pathPattern.replace( "?", libName ) );
             
-            _G.out.println( "Searching path '"
-                    + path.toString()
-                    + " for module '"
-                    + libName
-                    + "'" );
+            _G.out.println( "Searching path '" + path.toString() + " for module '" + libName + "'" );
             
             if ( Files.exists( path ) )
             {

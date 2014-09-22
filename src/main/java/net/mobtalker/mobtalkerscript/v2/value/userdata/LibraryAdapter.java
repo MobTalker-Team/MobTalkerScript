@@ -105,7 +105,7 @@ import com.google.common.collect.Maps;
     {
         Set<Entry<String, Method>> methods = _methods.entrySet();
         
-        t.ensureHashCapacity( methods.size() );
+        t.ensureHashCapacity( t.tableSize() + methods.size() );
         
         for ( Entry<String, Method> entry : methods )
         {
@@ -166,9 +166,9 @@ import com.google.common.collect.Maps;
     {
         Map<String, Method> methods = Maps.newHashMap();
         
-        for ( Method m : getAnnotatedMethods( c ) )
+        for ( AnnotatedMethod am : getAnnotatedMethods( c ) )
         {
-            methods.put( getMethodName( m ), m );
+            methods.put( am.getName(), am.getMethod() );
         }
         
         return methods;

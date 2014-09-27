@@ -210,9 +210,9 @@ public class Instructions
     }
     
 //    public static InstrLoadET InstrLoadET( int external, int constant )
-    //    {
-    //        return new InstrLoadET( external, constant );
-    //    }
+    // {
+    // return new InstrLoadET( external, constant );
+    // }
     
     public static InstrLoadNil InstrLoadNil()
     {
@@ -230,9 +230,9 @@ public class Instructions
     }
     
 //    public static InstrStoreET InstrStoreET( int external, int constant )
-    //    {
-    //        return new InstrStoreET( external, constant );
-    //    }
+    // {
+    // return new InstrStoreET( external, constant );
+    // }
     
     // ========================================
     

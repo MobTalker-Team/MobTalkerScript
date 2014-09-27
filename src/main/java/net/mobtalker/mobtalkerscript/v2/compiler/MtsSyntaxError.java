@@ -62,9 +62,9 @@ public class MtsSyntaxError extends RuntimeException
     public String getMessage()
     {
         return new StringBuilder().append( _sourceName )
-                .append( ":" )
-                .append( _sourcePosition.Line )
-                .append( ": " )
-                .append( _msg ).toString();
+                                  .append( ":" )
+                                  .append( _sourcePosition.Line )
+                                  .append( ": " )
+                                  .append( _msg ).toString();
     }
 }

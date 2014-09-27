@@ -237,12 +237,12 @@ public class MtsFunctionPrototype
         
         s.append( "function: " ).append( _name ).append( '\n' );
         s.append( "    source: " )
-        .append( _sourceName )
-        .append( ':' )
-        .append( _sourceLineStart )
-        .append( '-' )
-        .append( _sourceLineEnd )
-        .append( '\n' );
+         .append( _sourceName )
+         .append( ':' )
+         .append( _sourceLineStart )
+         .append( '-' )
+         .append( _sourceLineEnd )
+         .append( '\n' );
         s.append( "    stacksize: " ).append( _maxStackSize );
         
         printLocals( s, "    " + prefix, full );

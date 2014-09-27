@@ -45,7 +45,7 @@ public class InstrSize extends MtsInstruction
     {
         return 0;
     }
-
+    
     // ========================================
     
     @Override

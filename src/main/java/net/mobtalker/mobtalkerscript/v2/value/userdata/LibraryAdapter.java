@@ -97,6 +97,10 @@ import com.google.common.collect.Maps;
         
         _methods = getMethods( mappedClass );
         _fields = getFields( mappedClass );
+        
+        if ( _methods.isEmpty() && _fields.isEmpty() )
+            throw new IllegalArgumentException( "Class '" + mappedClass.getName()
+                                                + "' does not have any annotated methods or fields!" );
     }
     
     // ========================================

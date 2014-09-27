@@ -193,6 +193,18 @@ public class MtsCheck
         return v;
     }
     
+    public static int checkIntegerWithMinimum( MtsValue value, int i, int min, int fallback )
+    {
+        if ( value.isNil() )
+            return fallback;
+        
+        int v = checkInteger( value, i );
+        if ( v < min )
+            throw new BadArgumentException( i, "number must be equal to or greater than %s, was %s", min, value );
+        
+        return v;
+    }
+    
     // ========================================
     
     private MtsCheck()

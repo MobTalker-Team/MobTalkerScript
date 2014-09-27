@@ -31,7 +31,7 @@ public class InstrNeg extends MtsInstruction
     {
         return 0;
     }
-
+    
     // ========================================
     
     @Override

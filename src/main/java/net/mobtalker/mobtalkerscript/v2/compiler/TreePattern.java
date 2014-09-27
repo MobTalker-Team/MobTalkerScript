@@ -46,7 +46,7 @@ public class TreePattern implements ITreePattern
         {
             if ( ( cur == null ) || ( !element.isAssignableFrom( cur.getClass() ) ) )
             {
-                //                printFailureMsg( ctx );
+                // printFailureMsg( ctx );
                 return false;
             }
             

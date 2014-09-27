@@ -48,20 +48,20 @@ public abstract class AbstractConsoleEntityLib<T extends DummyEntity>
     }
     
 //    @MtsNativeFunction
-    //    public void hurt( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
-    //    {
-    //        float amount = (float) checkNumber( arg1, 0 );
-    //        boolean isMagic = MtsValue.isTrue( arg2 );
-    //        boolean bypassArmor = MtsValue.isTrue( arg3 );
+    // public void hurt( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+    // {
+    // float amount = (float) checkNumber( arg1, 0 );
+    // boolean isMagic = MtsValue.isTrue( arg2 );
+    // boolean bypassArmor = MtsValue.isTrue( arg3 );
     //
-    //        if ( amount <= 0.0F )
-    //            throw new BadArgumentException( 0, "damage value must be greater than zero" );
+    // if ( amount <= 0.0F )
+    // throw new BadArgumentException( 0, "damage value must be greater than zero" );
     //
-    //        T player = getEntity();
+    // T player = getEntity();
     //
-    //        DamageSource source = new MobTalkerDamageSource( null, "mob", isMagic, bypassArmor );
-    //        player.attackEntityFrom( source, amount );
-    //    }
+    // DamageSource source = new MobTalkerDamageSource( null, "mob", isMagic, bypassArmor );
+    // player.attackEntityFrom( source, amount );
+    // }
     
     // ========================================
     

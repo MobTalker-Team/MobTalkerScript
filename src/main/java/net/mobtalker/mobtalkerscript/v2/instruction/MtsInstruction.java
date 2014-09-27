@@ -26,9 +26,9 @@ public abstract class MtsInstruction
         MtsValue tag = a.getMetaTag( key );
         return tag.isNil() ? b.getMetaTag( key ) : tag;
     }
-
+    
     // ========================================
-
+    
     protected MtsInstruction()
     {}
     

@@ -26,3 +26,6 @@
 /*.iws
 /atlassian-ide-plugin.xml
 /deploy.gradle
+
+## Custom
+/docs/

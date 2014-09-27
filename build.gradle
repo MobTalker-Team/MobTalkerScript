@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.+'
+        classpath 'com.tunnelvisionlabs:antlr4:4.4'
     }
 }
 
@@ -16,7 +17,7 @@ if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
-version = "2.2.3-beta"
+version = "2.2.4-beta"
 group = "net.mobtalker.mobtalkerscript"
 archivesBaseName = "MobTalkerScript"
 
@@ -27,14 +28,8 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    antlr
-}
-
 dependencies {
-    antlr 'org.antlr:antlr4:4.3'
-
-    compile 'org.antlr:antlr4-runtime:4.3'
+    compile 'com.tunnelvisionlabs:antlr4-runtime:4.4'
     compile 'org.apache.commons:commons-lang3:3.3.+'
     compile 'com.google.guava:guava:17.+'
     compile 'net.sf.jopt-simple:jopt-simple:4.5'
@@ -72,7 +67,7 @@ task generateAntlr( type: JavaExec ) {
     def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v2/compiler/antlr/'
 
     main 'org.antlr.v4.Tool'
-    classpath configurations.antlr
+    classpath buildscript.configurations.classpath
     
     inputs.file grammarFile
     outputs.files(

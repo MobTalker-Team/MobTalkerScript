@@ -25,12 +25,12 @@ import org.antlr.v4.runtime.*;
 public class MtsAntlrErrorListener extends BaseErrorListener
 {
     @Override
-    public void syntaxError( Recognizer<?, ?> recognizer,
-                             Object offendingSymbol,
-                             int line,
-                             int charPositionInLine,
-                             String msg,
-                             RecognitionException e )
+    public <T extends Token> void syntaxError( Recognizer<T, ?> recognizer,
+                                               T offendingSymbol,
+                                               int line,
+                                               int charPositionInLine,
+                                               String msg,
+                                               RecognitionException e )
     {
         throw transformSyntaxError( (MtsParser) recognizer,
                                     (Token) offendingSymbol,
@@ -48,7 +48,7 @@ public class MtsAntlrErrorListener extends BaseErrorListener
                                                         String msg )
     {
         String source = Paths.get( offendingToken.getTokenSource().getSourceName() ).getFileName().toString();
-        //        String source = Paths.get( offendingToken.getTokenSource().getSourceName() ).toString();
+        // String source = Paths.get( offendingToken.getTokenSource().getSourceName() ).toString();
         
         return new MtsSyntaxError( source,
                                    line,

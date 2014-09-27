@@ -1,24 +1,14 @@
-package net.mobtalker.mobtalkerscript.api.library;
+package net.mobtalker.mobtalkerscript.api;
 
 public class ItemInfo
 {
-    private final String _name;
-    private final int _meta;
+    public final String Name;
+    public final int Meta;
     
     public ItemInfo( String name, int meta )
     {
-        _name = name;
-        _meta = meta;
-    }
-    
-    public String getName()
-    {
-        return _name;
-    }
-    
-    public int getMeta()
-    {
-        return _meta;
+        Name = name;
+        Meta = meta;
     }
     
     // ========================================
@@ -28,8 +18,8 @@ public class ItemInfo
     {
         final int prime = 31;
         int result = 1;
-        result = ( prime * result ) + _meta;
-        result = ( prime * result ) + _name.hashCode();
+        result = ( prime * result ) + Meta;
+        result = ( prime * result ) + Name.hashCode();
         return result;
     }
     
@@ -46,9 +36,9 @@ public class ItemInfo
     
     public boolean equals( ItemInfo other )
     {
-        if ( !_name.equals( other._name ) )
+        if ( !Name.equals( other.Name ) )
             return false;
-        if ( _meta != other._meta )
+        if ( Meta != other.Meta )
             return false;
         return true;
     }

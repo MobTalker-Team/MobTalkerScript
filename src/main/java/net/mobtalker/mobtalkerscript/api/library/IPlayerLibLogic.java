@@ -1,5 +1,7 @@
 package net.mobtalker.mobtalkerscript.api.library;
 
+import net.mobtalker.mobtalkerscript.api.InventoryInfo;
+
 public interface IPlayerLibLogic
 {
     /**
@@ -24,7 +26,7 @@ public interface IPlayerLibLogic
     /**
      * Current experience progress on the current level
      */
-    double getExperience();
+    int getExperience();
     
     /**
      * Experience required to reach the next level
@@ -34,15 +36,22 @@ public interface IPlayerLibLogic
     /**
      * Give the specific amount of experience
      */
-    void giveExperience( double amount );
+    void giveExperience( int amount );
+    
+    /**
+     * Tries to take that much experience
+     */
+    boolean takeExperience( int amount );
     
     // ========================================
+    
+    boolean isValidItem( String name );
     
     int getItemCount( String name, int meta );
     
     boolean takeItems( String name, int meta, int amount );
     
-    boolean giveItems( String name, int amount, int meta );
+    boolean giveItems( String name, int meta, int amount );
     
     InventoryInfo getInventory();
 }

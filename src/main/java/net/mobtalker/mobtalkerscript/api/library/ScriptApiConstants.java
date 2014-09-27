@@ -13,8 +13,8 @@ public class ScriptApiConstants
     public static final MtsString KEY_EFFECT_DURATION = valueOf( "duration" );
     public static final MtsString KEY_EFFECT_AMPLIFIER = valueOf( "amplifier" );
     
-    public static final String REACTION_KEY_PLAYER = "player";
-    public static final String REACTION_KEY_PREFIX_TYPE = "type:";
+    public static final String ENTITYKEY_PLAYER = "player";
+    public static final String ENTITYKEY_PREFIX_TYPE = "type:";
     
     // ========================================
     

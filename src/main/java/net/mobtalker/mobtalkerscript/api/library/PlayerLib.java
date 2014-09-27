@@ -2,6 +2,7 @@ package net.mobtalker.mobtalkerscript.api.library;
 
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import net.mobtalker.mobtalkerscript.api.*;
 import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
@@ -15,6 +16,13 @@ public final class PlayerLib
     public PlayerLib( IPlayerLibLogic logic )
     {
         _logic = logic;
+    }
+    
+    // ========================================
+    
+    public IPlayerLibLogic getLogic()
+    {
+        return _logic;
     }
     
     // ========================================
@@ -49,37 +57,47 @@ public final class PlayerLib
         _logic.giveExperience( checkInteger( argAmount, 0 ) );
     }
     
+    @MtsNativeFunction
+    public MtsBoolean takeExperience( MtsValue argAmount )
+    {
+        return valueOf( _logic.takeExperience( checkInteger( argAmount, 0 ) ) );
+    }
+    
     // ========================================
     
     @MtsNativeFunction
-    public MtsNumber getItemCount( MtsValue argItemName, MtsValue argItemMeta )
+    public MtsNumber countItem( MtsValue argItemName, MtsValue argItemMeta )
     {
-        return valueOf( _logic.getItemCount( checkString( argItemName, 0 ),
+        String name = checkString( argItemName, 0 );
+        if ( !_logic.isValidItem( name ) )
+            throw new BadArgumentException( 0, "unknown item name '%s'", name );
+        
+        return valueOf( _logic.getItemCount( name,
                                              checkInteger( argItemMeta, 1, -1 ) ) );
     }
     
     @MtsNativeFunction
-    public MtsBoolean takeItems( MtsValue argItemName, MtsValue argItemCount, MtsValue argItemMeta )
+    public MtsBoolean giveItem( MtsValue argItemName, MtsValue argItemCount, MtsValue argItemMeta )
     {
-        int amount = checkInteger( argItemCount, 1, 1 );
-        if ( amount <= 0 )
-            throw new BadArgumentException( "amount must be greater than zero (was '%s')", amount );
+        String name = checkString( argItemName, 0 );
+        if ( !_logic.isValidItem( name ) )
+            throw new BadArgumentException( 0, "unknown item name '%s'", name );
         
-        return valueOf( _logic.takeItems( checkString( argItemName, 0 ),
-                                          amount,
-                                          checkInteger( argItemMeta, 2, -1 ) ) );
+        return valueOf( _logic.giveItems( name,
+                                          checkIntegerWithMinimum( argItemCount, 1, 1, 1 ),
+                                          checkIntegerWithMinimum( argItemMeta, 2, 0, -1 ) ) );
     }
     
     @MtsNativeFunction
-    public MtsBoolean giveItems( MtsValue argItemName, MtsValue argItemCount, MtsValue argItemMeta )
+    public MtsBoolean takeItem( MtsValue argItemName, MtsValue argItemCount, MtsValue argItemMeta )
     {
-        int amount = checkInteger( argItemCount, 1, 1 );
-        if ( amount <= 0 )
-            throw new BadArgumentException( "amount must be greater than zero (was '%s')", amount );
+        String name = checkString( argItemName, 0 );
+        if ( !_logic.isValidItem( name ) )
+            throw new BadArgumentException( 0, "unknown item name '%s'", name );
         
-        return valueOf( _logic.giveItems( checkString( argItemName, 0 ),
-                                          amount,
-                                          checkInteger( argItemMeta, 2 ) ) );
+        return valueOf( _logic.takeItems( name,
+                                          checkIntegerWithMinimum( argItemCount, 1, 1, 1 ),
+                                          checkIntegerWithMinimum( argItemMeta, 2, 0, -1 ) ) );
     }
     
     @MtsNativeFunction
@@ -91,8 +109,8 @@ public final class PlayerLib
         for ( ItemInfo item : inventory.getItems() )
         {
             MtsTable info = new MtsTable( 0, 3 );
-            info.set( "name", valueOf( item.getName() ) );
-            info.set( "meta", valueOf( item.getMeta() ) );
+            info.set( "name", valueOf( item.Name ) );
+            info.set( "meta", valueOf( item.Meta ) );
             info.set( "count", valueOf( inventory.getAmount( item ) ) );
             t.add( info );
         }

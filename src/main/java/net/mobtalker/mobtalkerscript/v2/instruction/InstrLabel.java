@@ -21,37 +21,37 @@ import net.mobtalker.mobtalkerscript.v2.MtsFrame;
 public class InstrLabel extends MtsInstruction
 {
     private final String _name;
-
+    
     // ========================================
-
+    
     /* package */InstrLabel()
     {
         _name = null;
     }
-
+    
     /* package */InstrLabel( String name )
     {
         _name = name;
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {}
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return _name == null ? "LABEL" : ( "LABEL " + _name );
     }
-
+    
 }

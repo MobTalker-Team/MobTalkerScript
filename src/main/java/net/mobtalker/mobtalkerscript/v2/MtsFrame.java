@@ -137,8 +137,8 @@ public final class MtsFrame
         
         assert stackIsEmpty()
         /*   */: "Stack was not emptied! " + formatStack();
-        //        assert result.isVarArgs()
-        //        /*   */: "Return value is not of type VarArgs, but " + result.getType() + "!";
+        // assert result.isVarArgs()
+        // /* */: "Return value is not of type VarArgs, but " + result.getType() + "!";
         
 //        return result.asVarArgs();
         return result;
@@ -174,8 +174,8 @@ public final class MtsFrame
         
         if ( DEBUG )
             _lastVarOrConst = result.isString() ? result.toString() : "?";
-            else
-                _lastVarOrConst = "?";
+        else
+            _lastVarOrConst = "?";
         
         return result;
     }

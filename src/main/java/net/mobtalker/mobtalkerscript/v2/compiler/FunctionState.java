@@ -192,7 +192,7 @@ public class FunctionState
     {
         checkState( !_loops.isEmpty(), "There is no loop to break!" );
         checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                "Last added instruction is not a jump instruction!" );
+                    "Last added instruction is not a jump instruction!" );
         
         LoopState loop = _loops.peek();
         MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.getLast();
@@ -204,7 +204,7 @@ public class FunctionState
     {
         checkState( !_loops.isEmpty(), "There is no loop to exit!" );
         checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                "Last added instruction is not a jump instruction!" );
+                    "Last added instruction is not a jump instruction!" );
         
         LoopState loop = _loops.pop();
         MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.getLast();
@@ -223,9 +223,9 @@ public class FunctionState
         
         assert ( stepIndex == ( limitIndex + 1 ) ) && ( limitIndex == ( loopIndex + 1 ) )
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                                loopIndex,
-                                limitIndex,
-                                stepIndex );
+                              loopIndex,
+                              limitIndex,
+                              stepIndex );
         
         addInstruction( InstrNForPrep( loopIndex ) );
         
@@ -242,9 +242,9 @@ public class FunctionState
         
         assert ( indexIndex == ( stateIndex + 1 ) ) && ( stateIndex == ( iterIndex + 1 ) )
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                                iterIndex,
-                                stateIndex,
-                                indexIndex );
+                              iterIndex,
+                              stateIndex,
+                              indexIndex );
         
         for ( int i = 0; i < loopVars.length; i++ )
         {
@@ -252,7 +252,7 @@ public class FunctionState
             int varIndex = declareLocal( loopVar ).getIndex();
             
             assert ( varIndex - i - 1 ) == indexIndex
-                    /*   */: "Loop variable indices are not consecutive!";
+            /*   */: "Loop variable indices are not consecutive!";
         }
         
         addInstruction( InstrStoreL( indexIndex ) );
@@ -331,7 +331,7 @@ public class FunctionState
     public void markPendingJump()
     {
         checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                "Last added instruction is not a jump instruction!" );
+                    "Last added instruction is not a jump instruction!" );
         
         MtsJumpInstruction jump = (MtsJumpInstruction) _instructions.getLast();
         _pendingJumps.add( new PendingJump( jump, currentIndex() ) );
@@ -406,9 +406,9 @@ public class FunctionState
     }
     
 //    protected int getLocalIndexSilent( String name )
-    //    {
-    //        return _block.getLocal( name ).getIndex();
-    //    }
+    // {
+    // return _block.getLocal( name ).getIndex();
+    // }
     
     // ========================================
     

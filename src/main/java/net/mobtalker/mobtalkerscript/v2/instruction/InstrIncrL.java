@@ -24,7 +24,7 @@ public class InstrIncrL extends MtsIndexedInstruction
     {
         super( i );
     }
-
+    
     // ========================================
     
     @Override
@@ -39,7 +39,7 @@ public class InstrIncrL extends MtsIndexedInstruction
     {
         return 0;
     }
-
+    
     // ========================================
     
     @Override

@@ -157,12 +157,22 @@ public final class MtsLog
     
     // ========================================
     
+    public void info( String msg )
+    {
+        log( Level.INFO, msg );
+    }
+    
     public void info( String msg, Object... data )
     {
         log( Level.INFO, msg, data );
     }
     
     // ========================================
+    
+    public void config( String msg )
+    {
+        log( Level.CONFIG, msg );
+    }
     
     public void config( String msg, Object... data )
     {
@@ -171,6 +181,11 @@ public final class MtsLog
     
     // ========================================
     
+    public void fine( String msg )
+    {
+        log( Level.FINE, msg );
+    }
+    
     public void fine( String msg, Object... data )
     {
         log( Level.FINE, msg, data );
@@ -178,12 +193,22 @@ public final class MtsLog
     
     // ========================================
     
+    public void finer( String msg )
+    {
+        log( Level.FINER, msg );
+    }
+    
     public void finer( String msg, Object... data )
     {
         log( Level.FINER, msg, data );
     }
     
     // ========================================
+    
+    public void finest( String msg )
+    {
+        log( Level.FINEST, msg );
+    }
     
     public void finest( String msg, Object... data )
     {

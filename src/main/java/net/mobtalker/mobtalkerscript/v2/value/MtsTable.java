@@ -317,16 +317,16 @@ public class MtsTable extends MtsMetaTableValue
                     _listPart.transferOrphansTo( _hashPart );
                 }
             }
-            
-            if ( _listPart.contains( i - 1 ) || ( i == 0 ) )
+            else if ( _listPart.contains( i - 1 ) || ( i == 0 ) )
             {
                 _listPart.add( value );
                 _listPart.collectFrom( _hashPart );
-                return;
             }
         }
-        
-        _hashPart.set( key, value );
+        else
+        {
+            _hashPart.set( key, value );
+        }
     }
     
     // ========================================

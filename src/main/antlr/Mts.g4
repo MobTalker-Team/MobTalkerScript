@@ -334,7 +334,7 @@ funcBody
     ;
 
 command
-    : 'say' Character=expr? Text=expr IsLast='as conclusion'?
+    : 'say' Arg1=expr Arg2=expr? IsLast='as conclusion'?
       # CommandSay
     | 'show' Group=expr 
              Path+=expr+ 

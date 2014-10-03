@@ -22,7 +22,6 @@ import com.google.common.collect.Maps;
 
 public enum EquipmentSlot
 {
-    TOOL( "tool", 0 ),
     HEAD( "head", 1 ),
     CHEST( "chest", 2 ),
     LEGS( "legs", 3 ),

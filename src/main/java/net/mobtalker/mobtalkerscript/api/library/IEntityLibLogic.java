@@ -55,4 +55,6 @@ public interface IEntityLibLogic
     EquipmentInfo getEquipment();
     
     ItemInfo getEquipment( EquipmentSlot slot );
+    
+    ItemStackInfo getHeldItem();
 }

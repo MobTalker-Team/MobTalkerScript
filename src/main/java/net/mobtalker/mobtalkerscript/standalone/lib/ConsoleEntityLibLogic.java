@@ -112,4 +112,10 @@ public class ConsoleEntityLibLogic implements IEntityLibLogic
         return new ItemInfo( "mts:dummy", 0 );
     }
     
+    @Override
+    public ItemStackInfo getHeldItem()
+    {
+        // TODO
+        return new ItemStackInfo( new ItemInfo( "mts:dummy", 0 ), 1 );
+    }
 }

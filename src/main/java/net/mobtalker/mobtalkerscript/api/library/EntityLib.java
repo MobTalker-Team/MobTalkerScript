@@ -144,7 +144,20 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
                 throw new BadArgumentException( 0, "'%s' is not a valid equipment slot", slotName );
             
             ItemInfo item = _logic.getEquipment( slot );
+            if ( item == null )
+                return NIL;
+            
             return MtsVarArgs.of( valueOf( item.Name ), valueOf( item.Meta ) );
         }
+    }
+    
+    @MtsNativeFunction
+    public MtsValue getHeldItem()
+    {
+        ItemStackInfo info = _logic.getHeldItem();
+        if ( info == null )
+            return null;
+
+        return MtsVarArgs.of( valueOf( info.Item.Name ), valueOf( info.Item.Meta ), valueOf( info.Count ) );
     }
 }

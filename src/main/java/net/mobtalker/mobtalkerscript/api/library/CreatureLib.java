@@ -24,22 +24,11 @@ import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
 import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
-public class CreatureLib
+public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
 {
-    private ICreatureLibLogic _logic;
-    
-    // ========================================
-    
     public CreatureLib( ICreatureLibLogic logic )
     {
-        _logic = logic;
-    }
-    
-    // ========================================
-    
-    public ICreatureLibLogic getLogic()
-    {
-        return _logic;
+        super( logic );
     }
     
     // ========================================

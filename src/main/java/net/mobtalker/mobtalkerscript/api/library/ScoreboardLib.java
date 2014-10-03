@@ -16,6 +16,7 @@
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
+import static net.mobtalker.mobtalkerscript.api.ScriptApiConstants.*;
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
@@ -206,9 +207,9 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         for ( ScoreboardTeamInfo team : teams )
         {
             MtsTable info = new MtsTable( 0, 3 );
-            info.set( "color", valueOf( team.Color ) );
-            info.set( "friendlyfire", valueOf( team.FriendlyFire ) );
-            info.set( "seeFriendlyInvisibles", valueOf( team.CanSeeInvisibleMembers ) );
+            info.set( KEY_SCOREBOARD_TEAM_COLOR, valueOf( team.Color ) );
+            info.set( KEY_SCOREBOARD_TEAM_FRIENDLYFIRE, valueOf( team.FriendlyFire ) );
+            info.set( KEY_SCOREBOARD_TEAM_SEEFIRENDLYINVISIBLES, valueOf( team.CanSeeInvisibleMembers ) );
             result.set( team.Name, info );
         }
         

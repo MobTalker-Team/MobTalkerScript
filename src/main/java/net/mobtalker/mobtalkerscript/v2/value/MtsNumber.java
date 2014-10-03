@@ -268,6 +268,12 @@ public final class MtsNumber extends MtsValue
     // ========================================
     
     @Override
+    public Double toJava()
+    {
+        return Double.valueOf( _value );
+    }
+    
+    @Override
     public String toString()
     {
         if ( isInteger() )

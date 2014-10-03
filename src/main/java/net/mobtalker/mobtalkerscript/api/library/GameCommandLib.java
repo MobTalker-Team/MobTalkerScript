@@ -26,22 +26,11 @@ import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
 import com.google.common.collect.Lists;
 
-public class GameCommandLib
+public class GameCommandLib extends AbstractUnifiedLib<IGameCommandLibLogic>
 {
-    private IGameCommandLibLogic _logic;
-    
-    // ========================================
-    
     public GameCommandLib( IGameCommandLibLogic logic )
     {
-        _logic = logic;
-    }
-    
-    // ========================================
-    
-    public IGameCommandLibLogic getLogic()
-    {
-        return _logic;
+        super( logic );
     }
     
     // ========================================

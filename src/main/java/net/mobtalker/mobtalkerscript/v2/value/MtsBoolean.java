@@ -115,6 +115,12 @@ public class MtsBoolean extends MtsValue
     // ========================================
     
     @Override
+    public Boolean toJava()
+    {
+        return Boolean.valueOf( _value );
+    }
+    
+    @Override
     public String toString()
     {
         return _string;

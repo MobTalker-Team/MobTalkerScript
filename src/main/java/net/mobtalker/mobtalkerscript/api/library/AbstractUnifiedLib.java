@@ -16,7 +16,7 @@
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
-public class AbstractUnifiedLib<T>
+/* package */class AbstractUnifiedLib<T>
 {
     protected final T _logic;
     

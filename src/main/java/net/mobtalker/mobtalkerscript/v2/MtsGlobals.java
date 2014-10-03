@@ -31,7 +31,7 @@ public class MtsGlobals extends MtsTable
     
     // ========================================
     
-    public static final MtsValue VERSION = valueOf( "@VERSION@" );
+    public static final MtsString VERSION = valueOf( "@VERSION@" );
     
     // ========================================
     
@@ -54,6 +54,7 @@ public class MtsGlobals extends MtsTable
         set( "Math", createLibrary( MtsMathLib.class ) );
         set( "Table", createLibrary( MtsTableLib.class ) );
         
+        set( "String", createLibrary( MtsStringLib.class ) );
         createStringLib();
         
         PackageLib = new MtsPackageLib( this );

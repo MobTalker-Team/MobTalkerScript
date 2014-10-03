@@ -244,9 +244,15 @@ public class MtsString extends MtsValue
     // ========================================
     
     @Override
-    public String toString()
+    public String toJava()
     {
         return _value;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return '"' + _value + '"';
     }
     
     @Override

@@ -1,20 +1,20 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.mobtalker.mobtalkerscript;
+package net.mobtalker.mobtalkerscript.standalone;
 
 import static net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNatives.*;
 
@@ -23,11 +23,13 @@ import java.util.logging.*;
 
 import joptsimple.*;
 import joptsimple.internal.Strings;
+import net.mobtalker.mobtalkerscript.api.WorldPosition;
+import net.mobtalker.mobtalkerscript.api.library.*;
+import net.mobtalker.mobtalkerscript.standalone.lib.*;
+import net.mobtalker.mobtalkerscript.util.PrettyPrinter;
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.*;
-import net.mobtalker.mobtalkerscript.v2.lib.console.ConsoleCommandLib;
-import net.mobtalker.mobtalkerscript.v2.lib.console.mobtalker.*;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 
 /**
@@ -61,19 +63,12 @@ public class MobTalkerScript
         
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
-        
-        // Create libraries
-        createLibrary( new ConsoleCommandLib( _G ), _G );
-        _G.set( "Scoreboard", createLibrary( new ScoreboardLib() ) );
-        _G.set( "Command", createLibrary( new MinecraftCommandLib() ) );
-        _G.set( "Entity", createLibrary( new InteractionEntityLib() ) );
-        _G.set( "Player", createLibrary( new InteractionPlayerLib() ) );
-        _G.set( "World", createLibrary( new InteractionWorldLib() ) );
+        createLibraries( _G );
         
         _G.out.println( "MobTalkerScript " //
-                        + MtsGlobals.VERSION.asString().asJavaString()
+                        + MtsGlobals.VERSION.asJavaString()
                         + " Copyright (c) 2013-2014 Chimaine" );
-        _G.out.println( "This is free software licensed under the GNU General Public License version 3." );
+        _G.out.println( "This is free software licensed under the GNU Lesser General Public License version 3." );
         
         // Load specified file if any
         if ( !Strings.isNullOrEmpty( options.valueOf( files ) ) )
@@ -142,7 +137,7 @@ public class MobTalkerScript
                 if ( ( result.isVarArgs() && ( result.asVarArgs().count() > 0 ) )
                      || ( !result.isNil() && !result.isVarArgs() ) )
                 {
-                    _G.out.println( result );
+                    _G.out.print( new PrettyPrinter().print( result, "result" ) );
                 }
             }
             catch ( ScriptRuntimeException ex )
@@ -152,7 +147,41 @@ public class MobTalkerScript
             }
         }
     }
+
+    private static void createLibraries( MtsGlobals env )
+    {
+        DummyCreature dummyCreature = new DummyCreature( "DummyMob", 10, 10, new WorldPosition( 0, 0, 0 ) );
+        DummyPlayer dummyPlayer = new DummyPlayer( "Player", new WorldPosition( 0, 0, 0 ) );
+
+        {
+            createLibrary( new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ), env );
+        }
+        {
+            MtsTable lib = new MtsTable( 0, 0 );
+            createLibrary( new GameCommandLib( new ConsoleGameCommandLibLogic( env ) ), lib );
+            env.set( "Command", lib );
+        }
+        {
+            MtsTable lib = new MtsTable( 0, 0 );
+            createLibrary( new EntityLib( new ConsoleEntityLibLogic( dummyCreature ) ), lib );
+            createLibrary( new CreatureLib( new ConsoleCreatureLibLogic( dummyCreature ) ), lib );
+            env.set( "Entity", lib );
+        }
+        {
+            MtsTable lib = new MtsTable( 0, 0 );
+            createLibrary( new EntityLib( new ConsoleEntityLibLogic( dummyPlayer ) ), lib );
+            createLibrary( new PlayerLib( new ConsolePlayerLibLogic( dummyPlayer ) ), lib );
+            env.set( "Player", lib );
+        }
+        {
+            MtsTable lib = new MtsTable( 0, 0 );
+            createLibrary( new InteractionWorldLib( new ConsoleInteractionWorldLibLogic() ), lib );
+            env.set( "World", lib );
+        }
+    }
     
+    // ========================================
+
     private MobTalkerScript()
     {}
     

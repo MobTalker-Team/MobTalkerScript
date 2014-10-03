@@ -16,6 +16,7 @@
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
+import static net.mobtalker.mobtalkerscript.api.ScriptApiConstants.*;
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.api.*;
@@ -23,26 +24,15 @@ import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
-public final class PlayerLib
+public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
 {
-    private final IPlayerLibLogic _logic;
-    
-    // ========================================
-    
     public PlayerLib( IPlayerLibLogic logic )
     {
-        _logic = logic;
+        super( logic );
     }
     
     // ========================================
-    
-    public IPlayerLibLogic getLogic()
-    {
-        return _logic;
-    }
-    
-    // ========================================
-    
+
     @MtsNativeFunction
     public MtsString getGameMode()
     {
@@ -125,9 +115,9 @@ public final class PlayerLib
         for ( ItemInfo item : inventory.getItems() )
         {
             MtsTable info = new MtsTable( 0, 3 );
-            info.set( "name", valueOf( item.Name ) );
-            info.set( "meta", valueOf( item.Meta ) );
-            info.set( "count", valueOf( inventory.getAmount( item ) ) );
+            info.set( KEY_ITEM_NAME, valueOf( item.Name ) );
+            info.set( KEY_ITEM_META, valueOf( item.Meta ) );
+            info.set( KEY_ITEM_COUNT, valueOf( inventory.getAmount( item ) ) );
             t.add( info );
         }
         

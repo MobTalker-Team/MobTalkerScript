@@ -14,21 +14,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.mobtalker.mobtalkerscript.api.library;
+package net.mobtalker.mobtalkerscript.api;
 
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
-import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v2.value.MtsString;
 
 public class ScriptApiConstants
 {
-    public static final MtsValue KEY_ITEM_NAME = valueOf( "name" );
-    public static final MtsValue KEY_ITEM_COUNT = valueOf( "count" );
-    public static final MtsValue KEY_ITEM_META = valueOf( "meta" );
+    public static final MtsString KEY_ITEM_NAME = valueOf( "name" );
+    public static final MtsString KEY_ITEM_COUNT = valueOf( "count" );
+    public static final MtsString KEY_ITEM_META = valueOf( "meta" );
     
     public static final MtsString KEY_EFFECT_NAME = valueOf( "name" );
     public static final MtsString KEY_EFFECT_DURATION = valueOf( "duration" );
     public static final MtsString KEY_EFFECT_AMPLIFIER = valueOf( "amplifier" );
     
+    public static final MtsString KEY_SCOREBOARD_TEAM_COLOR = valueOf( "color" );
+    public static final MtsString KEY_SCOREBOARD_TEAM_FRIENDLYFIRE = valueOf( "friendlyFire" );
+    public static final MtsString KEY_SCOREBOARD_TEAM_SEEFIRENDLYINVISIBLES = valueOf( "seeFriendlyInvisibles" );
+
     public static final String ENTITYKEY_PLAYER = "player";
     public static final String ENTITYKEY_PREFIX_TYPE = "type:";
     

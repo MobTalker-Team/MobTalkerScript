@@ -55,17 +55,18 @@ public class MtsNil extends MtsValue
         return FALSE;
     }
     
-    public Object toJavaValue()
-    {
-        return null;
-    }
-    
     // ========================================
     
     @Override
     public String toString()
     {
         return "nil";
+    }
+    
+    @Override
+    public Object toJava()
+    {
+        return null;
     }
     
     @Override

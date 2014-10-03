@@ -103,7 +103,7 @@ public final class MtsTableLib
     }
     
     @MtsNativeFunction
-    public static MtsValue print( MtsValue argValue, MtsValue argIndent )
+    public static MtsValue dump( MtsValue argValue, MtsValue argIndent )
     {
         return valueOf( new PrettyPrinter( checkString( argIndent, 1, "    " ) ).print( argValue, null ) );
     }

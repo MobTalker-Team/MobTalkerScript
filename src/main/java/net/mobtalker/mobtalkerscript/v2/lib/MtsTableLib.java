@@ -21,16 +21,17 @@ import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.util.Random;
 
+import net.mobtalker.mobtalkerscript.util.PrettyPrinter;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
 public final class MtsTableLib
 {
     @MtsNativeFunction
-    public static MtsString concat( MtsValue arg1, MtsValue arg2, MtsValue arg3, MtsValue arg4 )
+    public static MtsString concat( MtsValue argTable, MtsValue argSep, MtsValue arg3, MtsValue arg4 )
     {
-        MtsTable table = checkTable( arg1, 0 );
-        String sep = arg2.isNil() ? "" : checkString( arg2, 1 );
+        MtsTable table = checkTable( argTable, 0 );
+        String sep = checkString( argSep, 1, "" );
         
         if ( arg3.isNil() )
             return table.concatList( sep );
@@ -46,15 +47,15 @@ public final class MtsTableLib
     }
     
     @MtsNativeFunction
-    public static MtsNumber count( MtsValue arg1 )
+    public static MtsNumber count( MtsValue argTable )
     {
-        return valueOf( checkTable( arg1, 0 ).count() );
+        return valueOf( checkTable( argTable, 0 ).count() );
     }
     
     @MtsNativeFunction
-    public static void insert( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
+    public static void insert( MtsValue argTable, MtsValue arg2, MtsValue arg3 )
     {
-        MtsTable table = checkTable( arg1, 0 );
+        MtsTable table = checkTable( argTable, 0 );
         
         if ( arg3.isNil() )
             table.add( arg2 );
@@ -90,16 +91,19 @@ public final class MtsTableLib
         return arg1;
     }
     
-    // ========================================
-    
     @MtsNativeFunction
-    public static MtsValue remove( MtsValue arg1, MtsValue arg2 )
+    public static MtsValue remove( MtsValue argTable, MtsValue argIndex )
     {
-        MtsTable table = checkTable( arg1, 0 );
+        MtsTable table = checkTable( argTable, 0 );
         
-        if ( arg2.isNil() )
+        if ( argIndex.isNil() )
             return table.removeLast();
         
-        return table.remove( checkInteger( arg2, 1 ) );
+        return table.remove( checkInteger( argIndex, 1 ) );
+    }
+    
+    public static MtsValue print( MtsValue argValue, MtsValue argIndent )
+    {
+        return valueOf( new PrettyPrinter( checkString( argIndent, 1, "    " ) ).print( argValue, null ) );
     }
 }

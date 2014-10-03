@@ -118,18 +118,17 @@ public final class MtsMathLib
     private static final java.util.Random _rnd = new java.util.Random();
     
     @MtsNativeFunction
-    public static MtsNumber random( MtsValue arg1, MtsValue arg2 )
+    public static MtsNumber random( MtsValue argMin, MtsValue argMax )
     {
-        if ( arg2.isNil() )
+        if ( argMax.isNil() )
         {
-            if ( arg1.isNil() )
+            if ( argMin.isNil() )
                 return random();
-            return random( arg1 );
+            return random( argMin );
         }
         
-        int a = checkInteger( arg1, 0 );
-        int b = checkInteger( arg2, 1 );
-        
+        int a = checkInteger( argMin, 0 );
+        int b = checkInteger( argMax, 1 );
         return valueOf( a + _rnd.nextInt( b ) );
     }
     

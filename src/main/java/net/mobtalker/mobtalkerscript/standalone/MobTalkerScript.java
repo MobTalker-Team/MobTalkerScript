@@ -178,6 +178,11 @@ public class MobTalkerScript
             createLibrary( new InteractionWorldLib( new ConsoleInteractionWorldLibLogic() ), lib );
             env.set( "World", lib );
         }
+        {
+            MtsTable lib = new MtsTable( 0, 0 );
+            createLibrary( new ScoreboardLib( new ConsoleScoreboardLibLogic() ), lib );
+            env.set( "Scoreboard", lib );
+        }
     }
     
     // ========================================

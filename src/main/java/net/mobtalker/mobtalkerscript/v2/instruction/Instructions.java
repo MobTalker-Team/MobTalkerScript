@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v2.instruction;
@@ -210,9 +210,9 @@ public class Instructions
     }
     
 //    public static InstrLoadET InstrLoadET( int external, int constant )
-    //    {
-    //        return new InstrLoadET( external, constant );
-    //    }
+    // {
+    // return new InstrLoadET( external, constant );
+    // }
     
     public static InstrLoadNil InstrLoadNil()
     {
@@ -230,9 +230,9 @@ public class Instructions
     }
     
 //    public static InstrStoreET InstrStoreET( int external, int constant )
-    //    {
-    //        return new InstrStoreET( external, constant );
-    //    }
+    // {
+    // return new InstrStoreET( external, constant );
+    // }
     
     // ========================================
     

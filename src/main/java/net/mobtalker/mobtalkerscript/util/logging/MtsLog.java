@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.util.logging;
@@ -157,12 +157,22 @@ public final class MtsLog
     
     // ========================================
     
+    public void info( String msg )
+    {
+        log( Level.INFO, msg );
+    }
+    
     public void info( String msg, Object... data )
     {
         log( Level.INFO, msg, data );
     }
     
     // ========================================
+    
+    public void config( String msg )
+    {
+        log( Level.CONFIG, msg );
+    }
     
     public void config( String msg, Object... data )
     {
@@ -171,6 +181,11 @@ public final class MtsLog
     
     // ========================================
     
+    public void fine( String msg )
+    {
+        log( Level.FINE, msg );
+    }
+    
     public void fine( String msg, Object... data )
     {
         log( Level.FINE, msg, data );
@@ -178,12 +193,22 @@ public final class MtsLog
     
     // ========================================
     
+    public void finer( String msg )
+    {
+        log( Level.FINER, msg );
+    }
+    
     public void finer( String msg, Object... data )
     {
         log( Level.FINER, msg, data );
     }
     
     // ========================================
+    
+    public void finest( String msg )
+    {
+        log( Level.FINEST, msg );
+    }
     
     public void finest( String msg, Object... data )
     {

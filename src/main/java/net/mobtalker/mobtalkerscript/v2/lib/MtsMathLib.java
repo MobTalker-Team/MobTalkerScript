@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v2.lib;
@@ -118,18 +118,17 @@ public final class MtsMathLib
     private static final java.util.Random _rnd = new java.util.Random();
     
     @MtsNativeFunction
-    public static MtsNumber random( MtsValue arg1, MtsValue arg2 )
+    public static MtsNumber random( MtsValue argMin, MtsValue argMax )
     {
-        if ( arg2.isNil() )
+        if ( argMax.isNil() )
         {
-            if ( arg1.isNil() )
+            if ( argMin.isNil() )
                 return random();
-            return random( arg1 );
+            return random( argMin );
         }
         
-        int a = checkInteger( arg1, 0 );
-        int b = checkInteger( arg2, 1 );
-        
+        int a = checkInteger( argMin, 0 );
+        int b = checkInteger( argMax, 1 );
         return valueOf( a + _rnd.nextInt( b ) );
     }
     

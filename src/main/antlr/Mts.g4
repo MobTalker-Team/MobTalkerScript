@@ -280,7 +280,8 @@ varAccess
     : varOrExpr fieldAccess*
     ;
     
-call returns [int nReturn = 1]
+call returns [int nReturn]
+    @init { $nReturn = 1; }
     : varOrExpr Args+=callArgs[1]+
     ;
 
@@ -333,7 +334,7 @@ funcBody
     ;
 
 command
-    : 'say' Character=expr? Text=expr IsLast='as conclusion'?
+    : 'say' Arg1=expr Arg2=expr? IsLast='as conclusion'?
       # CommandSay
     | 'show' Group=expr 
              Path+=expr+ 

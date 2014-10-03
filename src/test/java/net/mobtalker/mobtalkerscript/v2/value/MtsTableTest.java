@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.v2.value;
 
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
@@ -9,82 +25,109 @@ import org.junit.*;
 
 public class MtsTableTest
 {
-    private MtsTable _table;
+    private MtsTable t;
     
     @Before
     public void before()
     {
-        _table = new MtsTable( 0, 0 );
+        t = new MtsTable( 0, 0 );
+    }
+    
+    @Test
+    public void testListReplace()
+    {
+        t.set( valueOf( 1 ), valueOf( "a" ), true );
+        t.set( valueOf( 2 ), valueOf( "b" ), true );
+        t.set( valueOf( 3 ), valueOf( "c" ), true );
+        
+        assertTrue( t.containsKey( valueOf( 1 ) ) );
+        assertTrue( t.containsKey( valueOf( 2 ) ) );
+        assertTrue( t.containsKey( valueOf( 3 ) ) );
+        assertEquals( t.listSize(), 3 );
+        assertEquals( t.tableSize(), 0 );
+        
+        t.set( valueOf( 1 ), valueOf( "D" ), true );
+        t.set( valueOf( 2 ), valueOf( "E" ), true );
+        
+        assertTrue( t.containsKey( valueOf( 1 ) ) );
+        assertTrue( t.containsKey( valueOf( 2 ) ) );
+        assertTrue( t.containsKey( valueOf( 3 ) ) );
+        assertEquals( t.listSize(), 3 );
+        assertEquals( t.tableSize(), 0 );
+        
+        assertEquals( t.get( valueOf( 1 ), true ), valueOf( "D" ) );
+        assertEquals( t.get( valueOf( 2 ), true ), valueOf( "E" ) );
+        assertEquals( t.get( valueOf( 3 ), true ), valueOf( "c" ) );
     }
     
     @Test
     public void testHashGetSet()
     {
         // Hash part
-        _table.set( valueOf( "a" ), valueOf( "foo" ) );
+        t.set( valueOf( "a" ), valueOf( "foo" ) );
         
-        assertTrue( _table.containsKey( valueOf( "a" ) ) );
-        assertEquals( 1, _table.count() );
-        assertEquals( valueOf( "foo" ), _table.get( valueOf( "a" ) ) );
-        assertEquals( valueOf( "foo" ), _table.get( "a" ) );
+        assertTrue( t.containsKey( valueOf( "a" ) ) );
+        assertEquals( 1, t.count() );
+        assertEquals( valueOf( "foo" ), t.get( valueOf( "a" ) ) );
+        assertEquals( valueOf( "foo" ), t.get( "a" ) );
         
-        _table.set( valueOf( "a" ), valueOf( "bar" ) );
-        assertEquals( 1, _table.count() );
-        assertEquals( valueOf( "bar" ), _table.get( valueOf( "a" ) ) );
-        assertEquals( valueOf( "bar" ), _table.get( "a" ) );
+        t.set( valueOf( "a" ), valueOf( "bar" ) );
+        assertEquals( 1, t.count() );
+        assertEquals( valueOf( "bar" ), t.get( valueOf( "a" ) ) );
+        assertEquals( valueOf( "bar" ), t.get( "a" ) );
         
         Random rnd = new Random();
         for ( int i = 0; i < 100; i++ )
         {
-            _table.set( valueOf( "" + ( (char) i + 65 ) ), valueOf( rnd.nextInt() ) );
+            t.set( valueOf( "" + ( (char) i + 65 ) ), valueOf( rnd.nextInt() ) );
         }
-        assertEquals( 101, _table.count() );
+        assertEquals( 101, t.count() );
         for ( int i = 0; i < 100; i++ )
         {
-            assertTrue( _table.containsKey( valueOf( "" + ( (char) i + 65 ) ) ) );
+            assertTrue( t.containsKey( valueOf( "" + ( (char) i + 65 ) ) ) );
         }
         
-        _table.set( valueOf( "b" ), valueOf( "lorom" ) );
-        assertEquals( 102, _table.count() );
-        assertTrue( _table.containsKey( valueOf( "b" ) ) );
-        assertEquals( valueOf( "lorom" ), _table.get( valueOf( "b" ) ) );
+        t.set( valueOf( "b" ), valueOf( "lorom" ) );
+        assertEquals( 102, t.count() );
+        assertTrue( t.containsKey( valueOf( "b" ) ) );
+        assertEquals( valueOf( "lorom" ), t.get( valueOf( "b" ) ) );
         
-        _table.set( valueOf( "b" ), NIL );
-        assertEquals( 101, _table.count() );
-        assertFalse( _table.containsKey( valueOf( "b" ) ) );
-        assertEquals( NIL, _table.get( valueOf( "b" ) ) );
-        _table.clear();
+        t.set( valueOf( "b" ), NIL );
+        assertEquals( 101, t.count() );
+        assertFalse( t.containsKey( valueOf( "b" ) ) );
+        assertEquals( NIL, t.get( valueOf( "b" ) ) );
+        t.clear();
     }
     
     @Test
     public void testListGetSet()
     {
         // List part
-        _table.set( ONE, valueOf( "a" ) );
-        assertTrue( _table.containsKey( ONE ) );
-        assertEquals( 1, _table.listSize() );
+        t.set( ONE, valueOf( "a" ) );
+        assertTrue( t.containsKey( ONE ) );
+        assertEquals( 1, t.listSize() );
         
-        _table.set( valueOf( 2 ), valueOf( "b" ) );
-        assertTrue( _table.containsKey( valueOf( 2 ) ) );
-        assertEquals( 2, _table.listSize() );
+        t.set( valueOf( 2 ), valueOf( "b" ) );
+        assertTrue( t.containsKey( valueOf( 2 ) ) );
+        assertEquals( 2, t.listSize() );
         
-        _table.set( valueOf( 3 ), TRUE );
-        _table.set( valueOf( 4 ), TRUE );
-        _table.set( valueOf( 5 ), TRUE );
-        _table.set( valueOf( 6 ), TRUE );
-        assertEquals( 6, _table.listSize() );
+        t.set( valueOf( 3 ), TRUE );
+        t.set( valueOf( 4 ), TRUE );
+        t.set( valueOf( 5 ), TRUE );
+        t.set( valueOf( 6 ), TRUE );
+        assertEquals( 6, t.listSize() );
         
-        _table.set( valueOf( 6 ), NIL );
-        assertFalse( _table.containsKey( valueOf( 6 ) ) );
-        assertEquals( 5, _table.listSize() );
+        t.set( valueOf( 6 ), NIL );
+        assertFalse( t.containsKey( valueOf( 6 ) ) );
+        assertEquals( 5, t.listSize() );
         
-        _table.set( valueOf( 3 ), NIL );
-        assertEquals( 2, _table.listSize() );
-        assertTrue( _table.containsKey( valueOf( 5 ) ) );
+        t.set( valueOf( 3 ), NIL );
+        assertEquals( 2, t.listSize() );
+        assertTrue( t.containsKey( valueOf( 5 ) ) );
         
-        _table.set( valueOf( 3 ), TRUE );
-        assertEquals( 5, _table.listSize() );
-        assertTrue( _table.containsKey( valueOf( 5 ) ) );
+        t.set( valueOf( 3 ), TRUE );
+        assertEquals( 5, t.listSize() );
+        assertTrue( t.containsKey( valueOf( 5 ) ) );
     }
     
 //    @Test

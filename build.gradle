@@ -3,7 +3,9 @@ buildscript {
         jcenter() 
     }
     dependencies {
+        classpath 'com.tunnelvisionlabs:antlr4:4.4'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.+'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
     }
 }
 
@@ -11,12 +13,13 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'license'
 
 if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
-version = "2.2.3-beta"
+version = "2.3.0-beta"
 group = "net.mobtalker.mobtalkerscript"
 archivesBaseName = "MobTalkerScript"
 
@@ -27,14 +30,8 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    antlr
-}
-
 dependencies {
-    antlr 'org.antlr:antlr4:4.3'
-
-    compile 'org.antlr:antlr4-runtime:4.3'
+    compile 'com.tunnelvisionlabs:antlr4-runtime:4.4'
     compile 'org.apache.commons:commons-lang3:3.3.+'
     compile 'com.google.guava:guava:17.+'
     compile 'net.sf.jopt-simple:jopt-simple:4.5'
@@ -50,15 +47,21 @@ shadowJar {
     from 'LICENSE'
     exclude 'META-INF', 'META-INF/**'
 
-    appendManifest {
-        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript'
+    manifest {
+        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.standalone.MobTalkerScript'
     }
     
     classifier = 'standalone'
 }
 
+task sourceJar( type: Jar ) {
+    from sourceSets.main.allSource
+    classifier = 'src'
+}
+
 artifacts {
-    archives shadowJar
+    archives shadowJar 
+    archives sourceJar
 }
 
 task generateAntlr( type: JavaExec ) {
@@ -66,7 +69,7 @@ task generateAntlr( type: JavaExec ) {
     def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v2/compiler/antlr/'
 
     main 'org.antlr.v4.Tool'
-    classpath configurations.antlr
+    classpath buildscript.configurations.classpath
     
     inputs.file grammarFile
     outputs.files(
@@ -91,4 +94,23 @@ tasks.compileJava.dependsOn generateAntlr
 
 task cleanAntlr( type: Delete ) {
     delete generateAntlr.outputs.getFiles()
+}
+
+license {    
+    include "**/*.java"
+    excludes ([
+        "**/MtsParser.java", 
+        "**/MtsLexer.java", 
+        "**/MtsVisitor.java", 
+        "**/MtsBaseVisitor.java"
+    ])
+    
+    header project.file( 'HEADER' )    
+    
+    ignoreFailures false
+    strictCheck false
+ 
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
 }

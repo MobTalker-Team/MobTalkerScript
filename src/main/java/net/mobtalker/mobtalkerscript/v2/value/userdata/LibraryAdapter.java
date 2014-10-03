@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v2.value.userdata;
@@ -97,6 +97,10 @@ import com.google.common.collect.Maps;
         
         _methods = getMethods( mappedClass );
         _fields = getFields( mappedClass );
+        
+        if ( _methods.isEmpty() && _fields.isEmpty() )
+            throw new IllegalArgumentException( "Class '" + mappedClass.getName()
+                                                + "' does not have any annotated methods or fields!" );
     }
     
     // ========================================
@@ -105,7 +109,7 @@ import com.google.common.collect.Maps;
     {
         Set<Entry<String, Method>> methods = _methods.entrySet();
         
-        t.ensureHashCapacity( methods.size() );
+        t.ensureHashCapacity( t.tableSize() + methods.size() );
         
         for ( Entry<String, Method> entry : methods )
         {
@@ -166,9 +170,9 @@ import com.google.common.collect.Maps;
     {
         Map<String, Method> methods = Maps.newHashMap();
         
-        for ( Method m : getAnnotatedMethods( c ) )
+        for ( AnnotatedMethod am : getAnnotatedMethods( c ) )
         {
-            methods.put( getMethodName( m ), m );
+            methods.put( am.getName(), am.getMethod() );
         }
         
         return methods;

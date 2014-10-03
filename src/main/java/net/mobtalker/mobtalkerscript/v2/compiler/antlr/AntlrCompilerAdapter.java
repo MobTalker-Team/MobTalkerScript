@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v2.compiler.antlr;
@@ -152,12 +152,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Reference.FunctionNames.COMMAND_SAY );
         
-        if ( ctx.Character == null )
+        if ( ctx.Arg2 == null )
+        {
             _c.loadNil();
+            visit( ctx.Arg1 );
+        }
         else
-            visit( ctx.Character );
-        
-        visit( ctx.Text );
+        {
+            visit( ctx.Arg1 );
+            visit( ctx.Arg2 );
+        }
         
         _c.loadConstant( valueOf( ctx.IsLast != null ) );
         
@@ -268,7 +272,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             }
             
             _c.loadLocal( choiceIndex );
-            _c.loadConstant( valueOf( i ) );
+            _c.loadConstant( valueOf( i + 1 ) );
             _c.logicOperation( "==" );
             _c.endIfCondition();
             visit( ctx.Options.get( i ).Block );
@@ -287,7 +291,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     private static boolean isMethodBody( FuncBodyContext ctx )
     {
         return ( ctx.getParent() instanceof FuncDeclrStmtContext )
-                && ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null );
+               && ( ( (FuncDeclrStmtContext) ctx.getParent() ).Name.MethodName != null );
     }
     
     private static List<String> getParameterNames( FuncBodyContext ctx )
@@ -470,9 +474,9 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     private static boolean isTailcall( CallArgsContext ctx )
     {
         return ( ctx.getParent() instanceof CallContext )
-                && ( ctx.getParent().getParent() instanceof CallExprContext )
-                && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
-                && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
+               && ( ctx.getParent().getParent() instanceof CallExprContext )
+               && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
+               && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
     }
     
     @Override
@@ -484,6 +488,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         }
         
         ctx.Args.get( ctx.Args.size() - 1 ).nReturn = ctx.nReturn;
+        
         return visitChildren( ctx );
     }
     

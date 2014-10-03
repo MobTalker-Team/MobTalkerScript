@@ -102,6 +102,7 @@ public final class MtsTableLib
         return table.remove( checkInteger( argIndex, 1 ) );
     }
     
+    @MtsNativeFunction
     public static MtsValue print( MtsValue argValue, MtsValue argIndent )
     {
         return valueOf( new PrettyPrinter( checkString( argIndent, 1, "    " ) ).print( argValue, null ) );

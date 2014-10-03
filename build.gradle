@@ -40,11 +40,11 @@ dependencies {
 }
 
 jar {
-    from 'LICENSE'
+    from 'LICENSE', 'LICENSE-GPL', 'LICENSE-LGPL'
 }
 
 shadowJar {
-    from 'LICENSE'
+    from 'LICENSE', 'LICENSE-GPL', 'LICENSE-LGPL'
     exclude 'META-INF', 'META-INF/**'
 
     manifest {

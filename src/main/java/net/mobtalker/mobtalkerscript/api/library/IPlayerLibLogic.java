@@ -65,9 +65,9 @@ public interface IPlayerLibLogic
     
     int getItemCount( String name, int meta );
     
-    boolean takeItems( String name, int meta, int amount );
+    boolean takeItems( String name, int amount, int meta );
     
-    boolean giveItems( String name, int meta, int amount );
+    boolean giveItems( String name, int amount, int meta );
     
     InventoryInfo getInventory();
 }

@@ -95,14 +95,14 @@ public class ConsolePlayerLibLogic implements IPlayerLibLogic
     }
     
     @Override
-    public boolean takeItems( String name, int meta, int amount )
+    public boolean takeItems( String name, int amount, int meta )
     {
         // TODO
         return true;
     }
     
     @Override
-    public boolean giveItems( String name, int meta, int amount )
+    public boolean giveItems( String name, int amount, int meta )
     {
         // TODO
         return true;

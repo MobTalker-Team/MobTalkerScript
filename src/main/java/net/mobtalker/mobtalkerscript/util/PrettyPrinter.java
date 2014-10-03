@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.util;
 
+import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+
 import java.util.Set;
 
 import net.mobtalker.mobtalkerscript.v2.value.*;
@@ -49,7 +51,7 @@ public class PrettyPrinter
     {
         StringBuilder s = new StringBuilder();
         print( v, name, s, "" );
-        return s.toString();
+        return s.deleteCharAt( s.length() - 1 ).toString();
     }
     
     private void print( MtsValue v, String name, StringBuilder s, String indent )
@@ -85,26 +87,31 @@ public class PrettyPrinter
     
     private void tablePrint( MtsTable t, StringBuilder s, String indent )
     {
-        for ( Entry entry : t.entryView() )
+        MtsValue k = NIL;
+        Entry entry;
+        while ( ( entry = t.getNext( k ) ) != null )
         {
-            MtsValue k = entry.getKey();
-            MtsValue v = entry.getValue();
-            
-            if ( v.isTable() && _cache.contains( v ) )
+            k = entry.getKey();
+            tableEntryPrint( k, entry.getValue(), s, indent );
+        }
+    }
+    
+    private void tableEntryPrint( MtsValue k, MtsValue v, StringBuilder s, String indent )
+    {
+        if ( v.isTable() && _cache.contains( v ) )
+        {
+            s.append( indent )
+             .append( '[' ).append( k ).append( "] = " )
+             .append( v ).append( ";\n" );
+        }
+        else
+        {
+            if ( v.isTable() )
             {
-                s.append( indent )
-                 .append( '[' ).append( k ).append( "] = " )
-                 .append( v ).append( ";\n" );
+                _cache.add( v );
             }
-            else
-            {
-                if ( v.isTable() )
-                {
-                    _cache.add( v );
-                }
 
-                print( v, "[" + k + "]", s, indent );
-            }
+            print( v, "[" + k + "]", s, indent );
         }
     }
 }

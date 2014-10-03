@@ -1,5 +1,22 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.api.library;
 
+import static net.mobtalker.mobtalkerscript.api.ScriptApiConstants.*;
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.api.*;
@@ -7,26 +24,15 @@ import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
-public final class PlayerLib
+public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
 {
-    private final IPlayerLibLogic _logic;
-    
-    // ========================================
-    
     public PlayerLib( IPlayerLibLogic logic )
     {
-        _logic = logic;
+        super( logic );
     }
     
     // ========================================
-    
-    public IPlayerLibLogic getLogic()
-    {
-        return _logic;
-    }
-    
-    // ========================================
-    
+
     @MtsNativeFunction
     public MtsString getGameMode()
     {
@@ -109,9 +115,9 @@ public final class PlayerLib
         for ( ItemInfo item : inventory.getItems() )
         {
             MtsTable info = new MtsTable( 0, 3 );
-            info.set( "name", valueOf( item.Name ) );
-            info.set( "meta", valueOf( item.Meta ) );
-            info.set( "count", valueOf( inventory.getAmount( item ) ) );
+            info.set( KEY_ITEM_NAME, valueOf( item.Name ) );
+            info.set( KEY_ITEM_META, valueOf( item.Meta ) );
+            info.set( KEY_ITEM_COUNT, valueOf( inventory.getAmount( item ) ) );
             t.add( info );
         }
         

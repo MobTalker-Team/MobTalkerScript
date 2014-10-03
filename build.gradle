@@ -3,8 +3,9 @@ buildscript {
         jcenter() 
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.+'
         classpath 'com.tunnelvisionlabs:antlr4:4.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.+'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
     }
 }
 
@@ -12,12 +13,13 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'license'
 
 if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
-version = "2.2.4-beta"
+version = "2.3.0-beta"
 group = "net.mobtalker.mobtalkerscript"
 archivesBaseName = "MobTalkerScript"
 
@@ -46,7 +48,7 @@ shadowJar {
     exclude 'META-INF', 'META-INF/**'
 
     manifest {
-        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript'
+        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.standalone.MobTalkerScript'
     }
     
     classifier = 'standalone'
@@ -92,4 +94,23 @@ tasks.compileJava.dependsOn generateAntlr
 
 task cleanAntlr( type: Delete ) {
     delete generateAntlr.outputs.getFiles()
+}
+
+license {    
+    include "**/*.java"
+    excludes ([
+        "**/MtsParser.java", 
+        "**/MtsLexer.java", 
+        "**/MtsVisitor.java", 
+        "**/MtsBaseVisitor.java"
+    ])
+    
+    header project.file( 'HEADER' )    
+    
+    ignoreFailures false
+    strictCheck false
+ 
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
 }

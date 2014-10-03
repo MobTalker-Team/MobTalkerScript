@@ -1,5 +1,22 @@
+/*
+ * Copyright (C) 2013-2014 Chimaine
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.mobtalker.mobtalkerscript.api.library;
 
+import static net.mobtalker.mobtalkerscript.api.ScriptApiConstants.*;
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
@@ -190,9 +207,9 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         for ( ScoreboardTeamInfo team : teams )
         {
             MtsTable info = new MtsTable( 0, 3 );
-            info.set( "color", valueOf( team.Color ) );
-            info.set( "friendlyfire", valueOf( team.FriendlyFire ) );
-            info.set( "seeFriendlyInvisibles", valueOf( team.CanSeeInvisibleMembers ) );
+            info.set( KEY_SCOREBOARD_TEAM_COLOR, valueOf( team.Color ) );
+            info.set( KEY_SCOREBOARD_TEAM_FRIENDLYFIRE, valueOf( team.FriendlyFire ) );
+            info.set( KEY_SCOREBOARD_TEAM_SEEFIRENDLYINVISIBLES, valueOf( team.CanSeeInvisibleMembers ) );
             result.set( team.Name, info );
         }
         

@@ -42,5 +42,5 @@ To increase the chances that your PR gets accepted, follow these basic rules
 
 
 ## License & Copyright
-MobTalkerScript is Copyright (C) 2013 - 2014 Chimaine and licensed under the GPLv3.
+MobTalkerScript is Copyright (C) 2013 - 2014 Chimaine and licensed under the LGPLv3.
 For more information, see the LICENSE file or http://www.gnu.org/licenses/.

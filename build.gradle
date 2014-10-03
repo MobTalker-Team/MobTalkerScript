@@ -48,7 +48,7 @@ shadowJar {
     exclude 'META-INF', 'META-INF/**'
 
     manifest {
-        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.MobTalkerScript'
+        attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.standalone.MobTalkerScript'
     }
     
     classifier = 'standalone'

@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,7 @@ import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v2.Reference;
+import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.AssignExprContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
@@ -109,6 +109,8 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         visit( chunk );
     }
+    
+    // ========================================
     
     // ========================================
     // Chunk
@@ -647,14 +649,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitIfThenElse( IfThenElseContext ctx )
     {
-        _c.enterIfThenElseBlock();
         _c.enterBlock();
+        _c.enterIfThenElseBlock();
         
         visit( ctx.Condition );
         _c.endIfCondition();
         
         visit( ctx.Block );
         _c.endThenBlock();
+        
+        _c.exitBlock();
         
         visit( ctx.ElseIfs );
         
@@ -663,7 +667,6 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             visit( ctx.Else );
         }
         
-        _c.exitBlock();
         _c.exitIfThenElse();
         
         return null;
@@ -672,11 +675,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitElseIfBody( ElseIfBodyContext ctx )
     {
+        _c.enterBlock();
         _c.enterIfCondition();
+        
         visit( ctx.Condition );
         _c.endIfCondition();
+        
         visit( ctx.Block );
         _c.endThenBlock();
+        
+        _c.exitBlock();
         
         return null;
     }
@@ -684,8 +692,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitElseBody( ElseBodyContext ctx )
     {
+        _c.enterBlock();
         _c.enterElseBlock();
+        
         visit( ctx.Block );
+        
+        _c.exitBlock();
         
         return null;
     }
@@ -696,11 +708,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitWhileLoop( WhileLoopContext ctx )
     {
+        _c.enterBlock();
         _c.enterWhileLoop();
+        
         visit( ctx.Condition );
         _c.enterWhileBody();
+        
         visit( ctx.Block );
         _c.exitWhileLoop();
+        
+        _c.exitBlock();
         
         return null;
     }
@@ -708,11 +725,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitRepeatLoop( RepeatLoopContext ctx )
     {
+        _c.enterBlock();
         _c.enterRepeatLoop();
+        
         visit( ctx.Block );
         _c.enterUntilConditon();
+        
         visit( ctx.Condition );
         _c.exitRepeatLoop();
+        
+        _c.exitBlock();
         
         return null;
     }
@@ -720,6 +742,8 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitNumericForLoop( NumericForLoopContext ctx )
     {
+        _c.enterBlock();
+        
         visit( ctx.Control.Start );
         visit( ctx.Control.Limit );
         
@@ -737,18 +761,24 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         visit( ctx.Block );
         _c.exitForLoop();
         
+        _c.exitBlock();
+        
         return null;
     }
     
     @Override
     public Void visitGenericForLoop( GenericForLoopContext ctx )
     {
+        _c.enterBlock();
+        
         adjustExprListResults( ctx.Control.Exprs.Exprs, 3 );
         
         _c.enterGenericForLoop( getNames( ctx.Control.Vars ) );
         
         visit( ctx.Block );
         _c.exitForLoop();
+        
+        _c.enterBlock();
         
         return null;
     }
@@ -848,21 +878,51 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             _c.setSourcePosition( line, coloum );
         }
         
-        return super.visit( tree );
+        try
+        {
+            return super.visit( tree );
+        }
+        catch ( ScriptParserException ex )
+        {
+            if ( tree instanceof ParserRuleContext )
+            {
+                ParserRuleContext ctx = (ParserRuleContext) tree;
+                int line = ctx.start.getLine();
+                int coloum = ctx.start.getCharPositionInLine();
+                System.out.println( line + ":" + coloum );
+            }
+            
+            throw ex;
+        }
     }
     
     @Override
     public Void visitChildren( RuleNode node )
     {
-        if ( node instanceof ParserRuleContext )
+//        if ( node instanceof ParserRuleContext )
+//        {
+//            ParserRuleContext ctx = (ParserRuleContext) node;
+//            int line = ctx.start.getLine();
+//            int coloum = ctx.start.getCharPositionInLine();
+//            _c.setSourcePosition( line, coloum );
+//        }
+//            return super.visitChildren( node );
+        
+        Void result = defaultResult();
+        int n = node.getChildCount();
+        for ( int i = 0; i < n; i++ )
         {
-            ParserRuleContext ctx = (ParserRuleContext) node;
-            int line = ctx.start.getLine();
-            int coloum = ctx.start.getCharPositionInLine();
-            _c.setSourcePosition( line, coloum );
+            if ( !shouldVisitNextChild( node, result ) )
+            {
+                break;
+            }
+            
+            ParseTree c = node.getChild( i );
+            Void childResult = visit( c );
+            result = aggregateResult( result, childResult );
         }
         
-        return super.visitChildren( node );
+        return result;
     }
     
     /**

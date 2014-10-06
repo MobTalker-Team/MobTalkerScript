@@ -243,20 +243,22 @@ expr
 //      # PrefixOpExpr
 //    | expr Operator=( '++' | '--' )
 //      # PostfixOpExpr
-    | Operator=( '-' | 'not' | '#' ) Expr=expr
-      # UnaryOpExpr
-    | <assoc=right> Left=expr Operator=( '%' | '^' ) Right=expr
+    | <assoc=right> Left=expr Operator='^' Right=expr
       # BinaryOpExpr
-    | Left=expr Operator=( '*' | '/' ) Right=expr
+    | Operator=( 'not' | '#' | '-' ) Expr=expr
+      # UnaryOpExpr
+    | Left=expr Operator=( '*' | '/' | '%' ) Right=expr
       # BinaryOpExpr
     | Left=expr Operator=( '+' | '-'  ) Right=expr
       # BinaryOpExpr
-    | Left=expr Operator=( '<=' | '>=' | '<' | '>' | '!=' | '==' ) Right=expr
-      # LogicalOpExpr
-    | Left=expr Operator=( 'and' | 'or' ) Right=expr
-      # ConditionalOpExpr
-    | Left=expr Operator='..' Right=expr
+    | <assoc=right> Left=expr Operator='..' Right=expr
       # BinaryOpExpr
+    | Left=expr Operator=( '<' | '>' | '<=' | '>=' | '!=' | '==' ) Right=expr
+      # LogicalOpExpr
+    | Left=expr Operator='and' Right=expr
+      # ConditionalOpExpr
+    | Left=expr Operator='or' Right=expr
+      # ConditionalOpExpr
     ;
 
 assignExpr

@@ -19,7 +19,7 @@ if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
-version = "2.3.0-beta"
+version = "2.3.1-beta"
 group = "net.mobtalker.mobtalkerscript"
 archivesBaseName = "MobTalkerScript"
 
@@ -40,11 +40,11 @@ dependencies {
 }
 
 jar {
-    from 'LICENSE', 'LICENSE-GPL', 'LICENSE-LGPL'
+    from 'LICENSE-MobTalkerScript', 'LICENSE-GPL', 'LICENSE-LGPL'
 }
 
 shadowJar {
-    from 'LICENSE', 'LICENSE-GPL', 'LICENSE-LGPL'
+    from 'LICENSE-MobTalkerScript', 'LICENSE-GPL', 'LICENSE-LGPL'
     exclude 'META-INF', 'META-INF/**'
 
     manifest {

@@ -23,7 +23,7 @@ import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
 import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v2.*;
+import net.mobtalker.mobtalkerscript.v2.Reference;
 import net.mobtalker.mobtalkerscript.v2.compiler.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.AssignExprContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
@@ -878,51 +878,21 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             _c.setSourcePosition( line, coloum );
         }
         
-        try
-        {
-            return super.visit( tree );
-        }
-        catch ( ScriptParserException ex )
-        {
-            if ( tree instanceof ParserRuleContext )
-            {
-                ParserRuleContext ctx = (ParserRuleContext) tree;
-                int line = ctx.start.getLine();
-                int coloum = ctx.start.getCharPositionInLine();
-                System.out.println( line + ":" + coloum );
-            }
-            
-            throw ex;
-        }
+        return super.visit( tree );
     }
     
     @Override
     public Void visitChildren( RuleNode node )
     {
-//        if ( node instanceof ParserRuleContext )
-//        {
-//            ParserRuleContext ctx = (ParserRuleContext) node;
-//            int line = ctx.start.getLine();
-//            int coloum = ctx.start.getCharPositionInLine();
-//            _c.setSourcePosition( line, coloum );
-//        }
-//            return super.visitChildren( node );
-        
-        Void result = defaultResult();
-        int n = node.getChildCount();
-        for ( int i = 0; i < n; i++ )
+        if ( node instanceof ParserRuleContext )
         {
-            if ( !shouldVisitNextChild( node, result ) )
-            {
-                break;
-            }
-            
-            ParseTree c = node.getChild( i );
-            Void childResult = visit( c );
-            result = aggregateResult( result, childResult );
+            ParserRuleContext ctx = (ParserRuleContext) node;
+            int line = ctx.start.getLine();
+            int coloum = ctx.start.getCharPositionInLine();
+            _c.setSourcePosition( line, coloum );
         }
         
-        return result;
+        return super.visitChildren( node );
     }
     
     /**

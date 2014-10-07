@@ -17,6 +17,7 @@
 package net.mobtalker.mobtalkerscript.v2.compiler;
 
 import static com.google.common.base.Preconditions.*;
+import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v2.instruction.Instructions.*;
 
 import java.util.*;
@@ -114,6 +115,8 @@ public class FunctionState
     {
         _instructions.add( instr );
         _lineNumbers.add( pos );
+        
+        CompilerLog.fine( "  Instruction: %s (%s)", instr, currentIndex() );
         
         return currentIndex();
     }

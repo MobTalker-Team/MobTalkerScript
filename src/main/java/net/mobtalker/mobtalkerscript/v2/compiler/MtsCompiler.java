@@ -33,7 +33,7 @@ import net.mobtalker.mobtalkerscript.util.StringEscapeUtil;
 import net.mobtalker.mobtalkerscript.v2.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ChunkContext;
-import net.mobtalker.mobtalkerscript.v2.instruction.MtsInstruction;
+import net.mobtalker.mobtalkerscript.v2.instruction.*;
 import net.mobtalker.mobtalkerscript.v2.value.*;
 
 import org.antlr.v4.runtime.*;
@@ -98,6 +98,12 @@ public class MtsCompiler
             throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
         }
         
+        // Debug option for displaying the parse tree
+//        if ( stream.index() > 1 )
+//        {
+//            chunk.inspect( parser );
+//        }
+        
         int lineStart = chunk.getStart().getLine();
         
         // stop token CAN be null if the input is empty and contains only comments and EOF
@@ -109,7 +115,9 @@ public class MtsCompiler
         AntlrCompilerAdapter adapter = new AntlrCompilerAdapter( compiler );
         adapter.compile( chunk );
         
-        return compiler.compile();
+        MtsFunctionPrototype prototype = compiler.compile();
+        System.out.println( prototype.toString( true, true ) );
+        return prototype;
     }
     
     // ========================================
@@ -143,12 +151,13 @@ public class MtsCompiler
         if ( _curPosition.equals( line, coloum ) )
             return;
         
-        if ( _curPosition.Line != line )
-        {
-            CompilerLog.fine( "Line: " + line );
-        }
-        
+        SourcePosition old = _curPosition;
         _curPosition = new SourcePosition( line, coloum );
+        
+        if ( old.Line != line )
+        {
+            addInstr( new InstrLine( line ) );
+        }
     }
     
     public SourcePosition getSourcePosition()
@@ -160,8 +169,6 @@ public class MtsCompiler
     
     public void addInstr( MtsInstruction instr )
     {
-        CompilerLog.fine( "  Instruction: " + instr );
-        
         _currentFunction.addInstruction( instr, _curPosition );
     }
     
@@ -298,31 +305,37 @@ public class MtsCompiler
     
     public void enterIfThenElseBlock()
     {
+        CompilerLog.info( "Enter if-then-else" );
         _currentFunction.enterIfThenElse();
     }
     
     public void enterIfCondition()
     {
+        CompilerLog.info( "Enter if condition" );
         _currentFunction.enterIfCondition();
     }
     
     public void endIfCondition()
     {
+        CompilerLog.info( "Enter then block" );
         _currentFunction.endIfCondition();
     }
     
     public void endThenBlock()
     {
+        CompilerLog.info( "Exit then block" );
         _currentFunction.endThenBlock();
     }
     
     public void enterElseBlock()
     {
+        CompilerLog.info( "Enter else block" );
         _currentFunction.enterElseBlock();
     }
     
     public void exitIfThenElse()
     {
+        CompilerLog.info( "Exit if-then-else" );
         _currentFunction.exitIfThenElse();
     }
     
@@ -330,11 +343,13 @@ public class MtsCompiler
     
     public void declareLabel( String name )
     {
+        CompilerLog.info( "Declare label: " + name );
         _currentFunction.addLabel( name );
     }
     
     public void gotoLabel( String name )
     {
+        CompilerLog.info( "Goto label: " + name );
         _currentFunction.gotoLabel( name );
     }
     
@@ -345,14 +360,12 @@ public class MtsCompiler
     public LocalDescription declareLocal( String name )
     {
         CompilerLog.info( "Declare local: " + name );
-        
         return _currentFunction.declareLocal( name );
     }
     
     public LocalDescription declareAnonymousLocal( String name )
     {
         CompilerLog.info( "Declare internal: " + name );
-        
         return _currentFunction.declareAnonymousLocal( name );
     }
     
@@ -418,7 +431,6 @@ public class MtsCompiler
     public void loadNil()
     {
         CompilerLog.info( "Load nil" );
-        
         addInstr( InstrLoadNil() );
     }
     
@@ -546,22 +558,22 @@ public class MtsCompiler
      */
     public void enterConditionalBlock( String op )
     {
-        CompilerLog.info( "Operator: " + op );
+        CompilerLog.info( "Enter conditional: " + op );
         
         if ( "and".equals( op ) )
         {
             addInstr( InstrAnd() );
-            _currentFunction.markPendingJump();
         }
         else if ( "or".equals( op ) )
         {
             addInstr( InstrOr() );
-            _currentFunction.markPendingJump();
         }
         else
         {
             throw new IllegalArgumentException( op + " is not a valid conditional operator" );
         }
+        
+        _currentFunction.markPendingJump();
     }
     
     /**
@@ -569,6 +581,8 @@ public class MtsCompiler
      */
     public void exitConditionalBlock()
     {
+        CompilerLog.info( "Exit conditional" );
+        
         _currentFunction.setPendingJump( 1 );
     }
     

@@ -233,10 +233,10 @@ expr
       # StringLiteral
     | 'function' funcBody
       # FuncDeclrExpr
-    | varAccess
-      # SimpleExpr
     | Call=call
       # CallExpr
+    | varAccess
+      # SimpleExpr
     | tableCtor
       # SimpleExpr
 //    | Operator=( '++' | '--' ) expr

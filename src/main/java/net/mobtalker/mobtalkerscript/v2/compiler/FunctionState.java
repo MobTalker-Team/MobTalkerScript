@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,7 +39,7 @@ public class FunctionState
     private final List<ExternalDescription> _externals;
     
     private final LinkedList<MtsInstruction> _instructions;
-    private final Queue<PendingJump> _pendingJumps;
+    private final Stack<PendingJump> _pendingJumps;
     
     private final Map<String, CompilerLabel> _labels;
     
@@ -63,7 +63,7 @@ public class FunctionState
         _externals = Lists.newArrayList();
         
         _instructions = Lists.newLinkedList();
-        _pendingJumps = Lists.newLinkedList();
+        _pendingJumps = Stack.newStack();
         
         _labels = Maps.newHashMapWithExpectedSize( 2 );
         
@@ -74,11 +74,8 @@ public class FunctionState
         _ifElses = Stack.newStack();
     }
     
-    public FunctionState( FunctionState parent,
-                          String name,
-                          String sourceFile,
-                          int sourceLineStart,
-                          int sourceLineEnd )
+    public FunctionState( FunctionState parent, String name,
+                          String sourceFile, int sourceLineStart, int sourceLineEnd )
     {
         _parent = parent;
         _name = name;
@@ -174,7 +171,8 @@ public class FunctionState
     
     public void exitBlock()
     {
-        checkNotNull( _block.getParent(), "Tried to leave function scope!" );
+        assert _block.getParent() != null : "Tried to leave function scope!";
+        
         _block = _block.getParent();
     }
     
@@ -190,9 +188,9 @@ public class FunctionState
      */
     public void markBreak()
     {
-        checkState( !_loops.isEmpty(), "There is no loop to break!" );
-        checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                    "Last added instruction is not a jump instruction!" );
+        assert !_loops.isEmpty() : "There is no loop to break!";
+        assert _instructions.getLast() instanceof MtsJumpInstruction
+        /*   */: "Last added instruction is not a jump instruction!";
         
         LoopState loop = _loops.peek();
         MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.getLast();
@@ -202,9 +200,9 @@ public class FunctionState
     
     public void exitLoop()
     {
-        checkState( !_loops.isEmpty(), "There is no loop to exit!" );
-        checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                    "Last added instruction is not a jump instruction!" );
+        assert !_loops.isEmpty() : "There is no loop to exit!";
+        assert _instructions.getLast() instanceof MtsJumpInstruction
+        /*   */: "Last added instruction is not a jump instruction!";
         
         LoopState loop = _loops.pop();
         MtsJumpInstruction instr = (MtsJumpInstruction) _instructions.getLast();
@@ -223,9 +221,7 @@ public class FunctionState
         
         assert ( stepIndex == ( limitIndex + 1 ) ) && ( limitIndex == ( loopIndex + 1 ) )
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                              loopIndex,
-                              limitIndex,
-                              stepIndex );
+                              loopIndex, limitIndex, stepIndex );
         
         addInstruction( InstrNForPrep( loopIndex ) );
         
@@ -242,17 +238,14 @@ public class FunctionState
         
         assert ( indexIndex == ( stateIndex + 1 ) ) && ( stateIndex == ( iterIndex + 1 ) )
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
-                              iterIndex,
-                              stateIndex,
-                              indexIndex );
+                              iterIndex, stateIndex, indexIndex );
         
         for ( int i = 0; i < loopVars.length; i++ )
         {
             String loopVar = loopVars[i];
             int varIndex = declareLocal( loopVar ).getIndex();
             
-            assert ( varIndex - i - 1 ) == indexIndex
-            /*   */: "Loop variable indices are not consecutive!";
+            assert ( varIndex - i - 1 ) == indexIndex : "Loop variable indices are not consecutive!";
         }
         
         addInstruction( InstrStoreL( indexIndex ) );
@@ -276,7 +269,7 @@ public class FunctionState
      */
     public void enterIfCondition()
     {
-        checkState( !_ifElses.isEmpty(), "Not inside an IfThenElse!" );
+        assert !_ifElses.isEmpty() : "Not inside an IfThenElse!";
         
         ConditionalState block = _ifElses.peek();
         block.markBeginNext( currentIndex() + 1 );
@@ -284,7 +277,7 @@ public class FunctionState
     
     public void endIfCondition()
     {
-        checkState( !_ifElses.isEmpty(), "Not inside an IfThenElse!" );
+        assert !_ifElses.isEmpty() : "Not inside an IfThenElse!";
         
         ConditionalState block = _ifElses.peek();
         MtsJumpInstruction jump = InstrTest();
@@ -298,7 +291,7 @@ public class FunctionState
      */
     public void endThenBlock()
     {
-        checkState( !_ifElses.isEmpty(), "Not inside an IfThenElse!" );
+        assert !_ifElses.isEmpty() : "Not inside an IfThenElse!";
         
         ConditionalState block = _ifElses.peek();
         MtsJumpInstruction jump = InstrJump();
@@ -309,7 +302,7 @@ public class FunctionState
     
     public void enterElseBlock()
     {
-        checkState( !_ifElses.isEmpty(), "Not inside an IfThenElse!" );
+        assert !_ifElses.isEmpty() : "Not inside an IfThenElse!";
         
         ConditionalState block = _ifElses.peek();
         block.markBeginNext( currentIndex() + 1 );
@@ -320,7 +313,7 @@ public class FunctionState
      */
     public void exitIfThenElse()
     {
-        checkState( !_ifElses.isEmpty(), "Not inside an IfThenElse!" );
+        assert !_ifElses.isEmpty() : "Not inside an IfThenElse!";
         
         ConditionalState block = _ifElses.pop();
         block.setExitTarget( currentIndex() + 1 );
@@ -330,26 +323,26 @@ public class FunctionState
     
     public void markPendingJump()
     {
-        checkState( _instructions.getLast() instanceof MtsJumpInstruction,
-                    "Last added instruction is not a jump instruction!" );
+        assert _instructions.getLast() instanceof MtsJumpInstruction
+        /*   */: "Last added instruction is not a jump instruction!";
         
         MtsJumpInstruction jump = (MtsJumpInstruction) _instructions.getLast();
-        _pendingJumps.add( new PendingJump( jump, currentIndex() ) );
+        _pendingJumps.push( new PendingJump( jump, currentIndex() ) );
     }
     
     public void setPendingJump()
     {
-        checkState( !_pendingJumps.isEmpty(), "There is no pending jump!" );
+        assert !_pendingJumps.isEmpty() : "There is no pending jump!";
         
-        PendingJump jump = _pendingJumps.remove();
+        PendingJump jump = _pendingJumps.pop();
         jump.setTarget( currentIndex() );
     }
     
     public void setPendingJump( int offset )
     {
-        checkState( !_pendingJumps.isEmpty(), "There is no pending jump!" );
+        assert !_pendingJumps.isEmpty() : "There is no pending jump!";
         
-        PendingJump jump = _pendingJumps.remove();
+        PendingJump jump = _pendingJumps.pop();
         jump.setTarget( currentIndex() + offset );
     }
     

@@ -501,7 +501,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         
         if ( ctx.ExprList != null )
         {
-            nReturn = ctx.ExprList.getChildCount();
+            nReturn = ctx.ExprList.Exprs.size();
             visit( ctx.ExprList );
         }
         
@@ -789,16 +789,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitUnaryOpExpr( UnaryOpExprContext ctx )
     {
-        if ( "-".equals( ctx.Operator.getText() ) && ( ctx.Expr instanceof NumberLiteralContext ) )
-        {
-            MtsNumber value = parseNumber( "-" + ctx.Expr.getText() );
-            _c.loadConstant( value );
-        }
-        else
-        {
-            visit( ctx.Expr );
-            _c.unaryOperation( ctx.Operator.getText() );
-        }
+//        if ( "-".equals( ctx.Operator.getText() ) && ( ctx.Expr instanceof NumberLiteralContext ) )
+//        {
+//            MtsNumber value = parseNumber( "-" + ctx.Expr.getText() );
+//            _c.loadConstant( value );
+//        }
+//        else
+//        {
+        visit( ctx.Expr );
+        _c.unaryOperation( ctx.Operator.getText() );
+//        }
         
         return null;
     }

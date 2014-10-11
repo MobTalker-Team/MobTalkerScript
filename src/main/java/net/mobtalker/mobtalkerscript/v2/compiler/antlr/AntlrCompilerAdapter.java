@@ -330,7 +330,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             if ( !ctx.TableKeys.isEmpty() )
             {
                 _c.loadConstant( ctx.TableKeys.get( 0 ).getText() );
-                for ( int i = 0; i < ctx.TableKeys.size(); i++ )
+                for ( int i = 1; i < ctx.TableKeys.size(); i++ )
                 {
                     _c.loadFromTable();
                     _c.loadConstant( ctx.TableKeys.get( i ).getText() );

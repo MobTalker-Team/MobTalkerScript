@@ -179,15 +179,10 @@ public class MtsCompiler
     
     // ========================================
     
-    public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, String... params )
-    {
-        CompilerLog.info( "Enter Function " );
-        
-        enterFunction( name, sourceLineStart, sourceLineEnd, params );
-    }
-    
     public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, Iterable<String> params )
     {
+        CompilerLog.info( "Enter Function: " + name );
+        
         FunctionState child = new FunctionState( _currentFunction,
                                                  name,
                                                  _sourceName,

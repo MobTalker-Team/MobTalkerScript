@@ -339,7 +339,11 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             
             if ( ctx.MethodName != null )
             {
-                _c.loadFromTable();
+                if ( !ctx.TableKeys.isEmpty() )
+                {
+                    _c.loadFromTable();
+                }
+                
                 _c.loadConstant( ctx.MethodName.getText() );
             }
             

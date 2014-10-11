@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,6 +31,7 @@ public class MtsFunctionPrototype
     private final List<MtsInstruction> _instructions;
     private final int _maxStackSize;
     
+    private final int _nParams;
     private final List<MtsValue> _constants;
     private final List<ExternalDescription> _externals;
     private final List<LocalDescription> _locals;
@@ -48,6 +49,7 @@ public class MtsFunctionPrototype
     
     public MtsFunctionPrototype( List<MtsInstruction> instructions,
                                  int maxStackSize,
+                                 int nParams,
                                  List<MtsValue> constants,
                                  List<ExternalDescription> externals,
                                  List<LocalDescription> locals,
@@ -60,10 +62,12 @@ public class MtsFunctionPrototype
         checkNotNull( instructions );
         checkArgument( 0 <= maxStackSize, "Stack size cannot be negative: " + maxStackSize );
         checkArgument( maxStackSize <= 0xFE, "Stack size exceeds maximum " + maxStackSize );
+        checkArgument( 0 <= nParams, "Parameter count cannot be negative: " + nParams );
         
         _instructions = instructions;
         _maxStackSize = maxStackSize;
         
+        _nParams = nParams;
         _constants = constants;
         _externals = externals;
         _locals = locals;
@@ -87,6 +91,11 @@ public class MtsFunctionPrototype
     public int getMaxStackSize()
     {
         return _maxStackSize;
+    }
+    
+    public int getParameterCount()
+    {
+        return _nParams;
     }
     
     // ========================================
@@ -244,6 +253,7 @@ public class MtsFunctionPrototype
          .append( _sourceLineEnd )
          .append( '\n' );
         s.append( "    stacksize: " ).append( _maxStackSize );
+        s.append( "    parameters: " ).append( _nParams );
         
         printLocals( s, "    " + prefix, full );
         printExternals( s, "    " + prefix, full );

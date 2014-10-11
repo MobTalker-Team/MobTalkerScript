@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -55,9 +55,10 @@ public final class MtsFrame
         _closure = closure;
         _ip = 0;
         
-        int nStack = closure.getPrototype().getMaxStackSize();
-        int nLocals = closure.getPrototype().getLocalCount();
-        int nArgs = arguments.count();
+        MtsFunctionPrototype prototype = closure.getPrototype();
+        int nStack = prototype.getMaxStackSize();
+        int nLocals = prototype.getLocalCount();
+        int nArgs = prototype.getParameterCount();
         
         _stack = new MtsValue[nStack];
         _top = 0;

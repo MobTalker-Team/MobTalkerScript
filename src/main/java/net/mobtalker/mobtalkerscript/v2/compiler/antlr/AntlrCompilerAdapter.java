@@ -384,7 +384,7 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         
         List<String> paramNames = getParameterNames( ctx );
         
-        _c.enterFunction( funcName, lineStart, lineEnd, paramNames );
+        _c.enterFunction( funcName, paramNames.size(), lineStart, lineEnd, paramNames );
         
         visit( ctx.Body );
         
@@ -465,14 +465,14 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
             nArgs += ctx.Args.Exprs.size();
         }
         
-        if ( isTailcall( ctx ) )
-        {
-            _c.tailCall( nArgs, ctx.nReturn );
-        }
-        else
-        {
-            _c.callFunction( nArgs, ctx.nReturn );
-        }
+//        if ( isTailcall( ctx ) )
+//        {
+//            _c.tailCall( nArgs, ctx.nReturn );
+//        }
+//        else
+//        {
+        _c.callFunction( nArgs, ctx.nReturn );
+//        }
         
         return null;
     }

@@ -45,6 +45,8 @@ public class FunctionState
     private final Map<String, CompilerLabel> _labels;
     
     private final String _name;
+    private final int _nParam;
+    
     private final String _sourceFile;
     private final int _sourceLineStart;
     private final int _sourceLineEnd;
@@ -75,11 +77,12 @@ public class FunctionState
         _ifElses = Stack.newStack();
     }
     
-    public FunctionState( FunctionState parent, String name,
+    public FunctionState( FunctionState parent, String name, int nParam,
                           String sourceFile, int sourceLineStart, int sourceLineEnd )
     {
         _parent = parent;
         _name = name;
+        _nParam = nParam;
         
         _sourceFile = sourceFile;
         _sourceLineStart = sourceLineStart;
@@ -499,6 +502,7 @@ public class FunctionState
         
         MtsFunctionPrototype p = new MtsFunctionPrototype( ImmutableList.copyOf( _instructions ),
                                                            calculateMaxStackSize(),
+                                                           _nParam,
                                                            ImmutableList.copyOf( _constants ),
                                                            ImmutableList.copyOf( _externals ),
                                                            ImmutableList.copyOf( _locals ),

@@ -136,7 +136,7 @@ public class MtsCompiler
     
     public MtsCompiler( String sourceName, int sourceLineStart, int sourceLineEnd )
     {
-        _mainFunction = new FunctionState( null, "main", sourceName, sourceLineStart, sourceLineEnd );
+        _mainFunction = new FunctionState( null, "main", 0, sourceName, sourceLineStart, sourceLineEnd );
         _mainFunction.addExternal( new ExternalDescription( ENV, 0, 0, true ) );
         
         _currentFunction = _mainFunction;
@@ -179,15 +179,12 @@ public class MtsCompiler
     
     // ========================================
     
-    public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, Iterable<String> params )
+    public void enterFunction( String name, int nParam, int sourceLineStart, int sourceLineEnd, Iterable<String> params )
     {
         CompilerLog.info( "Enter Function: " + name );
         
-        FunctionState child = new FunctionState( _currentFunction,
-                                                 name,
-                                                 _sourceName,
-                                                 sourceLineStart,
-                                                 sourceLineEnd );
+        FunctionState child = new FunctionState( _currentFunction, name, nParam,
+                                                 _sourceName, sourceLineStart, sourceLineEnd );
         _currentFunction.addChild( child );
         _currentFunction = child;
         

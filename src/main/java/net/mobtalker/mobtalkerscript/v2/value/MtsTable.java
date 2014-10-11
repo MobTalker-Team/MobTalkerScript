@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -277,6 +277,33 @@ public class MtsTable extends MtsMetaTableValue
     // ========================================
     
     /**
+     * @param i Zero-based
+     * @param value
+     */
+    public void set( int i, MtsValue value )
+    {
+        if ( TableListPart.isValidKey( i ) )
+        {
+            if ( _listPart.contains( i ) ) // Insert
+            {
+                setList( i, value );
+            }
+            else if ( _listPart.length() == i ) // Append
+            {
+                addList( value );
+            }
+            else
+            {
+                setEntry( valueOf( i + 1 ), value );
+            }
+        }
+        else
+        {
+            setEntry( valueOf( i + 1 ), value );
+        }
+    }
+    
+    /**
      * Associates the specified value with the specified key in this table.
      * If the table previously contained a mapping for the key, the old value is replaced.
      * If the value is set to {@link MtsNil nil} the entry for that mapping is removed.
@@ -308,25 +335,48 @@ public class MtsTable extends MtsMetaTableValue
             // Adjust MTS to Java index
             int i = key.asNumber().asJavaInt() - 1;
             
-            if ( _listPart.contains( i ) )
+            if ( _listPart.contains( i ) ) // Insert
             {
-                _listPart.set( i, value );
-                
-                if ( value.isNil() )
-                {
-                    _listPart.transferOrphansTo( _hashPart );
-                }
+                setList( i, value );
             }
-            else if ( _listPart.contains( i - 1 ) || ( i == 0 ) )
+            else if ( _listPart.length() == i ) // Append
             {
-                _listPart.add( value );
-                _listPart.collectFrom( _hashPart );
+                addList( value );
+            }
+            else
+            {
+                setEntry( key, value );
             }
         }
         else
         {
-            _hashPart.set( key, value );
+            setEntry( key, value );
         }
+    }
+    
+    private void setList( int i, MtsValue value )
+    {
+        _listPart.set( i, value );
+        
+        if ( value.isNil() )
+        {
+            _listPart.transferOrphansTo( _hashPart );
+        }
+    }
+    
+    private void addList( MtsValue value )
+    {
+        _listPart.add( value );
+        
+        if ( !_hashPart.isEmpty() )
+        {
+            _listPart.collectFrom( _hashPart );
+        }
+    }
+    
+    private void setEntry( MtsValue key, MtsValue value )
+    {
+        _hashPart.set( key, value );
     }
     
     // ========================================

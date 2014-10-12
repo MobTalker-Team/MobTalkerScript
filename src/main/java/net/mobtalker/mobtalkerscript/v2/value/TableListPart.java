@@ -314,10 +314,10 @@ import java.util.*;
         if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
             return "";
         
-        StringBuilder s = new StringBuilder( _entries[from].toMtsString().asJavaString() );
+        StringBuilder s = new StringBuilder( _entries[from].toMtsString().toJava() );
         for ( int i = from + 1; i <= to; i++ )
         {
-            s.append( sep ).append( _entries[i].toMtsString().asJavaString() );
+            s.append( sep ).append( _entries[i].toMtsString().toJava() );
         }
         
         return s.toString();

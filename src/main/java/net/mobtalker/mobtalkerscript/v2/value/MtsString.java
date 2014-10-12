@@ -64,15 +64,15 @@ public class MtsString extends MtsValue
     
     public static MtsString concat( MtsValue first, MtsValue second )
     {
-        return of( first.toMtsString().asJavaString()
-                   + second.toMtsString().asJavaString() );
+        return of( first.toMtsString().toJava()
+                   + second.toMtsString().toJava() );
     }
     
     public static MtsString concat( MtsValue first, MtsValue second, MtsValue third )
     {
-        return of( first.toMtsString().asJavaString()
-                   + second.toMtsString().asJavaString()
-                   + third.toMtsString().asJavaString() );
+        return of( first.toMtsString().toJava()
+                   + second.toMtsString().toJava()
+                   + third.toMtsString().toJava() );
     }
     
     public static MtsString concat( MtsValue first, MtsValue second, MtsValue third, MtsValue... others )
@@ -86,7 +86,7 @@ public class MtsString extends MtsValue
         {
             for ( MtsValue value : others )
             {
-                sb.append( value.toMtsString().asJavaString() );
+                sb.append( value.toMtsString().toJava() );
             }
         }
         
@@ -109,7 +109,7 @@ public class MtsString extends MtsValue
             for ( int i = 0; i < values.count(); i++ )
             {
                 MtsValue value = values.get( i );
-                sb.append( value.toMtsString().asJavaString() );
+                sb.append( value.toMtsString().toJava() );
             }
             
             return of( sb.toString() );
@@ -134,11 +134,11 @@ public class MtsString extends MtsValue
         if ( !iter.hasNext() )
             return value.toMtsString();
         
-        StringBuilder s = new StringBuilder( value.toMtsString().asJavaString() );
+        StringBuilder s = new StringBuilder( value.toMtsString().toJava() );
         while ( iter.hasNext() )
         {
             value = iter.next();
-            s.append( value.toMtsString().asJavaString() );
+            s.append( value.toMtsString().toJava() );
         }
         
         return of( s.toString() );
@@ -184,7 +184,7 @@ public class MtsString extends MtsValue
         if ( !other.isString() )
             throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
         
-        return valueOf( _value.compareTo( other.asString().asJavaString() ) < 0 );
+        return valueOf( _value.compareTo( other.asString().toJava() ) < 0 );
     }
     
     @Override
@@ -193,7 +193,7 @@ public class MtsString extends MtsValue
         if ( !other.isString() )
             throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
         
-        return valueOf( _value.compareTo( other.asString().asJavaString() ) <= 0 );
+        return valueOf( _value.compareTo( other.asString().toJava() ) <= 0 );
     }
     
     @Override
@@ -214,11 +214,6 @@ public class MtsString extends MtsValue
     public MtsString asString()
     {
         return this;
-    }
-    
-    public String asJavaString()
-    {
-        return _value;
     }
     
     @Override
@@ -271,7 +266,7 @@ public class MtsString extends MtsValue
         if ( !( obj instanceof MtsString ) )
             return false;
         
-        return ( (MtsString) obj ).asJavaString().equals( _value );
+        return ( (MtsString) obj ).toJava().equals( _value );
     }
     
     @Override
@@ -280,7 +275,7 @@ public class MtsString extends MtsValue
         if ( !o.isString() )
             return 0;
         
-        return _value.compareTo( o.asString().asJavaString() );
+        return _value.compareTo( o.asString().toJava() );
     }
     
 }

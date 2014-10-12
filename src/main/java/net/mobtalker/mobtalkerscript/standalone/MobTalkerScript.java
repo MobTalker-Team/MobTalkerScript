@@ -66,7 +66,7 @@ public class MobTalkerScript
         createLibraries( _G );
         
         _G.out.println( "MobTalkerScript " //
-                        + MtsGlobals.VERSION.asJavaString()
+                        + MtsGlobals.VERSION.toJava()
                         + " Copyright (c) 2013-2014 Chimaine" );
         _G.out.println( "This is free software licensed under the GNU Lesser General Public License version 3." );
         

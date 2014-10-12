@@ -28,6 +28,7 @@ import net.mobtalker.mobtalkerscript.v2.compiler.*;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.AssignExprContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.BinaryOpExprContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.BooleanLiteralContext;
+import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.BreakStmtContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.CallArgsContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.CallContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.CallExprContext;
@@ -712,7 +713,6 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     @Override
     public Void visitWhileLoop( WhileLoopContext ctx )
     {
-        _c.enterBlock();
         _c.enterWhileLoop();
         
         visit( ctx.Condition );
@@ -721,15 +721,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         visit( ctx.Block );
         _c.exitWhileLoop();
         
-        _c.exitBlock();
-        
         return null;
     }
     
     @Override
     public Void visitRepeatLoop( RepeatLoopContext ctx )
     {
-        _c.enterBlock();
         _c.enterRepeatLoop();
         
         visit( ctx.Block );
@@ -738,16 +735,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         visit( ctx.Condition );
         _c.exitRepeatLoop();
         
-        _c.exitBlock();
-        
         return null;
     }
     
     @Override
     public Void visitNumericForLoop( NumericForLoopContext ctx )
     {
-        _c.enterBlock();
-        
         visit( ctx.Control.Start );
         visit( ctx.Control.Limit );
         
@@ -765,16 +758,12 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         visit( ctx.Block );
         _c.exitForLoop();
         
-        _c.exitBlock();
-        
         return null;
     }
     
     @Override
     public Void visitGenericForLoop( GenericForLoopContext ctx )
     {
-        _c.enterBlock();
-        
         adjustExprListResults( ctx.Control.Exprs.Exprs, 3 );
         
         _c.enterGenericForLoop( getNames( ctx.Control.Vars ) );
@@ -782,8 +771,13 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         visit( ctx.Block );
         _c.exitForLoop();
         
-        _c.enterBlock();
-        
+        return null;
+    }
+    
+    @Override
+    public Void visitBreakStmt( BreakStmtContext ctx )
+    {
+        _c.breakLoop();
         return null;
     }
     

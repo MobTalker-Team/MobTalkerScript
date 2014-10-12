@@ -208,7 +208,7 @@ public class MtsCompiler
     {
         CompilerLog.info( "Enter Block" );
         
-        _currentFunction.enterBlock();
+        _currentFunction.enterBlock( _curPosition );
     }
     
     public void exitBlock()
@@ -233,7 +233,7 @@ public class MtsCompiler
         
         addInstr( InstrTest() );
         _currentFunction.markBreak();
-        _currentFunction.enterBlock();
+        enterBlock();
     }
     
     public void exitWhileLoop()
@@ -242,24 +242,29 @@ public class MtsCompiler
         
         addInstr( InstrJump() );
         _currentFunction.exitLoop();
-        _currentFunction.exitBlock();
+        exitBlock();
     }
     
     // ========================================
     
     public void enterRepeatLoop()
     {
+        CompilerLog.info( "Enter RepeatLoop" );
+        
         _currentFunction.enterLoop();
-        _currentFunction.enterBlock();
+        enterBlock();
     }
     
     public void enterUntilConditon()
     {
-        _currentFunction.exitBlock();
+        CompilerLog.info( "Enter UntilCondition" );
+        exitBlock();
     }
     
     public void exitRepeatLoop()
     {
+        CompilerLog.info( "Exit RepeatLoop" );
+        
         addInstr( InstrTest() );
         _currentFunction.exitLoop();
     }
@@ -268,13 +273,13 @@ public class MtsCompiler
     
     public void enterNumericForLoop( String varName )
     {
-        _currentFunction.enterBlock();
+        enterBlock();
         _currentFunction.enterNumericForLoop( varName );
     }
     
     public void enterGenericForLoop( String... vars )
     {
-        _currentFunction.enterBlock();
+        enterBlock();
         _currentFunction.enterGenericForLoop( vars );
     }
     
@@ -282,13 +287,15 @@ public class MtsCompiler
     {
         addInstr( InstrJump() );
         _currentFunction.exitLoop();
-        _currentFunction.exitBlock();
+        exitBlock();
     }
     
     // ========================================
     
     public void breakLoop()
     {
+        CompilerLog.info( "Break Loop" );
+        
         addInstr( InstrJump() );
         _currentFunction.markBreak();
     }

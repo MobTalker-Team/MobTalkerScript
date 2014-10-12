@@ -72,7 +72,6 @@ public class FunctionState
         
         _lineNumbers = Lists.newLinkedList();
         
-        _block = new BlockScope();
         _loops = Stack.newStack();
         _ifElses = Stack.newStack();
     }
@@ -87,6 +86,8 @@ public class FunctionState
         _sourceFile = sourceFile;
         _sourceLineStart = sourceLineStart;
         _sourceLineEnd = sourceLineEnd;
+        
+        _block = new BlockScope( new SourcePosition( sourceLineStart, 0 ) );
     }
     
     // ========================================
@@ -170,9 +171,9 @@ public class FunctionState
     
     // ========================================
     
-    public void enterBlock()
+    public void enterBlock( SourcePosition pos )
     {
-        _block = new BlockScope( _block );
+        _block = new BlockScope( pos, _block );
     }
     
     public void exitBlock()

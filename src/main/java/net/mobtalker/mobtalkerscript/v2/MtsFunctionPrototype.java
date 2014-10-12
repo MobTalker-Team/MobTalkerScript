@@ -224,7 +224,7 @@ public class MtsFunctionPrototype
             {
                 MtsInstruction instr = _instructions.get( i );
                 s.append( '\n' ).append( prefix ).append( "    " );
-                s.append( "[" ).append( i ).append( "] " ).append( instr );
+                s.append( "[" ).append( i ).append( "] " ).append( instr.toString( this ) );
             }
         }
     }

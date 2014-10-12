@@ -651,25 +651,9 @@ public class MtsCompiler
         return valueOf( Boolean.parseBoolean( s ) );
     }
     
-    private static Pattern _hexNumPattern = Pattern.compile( "^[+-]?0x", Pattern.CASE_INSENSITIVE );
-    
     public static MtsNumber parseNumber( String s )
     {
-        String input = s;
-        if ( _hexNumPattern.matcher( input ).find()
-             && ( StringUtils.lastIndexOfIgnoreCase( input, "p" ) < 0 ) )
-        {
-            input = input + "p0";
-        }
-        
-        try
-        {
-            return valueOf( Double.parseDouble( input ) );
-        }
-        catch ( NumberFormatException ex )
-        {
-            throw new NumberFormatException( s );
-        }
+        return MtsNumber.parse( s );
     }
     
     // ========================================

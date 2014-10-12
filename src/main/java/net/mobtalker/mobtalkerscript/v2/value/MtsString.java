@@ -21,7 +21,6 @@ import static com.google.common.base.Preconditions.*;
 import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v2.ScriptRuntimeException;
-import net.mobtalker.mobtalkerscript.v2.compiler.MtsCompiler;
 
 import com.google.common.collect.Maps;
 
@@ -239,7 +238,7 @@ public class MtsString extends MtsValue
     @Override
     public MtsNumber toMtsNumber() throws NumberFormatException
     {
-        return MtsCompiler.parseNumber( _value.trim() );
+        return MtsNumber.parse( _value );
     }
     
     // ========================================

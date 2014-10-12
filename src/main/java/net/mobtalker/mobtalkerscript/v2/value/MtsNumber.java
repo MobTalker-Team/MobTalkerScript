@@ -16,7 +16,11 @@
  */
 package net.mobtalker.mobtalkerscript.v2.value;
 
+import java.util.regex.Pattern;
+
 import net.mobtalker.mobtalkerscript.v2.ScriptRuntimeException;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.math.DoubleMath;
 
@@ -44,7 +48,7 @@ public final class MtsNumber extends MtsValue
             return NaN;
         
         int id = (int) value;
-        return value == id ? new MtsNumber( id ) : new MtsNumber( value );
+        return value == id ? of( id ) : new MtsNumber( value );
     }
     
     public static MtsNumber of( int value )
@@ -55,27 +59,37 @@ public final class MtsNumber extends MtsValue
         return new MtsNumber( value );
     }
     
-    public static MtsValue parse( MtsString str )
+    // ========================================
+    
+    public static MtsNumber parse( MtsString s ) throws NumberFormatException
     {
-        String s = str.asJavaString();
-        
-        MtsValue n;
-        try
-        {
-            double d = Double.parseDouble( s );
-            n = of( d );
-        }
-        catch ( NumberFormatException ex )
-        {
-            n = NIL;
-        }
-        
-        return n;
+        return parse( s.toJava() );
     }
     
     public static MtsNumber parse( MtsBoolean b )
     {
         return b.toJavaValue() ? ONE : ZERO;
+    }
+    
+    private static final Pattern _hexNumPattern = Pattern.compile( "^[+-]?0x", Pattern.CASE_INSENSITIVE );
+    
+    public static MtsNumber parse( String s ) throws NumberFormatException
+    {
+        String input = s.trim();
+        if ( _hexNumPattern.matcher( input ).find()
+             && ( StringUtils.lastIndexOfIgnoreCase( input, "p" ) < 0 ) )
+        {
+            input = input + "p0";
+        }
+        
+        try
+        {
+            return valueOf( Double.valueOf( input ) );
+        }
+        catch ( NumberFormatException ex )
+        {
+            throw new NumberFormatException( s );
+        }
     }
     
     // ========================================

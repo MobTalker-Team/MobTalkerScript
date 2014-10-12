@@ -219,7 +219,7 @@ public final class MtsNumber extends MtsValue
         if ( !other.isNumber() )
             throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
         
-        return valueOf( _value <= other.asNumber().asJavaDouble() );
+        return valueOf( _value <= other.asNumber()._value );
     }
     
     // ========================================

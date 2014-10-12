@@ -85,8 +85,7 @@ public class MtsCompiler
         parser.addErrorListener( new MtsAntlrErrorListener() );
         parser.setErrorHandler( new MtsErrorStrategy() );
         
-        // TODO: SLL doesn't seem to work, look further into it.
-        parser.getInterpreter().setPredictionMode( PredictionMode.LL_EXACT_AMBIG_DETECTION );
+        parser.getInterpreter().setPredictionMode( PredictionMode.LL );
         
         ChunkContext chunk;
         try

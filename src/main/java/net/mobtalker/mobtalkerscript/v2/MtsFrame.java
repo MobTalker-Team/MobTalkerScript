@@ -46,7 +46,7 @@ public final class MtsFrame
     private final List<FrameValue> _locals;
     private final List<FrameValue> _externals;
     
-    private String _lastVarOrConst;
+    private VariableDescription _lastVar;
     
     // ========================================
     
@@ -72,8 +72,6 @@ public final class MtsFrame
         
         _locals = locals;
         _externals = externals;
-        
-        _lastVarOrConst = "?";
     }
     
     // ========================================
@@ -93,9 +91,9 @@ public final class MtsFrame
         _ip = target;
     }
     
-    public String getLastVariableOrConstant()
+    public VariableDescription getLastVariable()
     {
-        return _lastVarOrConst;
+        return _lastVar;
     }
     
     // ========================================
@@ -171,22 +169,15 @@ public final class MtsFrame
     
     public MtsValue getConstant( int i )
     {
-        MtsValue result = _closure.getPrototype().getConstant( i );
-        
-        if ( DEBUG )
-            _lastVarOrConst = result.isString() ? result.toString() : "?";
-        else
-            _lastVarOrConst = "?";
-        
-        return result;
+        return _closure.getPrototype().getConstant( i );
     }
     
     public FrameValue getLocal( int i )
     {
         if ( DEBUG )
-            _lastVarOrConst = _closure.getPrototype().getLocalDescription( i ).getName();
-        else
-            _lastVarOrConst = "?";
+        {
+            _lastVar = _closure.getPrototype().getLocalDescription( i );
+        }
         
         return _locals.get( i );
     }
@@ -194,9 +185,9 @@ public final class MtsFrame
     public FrameValue getExternal( int i )
     {
         if ( DEBUG )
-            _lastVarOrConst = _closure.getPrototype().getExternalDescription( i ).getName();
-        else
-            _lastVarOrConst = "?";
+        {
+            _lastVar = _closure.getPrototype().getExternalDescription( i );
+        }
         
         return _externals.get( i );
     }
@@ -299,7 +290,7 @@ public final class MtsFrame
         StringBuilder s = new StringBuilder( "Frame" );
         
         s.append( " [IP: " ).append( _ip );
-        s.append( ", Last used Variable or Constant: " ).append( _lastVarOrConst );
+        s.append( ", Last used Variable or Constant: " ).append( _lastVar );
         s.append( "]\n" );
         
         s.append( " Locals    " ).append( _locals.toString() ).append( "\n" );

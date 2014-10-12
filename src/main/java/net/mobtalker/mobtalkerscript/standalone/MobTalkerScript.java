@@ -77,7 +77,7 @@ public class MobTalkerScript
             
             _G.out.println( "Loading file '" + path + "'" );
             
-            _G.PackageLib.setBasePath( Paths.get( path ).getParent().toString() );
+            _G.PackageLib.setBasePath( Paths.get( path ).toAbsolutePath().getParent().toString() );
             
             MtsFunctionPrototype fileChunk = null;
             try
@@ -95,6 +95,8 @@ public class MobTalkerScript
             
             if ( fileChunk != null )
             {
+                System.out.println( fileChunk.toString( true, true ) );
+                
                 try
                 {
                     new MtsClosure( fileChunk, _G ).call();
@@ -147,12 +149,12 @@ public class MobTalkerScript
             }
         }
     }
-
+    
     private static void createLibraries( MtsGlobals env )
     {
         DummyCreature dummyCreature = new DummyCreature( "DummyMob", 10, 10, new WorldPosition( 0, 0, 0 ) );
         DummyPlayer dummyPlayer = new DummyPlayer( "Player", new WorldPosition( 0, 0, 0 ) );
-
+        
         {
             createLibrary( new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ), env );
         }
@@ -186,7 +188,7 @@ public class MobTalkerScript
     }
     
     // ========================================
-
+    
     private MobTalkerScript()
     {}
     

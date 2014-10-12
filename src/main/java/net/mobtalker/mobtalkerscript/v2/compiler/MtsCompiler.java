@@ -651,10 +651,12 @@ public class MtsCompiler
         return valueOf( Boolean.parseBoolean( s ) );
     }
     
+    private static Pattern _hexNumPattern = Pattern.compile( "^[+-]?0x", Pattern.CASE_INSENSITIVE );
+    
     public static MtsNumber parseNumber( String s )
     {
         String input = s;
-        if ( StringUtils.startsWithIgnoreCase( input, "0x" )
+        if ( _hexNumPattern.matcher( input ).find()
              && ( StringUtils.lastIndexOfIgnoreCase( input, "p" ) < 0 ) )
         {
             input = input + "p0";

@@ -115,9 +115,7 @@ public class MtsCompiler
         AntlrCompilerAdapter adapter = new AntlrCompilerAdapter( compiler );
         adapter.compile( chunk );
         
-        MtsFunctionPrototype prototype = compiler.compile();
-        System.out.println( prototype.toString( true, true ) );
-        return prototype;
+        return compiler.compile();
     }
     
     // ========================================

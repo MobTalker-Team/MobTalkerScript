@@ -84,7 +84,12 @@ public final class MtsNumber extends MtsValue
         
         try
         {
-            return valueOf( Double.valueOf( input ) );
+            double d = Double.parseDouble( input );
+            MtsNumber result = valueOf( d );
+            
+            System.out.println( d + ": " + result );
+            
+            return result;
         }
         catch ( NumberFormatException ex )
         {
@@ -275,7 +280,7 @@ public final class MtsNumber extends MtsValue
     public int compareTo( MtsValue o )
     {
         if ( o.isNumber() || o.isString() )
-            return (int) Math.rint( _value - o.asNumber()._value );
+            return (int) Math.signum( _value - o.asNumber()._value );
         
         return 0;
     }

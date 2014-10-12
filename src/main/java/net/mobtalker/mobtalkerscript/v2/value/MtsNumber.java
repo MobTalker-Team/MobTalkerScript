@@ -22,8 +22,6 @@ import net.mobtalker.mobtalkerscript.v2.ScriptRuntimeException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.math.DoubleMath;
-
 public final class MtsNumber extends MtsValue
 {
     private static final MtsNumber[] CACHE;
@@ -84,12 +82,7 @@ public final class MtsNumber extends MtsValue
         
         try
         {
-            double d = Double.parseDouble( input );
-            MtsNumber result = valueOf( d );
-            
-            System.out.println( d + ": " + result );
-            
-            return result;
+            return valueOf( Double.parseDouble( input ) );
         }
         catch ( NumberFormatException ex )
         {
@@ -233,23 +226,14 @@ public final class MtsNumber extends MtsValue
     @Override
     public boolean isInteger()
     {
-        return DoubleMath.isMathematicalInteger( _value );
+//        return DoubleMath.isMathematicalInteger( _value );
+        return ( _value == Math.rint( _value ) ) && !Double.isInfinite( _value );
     }
     
     @Override
     public MtsNumber asNumber()
     {
         return this;
-    }
-    
-    public double asJavaDouble()
-    {
-        return _value;
-    }
-    
-    public int asJavaInt()
-    {
-        return (int) _value;
     }
     
     // ========================================
@@ -291,6 +275,16 @@ public final class MtsNumber extends MtsValue
     public Double toJava()
     {
         return Double.valueOf( _value );
+    }
+    
+    public double asJavaDouble()
+    {
+        return _value;
+    }
+    
+    public int asJavaInt()
+    {
+        return (int) _value;
     }
     
     @Override

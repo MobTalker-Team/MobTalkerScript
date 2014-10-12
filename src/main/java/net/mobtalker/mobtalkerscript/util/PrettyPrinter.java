@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,7 +18,7 @@ package net.mobtalker.mobtalkerscript.util;
 
 import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
 
-import java.util.Set;
+import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v2.value.*;
 import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
@@ -33,7 +33,7 @@ public class PrettyPrinter
     private final String _indent;
     
     // ========================================
-
+    
     public PrettyPrinter()
     {
         this( "    " );
@@ -46,7 +46,7 @@ public class PrettyPrinter
     }
     
     // ========================================
-
+    
     public String print( MtsValue v, String name )
     {
         StringBuilder s = new StringBuilder();
@@ -57,12 +57,12 @@ public class PrettyPrinter
     private void print( MtsValue v, String name, StringBuilder s, String indent )
     {
         s.append( indent );
-
+        
         if ( !StringUtils.isEmpty( name ) )
         {
             s.append( name ).append( " = " );
         }
-
+        
         if ( v.isTable() )
         {
             MtsTable t = v.asTable();
@@ -78,6 +78,11 @@ public class PrettyPrinter
                 tablePrint( t, s, indent + _indent );
                 s.append( indent ).append( "};\n" );
             }
+        }
+        else if ( v.isVarArgs() )
+        {
+            MtsVarArgs args = v.asVarArgs();
+            s.append( Arrays.toString( args.toArray() ) + "\n" );
         }
         else
         {
@@ -110,7 +115,7 @@ public class PrettyPrinter
             {
                 _cache.add( v );
             }
-
+            
             print( v, "[" + k + "]", s, indent );
         }
     }

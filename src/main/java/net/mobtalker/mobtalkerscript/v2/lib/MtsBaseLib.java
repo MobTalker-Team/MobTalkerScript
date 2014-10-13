@@ -54,7 +54,7 @@ public final class MtsBaseLib
         if ( arg2.isNil() )
             throw new ScriptRuntimeException( arg1.toMtsString().toJava() );
         else
-            throw new ScriptRuntimeException( arg2.asNumber().asJavaInt(),
+            throw new ScriptRuntimeException( arg2.asNumber().toJavaInt(),
                                               arg1.toMtsString().toJava() );
     }
     

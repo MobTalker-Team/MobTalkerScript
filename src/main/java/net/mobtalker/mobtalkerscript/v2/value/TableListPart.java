@@ -94,7 +94,7 @@ import java.util.*;
      */
     public boolean contains( MtsValue key )
     {
-        return isValidKey( key ) && ( key.asNumber().asJavaInt() <= _limit );
+        return isValidKey( key ) && ( key.asNumber().toJavaInt() <= _limit );
     }
     
     /**
@@ -104,7 +104,7 @@ import java.util.*;
      */
     public boolean contains( MtsNumber key )
     {
-        return isValidKey( key ) && ( key.asJavaInt() <= _limit );
+        return isValidKey( key ) && ( key.toJavaInt() <= _limit );
     }
     
     /**
@@ -241,7 +241,7 @@ import java.util.*;
     public MtsValue remove( MtsNumber key )
     {
         // Adjust MTS to Java index
-        int i = key.asJavaInt() - 1;
+        int i = key.toJavaInt() - 1;
         
         if ( !contains( i ) )
             throw new IllegalArgumentException( "key is not part of this list" );
@@ -298,7 +298,7 @@ import java.util.*;
      */
     public MtsValue get( MtsNumber key )
     {
-        return get( key.asJavaInt() - 1 );
+        return get( key.toJavaInt() - 1 );
     }
     
     public MtsValue get( int i )

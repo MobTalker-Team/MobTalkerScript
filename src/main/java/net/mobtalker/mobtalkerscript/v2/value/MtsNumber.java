@@ -36,7 +36,9 @@ public final class MtsNumber extends MtsValue
     
     // ========================================
     
-    public static final MtsNumber NaN = of( Double.NaN );
+    public static final MtsNumber NaN = new MtsNumber( Double.NaN );
+    public static final MtsNumber POSITIVE_INFINITY = new MtsNumber( Double.POSITIVE_INFINITY );
+    public static final MtsNumber NEGATIVE_INFINITY = new MtsNumber( Double.NEGATIVE_INFINITY );
     
     // ========================================
     
@@ -98,6 +100,7 @@ public final class MtsNumber extends MtsValue
     // ========================================
     
     private final double _value;
+    private Double _doubleValue;
     
     // ========================================
     
@@ -179,7 +182,7 @@ public final class MtsNumber extends MtsValue
     
     public boolean isNaN()
     {
-        return Double.isNaN( _value );
+        return this == NaN;
     }
     
     public boolean isInfinite()
@@ -203,7 +206,7 @@ public final class MtsNumber extends MtsValue
         if ( !other.isNumber() )
             throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
         
-        return valueOf( _value < other.asNumber().asJavaDouble() );
+        return valueOf( _value < other.asNumber().toJavaDouble() );
     }
     
     @Override
@@ -274,15 +277,20 @@ public final class MtsNumber extends MtsValue
     @Override
     public Double toJava()
     {
-        return Double.valueOf( _value );
+        if ( _doubleValue == null )
+        {
+            _doubleValue = Double.valueOf( _value );
+        }
+        
+        return _doubleValue;
     }
     
-    public double asJavaDouble()
+    public double toJavaDouble()
     {
         return _value;
     }
     
-    public int asJavaInt()
+    public int toJavaInt()
     {
         return (int) _value;
     }

@@ -116,7 +116,7 @@ public class MtsTable extends MtsMetaTableValue
         if ( TableListPart.isValidKey( key ) )
         {
             // Adjust MTS to Java index
-            int i = key.asNumber().asJavaInt() - 1;
+            int i = key.asNumber().toJavaInt() - 1;
             
             if ( _listPart.contains( i++ ) )
             {
@@ -132,7 +132,7 @@ public class MtsTable extends MtsMetaTableValue
     
     public Entry getINext( MtsNumber key )
     {
-        int i = key.asNumber().asJavaInt();
+        int i = key.asNumber().toJavaInt();
         
         if ( _listPart.contains( i ) )
             return new Entry( valueOf( i ), _listPart.get( i ) );
@@ -170,7 +170,7 @@ public class MtsTable extends MtsMetaTableValue
         if ( _listPart.contains( index ) )
         {
             // Adjust MTS to Java index
-            int i = index.asJavaInt() - 1;
+            int i = index.toJavaInt() - 1;
             
             _listPart.insert( i, value );
             _listPart.collectFrom( _hashPart );
@@ -190,7 +190,7 @@ public class MtsTable extends MtsMetaTableValue
         
         if ( _listPart.contains( key ) )
         {
-            int i = key.asNumber().asJavaInt();
+            int i = key.asNumber().toJavaInt();
             return _listPart.remove( i );
         }
         
@@ -265,7 +265,7 @@ public class MtsTable extends MtsMetaTableValue
         if ( TableListPart.isValidKey( key ) )
         {
             // Adjust MTS to Java index
-            int i = key.asNumber().asJavaInt() - 1;
+            int i = key.asNumber().toJavaInt() - 1;
             
             if ( _listPart.contains( i ) )
                 return _listPart.get( i );
@@ -333,7 +333,7 @@ public class MtsTable extends MtsMetaTableValue
         if ( TableListPart.isValidKey( key ) )
         {
             // Adjust MTS to Java index
-            int i = key.asNumber().asJavaInt() - 1;
+            int i = key.asNumber().toJavaInt() - 1;
             
             if ( _listPart.contains( i ) ) // Insert
             {

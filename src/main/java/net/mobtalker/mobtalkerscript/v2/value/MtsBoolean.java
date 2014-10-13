@@ -26,7 +26,7 @@ public class MtsBoolean extends MtsValue
     
     public static MtsBoolean parse( MtsNumber n )
     {
-        int i = (int) n.asJavaDouble();
+        int i = (int) n.toJavaDouble();
         return valueOf( i != 0.0D );
     }
     

@@ -128,7 +128,7 @@ public class MtsCheck
     public static double checkNumber( MtsValue value )
     {
         if ( value.isNumber() )
-            return value.asNumber().asJavaDouble();
+            return value.asNumber().toJavaDouble();
         
         throw new BadArgumentException( MtsType.NUMBER, value.getType() );
     }
@@ -136,7 +136,7 @@ public class MtsCheck
     public static double checkNumber( MtsValue value, int i )
     {
         if ( value.isNumber() )
-            return value.asNumber().asJavaDouble();
+            return value.asNumber().toJavaDouble();
         
         throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
     }
@@ -151,7 +151,7 @@ public class MtsCheck
     public static int checkInteger( MtsValue value )
     {
         if ( value.isNumber() )
-            return value.asNumber().asJavaInt();
+            return value.asNumber().toJavaInt();
         
         throw new BadArgumentException( MtsType.NUMBER, value.getType() );
     }
@@ -159,7 +159,7 @@ public class MtsCheck
     public static int checkInteger( MtsValue value, int i )
     {
         if ( value.isNumber() )
-            return value.asNumber().asJavaInt();
+            return value.asNumber().toJavaInt();
         
         throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
     }
@@ -169,7 +169,7 @@ public class MtsCheck
         if ( value.isNil() )
             return fallback;
         if ( value.isNumber() )
-            return value.asNumber().asJavaInt();
+            return value.asNumber().toJavaInt();
         
         throw new BadArgumentException( i, "%s or %s expected, got %s", MtsType.NUMBER, MtsType.NIL, value.getType() );
     }

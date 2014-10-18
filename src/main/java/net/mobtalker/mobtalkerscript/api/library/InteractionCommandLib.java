@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -64,37 +64,32 @@ public class InteractionCommandLib
         if ( arg1.isNil() )
             throw new ScriptRuntimeException( "must provide at least one option" );
         
+        List<String> options;
         if ( arg1.isTable() )
         {
             MtsTable argOptions = arg1.asTable();
             
-            List<String> options = Lists.newArrayListWithCapacity( argOptions.listSize() );
+            options = Lists.newArrayListWithCapacity( argOptions.listSize() );
             for ( MtsValue arg : argOptions.listView() )
             {
                 options.add( checkString( arg ) );
             }
-            
-            int choice = _logic.showMenu( caption, options );
-            return argOptions.get( valueOf( choice ) );
         }
         else
         {
-            List<String> options = Lists.newArrayListWithCapacity( args.count() - 1 );
+            options = Lists.newArrayListWithCapacity( args.count() - 1 );
             for ( int i = 1; i < args.count(); i++ )
             {
                 options.add( checkString( args, i ) );
             }
-            
-            return valueOf( _logic.showMenu( caption, options ) );
         }
+        
+        return valueOf( _logic.showMenu( caption, options ) );
     }
     
     @MtsNativeFunction
-    public void showSprite( MtsValue argGroup,
-                            MtsValue argSubPath,
-                            MtsValue argPosition,
-                            MtsValue argOffsetX,
-                            MtsValue argOffsetY )
+    public void showSprite( MtsValue argGroup, MtsValue argSubPath,
+                            MtsValue argPosition, MtsValue argOffsetX, MtsValue argOffsetY )
     {
         _logic.showSprite( checkString( argGroup, 0 ),
                            checkString( argSubPath, 1 ),

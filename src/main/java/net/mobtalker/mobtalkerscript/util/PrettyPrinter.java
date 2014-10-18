@@ -16,8 +16,6 @@
  */
 package net.mobtalker.mobtalkerscript.util;
 
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
-
 import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v2.value.*;
@@ -92,12 +90,9 @@ public class PrettyPrinter
     
     private void tablePrint( MtsTable t, StringBuilder s, String indent )
     {
-        MtsValue k = NIL;
-        Entry entry;
-        while ( ( entry = t.getNext( k ) ) != null )
+        for ( Entry e : t )
         {
-            k = entry.getKey();
-            tableEntryPrint( k, entry.getValue(), s, indent );
+            tableEntryPrint( e.getKey(), e.getValue(), s, indent );
         }
     }
     

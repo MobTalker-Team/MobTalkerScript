@@ -28,6 +28,10 @@ import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
 
 public final class MtsTableLib
 {
+    private static final Random _rnd = new Random();
+    
+    // ========================================
+    
     @MtsNativeFunction
     public static MtsString concat( MtsValue argTable, MtsValue argSep, MtsValue arg3, MtsValue arg4 )
     {
@@ -48,9 +52,24 @@ public final class MtsTableLib
     }
     
     @MtsNativeFunction
+    public static MtsValue copy( MtsValue argTable, MtsValue argDeep )
+    {
+        MtsTable t = checkTable( argTable, 0 );
+        boolean deep = isTrue( argDeep );
+        
+        return deep ? new TableCloner().clone( t ) : new MtsTable( t );
+    }
+    
+    @MtsNativeFunction
     public static MtsNumber count( MtsValue argTable )
     {
         return valueOf( checkTable( argTable, 0 ).count() );
+    }
+    
+    @MtsNativeFunction
+    public static MtsValue dump( MtsValue argValue, MtsValue argIndent )
+    {
+        return valueOf( new PrettyPrinter( checkString( argIndent, 1, "    " ) ).print( argValue, null ) );
     }
     
     @MtsNativeFunction
@@ -66,7 +85,33 @@ public final class MtsTableLib
         table.insert( arg2.asNumber(), arg3 );
     }
     
-    private static final Random _rnd = new Random();
+    @MtsNativeFunction
+    public static MtsValue keys( MtsValue argTable )
+    {
+        MtsTable t = checkTable( argTable, 0 );
+        MtsTable result = new MtsTable( t.count(), 0 );
+        
+        for ( Entry entry : t )
+        {
+            result.add( entry.getKey() );
+        }
+        
+        return result;
+    }
+    
+    @MtsNativeFunction
+    public static MtsValue pack( MtsVarArgs args )
+    {
+        int count = args.count();
+        MtsTable result = new MtsTable( count, 0 );
+        
+        for ( int i = 0; i < count; i++ )
+        {
+            result.add( args.get( i ) );
+        }
+        
+        return result;
+    }
     
     @MtsNativeFunction
     public static MtsValue random( MtsVarArgs args )
@@ -104,32 +149,22 @@ public final class MtsTableLib
     }
     
     @MtsNativeFunction
-    public static MtsValue dump( MtsValue argValue, MtsValue argIndent )
+    public static void sort( MtsValue argTable )
     {
-        return valueOf( new PrettyPrinter( checkString( argIndent, 1, "    " ) ).print( argValue, null ) );
+        checkTable( argTable, 0 ).sortList();
     }
     
     @MtsNativeFunction
-    public static MtsValue copy( MtsValue argTable, MtsValue argDeep )
+    public static MtsValue values( MtsValue argTable )
     {
         MtsTable t = checkTable( argTable, 0 );
-        boolean deep = isTrue( argDeep );
+        MtsTable result = new MtsTable( t.count(), 0 );
         
-        if ( deep )
+        for ( Entry entry : t )
         {
-            return new TableCloner().clone( t );
+            result.add( entry.getValue() );
         }
-        else
-        {
-            MtsValue clone = new MtsTable( t.listSize(), t.tableSize() );
-            MtsValue k = NIL;
-            Entry entry;
-            while ( ( entry = t.getNext( k ) ) != null )
-            {
-                clone.set( k = entry.getKey(), entry.getValue() );
-            }
-            
-            return clone;
-        }
+        
+        return result;
     }
 }

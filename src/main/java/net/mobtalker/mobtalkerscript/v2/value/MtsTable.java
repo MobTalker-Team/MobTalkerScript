@@ -19,12 +19,14 @@ package net.mobtalker.mobtalkerscript.v2.value;
 import static com.google.common.base.Preconditions.*;
 import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
 
+import java.util.*;
+
 /**
  * An associative array used to store values.
  *
  * It uses two storage formats; a list for storing consecutive indices and a hash map for any other value.
  */
-public class MtsTable extends MtsMetaTableValue
+public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Entry>
 {
     private final TableListPart _listPart;
     private final TableHashPart _hashPart;
@@ -40,6 +42,15 @@ public class MtsTable extends MtsMetaTableValue
     {
         _listPart = new TableListPart( initialListCapacity );
         _hashPart = new TableHashPart( initialHashCapacity );
+    }
+    
+    public MtsTable( MtsTable table )
+    {
+        this( table.listSize(), table.tableSize() );
+        for ( Entry e : table )
+        {
+            rawset( e.getKey(), e.getValue() );
+        }
     }
     
     // ========================================
@@ -208,6 +219,11 @@ public class MtsTable extends MtsMetaTableValue
     public MtsValue removeLast()
     {
         return _listPart.removeLast();
+    }
+    
+    public void sortList()
+    {
+        _listPart.sort();
     }
     
     // ========================================
@@ -427,6 +443,12 @@ public class MtsTable extends MtsMetaTableValue
         return _hashPart;
     }
     
+    @Override
+    public Iterator<Entry> iterator()
+    {
+        return new TableIterator( this );
+    }
+    
     // ========================================
     
     public static class Entry
@@ -465,4 +487,44 @@ public class MtsTable extends MtsMetaTableValue
     }
     
     // ========================================
+    
+    private static final class TableIterator implements Iterator<MtsTable.Entry>
+    {
+        private final MtsTable _table;
+        private Entry _next;
+        
+        // ========================================
+        
+        public TableIterator( MtsTable table )
+        {
+            _table = table;
+            _next = table.getNext( NIL );
+        }
+        
+        // ========================================
+        
+        @Override
+        public boolean hasNext()
+        {
+            return _next != null;
+        }
+        
+        @Override
+        public Entry next()
+        {
+            if ( !hasNext() )
+                throw new NoSuchElementException();
+            
+            Entry next = _next;
+            _next = _table.getNext( next.getKey() );
+            
+            return next;
+        }
+        
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

@@ -362,6 +362,13 @@ import java.util.*;
     
     // ========================================
     
+    public void sort()
+    {
+        Arrays.sort( _entries );
+    }
+    
+    // ========================================
+    
     @Override
     public Iterator<MtsValue> iterator()
     {

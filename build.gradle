@@ -19,9 +19,9 @@ if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
-version = "2.4.0-beta"
-group = "net.mobtalker.mobtalkerscript"
+group = "net.mobtalker"
 archivesBaseName = "MobTalkerScript"
+version = "2.4.0-beta"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -56,7 +56,7 @@ shadowJar {
 
 task sourceJar( type: Jar ) {
     from sourceSets.main.allSource
-    classifier = 'src'
+    classifier = 'sources'
 }
 
 artifacts {

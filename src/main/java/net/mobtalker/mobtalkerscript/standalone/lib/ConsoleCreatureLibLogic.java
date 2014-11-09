@@ -53,16 +53,22 @@ public class ConsoleCreatureLibLogic implements ICreatureLibLogic
     }
     
     @Override
+    public EntityReaction getReaction( String key )
+    {
+        // TODO
+        return EntityReaction.NEUTRAL;
+    }
+    
+    @Override
     public void setReaction( String key, EntityReaction reaction )
     {
         // TODO
     }
     
     @Override
-    public EntityReaction getReaction( String key )
+    public void resetReaction( String key )
     {
         // TODO
-        return EntityReaction.NEUTRAL;
     }
     
     @Override

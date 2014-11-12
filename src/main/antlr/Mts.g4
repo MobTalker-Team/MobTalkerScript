@@ -338,20 +338,13 @@ funcBody
     ;
 
 command
-    : 'say' Arg1=expr Arg2=expr? IsLast='as conclusion'?
+    : 'say' Args=exprList IsLast='as conclusion'?
       # CommandSay
-    | 'show' Group=expr 
-             Path+=expr+ 
-             ( 'at' Position=expr )? 
-             ( 'offset' Offset=exprList )? 
-             /*( 'with' Effect=exprList )?*/
+    | 'show' Args=exprList ( 'at' Position=expr )? ( 'offset' Offset=exprList )? /*( 'with' Effect=exprList )?*/
       # CommandShow
-    | 'scene' Path+=expr+ 
-    		  ( 'as' Mode=expr )? 
-    		  /*( 'with' exprList )?*/
+    | 'scene' Arg=expr ( 'as' Mode=expr )? /*( 'with' exprList )?*/
       # CommandScene
-    | 'hide' ( Group=expr | Scene='scene' )
-    	     /*( 'with' exprList )?*/
+    | 'hide' ( Group=expr | Scene='scene' ) /*( 'with' exprList )?*/
       # CommandHide
     | 'menu' Caption=expr? Options+=commandMenuOption+ 'end'
 	  # CommandMenu

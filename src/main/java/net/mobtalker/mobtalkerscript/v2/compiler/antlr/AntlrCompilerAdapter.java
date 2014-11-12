@@ -42,7 +42,6 @@ import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ConditionalOpEx
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ElseBodyContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ElseIfBodyContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ExprContext;
-import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.ExprListContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.FieldDefContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.FuncBodyContext;
 import net.mobtalker.mobtalkerscript.v2.compiler.antlr.MtsParser.FuncDeclrExprContext;
@@ -112,8 +111,6 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     }
     
     // ========================================
-    
-    // ========================================
     // Chunk
     
     @Override
@@ -139,31 +136,21 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     // ========================================
     // Commands
     
-    private void visitSingleOrCreateTable( List<ExprContext> ctxs )
-    {
-        visit( ctxs );
-        
-        int exprs = ctxs.size();
-        if ( exprs > 1 )
-        {
-            _c.createTable( exprs, 0 );
-        }
-    }
-    
     @Override
     public Void visitCommandSay( CommandSayContext ctx )
     {
         _c.loadVariable( Reference.FunctionNames.COMMAND_SAY );
         
-        if ( ctx.Arg2 == null )
+        List<ExprContext> args = ctx.Args.Exprs;
+        if ( args.size() > 1 )
         {
-            _c.loadNil();
-            visit( ctx.Arg1 );
+            visit( args.get( 0 ) );
+            visit( args.get( 1 ) );
         }
         else
         {
-            visit( ctx.Arg1 );
-            visit( ctx.Arg2 );
+            _c.loadNil();
+            visit( args.get( 0 ) );
         }
         
         _c.loadConstant( valueOf( ctx.IsLast != null ) );
@@ -178,13 +165,26 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Reference.FunctionNames.COMMAND_SHOW );
         
-        visit( ctx.Group );
-        visitSingleOrCreateTable( ctx.Path );
+        List<ExprContext> args = ctx.Args.Exprs;
+        if ( args.size() > 1 )
+        {
+            visit( args.get( 0 ) );
+            visit( args.get( 1 ) );
+        }
+        else
+        {
+            _c.loadNil();
+            visit( args.get( 0 ) );
+        }
         
         if ( ctx.Position == null )
+        {
             _c.loadNil();
+        }
         else
+        {
             visit( ctx.Position );
+        }
         
         if ( ctx.Offset == null )
         {
@@ -214,12 +214,16 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
     {
         _c.loadVariable( Reference.FunctionNames.COMMAND_SCENE );
         
-        visitSingleOrCreateTable( ctx.Path );
+        visit( ctx.Arg );
         
         if ( ctx.Mode == null )
+        {
             _c.loadNil();
+        }
         else
+        {
             visit( ctx.Mode );
+        }
         
         _c.callFunction( 2, 0 );
         
@@ -232,11 +236,17 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         _c.loadVariable( Reference.FunctionNames.COMMAND_HIDE );
         
         if ( ctx.Group != null )
+        {
             visit( ctx.Group );
+        }
         else if ( ctx.Scene != null )
+        {
             _c.loadConstant( ctx.Scene.getText() );
+        }
         else
+        {
             throw new AssertionError();
+        }
         
         _c.callFunction( 1, 0 );
         
@@ -249,9 +259,13 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         _c.loadVariable( Reference.FunctionNames.COMMAND_MENU );
         
         if ( ctx.Caption == null )
+        {
             _c.loadNil();
+        }
         else
+        {
             visit( ctx.Caption );
+        }
         
         int choiceIndex = _c.declareAnonymousLocal( "choice" ).getIndex();
         
@@ -478,13 +492,13 @@ public class AntlrCompilerAdapter extends MtsBaseVisitor<Void>
         return null;
     }
     
-    private static boolean isTailcall( CallArgsContext ctx )
-    {
-        return ( ctx.getParent() instanceof CallContext )
-               && ( ctx.getParent().getParent() instanceof CallExprContext )
-               && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
-               && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
-    }
+//    private static boolean isTailcall( CallArgsContext ctx )
+//    {
+//        return ( ctx.getParent() instanceof CallContext )
+//               && ( ctx.getParent().getParent() instanceof CallExprContext )
+//               && ( ctx.getParent().getParent().getParent() instanceof ExprListContext )
+//               && ( ctx.getParent().getParent().getParent().getParent() instanceof ReturnStmtContext );
+//    }
     
     @Override
     public Void visitCall( CallContext ctx )

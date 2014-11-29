@@ -18,8 +18,8 @@ package net.mobtalker.mobtalkerscript.util;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.v2.value.*;
-import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 

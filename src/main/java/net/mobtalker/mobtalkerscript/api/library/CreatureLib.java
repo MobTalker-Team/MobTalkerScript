@@ -17,12 +17,12 @@
 package net.mobtalker.mobtalkerscript.api.library;
 
 import static net.mobtalker.mobtalkerscript.api.ScriptApiCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
+import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.api.*;
-import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
-import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
-import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
+import net.mobtalker.mobtalkerscript.v3.BadArgumentException;
+import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
+import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
 public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
 {

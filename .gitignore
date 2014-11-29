@@ -25,10 +25,7 @@
 /*.ipr
 /*.iws
 /atlassian-ide-plugin.xml
-/deploy.gradle
-<<<<<<< Updated upstream
 
-## Custom
-=======
->>>>>>> Stashed changes
+## custom
+/deploy.gradle
 /docs/

@@ -65,29 +65,26 @@ artifacts {
 }
 
 task generateAntlr( type: JavaExec ) {
-    def grammarFile = 'src/main/antlr/Mts.g4'
-    def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v2/compiler/antlr/'
+    def grammarFile = 'src/main/antlr/Mts3.g4'
+    def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v3/compiler/antlr/generated'
 
     main 'org.antlr.v4.Tool'
+    classpath 'src/main/antlr/templates'
     classpath buildscript.configurations.classpath
     
     inputs.file grammarFile
-    outputs.files(
-        "${outputDir}/MtsParser.java",
-        "${outputDir}/MtsLexer.java",
-        "${outputDir}/MtsVisitor.java",
-        "${outputDir}/MtsBaseVisitor.java",
-        "${outputDir}/Mts.tokens",
-        "${outputDir}/MtsLexer.tokens"
-    )
+    //outputs.dir( "${outputDir}" )
     
     args = [ 
         grammarFile,
         '-o', outputDir,
-        '-package', 'net.mobtalker.mobtalkerscript.v2.compiler.antlr',
-        '-visitor',
-        '-no-listener',
-        '-encoding', 'UTF-8'
+        '-package', 'net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated',
+        '-no-visitor',
+        '-listener',
+        //'-no-listener',
+        '-encoding', 'UTF-8',
+        //'-Xlog',
+        //'-XdbgST'
     ]
 }
 tasks.compileJava.dependsOn generateAntlr

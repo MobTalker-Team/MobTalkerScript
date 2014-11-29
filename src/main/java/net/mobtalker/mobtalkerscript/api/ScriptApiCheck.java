@@ -16,9 +16,9 @@
  */
 package net.mobtalker.mobtalkerscript.api;
 
-import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
-import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
+import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
+import net.mobtalker.mobtalkerscript.v3.BadArgumentException;
+import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
 public class ScriptApiCheck
 {

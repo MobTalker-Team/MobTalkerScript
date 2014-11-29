@@ -16,14 +16,14 @@
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
-import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
+import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.Map;
 
 import net.mobtalker.mobtalkerscript.api.IWorldInfo;
-import net.mobtalker.mobtalkerscript.v2.value.*;
-import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
 public class InteractionWorldLib
 {

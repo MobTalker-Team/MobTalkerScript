@@ -20,9 +20,9 @@ import java.io.*;
 import java.util.logging.Logger;
 
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
-import net.mobtalker.mobtalkerscript.v2.*;
-import net.mobtalker.mobtalkerscript.v2.compiler.MtsCompiler;
-import net.mobtalker.mobtalkerscript.v2.value.MtsClosure;
+import net.mobtalker.mobtalkerscript.v3.*;
+import net.mobtalker.mobtalkerscript.v3.compiler.MtsCompiler;
+import net.mobtalker.mobtalkerscript.v3.value.MtsClosure;
 
 import org.junit.*;
 
@@ -32,7 +32,7 @@ public class TestScripts
     {
         setUp();
         TestScripts test = new TestScripts();
-        MtsCompiler.loadString( ";", "" );
+        MtsCompiler.loadStringChunk( ";", "" );
         
         BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
         in.readLine();

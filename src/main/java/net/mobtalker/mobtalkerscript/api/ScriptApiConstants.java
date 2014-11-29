@@ -16,8 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.api;
 
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
-import net.mobtalker.mobtalkerscript.v2.value.MtsString;
+import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
+import net.mobtalker.mobtalkerscript.v3.value.MtsString;
 
 public class ScriptApiConstants
 {

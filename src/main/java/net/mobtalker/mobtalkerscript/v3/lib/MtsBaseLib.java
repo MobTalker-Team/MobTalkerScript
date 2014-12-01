@@ -39,13 +39,16 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( "assert" )
-    public void assertMts( MtsValue arg1, MtsValue arg2 )
+    public MtsVarArgs assertMts( MtsVarArgs args )
     {
-        if ( !isTrue( arg1 ) )
+        if ( !isTrue( args.get( 0 ) ) )
         {
-            String msg = arg2.isNil() ? "assertion failed!" : arg2.toMtsString().toJava();
+            MtsValue argMsg = args.get( 1 );
+            String msg = argMsg.isNil() ? "assertion failed!" : argMsg.toMtsString().toJava();
             throw new ScriptRuntimeException( msg );
         }
+        
+        return args;
     }
     
     @MtsNativeFunction( "error" )
@@ -171,7 +174,7 @@ public final class MtsBaseLib
     
     // ========================================
     
-    @MtsNativeFunction( "LoadString" )
+    @MtsNativeFunction( "load" )
     public MtsFunction loadString( MtsVarArgs args )
     {
         MtsFunctionPrototype p;
@@ -217,5 +220,17 @@ public final class MtsBaseLib
         }
         
         return result;
+    }
+    
+    // ========================================
+    
+    @MtsNativeFunction( "select" )
+    public MtsValue select( MtsVarArgs args )
+    {
+        MtsValue arg1 = checkNotNil( args, 0 );
+        if ( arg1.isString() && arg1.asString().toJava().equals( "#" ) )
+            return valueOf( args.count() - 1 );
+        
+        return args.subArgs( 1 + checkInteger( arg1, 1 ) );
     }
 }

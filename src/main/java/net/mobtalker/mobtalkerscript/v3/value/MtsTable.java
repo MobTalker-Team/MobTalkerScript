@@ -28,8 +28,8 @@ import java.util.*;
  */
 public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Entry>
 {
-    private final TableListPart _listPart;
-    private final TableHashPart _hashPart;
+    private final MtsTableList _list;
+    private final MtsTableMap _map;
     
     // ========================================
     
@@ -40,17 +40,15 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     
     public MtsTable( int initialListCapacity, int initialHashCapacity )
     {
-        _listPart = new TableListPart( initialListCapacity );
-        _hashPart = new TableHashPart( initialHashCapacity );
+        _list = new MtsTableList( initialListCapacity );
+        _map = new MtsTableMap( initialHashCapacity );
     }
     
     public MtsTable( MtsTable table )
     {
-        this( table.listSize(), table.tableSize() );
-        for ( Entry e : table )
-        {
-            rawset( e.getKey(), e.getValue() );
-        }
+        this( table.list().size(), table.map().size() );
+        _list.addAll( table.list() );
+        _map.putAll( table.map() );
     }
     
     // ========================================
@@ -58,55 +56,55 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     /**
      * Returns the total number of elements in this table.
      */
-    public int count()
+    public int size()
     {
-        return _listPart.length() + _hashPart.count();
-    }
-    
-    /**
-     * Returns the number of consecutive elements starting from index 1.
-     */
-    public int listSize()
-    {
-        return _listPart.length();
-    }
-    
-    public int tableSize()
-    {
-        return _hashPart.count();
+        return _list.size() + _map.size();
     }
     
     public boolean isEmpty()
     {
-        return count() == 0;
-    }
-    
-    public void ensureHashCapacity( int capacity )
-    {
-        _hashPart.ensureCapacity( capacity );
+        return size() == 0;
     }
     
     public void ensureListCapacity( int capacity )
     {
-        _listPart.ensureCapacity( capacity );
+        _list.ensureCapacity( capacity );
+    }
+    
+    public void ensureMapCapacity( int capacity )
+    {
+        _map.ensureCapacity( capacity );
+    }
+    
+    public void ensureListSpace( int space )
+    {
+        _list.ensureCapacity( space );
+    }
+    
+    public void ensureMapSpace( int space )
+    {
+        _map.ensureCapacity( space );
     }
     
     // ========================================
     
     public boolean containsKey( MtsValue key )
     {
-        return !isEmpty() && ( _listPart.contains( key ) || !_hashPart.get( key ).isNil() );
+        return !isEmpty() && ( _list.canGetOrRemoveAt( key ) || !_map.get( key ).isNil() );
     }
     
     /**
-     * Finds the first entry in this table and returns it, or null if this table is empty.
+     * Finds the first entry in this table and returns it, or <code>null</code> if this table is empty.
      */
-    public Entry getFirstEntry()
+    public MtsTable.Entry getFirstEntry()
     {
-        if ( _listPart.length() > 0 )
-            return new Entry( MtsValue.ONE, _listPart.get( 0 ) );
+        if ( isEmpty() )
+            return null;
         
-        return _hashPart.getFirst();
+        if ( _list.size() > 0 )
+            return new MtsTable.Entry( MtsValue.ONE, _list.get( 0 ) );
+        
+        return (MtsTable.Entry) _map.getFirst();
     }
     
     /**
@@ -114,7 +112,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
      * <p>
      * Returns <code>null</code> if there are no entries after the given key.
      */
-    public Entry getNext( MtsValue key )
+    public MtsTable.Entry getNext( MtsValue key )
     {
         checkNotNull( key );
         
@@ -124,138 +122,36 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
         if ( key.isNil() )
             return getFirstEntry();
         
-        if ( TableListPart.isValidKey( key ) )
-        {
-            // Adjust MTS to Java index
-            int i = key.asNumber().toJavaInt() - 1;
-            
-            if ( _listPart.contains( i++ ) )
-            {
-                if ( _listPart.contains( i ) )
-                    return new Entry( valueOf( i + 1 ), _listPart.get( i ) );
-                else
-                    return _hashPart.getFirst();
-            }
-        }
+        if ( !_list.canAddOrSetAt( key ) )
+            return (MtsTable.Entry) _map.getNext( key );
         
-        return _hashPart.getNext( key );
+        int next = key.asNumber().toJavaInt();
+        return new MtsTable.Entry( valueOf( next ), _list.get( next ) );
     }
     
-    public Entry getINext( MtsNumber key )
-    {
-        int i = key.asNumber().toJavaInt();
-        
-        if ( _listPart.contains( i ) )
-            return new Entry( valueOf( i ), _listPart.get( i ) );
-        else
-            return null;
-    }
-    
-    // ========================================
-    // List Operations
-    
-    /**
-     * Adds a value to the end of the sequence of this table.
-     */
-    public void add( MtsValue value )
-    {
-        _listPart.add( value );
-    }
-    
-    public void add( Iterable<? extends MtsValue> values )
-    {
-        for ( MtsValue value : values )
-        {
-            add( value );
-        }
-    }
-    
-    /**
-     * Inserts a value into this table at the given location (1 based) and shifts subsequent entries to the left if necessary.
-     * <p>
-     * If <tt>key</tt> is not part of the sequence of this table a simple {@link #rawset(MtsValue, MtsValue) setRaw} is
-     * performed.
-     */
-    public void insert( MtsNumber index, MtsValue value )
-    {
-        if ( _listPart.contains( index ) )
-        {
-            // Adjust MTS to Java index
-            int i = index.toJavaInt() - 1;
-            
-            _listPart.insert( i, value );
-            _listPart.collectFrom( _hashPart );
-        }
-        else
-        {
-            set( index, value );
-        }
-    }
-    
-    /**
-     * Removes a mapping from this table and shifts subsequent entries down.
-     */
-    public MtsValue remove( MtsValue key )
+    public MtsTable.Entry getINext( MtsNumber key )
     {
         checkNotNull( key );
         
-        if ( _listPart.contains( key ) )
-        {
-            int i = key.asNumber().toJavaInt();
-            return _listPart.remove( i );
-        }
+        if ( isEmpty() )
+            return null;
         
-        return _hashPart.remove( key );
-    }
-    
-    public MtsValue remove( int i )
-    {
-        if ( !_listPart.contains( i ) )
-            return NIL;
+        if ( !_list.canAddOrSetAt( key ) )
+            return null;
         
-        return _listPart.remove( i );
-    }
-    
-    public MtsValue removeLast()
-    {
-        return _listPart.removeLast();
-    }
-    
-    public void sortList()
-    {
-        _listPart.sort();
+        int next = key.asNumber().toJavaInt();
+        return new MtsTable.Entry( valueOf( next ), _list.get( next ) );
     }
     
     // ========================================
     
     public void clear()
     {
-        _listPart.clear();
-        _hashPart.clear();
-    }
-    
-    public MtsString concatList( String sep, int from, int to )
-    {
-        return valueOf( _listPart.concat( sep, from, to ) );
-    }
-    
-    public MtsString concatList( String sep, int from )
-    {
-        return valueOf( _listPart.concat( sep, from ) );
-    }
-    
-    public MtsString concatList( String sep )
-    {
-        return valueOf( _listPart.concat( sep ) );
+        _list.clear();
+        _map.clear();
     }
     
     // ========================================
-    
-    @Override
-    public MtsValue doGet( MtsValue key )
-    {
-        return rawget( key );
-    }
     
     /**
      * Returns the value associated with the specified key in this table, or {@link MtsNil nil} if no such mapping exists.
@@ -271,47 +167,25 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
      * @see #rawget(MtsValue)
      * @see MtsValue#__INDEX
      */
-    private MtsValue rawget( MtsValue key )
+    @Override
+    public MtsValue doGet( MtsValue key )
     {
         assert key != null : "key cannot be null";
         
         if ( isEmpty() || key.isNil() )
             return NIL;
         
-        if ( TableListPart.isValidKey( key ) )
-        {
-            // Adjust MTS to Java index
-            int i = key.asNumber().toJavaInt() - 1;
-            
-            if ( _listPart.contains( i ) )
-                return _listPart.get( i );
-        }
-        
-        return _hashPart.get( key );
+        MtsValue result = _list.get( key );
+        return result.isNil() ? _map.get( key ) : result;
     }
     
     // ========================================
     
-    /**
-     * @param i Zero-based
-     * @param value
-     */
     public void set( int i, MtsValue value )
     {
-        if ( TableListPart.isValidKey( i ) )
+        if ( _list.canAddOrSetAt( i ) )
         {
-            if ( _listPart.contains( i ) ) // Insert
-            {
-                setList( i, value );
-            }
-            else if ( _listPart.length() == i ) // Append
-            {
-                addList( value );
-            }
-            else
-            {
-                setEntry( valueOf( i + 1 ), value );
-            }
+            addOrSetList( i, value );
         }
         else
         {
@@ -338,31 +212,12 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     @Override
     protected void doSet( MtsValue key, MtsValue value )
     {
-        rawset( key, value );
-    }
-    
-    private void rawset( MtsValue key, MtsValue value )
-    {
         assert key != null : "key was null";
         checkNotNil( key, "table index is nil" );
         
-        if ( TableListPart.isValidKey( key ) )
+        if ( _list.canAddOrSetAt( key ) )
         {
-            // Adjust MTS to Java index
-            int i = key.asNumber().toJavaInt() - 1;
-            
-            if ( _listPart.contains( i ) ) // Insert
-            {
-                setList( i, value );
-            }
-            else if ( _listPart.length() == i ) // Append
-            {
-                addList( value );
-            }
-            else
-            {
-                setEntry( key, value );
-            }
+            addOrSetList( key.asNumber().toJavaInt() - 1, value );
         }
         else
         {
@@ -370,29 +225,31 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
         }
     }
     
-    private void setList( int i, MtsValue value )
+    private void addOrSetList( int i, MtsValue value )
     {
-        _listPart.set( i, value );
-        
-        if ( value.isNil() )
+        if ( i == _list.size() )
         {
-            _listPart.transferOrphansTo( _hashPart );
+            _list.add( i, value );
+            
+            if ( !_map.isEmpty() )
+            {
+                _list.collectFrom( _map );
+            }
         }
-    }
-    
-    private void addList( MtsValue value )
-    {
-        _listPart.add( value );
-        
-        if ( !_hashPart.isEmpty() )
+        else
         {
-            _listPart.collectFrom( _hashPart );
+            _list.set( i, value );
+            
+            if ( value.isNil() )
+            {
+                _list.transferOrphansTo( _map );
+            }
         }
     }
     
     private void setEntry( MtsValue key, MtsValue value )
     {
-        _hashPart.set( key, value );
+        _map.put( key, value );
     }
     
     // ========================================
@@ -400,7 +257,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     @Override
     protected MtsNumber doGetLength()
     {
-        return valueOf( listSize() );
+        return valueOf( _list.size() );
     }
     
     // ========================================
@@ -433,18 +290,20 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     
     // ========================================
     
-    public Iterable<MtsValue> listView()
+    public MtsTableList list()
     {
-        return _listPart;
+        return _list;
     }
     
-    public Iterable<Entry> entryView()
+    public MtsTableMap map()
     {
-        return _hashPart;
+        return _map;
     }
+    
+    // ========================================
     
     @Override
-    public Iterator<Entry> iterator()
+    public Iterator<MtsTable.Entry> iterator()
     {
         return new TableIterator( this );
     }

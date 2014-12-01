@@ -69,8 +69,8 @@ public class InteractionCommandLib
         {
             MtsTable argOptions = arg1.asTable();
             
-            options = Lists.newArrayListWithCapacity( argOptions.listSize() );
-            for ( MtsValue arg : argOptions.listView() )
+            options = Lists.newArrayListWithCapacity( argOptions.list().size() );
+            for ( MtsValue arg : argOptions.list() )
             {
                 options.add( checkString( arg ) );
             }

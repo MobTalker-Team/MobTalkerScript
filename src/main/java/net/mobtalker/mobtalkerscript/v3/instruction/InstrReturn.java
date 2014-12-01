@@ -17,8 +17,14 @@
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
+
+import java.util.*;
+
+import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
-import net.mobtalker.mobtalkerscript.v3.value.MtsVarArgs;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+
+import com.google.common.collect.Lists;
 
 public final class InstrReturn extends MtsInstruction
 {
@@ -37,9 +43,39 @@ public final class InstrReturn extends MtsInstruction
     public void execute( MtsFrame frame )
     {
         if ( _count == 0 )
+        {
             frame.push( EMPTY_VARARGS );
+        }
         else if ( _count > 1 )
-            frame.push( MtsVarArgs.of( frame.pop( _count ) ) );
+        {
+            ArrayList<MtsValue> values = new ArrayList<>( _count );
+            for ( int i = 0; i < _count; i++ )
+            {
+                MtsValue value = frame.pop();
+                
+                MtsLog.EngineLog.info( value.toString() );
+                
+                if ( value.isVarArgs() )
+                {
+                    unpackVarargs( value.asVarArgs(), values );
+                }
+                else
+                {
+                    values.add( value );
+                }
+            }
+            
+            frame.push( MtsVarArgs.of( Lists.reverse( values ) ) );
+        }
+    }
+    
+    private static void unpackVarargs( MtsVarArgs varargs, List<MtsValue> list )
+    {
+        int count = varargs.count();
+        for ( int i = count - 1; i >= 0; --i )
+        {
+            list.add( varargs.get( i ) );
+        }
     }
     
     @Override

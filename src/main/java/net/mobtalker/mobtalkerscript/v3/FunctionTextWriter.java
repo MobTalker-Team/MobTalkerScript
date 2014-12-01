@@ -24,6 +24,13 @@ public class FunctionTextWriter
               .append( Integer.toString( prototype.getSourceLineEnd() ) )
               .append( '\n' );
         
+        writer.append( ".params " ).append( Integer.toString( prototype.getParameterCount() ) )
+              .append( '\n' );
+        writer.append( ".stacksize " ).append( Integer.toString( prototype.getMaxStackSize() ) )
+              .append( '\n' );
+        writer.append( ".varargs " ).append( prototype.hasVarargs() ? 't' : 'f' )
+              .append( '\n' );
+        
         // Constants
         int nConstants = prototype.getConstantCount();
         if ( nConstants > 0 )
@@ -32,8 +39,7 @@ public class FunctionTextWriter
                   .append( '\n' );
             for ( int i = 0; i < nConstants; i++ )
             {
-                writer.append( '[' ).append( Integer.toString( i ) ).append( "] " )
-                      .append( prototype.getConstant( i ).toString() )
+                writer.append( prototype.getConstant( i ).toString() )
                       .append( '\n' );
             }
         }
@@ -46,8 +52,10 @@ public class FunctionTextWriter
                   .append( '\n' );
             for ( int i = 0; i < nLocals; i++ )
             {
-                writer.append( '[' ).append( Integer.toString( i ) ).append( "] " )
-                      .append( prototype.getLocalDescription( i ).toString() )
+                LocalDescription local = prototype.getLocalDescription( i );
+                writer.append( local.getName() )
+                      .append( ':' ).append( Integer.toString( local.getStart() ) )
+                      .append( '-' ).append( Integer.toString( local.getEnd() ) )
                       .append( '\n' );
             }
         }
@@ -60,8 +68,10 @@ public class FunctionTextWriter
                   .append( '\n' );
             for ( int i = 0; i < nExternals; i++ )
             {
-                writer.append( '[' ).append( Integer.toString( i ) ).append( "] " )
-                      .append( prototype.getExternalDescription( i ).toString() )
+                ExternalDescription external = prototype.getExternalDescription( i );
+                writer.append( external.getName() )
+                      .append( ',' ).append( Integer.toString( external.getParentIndex() ) )
+                      .append( ',' ).append( external.isParentLocal() ? 't' : 'f' )
                       .append( '\n' );
             }
         }
@@ -75,8 +85,7 @@ public class FunctionTextWriter
                   .append( '\n' );
             for ( int i = 0; i < nInstrs; i++ )
             {
-                writer.append( '[' ).append( Integer.toString( i ) ).append( "] " )
-                      .append( instrs.get( i ).toString() )
+                writer.append( instrs.get( i ).toString() )
                       .append( '\n' );
             }
         }

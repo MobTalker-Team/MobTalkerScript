@@ -19,7 +19,7 @@ package net.mobtalker.mobtalkerscript.v3.lib;
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
-import java.util.Random;
+import java.util.*;
 
 import net.mobtalker.mobtalkerscript.util.*;
 import net.mobtalker.mobtalkerscript.v3.value.*;
@@ -35,20 +35,20 @@ public final class MtsTableLib
     @MtsNativeFunction
     public static MtsString concat( MtsValue argTable, MtsValue argSep, MtsValue arg3, MtsValue arg4 )
     {
-        MtsTable table = checkTable( argTable, 0 );
+        MtsTableList list = checkTable( argTable, 0 ).list();
         String sep = checkString( argSep, 1, "" );
         
         if ( arg3.isNil() )
-            return table.concatList( sep );
+            return valueOf( list.concat( sep ) );
         
         int from = checkInteger( arg3, 2 );
         
         if ( arg4.isNil() )
-            return table.concatList( sep, from );
+            return valueOf( list.concat( sep, from ) );
         
         int to = checkInteger( arg4, 3 );
         
-        return table.concatList( sep, from, to );
+        return valueOf( list.concat( sep, from, to ) );
     }
     
     @MtsNativeFunction
@@ -63,7 +63,7 @@ public final class MtsTableLib
     @MtsNativeFunction
     public static MtsNumber count( MtsValue argTable )
     {
-        return valueOf( checkTable( argTable, 0 ).count() );
+        return valueOf( checkTable( argTable, 0 ).size() );
     }
     
     @MtsNativeFunction
@@ -75,29 +75,16 @@ public final class MtsTableLib
     @MtsNativeFunction
     public static void insert( MtsValue argTable, MtsValue arg2, MtsValue arg3 )
     {
-        MtsTable table = checkTable( argTable, 0 );
+        MtsTableList list = checkTable( argTable, 0 ).list();
         
         if ( arg3.isNil() )
-            table.add( arg2 );
+            list.add( arg2 );
         
         checkNumber( arg2, 1 );
-        
-        table.insert( arg2.asNumber(), arg3 );
+        list.add( arg2.asNumber(), arg3 );
     }
     
-    @MtsNativeFunction
-    public static MtsValue keys( MtsValue argTable )
-    {
-        MtsTable t = checkTable( argTable, 0 );
-        MtsTable result = new MtsTable( t.count(), 0 );
-        
-        for ( Entry entry : t )
-        {
-            result.add( entry.getKey() );
-        }
-        
-        return result;
-    }
+    // ========================================
     
     @MtsNativeFunction
     public static MtsValue pack( MtsVarArgs args )
@@ -107,11 +94,26 @@ public final class MtsTableLib
         
         for ( int i = 0; i < count; i++ )
         {
-            result.add( args.get( i ) );
+            result.list().add( args.get( i ) );
         }
         
         return result;
     }
+    
+    @MtsNativeFunction
+    public static MtsVarArgs unpack( MtsValue argTable, MtsValue argFrom, MtsValue argTo )
+    {
+        MtsTableList list = checkTable( argTable, 0 ).list();
+        int from = checkInteger( argFrom, 1, 1 ) - 1;
+        int to = checkInteger( argTo, 2, list.size() );
+        
+        if ( ( from > to ) || ( to < from ) )
+            return EMPTY_VARARGS;
+        
+        return MtsVarArgs.of( new ArrayList<>( list.subList( from, Math.min( to, list.size() ) ) ) );
+    }
+    
+    // ========================================
     
     @MtsNativeFunction
     public static MtsValue random( MtsVarArgs args )
@@ -127,10 +129,10 @@ public final class MtsTableLib
         {
             MtsTable t = arg1.asTable();
             
-            if ( t.listSize() == 0 )
+            if ( t.list().isEmpty() )
                 return NIL;
             
-            MtsNumber k = valueOf( _rnd.nextInt( t.listSize() ) + 1 );
+            MtsNumber k = valueOf( _rnd.nextInt( t.list().size() ) + 1 );
             return t.get( k );
         }
         
@@ -140,7 +142,7 @@ public final class MtsTableLib
     @MtsNativeFunction
     public static MtsValue remove( MtsValue argTable, MtsValue argIndex )
     {
-        MtsTable table = checkTable( argTable, 0 );
+        MtsTableList table = checkTable( argTable, 0 ).list();
         
         if ( argIndex.isNil() )
             return table.removeLast();
@@ -151,18 +153,32 @@ public final class MtsTableLib
     @MtsNativeFunction
     public static void sort( MtsValue argTable )
     {
-        checkTable( argTable, 0 ).sortList();
+        checkTable( argTable, 0 ).list().sort();
+    }
+    
+    @MtsNativeFunction
+    public static MtsValue keys( MtsValue argTable )
+    {
+        MtsTable table = checkTable( argTable, 0 );
+        MtsTable result = new MtsTable( table.size(), 0 );
+        
+        for ( Entry entry : table )
+        {
+            result.list().add( entry.getKey() );
+        }
+        
+        return result;
     }
     
     @MtsNativeFunction
     public static MtsValue values( MtsValue argTable )
     {
         MtsTable t = checkTable( argTable, 0 );
-        MtsTable result = new MtsTable( t.count(), 0 );
+        MtsTable result = new MtsTable( t.size(), 0 );
         
         for ( Entry entry : t )
         {
-            result.add( entry.getValue() );
+            result.list().add( entry.getValue() );
         }
         
         return result;

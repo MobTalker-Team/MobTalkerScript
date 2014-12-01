@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,100 +18,89 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import static org.junit.Assert.*;
-import net.mobtalker.mobtalkerscript.v3.value.TableListPart;
 
 import org.junit.*;
 
-public class TableListPartTest
+public class MtsTableListTest
 {
-    
-    private TableListPart _list;
+    private MtsTableList _list;
     
     @Before
     public void setUp() throws Exception
     {
-        _list = new TableListPart( 0 );
-    }
-    
-    @Test
-    public void testIsValidKey()
-    {
-        assertFalse( TableListPart.isValidKey( TRUE ) );
-        assertFalse( TableListPart.isValidKey( FALSE ) );
-        assertFalse( TableListPart.isValidKey( NIL ) );
-        
-        assertFalse( TableListPart.isValidKey( valueOf( 0.1 ) ) );
-        assertFalse( TableListPart.isValidKey( valueOf( 1.34 ) ) );
-        
-        assertFalse( TableListPart.isValidKey( valueOf( 0 ) ) );
-        assertFalse( TableListPart.isValidKey( valueOf( -1 ) ) );
-        assertFalse( TableListPart.isValidKey( valueOf( Integer.MIN_VALUE ) ) );
-        
-        assertTrue( TableListPart.isValidKey( valueOf( 1 ) ) );
-        assertTrue( TableListPart.isValidKey( valueOf( 2 ) ) );
-        assertTrue( TableListPart.isValidKey( valueOf( Integer.MAX_VALUE ) ) );
+        _list = new MtsTableList( 0 );
     }
     
     @Test
     public void testLength()
     {
-        assertEquals( 0, _list.length() );
+        assertEquals( 0, _list.size() );
         
         _list.add( valueOf( "a" ) );
-        assertEquals( 1, _list.length() );
+        assertEquals( 1, _list.size() );
         
         _list.add( valueOf( "bc" ) );
         _list.add( valueOf( "def" ) );
         _list.add( valueOf( "gh" ) );
-        assertEquals( 4, _list.length() );
+        assertEquals( 4, _list.size() );
         
         _list.removeLast();
-        assertEquals( 3, _list.length() );
+        assertEquals( 3, _list.size() );
         
-        _list.insert( 2, valueOf( "ijkl" ) );
-        assertEquals( 4, _list.length() );
+        _list.add( 2, valueOf( "ijkl" ) );
+        assertEquals( 4, _list.size() );
         
         _list.remove( 1 );
-        assertEquals( 3, _list.length() );
+        assertEquals( 3, _list.size() );
         
         _list.clear();
-        assertEquals( 0, _list.length() );
+        assertEquals( 0, _list.size() );
     }
     
     @Test
     public void testContains()
     {
         assertFalse( _list.contains( valueOf( "foo" ) ) );
-        assertFalse( _list.contains( 0 ) );
+        assertFalse( _list.canGetOrRemoveAt( 0 ) );
         assertFalse( _list.contains( ZERO ) );
-        assertFalse( _list.contains( 1 ) );
+        assertFalse( _list.canGetOrRemoveAt( 1 ) );
         assertFalse( _list.contains( ONE ) );
+        assertFalse( _list.canGetOrRemoveAt( ONE ) );
         
         _list.add( valueOf( "bc" ) );
-        assertTrue( _list.contains( 0 ) );
-        assertTrue( _list.contains( ONE ) );
+        assertTrue( _list.canGetOrRemoveAt( 0 ) );
+        assertTrue( _list.canGetOrRemoveAt( ONE ) );
+        assertTrue( _list.contains( valueOf( "bc" ) ) );
         
         _list.removeLast();
-        assertFalse( _list.contains( 0 ) );
-        assertFalse( _list.contains( ONE ) );
+        assertFalse( _list.canGetOrRemoveAt( 0 ) );
+        assertFalse( _list.canGetOrRemoveAt( ONE ) );
+        assertFalse( _list.contains( valueOf( "bc" ) ) );
         
         _list.add( valueOf( "def" ) );
-        _list.insert( 1, valueOf( "ijkl" ) );
-        assertTrue( _list.contains( 1 ) );
-        assertTrue( _list.contains( valueOf( 2 ) ) );
+        _list.add( 1, valueOf( "ijkl" ) );
+        assertTrue( _list.canGetOrRemoveAt( 1 ) );
+        assertTrue( _list.canGetOrRemoveAt( valueOf( 2 ) ) );
+        assertTrue( _list.contains( valueOf( "ijkl" ) ) );
         
         _list.add( valueOf( "gh" ) );
         _list.remove( 1 );
-        assertTrue( _list.contains( 1 ) );
-        assertTrue( _list.contains( valueOf( 2 ) ) );
-        assertFalse( _list.contains( 2 ) );
-        assertFalse( _list.contains( valueOf( 3 ) ) );
+        assertTrue( _list.canGetOrRemoveAt( 1 ) );
+        assertTrue( _list.canGetOrRemoveAt( valueOf( 2 ) ) );
+        assertFalse( _list.canGetOrRemoveAt( 2 ) );
+        assertFalse( _list.canGetOrRemoveAt( valueOf( 3 ) ) );
+        assertTrue( _list.contains( valueOf( "gh" ) ) );
+        assertFalse( _list.contains( valueOf( "ijkl" ) ) );
         
         _list.clear();
-        assertFalse( _list.contains( 0 ) );
-        assertFalse( _list.contains( ZERO ) );
-        assertFalse( _list.contains( 1 ) );
-        assertFalse( _list.contains( ONE ) );
+        assertFalse( _list.canGetOrRemoveAt( 0 ) );
+        assertFalse( _list.canGetOrRemoveAt( ZERO ) );
+        assertFalse( _list.canGetOrRemoveAt( 1 ) );
+        assertFalse( _list.canGetOrRemoveAt( ONE ) );
+        assertFalse( _list.contains( valueOf( "gh" ) ) );
+        assertFalse( _list.contains( valueOf( "def" ) ) );
+        assertFalse( _list.contains( valueOf( "ijkl" ) ) );
+        assertFalse( _list.contains( valueOf( "bc" ) ) );
     }
     
     @Test
@@ -128,7 +117,7 @@ public class TableListPartTest
         _list.add( valueOf( "gh" ) );
         assertEquals( valueOf( "gh" ), _list.get( 2 ) );
         
-        _list.insert( 2, valueOf( "ijkl" ) );
+        _list.add( 2, valueOf( "ijkl" ) );
         _list.add( valueOf( "mno" ) );
         assertEquals( valueOf( "mno" ), _list.get( 4 ) );
     }
@@ -136,23 +125,23 @@ public class TableListPartTest
     @Test( expected = ArrayIndexOutOfBoundsException.class )
     public void testInsert()
     {
-        _list.insert( 0, valueOf( "a" ) );
+        _list.add( 0, valueOf( "a" ) );
         assertEquals( valueOf( "a" ), _list.get( 0 ) );
         
         _list.add( valueOf( "bc" ) );
         _list.add( valueOf( "def" ) );
         
-        _list.insert( 2, valueOf( "ijkl" ) );
+        _list.add( 2, valueOf( "ijkl" ) );
         assertEquals( valueOf( "ijkl" ), _list.get( 2 ) );
         
         _list.remove( 2 );
-        _list.insert( 2, valueOf( "gh" ) );
+        _list.add( 2, valueOf( "gh" ) );
         assertEquals( valueOf( "gh" ), _list.get( 2 ) );
         
-        _list.insert( _list.length(), valueOf( "mno" ) );
+        _list.add( _list.size(), valueOf( "mno" ) );
         assertEquals( valueOf( "mno" ), _list.get( 4 ) );
         
-        _list.insert( _list.length() + 1, valueOf( "pq" ) );
+        _list.add( _list.size() + 1, valueOf( "pq" ) );
     }
     
     @Test( expected = ArrayIndexOutOfBoundsException.class )
@@ -172,12 +161,12 @@ public class TableListPartTest
         _list.set( 3, valueOf( "opq" ) );
         assertEquals( valueOf( "opq" ), _list.get( 3 ) );
         
-        assertEquals( 4, _list.length() );
+        assertEquals( 4, _list.size() );
         _list.set( 3, NIL );
-        assertEquals( 3, _list.length() );
+        assertEquals( 3, _list.size() );
         
         _list.set( 1, NIL );
-        assertEquals( 1, _list.length() );
+        assertEquals( 1, _list.size() );
         
         _list.set( 1, ONE );
     }

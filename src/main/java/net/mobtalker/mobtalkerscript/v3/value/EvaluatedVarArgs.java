@@ -102,6 +102,14 @@ import com.google.common.collect.Lists;
     // ========================================
     
     @Override
+    public Iterator<MtsValue> iterator()
+    {
+        return _values.iterator();
+    }
+    
+    // ========================================
+    
+    @Override
     public String toString()
     {
         return super.toString() + _values.toString();

@@ -70,12 +70,10 @@ public class InstrCall extends MtsInstruction
         {
             MtsVarArgs varargs = lastArg.asVarArgs();
             int nVarargs = varargs.count();
-            nArgs -= 1;
             
             args = new ArrayList<>( nArgs + nVarargs );
-            args.add( lastArg );
             
-            for ( int i = nVarargs; i >= 0; i-- )
+            for ( int i = nVarargs - 1; i >= 0; i-- )
             {
                 args.add( varargs.get( i ) );
             }

@@ -83,8 +83,8 @@ public class GrammarTestRig
 //            }
 //        }.visit( chunk );
         
-        new TreeCleaner().visit( chunk );
-        chunk.inspect( parser );
+//        new TreeCleaner().visit( chunk );
+//        chunk.inspect( parser );
         
         MtsCompiler compiler = new MtsCompiler( path, 0, 0 );
         compiler.visit( chunk );
@@ -97,6 +97,12 @@ public class GrammarTestRig
         {
             new FunctionTextWriter().write( prototype, writer );
         }
+        
+//        try (
+//            Reader readable = Files.newBufferedReader( Paths.get( "D:\\test" ), Charsets.UTF_8 ) )
+//        {
+//            prototype = new FunctionTextReader().read( readable );
+//        }
         
         new MtsClosure( prototype, new MtsGlobals() ).call();
     }

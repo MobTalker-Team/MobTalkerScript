@@ -85,17 +85,7 @@ public interface <file.grammarName>Listener extends ParseTreeListener {
 <endif>
  * @param ctx the parse tree
  */
-void enter<lname; format="cap">(@NotNull <file.parserName>.<lname; format="cap">Context ctx);
-/**
-<if(file.listenerLabelRuleNames.(lname))>
- * Exit a parse tree produced by the {@code <lname>\}
- * labeled alternative in {@link <file.parserName>#<file.listenerLabelRuleNames.(lname)>\}.
-<else>
- * Exit a parse tree produced by {@link <file.parserName>#<lname>\}.
-<endif>
- * @param ctx the parse tree
- */
-void exit<lname; format="cap">(@NotNull <file.parserName>.<lname; format="cap">Context ctx);}; separator="\n">
+void enter<lname; format="cap">(@NotNull <file.parserName>.<lname; format="cap">Context ctx);}; separator="\n">
 
     void visit(@NotNull ParseTree tree);
     
@@ -126,13 +116,7 @@ public class <file.grammarName>BaseListener implements <file.grammarName>Listene
  *
  * \<p>The default implementation does nothing.\</p>
  */
-@Override public void enter<lname; format="cap">(@NotNull <file.parserName>.<lname; format="cap">Context ctx) { visitChildren(ctx); \}
-/**
- * {@inheritDoc\}
- *
- * \<p>The default implementation does nothing.\</p>
- */
-@Override public void exit<lname; format="cap">(@NotNull <file.parserName>.<lname; format="cap">Context ctx) { \}}; separator="\n">
+@Override public void enter<lname; format="cap">(@NotNull <file.parserName>.<lname; format="cap">Context ctx) { visitChildren(ctx); \}}; separator="\n">
 
 	/**
 	 * {@inheritDoc\}
@@ -140,12 +124,12 @@ public class <file.grammarName>BaseListener implements <file.grammarName>Listene
 	 * \<p>The default implementation does nothing.\</p>
 	 */
 	@Override public void enterEveryRule(@NotNull ParserRuleContext ctx) { }
-	/**
-	 * {@inheritDoc\}
-	 *
-	 * \<p>The default implementation does nothing.\</p>
-	 */
-	@Override public void exitEveryRule(@NotNull ParserRuleContext ctx) { }
+    /**
+     * {@inheritDoc\}
+     *
+     * \<p>The default implementation does nothing.\</p>
+     */
+    @Override public void exitEveryRule(@NotNull ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc\}
 	 *
@@ -835,10 +819,10 @@ public static class <struct.name> extends <currentRule.name; format="cap">Contex
 >>
 
 ListenerDispatchMethod(method) ::= <<
-@Override
-public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener listener) {
-	if ( listener instanceof <parser.grammarName>Listener ) ((<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
-}
+<if(method.isEnter)>@Override
+public void enterRule(ParseTreeListener listener) {
+	if ( listener instanceof <parser.grammarName>Listener ) ((<parser.grammarName>Listener)listener).enter<struct.derivedFromName; format="cap">(this);
+}<endif>
 >>
 
 VisitorDispatchMethod(method) ::= <<

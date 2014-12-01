@@ -79,10 +79,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterChunk(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitChunk(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -128,10 +125,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterBlock(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitBlock(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -213,10 +207,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterFunctionDefinitionExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitFunctionDefinitionExpr(this);
-		}
+
 	}
 	public static class BinaryExprContext extends ExprContext {
 		public ExprContext Left;
@@ -233,10 +224,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterBinaryExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitBinaryExpr(this);
-		}
+
 	}
 	public static class LiteralExprContext extends ExprContext {
 		public LiteralContext Literal;
@@ -248,10 +236,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterLiteralExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitLiteralExpr(this);
-		}
+
 	}
 	public static class VarargsExprContext extends ExprContext {
 		public VarargsExprContext(ExprContext ctx) { copyFrom(ctx); }
@@ -259,10 +244,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterVarargsExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitVarargsExpr(this);
-		}
+
 	}
 	public static class AssignmentExprContext extends ExprContext {
 		public VarContext Var;
@@ -278,10 +260,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterAssignmentExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitAssignmentExpr(this);
-		}
+
 	}
 	public static class EnclosedExprContext extends ExprContext {
 		public ExprContext expr() {
@@ -292,10 +271,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterEnclosedExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitEnclosedExpr(this);
-		}
+
 	}
 	public static class ConditionalExprContext extends ExprContext {
 		public ExprContext Left;
@@ -312,10 +288,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterConditionalExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitConditionalExpr(this);
-		}
+
 	}
 	public static class UnaryExprContext extends ExprContext {
 		public Token Operator;
@@ -328,10 +301,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterUnaryExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitUnaryExpr(this);
-		}
+
 	}
 	public static class LogicalExprContext extends ExprContext {
 		public ExprContext Left;
@@ -348,10 +318,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterLogicalExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitLogicalExpr(this);
-		}
+
 	}
 	public static class PrefixExprContext extends ExprContext {
 		public NameAndArgsContext nameAndArgs;
@@ -370,10 +337,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterPrefixExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitPrefixExpr(this);
-		}
+
 	}
 	public static class TableConstructorExprContext extends ExprContext {
 		public TableCtorContext tableCtor() {
@@ -384,10 +348,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterTableConstructorExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitTableConstructorExpr(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -662,10 +623,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterStringLiteral(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitStringLiteral(this);
-		}
+
 	}
 	public static class BooleanLiteralContext extends LiteralContext {
 		public TerminalNode BOOLEAN() { return getToken(Mts3Parser.BOOLEAN, 0); }
@@ -674,10 +632,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterBooleanLiteral(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitBooleanLiteral(this);
-		}
+
 	}
 	public static class NilLiteralContext extends LiteralContext {
 		public TerminalNode NIL() { return getToken(Mts3Parser.NIL, 0); }
@@ -686,10 +641,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterNilLiteral(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitNilLiteral(this);
-		}
+
 	}
 	public static class NumberLiteralContext extends LiteralContext {
 		public TerminalNode HEX() { return getToken(Mts3Parser.HEX, 0); }
@@ -701,10 +653,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterNumberLiteral(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitNumberLiteral(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -786,10 +735,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterExprList(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitExprList(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -848,10 +794,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterNormalString(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitNormalString(this);
-		}
+
 	}
 	public static class LongStringContext extends StringContext {
 		public TerminalNode LONGSTRING() { return getToken(Mts3Parser.LONGSTRING, 0); }
@@ -860,10 +803,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterLongString(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitLongString(this);
-		}
+
 	}
 	public static class CharStringContext extends StringContext {
 		public TerminalNode CHARSTRING() { return getToken(Mts3Parser.CHARSTRING, 0); }
@@ -872,10 +812,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterCharString(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitCharString(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -934,10 +871,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterTableCtor(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitTableCtor(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -994,10 +928,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterNameField(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitNameField(this);
-		}
+
 	}
 	public static class ExprFieldContext extends FieldContext {
 		public ExprContext Field;
@@ -1013,10 +944,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterExprField(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitExprField(this);
-		}
+
 	}
 	public static class ListFieldContext extends FieldContext {
 		public ExprContext Expr;
@@ -1028,10 +956,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterListField(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitListField(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -1100,10 +1025,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterFieldList(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitFieldList(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -1194,10 +1116,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterShowStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitShowStmt(this);
-		}
+
 	}
 	public static class LabelStmtContext extends StmtContext {
 		public Token Name;
@@ -1207,10 +1126,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterLabelStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitLabelStmt(this);
-		}
+
 	}
 	public static class LocalFunctionDefinitionStmtContext extends StmtContext {
 		public Token Name;
@@ -1224,10 +1140,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterLocalFunctionDefinitionStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitLocalFunctionDefinitionStmt(this);
-		}
+
 	}
 	public static class BlockStmtContext extends StmtContext {
 		public BlockContext block() {
@@ -1238,10 +1151,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterBlockStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitBlockStmt(this);
-		}
+
 	}
 	public static class FunctionDefinitionStmtContext extends StmtContext {
 		public FuncNameContext Name;
@@ -1257,10 +1167,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterFunctionDefinitionStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitFunctionDefinitionStmt(this);
-		}
+
 	}
 	public static class SayStmtContext extends StmtContext {
 		public ExprListContext Args;
@@ -1273,10 +1180,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterSayStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitSayStmt(this);
-		}
+
 	}
 	public static class CallStmtContext extends StmtContext {
 		public NameAndArgsContext nameAndArgs;
@@ -1296,10 +1200,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterCallStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitCallStmt(this);
-		}
+
 	}
 	public static class RepeatStmtContext extends StmtContext {
 		public BlockContext Block;
@@ -1315,10 +1216,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterRepeatStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitRepeatStmt(this);
-		}
+
 	}
 	public static class GenericForStmtContext extends StmtContext {
 		public NameListContext NameList;
@@ -1338,10 +1236,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterGenericForStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitGenericForStmt(this);
-		}
+
 	}
 	public static class SceneStmtContext extends StmtContext {
 		public ExprContext Group;
@@ -1357,10 +1252,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterSceneStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitSceneStmt(this);
-		}
+
 	}
 	public static class HideStmtContext extends StmtContext {
 		public ExprContext Group;
@@ -1372,10 +1264,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterHideStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitHideStmt(this);
-		}
+
 	}
 	public static class WhileStmtContext extends StmtContext {
 		public ExprContext Condition;
@@ -1391,10 +1280,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterWhileStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitWhileStmt(this);
-		}
+
 	}
 	public static class IfThenElseStmtContext extends StmtContext {
 		public ExprContext IfCondition;
@@ -1425,10 +1311,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterIfThenElseStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitIfThenElseStmt(this);
-		}
+
 	}
 	public static class GotoStmtContext extends StmtContext {
 		public Token Target;
@@ -1438,10 +1321,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterGotoStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitGotoStmt(this);
-		}
+
 	}
 	public static class LocalVariableDeclarationStmtContext extends StmtContext {
 		public NameListContext NameList;
@@ -1457,10 +1337,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterLocalVariableDeclarationStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitLocalVariableDeclarationStmt(this);
-		}
+
 	}
 	public static class MenuStmtContext extends StmtContext {
 		public ExprContext Caption;
@@ -1480,10 +1357,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterMenuStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitMenuStmt(this);
-		}
+
 	}
 	public static class AssignmentStmtContext extends StmtContext {
 		public VarListContext VarList;
@@ -1499,10 +1373,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterAssignmentStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitAssignmentStmt(this);
-		}
+
 	}
 	public static class EmptyStmtContext extends StmtContext {
 		public EmptyStmtContext(StmtContext ctx) { copyFrom(ctx); }
@@ -1510,10 +1381,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterEmptyStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitEmptyStmt(this);
-		}
+
 	}
 	public static class NumericForStmtContext extends StmtContext {
 		public Token Var;
@@ -1536,10 +1404,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterNumericForStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitNumericForStmt(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -1924,10 +1789,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterMenuOption(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitMenuOption(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -1966,10 +1828,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterReturnStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitReturnStmt(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2019,10 +1878,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterBreakStmt(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitBreakStmt(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2075,10 +1931,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterArgString(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitArgString(this);
-		}
+
 	}
 	public static class ArgListContext extends ArgsContext {
 		public ExprListContext ExprList;
@@ -2090,10 +1943,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterArgList(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitArgList(this);
-		}
+
 	}
 	public static class ArgTableContext extends ArgsContext {
 		public TableCtorContext tableCtor() {
@@ -2104,10 +1954,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterArgTable(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitArgTable(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2180,10 +2027,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterNameAndArgs(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitNameAndArgs(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2234,10 +2078,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterFuncName(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitFuncName(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2303,10 +2144,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterFuncBody(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitFuncBody(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2356,10 +2194,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterParamList(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitParamList(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2429,10 +2264,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterVar(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitVar(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2520,10 +2352,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterFieldNameSuffix(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitFieldNameSuffix(this);
-		}
+
 	}
 	public static class FieldExprSuffixContext extends VarSuffixContext {
 		public NameAndArgsContext nameAndArgs;
@@ -2543,10 +2372,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterFieldExprSuffix(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitFieldExprSuffix(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2631,10 +2457,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterVarOrExpr(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitVarOrExpr(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2689,10 +2512,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterVarList(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitVarList(this);
-		}
+
 	}
 
 	@RuleVersion(0)
@@ -2748,10 +2568,7 @@ public class Mts3Parser extends Parser {
 		public void enterRule(ParseTreeListener listener) {
 			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).enterNameList(this);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Mts3Listener ) ((Mts3Listener)listener).exitNameList(this);
-		}
+
 	}
 
 	@RuleVersion(0)

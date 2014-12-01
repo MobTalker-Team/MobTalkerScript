@@ -421,7 +421,14 @@ public class MtsCompiler extends Mts3BaseListener
     public LocalDescription declareLocal( String name )
     {
         CompilerLog.info( "Declare local: " + name );
-        return _currentFunction.declareLocal( name );
+        try
+        {
+            return _currentFunction.declareLocal( name );
+        }
+        catch ( ScriptParserException ex )
+        {
+            throw new MtsSyntaxError( _sourceName, _curPosition, ex.getMessage() );
+        }
     }
     
     public LocalDescription declareAnonymousLocal( String name )
@@ -894,12 +901,10 @@ public class MtsCompiler extends Mts3BaseListener
         if ( ctx.FieldExpr instanceof LiteralExprContext )
         {
             LiteralContext literal = ( (LiteralExprContext) ctx.FieldExpr ).Literal;
-            if ( literal instanceof NilLiteralContext )
-                field = MtsValue.NIL;
-            else if ( literal instanceof BooleanLiteralContext )
-                field = MtsBoolean.parse( literal.getText() );
-            else if ( literal instanceof NumberLiteralContext )
+            if ( literal instanceof NumberLiteralContext )
+            {
                 field = MtsNumber.parse( literal.getText() );
+            }
             else
             {
                 visit( literal );
@@ -1067,7 +1072,7 @@ public class MtsCompiler extends Mts3BaseListener
         if ( !listFields.isEmpty() )
         {
             getLast( listFields ).Expr.nResults = -1;
-            visit( Lists.reverse( listFields ) );
+            visit( listFields );
         }
         
         createTable( listFields.size(), nPairs );
@@ -1340,8 +1345,11 @@ public class MtsCompiler extends Mts3BaseListener
     
     private static int getReturnCount( NameAndArgsContext ctx )
     {
-        if ( ctx.getParent() instanceof ExprContext )
-            return ( (ExprContext) ctx.getParent() ).nResults;
+        if ( ctx.getParent() instanceof PrefixExprContext )
+        {
+            PrefixExprContext parent = (PrefixExprContext) ctx.getParent();
+            return getLast( parent.Calls ).equals( ctx ) ? parent.nResults : 1;
+        }
         if ( ( ctx.getParent() instanceof CallStmtContext ) && ctx.equals( ( (CallStmtContext) ctx.getParent() ).LastCall ) )
             return 0;
         

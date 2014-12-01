@@ -16,23 +16,21 @@
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
-import java.util.List;
+import java.util.LinkedList;
 
-import net.mobtalker.mobtalkerscript.v3.*;
-
-import com.google.common.collect.Lists;
+import net.mobtalker.mobtalkerscript.v3.LocalDescription;
 
 public class BlockScope
 {
     private final BlockScope _parent;
-    private final List<LocalDescription> _locals;
+    private final LinkedList<LocalDescription> _locals;
     
     private final SourcePosition _start;
     
     // ========================================
     
     {
-        _locals = Lists.newArrayList();
+        _locals = new LinkedList<>();
     }
     
     public BlockScope( SourcePosition pos )
@@ -72,17 +70,9 @@ public class BlockScope
     
     // ========================================
     
-    public boolean canDeclare( String name )
-    {
-        return !contains( name );
-    }
-    
     public void declare( LocalDescription local )
     {
-        if ( !canDeclare( local.getName() ) )
-            throw new ScriptParserException( "Tried to declare local variable '%s' twice", local.getName() );
-        
-        _locals.add( local );
+        _locals.addFirst( local );
     }
     
     /**

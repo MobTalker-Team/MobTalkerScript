@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
+import java.util.Iterator;
+
 public class MtsTailcall extends MtsVarArgs
 {
     private MtsValue _target;
@@ -109,6 +111,14 @@ public class MtsTailcall extends MtsVarArgs
         _target = null;
         _args = null;
         _result = result;
+    }
+    
+    // ========================================
+    
+    @Override
+    public Iterator<MtsValue> iterator()
+    {
+        throw new UnsupportedOperationException();
     }
     
     // ========================================

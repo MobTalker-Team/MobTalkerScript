@@ -73,6 +73,7 @@ task generateAntlr( type: JavaExec ) {
     classpath buildscript.configurations.classpath
     
     inputs.file grammarFile
+    inputs.file 'src/main/antlr/templates/org/antlr/v4/tool/templates/codegen/Java/Java.stg'
     //outputs.dir( "${outputDir}" )
     
     args = [ 

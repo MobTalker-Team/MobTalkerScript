@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * An Array-backed list specifically tailored for MobTalkerScript.
  */
-/* package */final class TableListPart implements Iterable<MtsValue>
+public final class MtsTableList extends AbstractList<MtsValue> implements RandomAccess
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
     
@@ -34,7 +34,7 @@ import java.util.*;
     
     // ========================================
     
-    public TableListPart( int initialCapacity )
+    /* package */MtsTableList( int initialCapacity )
     {
         int capacity = 1;
         while ( capacity < initialCapacity )
@@ -47,73 +47,6 @@ import java.util.*;
     }
     
     // ========================================
-    
-    /**
-     * Determines if the given key is valid for the list part of a table.
-     */
-    public static boolean isValidKey( MtsValue key )
-    {
-        if ( !key.isInteger() )
-            return false;
-        
-        return key.asNumber().isPositive();
-    }
-    
-    /**
-     * Determines if the given key is valid for the list part of a table.
-     * <p>
-     * NOTE: The index is 1 based.
-     */
-    public static boolean isValidKey( MtsNumber key )
-    {
-        return key.isInteger() && key.isPositive();
-    }
-    
-    public static boolean isValidKey( int index )
-    {
-        return index >= 0;
-    }
-    
-    /**
-     * Length of this list.
-     */
-    public int length()
-    {
-        return _limit;
-    }
-    
-    public boolean isEmpty()
-    {
-        return _limit == 0;
-    }
-    
-    /**
-     * Determines if the given key resides inside the list part of this table.
-     * <p>
-     * <b>NOTE:</b> The index is 1 based.
-     */
-    public boolean contains( MtsValue key )
-    {
-        return isValidKey( key ) && ( key.asNumber().toJavaInt() <= _limit );
-    }
-    
-    /**
-     * Determines if the given key resides inside the list part of this table.
-     * <p>
-     * <b>NOTE:</b> The index is 1 based.
-     */
-    public boolean contains( MtsNumber key )
-    {
-        return isValidKey( key ) && ( key.toJavaInt() <= _limit );
-    }
-    
-    /**
-     * Determines if the given index resides inside the list part of this table.
-     */
-    public boolean contains( int i )
-    {
-        return ( 0 <= i ) && ( i < _limit );
-    }
     
     private int findCapacity( int target )
     {
@@ -152,27 +85,58 @@ import java.util.*;
         }
     }
     
+    public void ensureSpace( int space )
+    {
+        ensureCapacity( _limit + space );
+    }
+    
+    // ========================================
+    // Size
+    
+    @Override
+    public int size()
+    {
+        return _limit;
+    }
+    
+    public boolean canGetOrRemoveAt( int i )
+    {
+        return ( 0 <= i ) && ( i < _limit );
+    }
+    
+    public boolean canGetOrRemoveAt( MtsValue key )
+    {
+        return key.isInteger() && canGetOrRemoveAt( key.asNumber().toJavaInt() - 1 );
+    }
+    
+    public boolean canAddOrSetAt( int i )
+    {
+        return ( 0 <= i ) && ( i <= _limit );
+    }
+    
+    public boolean canAddOrSetAt( MtsValue key )
+    {
+        return key.isInteger() && canAddOrSetAt( key.asNumber().toJavaInt() - 1 );
+    }
+    
     // ========================================
     // Adding
     
-    /**
-     * Adds an entry to the end of this list.
-     */
-    public void add( MtsValue value )
+    @Override
+    public boolean add( MtsValue value )
     {
         if ( value.isNil() )
-            return;
+            return false;
         
         ensureCapacity( _limit + 1 );
         _entries[_limit++] = value;
+        return true;
     }
     
-    /**
-     * Inserts a value at the given index and shifts subsequent entries up.
-     */
-    public void insert( int i, MtsValue value )
+    @Override
+    public void add( int i, MtsValue value )
     {
-        if ( _limit < i )
+        if ( ( i < 0 ) || ( _limit < i ) )
             throw new ArrayIndexOutOfBoundsException( i );
         
         if ( i == _limit )
@@ -208,11 +172,34 @@ import java.util.*;
     }
     
     /**
-     * Sets the value of a specified index
+     * <b>NOTE:</b> Indices are 1 based.
      */
+    public void add( MtsNumber key, MtsValue value )
+    {
+        add( key.toJavaInt() - 1, value );
+    }
+    
+    @Override
+    public boolean addAll( Collection<? extends MtsValue> c )
+    {
+        ensureCapacity( _limit + c.size() );
+        return super.addAll( c );
+    }
+    
+    @Override
+    public boolean addAll( int index, Collection<? extends MtsValue> c )
+    {
+        ensureCapacity( _limit + c.size() );
+        return super.addAll( index, c );
+    }
+    
+    // ========================================
+    // Setting
+    
+    @Override
     public MtsValue set( int i, MtsValue value )
     {
-        if ( _limit <= i )
+        if ( ( i < 0 ) || ( _limit <= i ) )
             throw new ArrayIndexOutOfBoundsException( i );
         
         MtsValue old = _entries[i];
@@ -230,44 +217,38 @@ import java.util.*;
         return old;
     }
     
+    /**
+     * <b>NOTE:</b> Indices are 1 based.
+     */
+    public MtsValue set( MtsNumber key, MtsValue value )
+    {
+        return set( key.toJavaInt() - 1, value );
+    }
+    
     // ========================================
     // Removing
     
+    @Override
+    public MtsValue remove( int i )
+    {
+        if ( ( i < 0 ) || ( _limit <= i ) )
+            throw new ArrayIndexOutOfBoundsException( i );
+        
+        MtsValue old = _entries[i];
+        if ( i < _limit-- )
+        {
+            System.arraycopy( _entries, i + 1, _entries, i, _limit - i );
+        }
+        
+        return old;
+    }
+    
     /**
-     * Removes an entry from this list, shifting subsequent entries down.
-     * <p>
      * <b>NOTE:</b> Indices are 1 based.
      */
     public MtsValue remove( MtsNumber key )
     {
-        // Adjust MTS to Java index
-        int i = key.toJavaInt() - 1;
-        
-        if ( !contains( i ) )
-            throw new IllegalArgumentException( "key is not part of this list" );
-        
-        return doRemove( i );
-    }
-    
-    /**
-     * Removes an entry from this list, shifting subsequent entries down.
-     */
-    public MtsValue remove( int i )
-    {
-        if ( _limit <= i )
-            throw new ArrayIndexOutOfBoundsException( i );
-        
-        return doRemove( i );
-    }
-    
-    private MtsValue doRemove( int i )
-    {
-        MtsValue old = _entries[i];
-        
-        System.arraycopy( _entries, i + 1, _entries, i, _limit - i - 1 );
-        
-        --_limit;
-        return old;
+        return remove( key.toJavaInt() - 1 );
     }
     
     /**
@@ -285,6 +266,7 @@ import java.util.*;
     /*
      * Removes every entry from this list.
      */
+    @Override
     public void clear()
     {
         _limit = 0;
@@ -292,6 +274,15 @@ import java.util.*;
     
     // ========================================
     // Retrieval
+    
+    @Override
+    public MtsValue get( int i )
+    {
+        if ( ( i < 0 ) || ( _limit <= i ) )
+            throw new ArrayIndexOutOfBoundsException( i );
+        
+        return _entries[i];
+    }
     
     /**
      * <b>NOTE:</b> Indices are 1 based.
@@ -301,13 +292,51 @@ import java.util.*;
         return get( key.toJavaInt() - 1 );
     }
     
-    public MtsValue get( int i )
+    public MtsValue get( MtsValue key )
     {
+        if ( !key.isInteger() )
+            return NIL;
+        int i = key.asNumber().toJavaInt() - 1;
         if ( ( i < 0 ) || ( _limit <= i ) )
-            throw new ArrayIndexOutOfBoundsException( i );
+            return NIL;
         
         return _entries[i];
     }
+    
+    // ========================================
+    // Searching
+    
+    @Override
+    public boolean contains( Object o )
+    {
+        return indexOf( o ) >= 0;
+    }
+    
+    @Override
+    public int indexOf( Object o )
+    {
+        if ( !( o instanceof MtsValue ) )
+            return -1;
+        
+        for ( int i = 0; i < _limit; i++ )
+        {
+            if ( o.equals( _entries[i] ) )
+                return i;
+        }
+        
+        return -1;
+    }
+    
+    // ========================================
+    // Sublist
+    
+    public List<MtsValue> subList( int fromIndex )
+    {
+        return subList( fromIndex, _limit );
+    }
+    
+    // ========================================
+    // Concatenation
     
     public String concat( String sep, int from, int to )
     {
@@ -336,18 +365,18 @@ import java.util.*;
     // ========================================
     // Transfer operations
     
-    /* package */void collectFrom( TableHashPart hashPart )
+    /* package */void collectFrom( MtsTableMap map )
     {
         MtsValue value;
         int i = _limit;
         // ++i is needed for conversion between 1-based and 0-based indices.
-        while ( !( value = hashPart.remove( valueOf( ++i ) ) ).isNil() )
+        while ( !( value = map.remove( valueOf( ++i ) ) ).isNil() )
         {
             add( value );
         }
     }
     
-    /* package */void transferOrphansTo( TableHashPart hashPart )
+    /* package */void transferOrphansTo( MtsTableMap map )
     {
         MtsValue[] t = _entries;
         MtsValue value;
@@ -356,7 +385,7 @@ import java.util.*;
         {
             t[i] = null;
             // ++i is needed for conversion between 1-based and 0-based indices.
-            hashPart.set( valueOf( ++i ), value );
+            map.put( valueOf( ++i ), value );
         }
     }
     
@@ -365,57 +394,5 @@ import java.util.*;
     public void sort()
     {
         Arrays.sort( _entries );
-    }
-    
-    // ========================================
-    
-    @Override
-    public Iterator<MtsValue> iterator()
-    {
-        return new ListIterator( this );
-    }
-    
-    // ========================================
-    
-    @Override
-    public String toString()
-    {
-        return Arrays.toString( _entries );
-    }
-    
-    // ========================================
-    
-    private static class ListIterator implements Iterator<MtsValue>
-    {
-        private final TableListPart _listPart;
-        private int _next;
-        
-        public ListIterator( TableListPart listPart )
-        {
-            _listPart = listPart;
-            _next = 0;
-        }
-        
-        @Override
-        public boolean hasNext()
-        {
-            return _next < _listPart.length();
-        }
-        
-        @Override
-        public MtsValue next()
-        {
-            if ( !hasNext() )
-                throw new NoSuchElementException();
-            
-            MtsValue result = _listPart.get( _next++ );
-            return result;
-        }
-        
-        @Override
-        public void remove()
-        {
-            throw new UnsupportedOperationException();
-        }
     }
 }

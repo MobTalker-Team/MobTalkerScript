@@ -19,7 +19,6 @@ package net.mobtalker.mobtalkerscript.util;
 import java.util.Map;
 
 import net.mobtalker.mobtalkerscript.v3.value.*;
-import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
 
 import com.google.common.collect.Maps;
 
@@ -44,13 +43,8 @@ public class TableCloner
             MtsTable clone = _cache.get( t );
             if ( clone == null )
             {
-                clone = new MtsTable( t.listSize(), t.tableSize() );
+                clone = new MtsTable( t );
                 _cache.put( t, clone );
-            }
-            
-            for ( Entry e : t )
-            {
-                clone.set( e.getKey(), e.getValue() );
             }
             
             return clone;

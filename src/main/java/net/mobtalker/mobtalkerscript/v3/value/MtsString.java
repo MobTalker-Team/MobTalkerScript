@@ -22,6 +22,8 @@ import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v3.ScriptRuntimeException;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.google.common.collect.Maps;
 
 public class MtsString extends MtsValue
@@ -247,7 +249,7 @@ public class MtsString extends MtsValue
     @Override
     public String toString()
     {
-        return '"' + _value + '"';
+        return '"' + StringEscapeUtils.escapeJava( _value ) + '"';
     }
     
     @Override

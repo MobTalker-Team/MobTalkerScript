@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -81,7 +81,7 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
             effectTable.set( KEY_EFFECT_NAME, valueOf( effect.Name ) );
             effectTable.set( KEY_EFFECT_DURATION, valueOf( effect.Duration ) );
             effectTable.set( KEY_EFFECT_AMPLIFIER, valueOf( effect.Amplifier ) );
-            t.add( effectTable );
+            t.list().add( effectTable );
         }
         
         return t;
@@ -157,7 +157,7 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
         ItemStackInfo info = _logic.getHeldItem();
         if ( info == null )
             return null;
-
+        
         return MtsVarArgs.of( valueOf( info.Item.Name ), valueOf( info.Item.Meta ), valueOf( info.Count ) );
     }
 }

@@ -1,8 +1,0 @@
-print"testing commands";
-
-say "test";
-say "test", "test2";
-say "test" as conclusion;
-say "test", "test2" as conclusion;
-
-print"OK"

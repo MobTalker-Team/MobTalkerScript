@@ -21,12 +21,11 @@ import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v3.ScriptRuntimeException;
-import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
 
 /**
  * A HashMap specifically tailored for MobTalkerScript.
  */
-/* package */final class TableHashPart implements Iterable<Entry>
+public final class MtsTableMap implements Map<MtsValue, MtsValue>
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
     private static final float LOAD_FACTOR = 0.75f;
@@ -37,9 +36,13 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
     private int _threshold;
     private int _count;
     
+    private EntrySet _entrySet;
+    private KeysSet _keysSet;
+    private ValuesCollection _valuesCollection;
+    
     // ========================================
     
-    public TableHashPart( int initialCapacity )
+    /* package */MtsTableMap( int initialCapacity )
     {
         int capacity = 1;
         while ( capacity < initialCapacity )
@@ -143,6 +146,11 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         }
     }
     
+    public void ensureSpace( int space )
+    {
+        ensureCapacity( _count + space );
+    }
+    
     /**
      * Transfers all entries from current table to newTable (rehash the table).
      */
@@ -170,15 +178,126 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         }
     }
     
+    // ========================================
+    
+    @Override
+    public int size()
+    {
+        return _count;
+    }
+    
+    @Override
+    public boolean isEmpty()
+    {
+        return _count == 0;
+    }
+    
+    @Override
+    public boolean containsKey( Object key )
+    {
+        return getEntry( key ) != null;
+    }
+    
+    @Override
+    public boolean containsValue( Object value )
+    {
+        if ( !( value instanceof MtsValue ) || isEmpty() )
+            return false;
+        
+        HashEntry[] entries = _entries;
+        for ( int i = 0; i < entries.length; ++i )
+            for ( HashEntry e = entries[i]; e != null; e = e.next )
+                if ( value.equals( e.value ) )
+                    return true;
+        
+        return false;
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsValue get( Object key )
+    {
+        Map.Entry<MtsValue, MtsValue> result = getEntry( key );
+        return result == null ? NIL : result.getValue();
+    }
+    
+    public Entry<MtsValue, MtsValue> getEntry( Object key )
+    {
+        if ( !( key instanceof MtsValue ) || isEmpty() )
+            return null;
+        
+        int hash = getHashFor( (MtsValue) key );
+        for ( HashEntry e = _entries[indexFor( hash, _entries.length )]; e != null; e = e.next )
+            if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
+                return e;
+        
+        return null;
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsValue put( MtsValue key, MtsValue value )
+    {
+        assert key != null : "key was null";
+        
+        if ( key.isNil() )
+            throw new ScriptRuntimeException( "table index is nil" );
+        
+        if ( value.isNil() )
+            return remove( key );
+        
+        int hash = getHashFor( key );
+        int i = indexFor( hash, _entries.length );
+        
+        for ( HashEntry entry = _entries[i]; entry != null; entry = entry.next )
+        {
+            if ( ( entry.hash == hash ) && Objects.equals( key, entry.key ) )
+            {
+                MtsValue oldValue = entry.value;
+                entry.value = value;
+                return oldValue;
+            }
+        }
+        
+        HashEntry e = _entries[i];
+        _entries[i] = new HashEntry( key, hash, value, e );
+        _count++;
+        
+        ensureCapacity( _count );
+        
+        return NIL;
+    }
+    
+    @Override
+    public void putAll( Map<? extends MtsValue, ? extends MtsValue> map )
+    {
+        int nEntries = map.size();
+        if ( nEntries == 0 )
+            return;
+        
+        ensureCapacity( _count + nEntries );
+        
+        for ( Map.Entry<? extends MtsValue, ? extends MtsValue> e : map.entrySet() )
+            put( e.getKey(), e.getValue() );
+    }
+    
+    // ========================================
+    
     /**
      * Contains-and-Remove
      * <p>
      * Removes and returns the entry associated with the specified key in this table. Returns {@link #NIL} if this table
      * contained no mapping for this key.
      */
-    public MtsValue remove( MtsValue key )
+    @Override
+    public MtsValue remove( Object key )
     {
-        int hash = getHashFor( key );
+        if ( !( key instanceof MtsValue ) )
+            return NIL;
+        
+        int hash = getHashFor( (MtsValue) key );
         int i = indexFor( hash, _entries.length );
         
         HashEntry prev = _entries[i];
@@ -206,69 +325,14 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         return NIL;
     }
     
-    /**
-     * Returns the value associated with the specified key in the
-     * table. Returns {@link #NIL} if the table contains no mapping
-     * for this key.
-     */
-    public MtsValue get( MtsValue key )
-    {
-        int hash = getHashFor( key );
-        
-        for ( HashEntry e = _entries[indexFor( hash, _entries.length )]; e != null; e = e.next )
-        {
-            if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
-                return e.value;
-        }
-        
-        return NIL;
-    }
+    // ========================================
     
-    private void add( MtsValue key, int hash, int i, MtsValue value )
-    {
-        HashEntry e = _entries[i];
-        _entries[i] = new HashEntry( key, hash, value, e );
-        _count++;
-        
-        if ( _count >= _threshold )
-        {
-            resize( 2 * _entries.length );
-        }
-    }
-    
-    public MtsValue set( MtsValue key, MtsValue value )
-    {
-        assert key != null : "key was null";
-        
-        if ( key.isNil() )
-            throw new ScriptRuntimeException( "table index is nil" );
-        
-        if ( value.isNil() )
-            return remove( key );
-        
-        int hash = getHashFor( key );
-        int i = indexFor( hash, _entries.length );
-        
-        for ( HashEntry entry = _entries[i]; entry != null; entry = entry.next )
-        {
-            if ( ( entry.hash == hash ) && Objects.equals( key, entry.key ) )
-            {
-                MtsValue oldValue = entry.value;
-                entry.value = value;
-                return oldValue;
-            }
-        }
-        
-        add( key, hash, i, value );
-        return NIL;
-    }
-    
-    public Entry getFirst()
+    public Entry<MtsValue, MtsValue> getFirst()
     {
         if ( _count == 0 )
             return null;
         
-        Entry e = null;
+        HashEntry e = null;
         HashEntry[] t = _entries;
         for ( int i = 0; i < t.length; i++ )
         {
@@ -280,6 +344,11 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         return e;
     }
     
+    public Entry<MtsValue, MtsValue> getNext( Entry<MtsValue, MtsValue> entry )
+    {
+        return getNext( entry.getKey() );
+    }
+    
     /**
      * Returns the entry that follows (in arbitrary order) the entry associated with the given key.
      * <p>
@@ -288,7 +357,7 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
      * <p>
      * If there are no entries after <tt>key</tt> the return value is <code>null</code>.
      */
-    public Entry getNext( MtsValue key )
+    public Entry<MtsValue, MtsValue> getNext( MtsValue key )
     {
         if ( key.isNil() )
             return getFirst();
@@ -299,10 +368,8 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         
         int i = indexFor( hash, t.length );
         for ( next = t[i]; next != null; next = next.next )
-        {
             if ( ( next.hash == hash ) && Objects.equals( key, next.key ) )
                 break;
-        }
         
         if ( next == null )
             throw new ScriptRuntimeException( "invalid key" );
@@ -316,6 +383,7 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         return next;
     }
     
+    @Override
     public void clear()
     {
         HashEntry[] t = _entries;
@@ -329,34 +397,25 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
     
     // ========================================
     
-    public int count()
+    @Override
+    public Set<Map.Entry<MtsValue, MtsValue>> entrySet()
     {
-        return _count;
+        Set<Map.Entry<MtsValue, MtsValue>> result = _entrySet;
+        return result != null ? result : ( _entrySet = new EntrySet() );
     }
-    
-    public boolean isEmpty()
-    {
-        return _count == 0;
-    }
-    
-    // ========================================
     
     @Override
-    public String toString()
+    public Set<MtsValue> keySet()
     {
-        Iterator<Entry> iterator = iterator();
-        if ( !iterator.hasNext() )
-            return "[]";
-        
-        StringBuilder s = new StringBuilder();
-        s.append( "[" ).append( iterator.next() );
-        while ( iterator.hasNext() )
-        {
-            s.append( ", " ).append( iterator.next() );
-        }
-        s.append( "]" );
-        
-        return s.toString();
+        Set<MtsValue> result = _keysSet;
+        return result != null ? result : ( _keysSet = new KeysSet() );
+    }
+    
+    @Override
+    public Collection<MtsValue> values()
+    {
+        Collection<MtsValue> result = _valuesCollection;
+        return result != null ? result : ( _valuesCollection = new ValuesCollection() );
     }
     
     // ========================================
@@ -365,7 +424,7 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
      * Each entry is a Key-Value mapping as well as a bucket.
      * Values with the same hash are appended to each other in single-linked list style.
      */
-    private static final class HashEntry extends Entry
+    private static final class HashEntry extends MtsTable.Entry implements Map.Entry<MtsValue, MtsValue>
     {
         /**
          * Hash of the key when this entry was created.
@@ -373,7 +432,7 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         final int hash;
         
         /**
-         * The next entry in the bucket list or <code>null</code> if this entry is not a bucket.
+         * The next entry in the bucket list or <code>null</code> if this entry is the last in the list
          */
         HashEntry next;
         
@@ -383,27 +442,25 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
             hash = h;
             next = n;
         }
-    }
-    
-    // ========================================
-    
-    @Override
-    public Iterator<Entry> iterator()
-    {
-        return new HashIterator( this );
-    }
-    
-    // ========================================
-    
-    private static class HashIterator implements Iterator<Entry>
-    {
-        private final TableHashPart _hashPart;
-        private Entry _next;
         
-        public HashIterator( TableHashPart hashPart )
+        @Override
+        public MtsValue setValue( MtsValue value )
         {
-            _hashPart = hashPart;
-            _next = _hashPart.getFirst();
+            MtsValue result = this.value;
+            this.value = value;
+            return result;
+        }
+    }
+    
+    // ========================================
+    
+    private abstract class HashIterator<T> implements Iterator<T>
+    {
+        private Entry<MtsValue, MtsValue> _next;
+        
+        protected HashIterator()
+        {
+            _next = MtsTableMap.this.getFirst();
         }
         
         @Override
@@ -413,21 +470,141 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
         }
         
         @Override
-        public Entry next()
+        public T next()
         {
-            if ( _next == null )
-                throw new NoSuchElementException();
-            
-            Entry entry = _next;
-            _next = _hashPart.getNext( entry.getKey() );
-            
-            return entry;
+            T result = getResult( _next );
+            _next = MtsTableMap.this.getNext( _next );
+            return result;
         }
+        
+        protected abstract T getResult( Entry<MtsValue, MtsValue> entry );
         
         @Override
         public void remove()
         {
             throw new UnsupportedOperationException();
+        }
+    }
+    
+    /* package */final class KeysIterator extends HashIterator<MtsValue>
+    {
+        @Override
+        protected MtsValue getResult( Entry<MtsValue, MtsValue> entry )
+        {
+            return entry.getKey();
+        }
+    }
+    
+    /* package */final class ValuesIterator extends HashIterator<MtsValue>
+    {
+        @Override
+        protected MtsValue getResult( Entry<MtsValue, MtsValue> entry )
+        {
+            return entry.getValue();
+        }
+    }
+    
+    /* package */final class EntriesIterator extends HashIterator<Entry<MtsValue, MtsValue>>
+    {
+        @Override
+        protected Entry<MtsValue, MtsValue> getResult( Entry<MtsValue, MtsValue> entry )
+        {
+            return entry;
+        }
+    }
+    
+    // ========================================
+    
+    private final class EntrySet extends AbstractSet<Entry<MtsValue, MtsValue>>
+    {
+        @Override
+        public boolean contains( Object o )
+        {
+            if ( !( o instanceof Map.Entry ) )
+                return false;
+            
+            @SuppressWarnings( "unchecked" )
+            Entry<MtsValue, MtsValue> e = (Map.Entry<MtsValue, MtsValue>) o;
+            Entry<MtsValue, MtsValue> candidate = getEntry( e.getKey() );
+            return ( candidate != null ) && candidate.equals( e );
+        }
+        
+        @Override
+        public int size()
+        {
+            return MtsTableMap.this.size();
+        }
+        
+        @Override
+        public void clear()
+        {
+            MtsTableMap.this.clear();
+        }
+        
+        @Override
+        public boolean remove( Object o )
+        {
+            return MtsTableMap.this.remove( o ) != null;
+        }
+        
+        @Override
+        public Iterator<Entry<MtsValue, MtsValue>> iterator()
+        {
+            return new MtsTableMap.EntriesIterator();
+        }
+    }
+    
+    private final class KeysSet extends AbstractSet<MtsValue>
+    {
+        @Override
+        public boolean contains( Object o )
+        {
+            return MtsTableMap.this.containsKey( o );
+        }
+        
+        @Override
+        public int size()
+        {
+            return MtsTableMap.this.size();
+        }
+        
+        @Override
+        public void clear()
+        {
+            MtsTableMap.this.clear();
+        }
+        
+        @Override
+        public Iterator<MtsValue> iterator()
+        {
+            return new MtsTableMap.KeysIterator();
+        }
+    }
+    
+    private final class ValuesCollection extends AbstractCollection<MtsValue>
+    {
+        @Override
+        public boolean contains( Object o )
+        {
+            return MtsTableMap.this.containsValue( o );
+        }
+        
+        @Override
+        public int size()
+        {
+            return MtsTableMap.this.size();
+        }
+        
+        @Override
+        public void clear()
+        {
+            MtsTableMap.this.clear();
+        }
+        
+        @Override
+        public Iterator<MtsValue> iterator()
+        {
+            return new MtsTableMap.ValuesIterator();
         }
     }
 }

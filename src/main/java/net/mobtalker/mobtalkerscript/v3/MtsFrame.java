@@ -71,6 +71,8 @@ public final class MtsFrame
         {
             locals.add( new FrameValue( arguments.get( i ) ) );
         }
+        _varargs = prototype.hasVarargs() ? arguments.subArgs( i ) : EMPTY_VARARGS;
+        
         for ( ; i < nLocals; i++ )
         {
             locals.add( new FrameValue() );
@@ -78,7 +80,6 @@ public final class MtsFrame
         
         _locals = locals;
         _externals = externals;
-        _varargs = prototype.hasVarargs() ? arguments.subArgs( i ) : EMPTY_VARARGS;
     }
     
     // ========================================

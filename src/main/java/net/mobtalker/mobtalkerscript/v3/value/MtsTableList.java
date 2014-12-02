@@ -125,9 +125,6 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     @Override
     public boolean add( MtsValue value )
     {
-        if ( value.isNil() )
-            return false;
-        
         ensureCapacity( _limit + 1 );
         _entries[_limit++] = value;
         return true;

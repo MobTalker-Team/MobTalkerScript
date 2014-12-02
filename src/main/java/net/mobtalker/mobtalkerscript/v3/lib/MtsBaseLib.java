@@ -231,6 +231,17 @@ public final class MtsBaseLib
         if ( arg1.isString() && arg1.asString().toJava().equals( "#" ) )
             return valueOf( args.count() - 1 );
         
-        return args.subArgs( checkInteger( arg1, 1 ) );
+        int i = checkInteger( arg1, 1 );
+        if ( i > 0 )
+            return args.subArgs( i );
+        
+        if ( i < 0 )
+        {
+            i = args.count() + i;
+            if ( i > 0 )
+                return args.subArgs( i );
+        }
+        
+        throw new BadArgumentException( 1, "index out of range" );
     }
 }

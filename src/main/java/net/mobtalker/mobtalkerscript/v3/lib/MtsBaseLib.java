@@ -231,6 +231,6 @@ public final class MtsBaseLib
         if ( arg1.isString() && arg1.asString().toJava().equals( "#" ) )
             return valueOf( args.count() - 1 );
         
-        return args.subArgs( 1 + checkInteger( arg1, 1 ) );
+        return args.subArgs( checkInteger( arg1, 1 ) );
     }
 }

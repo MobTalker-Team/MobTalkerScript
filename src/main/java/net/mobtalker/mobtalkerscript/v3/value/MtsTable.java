@@ -288,6 +288,42 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
         return valueOf( toString() );
     }
     
+    public String toString( boolean debug )
+    {
+        if ( !debug )
+            return super.toString();
+        
+        StringBuilder s = new StringBuilder( "{" );
+        
+        // List
+        for ( Iterator<MtsValue> iterator = _list.iterator(); iterator.hasNext(); )
+        {
+            MtsValue value = iterator.next();
+            
+            s.append( this == value ? "<self>" : value );
+            
+            if ( iterator.hasNext() )
+                s.append( ", " );
+        }
+        
+        // Maps
+        for ( Iterator<Map.Entry<MtsValue, MtsValue>> iterator = _map.entrySet().iterator(); iterator.hasNext(); )
+        {
+            Map.Entry<MtsValue, MtsValue> e = iterator.next();
+            MtsValue key = e.getKey();
+            MtsValue value = e.getValue();
+            
+            s.append( this == key ? "<self>" : key )
+             .append( '=' )
+             .append( this == value ? "<self>" : value );
+            
+            if ( iterator.hasNext() )
+                s.append( ", " );
+        }
+        
+        return s.append( '}' ).toString();
+    }
+    
     // ========================================
     
     public MtsTableList list()

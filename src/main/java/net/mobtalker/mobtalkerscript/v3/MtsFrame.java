@@ -153,11 +153,12 @@ public final class MtsFrame
         
         StringBuilder s = new StringBuilder( "[" );
         int i = 0;
-        for ( ; i < ( _top - 1 ); i++ )
+        int limit = _top - 1;
+        for ( ; i < limit; ++i )
         {
-            s.append( _stack[i] ).append( ", " );
+            s.append( _stack[i].toString( DEBUG ) ).append( ", " );
         }
-        s.append( _stack[i] ).append( ']' );
+        s.append( _stack[i].toString( DEBUG ) ).append( ']' );
         
         return s.toString();
     }

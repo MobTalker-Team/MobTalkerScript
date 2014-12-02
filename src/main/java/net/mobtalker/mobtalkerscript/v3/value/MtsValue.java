@@ -551,7 +551,12 @@ public abstract class MtsValue implements Comparable<MtsValue>
     @Override
     public String toString()
     {
-        return getType() + ": " + formatHashCode( hashCode() );
+        return getType().toString() + ':' + formatHashCode( hashCode() );
+    }
+    
+    public String toString( boolean debug )
+    {
+        return toString();
     }
     
     public Object toJava()

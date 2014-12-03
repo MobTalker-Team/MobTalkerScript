@@ -20,49 +20,49 @@ import java.util.*;
 
 import com.google.common.collect.ImmutableList;
 
-public abstract class MtsVarArgs extends MtsValue implements Iterable<MtsValue>
+public abstract class MtsVarargs extends MtsValue implements Iterable<MtsValue>
 {
-    public static MtsVarArgs of( MtsValue value )
+    public static MtsVarargs of( MtsValue value )
     {
         return new EvaluatedVarArgs( Collections.singletonList( value ) );
     }
     
-    public static MtsVarArgs of( MtsValue e1, MtsValue e2 )
+    public static MtsVarargs of( MtsValue e1, MtsValue e2 )
     {
         return new EvaluatedVarArgs( ImmutableList.of( e1, e2 ) );
     }
     
-    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3 )
+    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3 )
     {
         return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3 ) );
     }
     
-    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4 )
+    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4 )
     {
         return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4 ) );
     }
     
-    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5 )
+    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5 )
     {
         return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4, e5 ) );
     }
     
-    public static MtsVarArgs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5, MtsValue e6 )
+    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5, MtsValue e6 )
     {
         return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4, e5, e6 ) );
     }
     
-    public static MtsVarArgs of( MtsValue[] values )
+    public static MtsVarargs of( MtsValue[] values )
     {
         return new EvaluatedVarArgs( Arrays.asList( values ) );
     }
     
-    public static MtsVarArgs of( List<MtsValue> values )
+    public static MtsVarargs of( List<MtsValue> values )
     {
         return new EvaluatedVarArgs( values );
     }
     
-    public static MtsVarArgs of( MtsValue first, MtsVarArgs rest )
+    public static MtsVarargs of( MtsValue first, MtsVarargs rest )
     {
         if ( rest instanceof EvaluatedVarArgs )
             return new EvaluatedVarArgs( first, (EvaluatedVarArgs) rest );
@@ -72,12 +72,12 @@ public abstract class MtsVarArgs extends MtsValue implements Iterable<MtsValue>
     
     // ========================================
     
-    public MtsVarArgs subArgs( int start )
+    public MtsVarargs subArgs( int start )
     {
         return subArgs( start, count() );
     }
     
-    public abstract MtsVarArgs subArgs( int start, int end );
+    public abstract MtsVarargs subArgs( int start, int end );
     
     // ========================================
     
@@ -104,7 +104,7 @@ public abstract class MtsVarArgs extends MtsValue implements Iterable<MtsValue>
     }
     
     @Override
-    public MtsVarArgs asVarArgs()
+    public MtsVarargs asVarArgs()
     {
         return this;
     }

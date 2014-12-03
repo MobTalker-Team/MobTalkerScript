@@ -46,13 +46,13 @@ public final class MtsFrame
     
     private final List<FrameValue> _locals;
     private final List<FrameValue> _externals;
-    private final MtsVarArgs _varargs;
+    private final MtsVarargs _varargs;
     
     private VariableDescription _lastVar;
     
     // ========================================
     
-    public MtsFrame( MtsClosure closure, MtsVarArgs arguments, List<FrameValue> externals )
+    public MtsFrame( MtsClosure closure, MtsVarargs arguments, List<FrameValue> externals )
     {
         _closure = closure;
         _ip = 0;
@@ -125,7 +125,9 @@ public final class MtsFrame
             
             if ( EngineLog.isInfoEnabled() )
             {
-                EngineLog.info( "Executing [%s] %s",
+                EngineLog.info( "Executing [%s:%s][%s] %s",
+                                _closure.getPrototype().getName(),
+                                _closure.getPrototype().getSourcePosition( _ip ).Line,
                                 formatInstructionPointer( instructions.size() ),
                                 instr.toString( getClosure().getPrototype() ) );
             }
@@ -209,7 +211,7 @@ public final class MtsFrame
         _stack[_top++] = o;
     }
     
-    public void push( MtsVarArgs args, int count )
+    public void push( MtsVarargs args, int count )
     {
         for ( int i = 0; i < count; i++ )
         {

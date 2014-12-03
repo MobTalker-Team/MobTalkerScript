@@ -50,9 +50,9 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     // ========================================
     
     @MtsNativeFunction
-    public MtsVarArgs getExperience()
+    public MtsVarargs getExperience()
     {
-        return MtsVarArgs.of( valueOf( _logic.getExperienceLevel() ),
+        return MtsVarargs.of( valueOf( _logic.getExperienceLevel() ),
                               valueOf( _logic.getExperience() ),
                               valueOf( _logic.getExperienceRequired() ) );
     }

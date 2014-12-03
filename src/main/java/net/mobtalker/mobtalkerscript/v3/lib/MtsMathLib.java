@@ -78,7 +78,7 @@ public final class MtsMathLib
     }
     
     @MtsNativeFunction
-    public static MtsNumber max( MtsVarArgs args )
+    public static MtsNumber max( MtsVarargs args )
     {
         if ( args.isEmpty() )
             throw new BadArgumentException( "got no value" );
@@ -94,7 +94,7 @@ public final class MtsMathLib
     }
     
     @MtsNativeFunction
-    public static MtsNumber min( MtsVarArgs args )
+    public static MtsNumber min( MtsVarargs args )
     {
         if ( args.isEmpty() )
             throw new BadArgumentException( "got no value" );

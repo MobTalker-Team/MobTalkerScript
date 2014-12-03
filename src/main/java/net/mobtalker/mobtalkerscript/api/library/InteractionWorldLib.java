@@ -63,9 +63,9 @@ public class InteractionWorldLib
     }
     
     @MtsNativeFunction
-    public MtsVarArgs getDifficulty()
+    public MtsVarargs getDifficulty()
     {
-        return MtsVarArgs.of( valueOf( _logic.getDifficulty() ),
+        return MtsVarargs.of( valueOf( _logic.getDifficulty() ),
                               valueOf( _logic.isHardcore() ) );
     }
     
@@ -122,16 +122,16 @@ public class InteractionWorldLib
     }
     
     @MtsNativeFunction
-    public MtsVarArgs getClimate()
+    public MtsVarargs getClimate()
     {
-        return MtsVarArgs.of( valueOf( _logic.getTemperature() ),
+        return MtsVarargs.of( valueOf( _logic.getTemperature() ),
                               valueOf( _logic.getHumidity() ) );
     }
     
     @MtsNativeFunction
-    public MtsVarArgs getWeather()
+    public MtsVarargs getWeather()
     {
-        return MtsVarArgs.of( valueOf( _logic.getWeather() ),
+        return MtsVarargs.of( valueOf( _logic.getWeather() ),
                               valueOf( _logic.isThundering() ) );
     }
 }

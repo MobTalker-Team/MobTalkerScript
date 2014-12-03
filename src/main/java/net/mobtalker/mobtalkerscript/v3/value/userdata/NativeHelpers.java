@@ -159,6 +159,6 @@ import com.google.common.collect.Lists;
     
     public static boolean isMtsVarargsClass( Class<?> c )
     {
-        return MtsVarArgs.class.isAssignableFrom( c );
+        return MtsVarargs.class.isAssignableFrom( c );
     }
 }

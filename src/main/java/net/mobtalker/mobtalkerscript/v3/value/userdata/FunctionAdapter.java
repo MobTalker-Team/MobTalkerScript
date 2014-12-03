@@ -18,7 +18,7 @@ package net.mobtalker.mobtalkerscript.v3.value.userdata;
 
 import java.lang.reflect.Method;
 
-import net.mobtalker.mobtalkerscript.v3.value.MtsVarArgs;
+import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
 
 /* package */class FunctionAdapter extends JavaMethodAdapter
 {
@@ -30,13 +30,13 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsVarArgs;
     // ========================================
     
     @Override
-    protected Object getCallInstance( MtsVarArgs args )
+    protected Object getCallInstance( MtsVarargs args )
     {
         return null;
     }
     
     @Override
-    protected Object[] getCallArguments( MtsVarArgs args, int nParams )
+    protected Object[] getCallArguments( MtsVarargs args, int nParams )
     {
         if ( nParams == -1 )
             return new Object[] { args };

@@ -79,7 +79,7 @@ public class PrettyPrinter
         }
         else if ( v.isVarArgs() )
         {
-            MtsVarArgs args = v.asVarArgs();
+            MtsVarargs args = v.asVarArgs();
             s.append( Arrays.toString( args.toArray() ) + "\n" );
         }
         else

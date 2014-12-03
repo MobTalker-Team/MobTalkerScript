@@ -219,25 +219,26 @@ assert(a() == "\0" and _G.x == 33)
 assert(debug.getinfo(a).source == "modname")
 -- cannot read text in binary mode
 cannotload("attempt to load a text chunk", load(read1(x), "modname", "b", {}))
-cannotload("attempt to load a text chunk", load(x, "modname", "b"))
+cannotload("attempt to load a text chunk", load(x, "modname", "b"))]=]
 
-a = assert(load(function () return nil end))
+--a = assert(load(function () return nil end))
+a = assert(load())
 a()  -- empty chunk
 
-assert(not load(function () return true end))
+--assert(not load(function () return true end))
 
 
--- small bug
+--[=[-- small bug
 local t = {nil, "return ", "3"}
-f, msg = load(function () return table.remove(t, 1) end)
-assert(f() == nil)   -- should read the empty chunk
+f, msg = load(function () return Table.Remove(t, 1) end)
+assert(f() == nil)   -- should read the empty chunk]=]
 
--- another small bug (in 5.2.1)
+--[=[-- another small bug (in 5.2.1)
 f = load(string.dump(function () return 1 end), nil, "b", {})
-assert(typeof(f) == "function" and f() == 1)
+assert(typeof(f) == "function" and f() == 1)]=]
 
 
-x = string.dump(load("x = 1; return x"))
+--[=[x = string.dump(load("x = 1; return x"))
 a = assert(load(read1(x), nil, "b"))
 assert(a() == 1 and _G.x == 1)
 cannotload("attempt to load a binary chunk", load(read1(x), nil, "t"))
@@ -247,13 +248,13 @@ assert(not pcall(string.dump, print))  -- no dump of C functions
 
 cannotload("unexpected symbol", load(read1("*a = 123")))
 cannotload("unexpected symbol", load("*a = 123"))
-cannotload("hhi", load(function () error("hhi") end))
+cannotload("hhi", load(function () error("hhi") end))]=]
 
--- any value is valid for _ENV
-assert(load("return _ENV", nil, nil, 123)() == 123)
+--[=[-- any value is valid for _ENV
+assert(load("return _ENV", nil, nil, 123)() == 123)]=]
 
 
--- load when _ENV is not first upvalue
+--[=[-- load when _ENV is not first upvalue
 local x; XX = 123
 local function h ()
   local y=x   -- use 'x', so that it becomes 1st upvalue
@@ -263,12 +264,12 @@ local d = string.dump(h)
 x = load(d, "", "b")
 assert(debug.getupvalue(x, 2) == '_ENV')
 debug.setupvalue(x, 2, _G)
-assert(x() == 123)
+assert(x() == 123)]=]
 
-assert(assert(load("return XX + ...", nil, nil, {XX = 13}))(4) == 17)
+assert(assert(load("return XX + ...", {XX = 13}))(4) == 17)
 
 
--- test generic load with nested functions
+--[=[-- test generic load with nested functions
 x = [[
   return function (x)
     return function (y)
@@ -283,7 +284,7 @@ a = assert(load(read1(x)))
 assert(a()(2)(3)(10) == 15)]=]
 
 
--- test for dump/undump with upvalues
+--[=[-- test for dump/undump with upvalues
 local a, b = 20, 30
 x = load(string.dump(function (x)
   if x == "set" then a = 10+b; b = b+1 else
@@ -298,7 +299,7 @@ assert(not debug.setupvalue(x, 3, 10))   -- only 2 upvalues
 x("set")
 assert(x() == 23)
 x("set")
-assert(x() == 24)
+assert(x() == 24)]=]
 
 
 -- test for bug in parameter adjustment

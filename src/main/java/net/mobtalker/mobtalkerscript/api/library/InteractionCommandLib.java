@@ -56,7 +56,7 @@ public class InteractionCommandLib
     }
     
     @MtsNativeFunction
-    public MtsValue showMenu( MtsVarArgs args )
+    public MtsValue showMenu( MtsVarargs args )
     {
         String caption = checkString( args, 0, "" );
         MtsValue arg1 = args.get( 1 );

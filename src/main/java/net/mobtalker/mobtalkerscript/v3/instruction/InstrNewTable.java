@@ -79,7 +79,7 @@ public class InstrNewTable extends MtsInstruction
         frame.push( t );
     }
     
-    private static void unpackVarargs( MtsVarArgs varargs, List<MtsValue> list )
+    private static void unpackVarargs( MtsVarargs varargs, List<MtsValue> list )
     {
         int count = varargs.count();
         for ( int i = count - 1; i >= 0; --i )

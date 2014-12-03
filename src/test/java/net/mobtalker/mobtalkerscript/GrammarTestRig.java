@@ -25,7 +25,7 @@ public class GrammarTestRig
     public static void main( String[] args ) throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-        MtsLog.EngineLog.setLevel( Level.OFF );
+        MtsLog.EngineLog.setLevel( Level.WARNING );
         
 //        System.out.print( "Select test: " );
 //

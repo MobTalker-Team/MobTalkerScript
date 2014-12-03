@@ -72,11 +72,11 @@ public final class InstrReturn extends MtsInstruction
             
             if ( values.size() > 1 )
             {
-                frame.push( MtsVarArgs.of( Lists.reverse( values ) ) );
+                frame.push( MtsVarargs.of( Lists.reverse( values ) ) );
             }
             else if ( values.size() == 1 )
             {
-                frame.push( MtsVarArgs.of( values.get( 0 ) ) );
+                frame.push( MtsVarargs.of( values.get( 0 ) ) );
             }
             else
             {
@@ -85,7 +85,7 @@ public final class InstrReturn extends MtsInstruction
         }
     }
     
-    private static void unpackVarargs( MtsVarArgs varargs, List<MtsValue> list )
+    private static void unpackVarargs( MtsVarargs varargs, List<MtsValue> list )
     {
         int count = varargs.count();
         for ( int i = count - 1; i >= 0; --i )

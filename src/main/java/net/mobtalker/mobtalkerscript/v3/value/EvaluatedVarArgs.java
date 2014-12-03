@@ -20,7 +20,7 @@ import java.util.*;
 
 import com.google.common.collect.Lists;
 
-/* package */class EvaluatedVarArgs extends MtsVarArgs
+/* package */class EvaluatedVarArgs extends MtsVarargs
 {
     private final List<MtsValue> _values;
     

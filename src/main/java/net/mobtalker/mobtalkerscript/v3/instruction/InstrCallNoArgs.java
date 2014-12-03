@@ -2,7 +2,7 @@ package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
-import net.mobtalker.mobtalkerscript.v3.value.MtsVarArgs;
+import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
 
 public class InstrCallNoArgs extends InstrCall
 {
@@ -14,7 +14,7 @@ public class InstrCallNoArgs extends InstrCall
     // ========================================
     
     @Override
-    protected MtsVarArgs getCallArgs( MtsFrame frame )
+    protected final MtsVarargs getCallArgs( MtsFrame frame )
     {
         return EMPTY_VARARGS;
     }

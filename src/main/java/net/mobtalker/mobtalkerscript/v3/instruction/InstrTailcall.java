@@ -16,81 +16,28 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import java.util.*;
-
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
-import com.google.common.collect.Lists;
-
-public final class InstrTailcall extends MtsInstruction
+public final class InstrTailcall extends InstrCall
 {
-    private final int _nArgs;
-    
-    // ========================================
-    
     /* package */InstrTailcall( int nArgs )
     {
-        _nArgs = nArgs;
+        super( nArgs, -1 );
     }
     
     // ========================================
     
     @Override
-    public void execute( MtsFrame frame )
+    protected final MtsValue getResults( MtsValue target, MtsVarargs args )
     {
-        MtsVarArgs args = getCallArgs( frame );
-        MtsValue target = frame.pop();
-        
-        frame.push( new MtsTailcall( target, args ) );
-    }
-    
-    protected MtsVarArgs getCallArgs( MtsFrame frame )
-    {
-        // TODO Not happy with this. See also InstrCall
-        
-        int nArgs = _nArgs;
-        List<MtsValue> args;
-        
-        MtsValue lastArg = frame.pop();
-        if ( lastArg.isVarArgs() )
-        {
-            MtsVarArgs varargs = lastArg.asVarArgs();
-            int nVarargs = varargs.count();
-            
-            args = new ArrayList<>( nArgs + nVarargs );
-            
-            for ( int i = nVarargs - 1; i >= 0; i-- )
-            {
-                args.add( varargs.get( i ) );
-            }
-        }
-        else
-        {
-            args = new ArrayList<>( nArgs );
-            args.add( lastArg );
-        }
-        
-        for ( int i = 1; i < nArgs; i++ )
-        {
-            args.add( frame.pop() );
-        }
-        
-        return MtsVarArgs.of( Lists.reverse( args ) );
-    }
-    
-    // ========================================
-    
-    @Override
-    public boolean exits()
-    {
-        return false;
+        return new MtsTailcall( target, args );
     }
     
     @Override
-    public int stackSizeChange()
+    protected final void pushResults( MtsFrame frame, MtsValue result )
     {
-        return 1 - _nArgs;
+        frame.push( result );
     }
     
     // ========================================
@@ -98,6 +45,6 @@ public final class InstrTailcall extends MtsInstruction
     @Override
     public String toString()
     {
-        return "TAILCALL " + _nArgs;
+        return "TAIL" + super.toString();
     }
 }

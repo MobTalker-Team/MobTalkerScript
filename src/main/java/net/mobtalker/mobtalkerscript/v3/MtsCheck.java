@@ -47,7 +47,7 @@ public class MtsCheck
         return value;
     }
     
-    public static MtsValue checkNotNil( MtsVarArgs args, int i )
+    public static MtsValue checkNotNil( MtsVarargs args, int i )
     {
         return checkNotNil( args.get( i ), i );
     }
@@ -80,7 +80,7 @@ public class MtsCheck
         throw new BadArgumentException( i, MtsType.TABLE, value.getType() );
     }
     
-    public static MtsTable checkTable( MtsVarArgs args, int i )
+    public static MtsTable checkTable( MtsVarargs args, int i )
     {
         return checkTable( args.get( i ), i );
     }
@@ -113,12 +113,12 @@ public class MtsCheck
         throw new BadArgumentException( i, "%s or %s expected, got %s", MtsType.STRING, MtsType.NIL, value.getType() );
     }
     
-    public static String checkString( MtsVarArgs args, int i )
+    public static String checkString( MtsVarargs args, int i )
     {
         return checkString( args.get( i ), i );
     }
     
-    public static String checkString( MtsVarArgs args, int i, String fallback )
+    public static String checkString( MtsVarargs args, int i, String fallback )
     {
         return checkString( args.get( i ), i, fallback );
     }
@@ -141,7 +141,7 @@ public class MtsCheck
         throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
     }
     
-    public static double checkNumber( MtsVarArgs args, int i )
+    public static double checkNumber( MtsVarargs args, int i )
     {
         return checkNumber( args.get( i ), i );
     }
@@ -174,12 +174,12 @@ public class MtsCheck
         throw new BadArgumentException( i, "%s or %s expected, got %s", MtsType.NUMBER, MtsType.NIL, value.getType() );
     }
     
-    public static int checkInteger( MtsVarArgs args, int i )
+    public static int checkInteger( MtsVarargs args, int i )
     {
         return checkInteger( args.get( i ), i );
     }
     
-    public static int checkInteger( MtsVarArgs args, int i, int fallback )
+    public static int checkInteger( MtsVarargs args, int i, int fallback )
     {
         return checkInteger( args.get( i ), i, fallback );
     }

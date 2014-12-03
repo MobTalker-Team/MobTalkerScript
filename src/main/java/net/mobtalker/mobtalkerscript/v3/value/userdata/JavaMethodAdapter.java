@@ -55,14 +55,14 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
         return _name;
     }
     
-    protected abstract Object getCallInstance( MtsVarArgs args );
+    protected abstract Object getCallInstance( MtsVarargs args );
     
-    protected abstract Object[] getCallArguments( MtsVarArgs args, int nParams );
+    protected abstract Object[] getCallArguments( MtsVarargs args, int nParams );
     
     // ========================================
     
     @Override
-    public MtsValue call( MtsVarArgs args )
+    public MtsValue call( MtsVarargs args )
     {
         Object instance = getCallInstance( args );
         Object[] convertedArgs = getCallArguments( args, _nParams );

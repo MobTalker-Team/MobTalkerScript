@@ -20,15 +20,14 @@ import java.util.Iterator;
 
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 
-public class MtsTailcall extends MtsVarArgs
+public final class MtsTailcall extends MtsVarargs
 {
     private MtsValue _target;
-    private MtsVarArgs _args;
-    private MtsValue _result;
+    private MtsVarargs _args;
     
     // ========================================
     
-    public MtsTailcall( MtsValue target, MtsVarArgs args )
+    public MtsTailcall( MtsValue target, MtsVarargs args )
     {
         _target = target;
         _args = args;
@@ -41,7 +40,7 @@ public class MtsTailcall extends MtsVarArgs
         return _target;
     }
     
-    public MtsVarArgs getArguments()
+    public MtsVarargs getArguments()
     {
         return _args;
     }
@@ -49,51 +48,33 @@ public class MtsTailcall extends MtsVarArgs
     // ========================================
     
     @Override
-    public MtsVarArgs subArgs( int start, int end )
+    public MtsVarargs subArgs( int start, int end )
     {
-        if ( _result == null )
-            throw new UnsupportedOperationException( "not yet evaluated" );
-        
-        if ( _result.isVarArgs() )
-            return _result.asVarArgs().subArgs( start, end );
-        else
-            return MtsVarArgs.of( _result );
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public MtsValue get( int i )
     {
-        if ( _result == null )
-            throw new UnsupportedOperationException( "not yet evaluated" );
-        
-        return _result.get( i );
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public MtsValue[] toArray()
     {
-        if ( _result == null )
-            throw new UnsupportedOperationException( "not yet evaluated" );
-        
-        if ( _result.isVarArgs() )
-            return _result.asVarArgs().toArray();
-        else
-            return new MtsValue[] { _result };
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public int count()
     {
-        if ( _result == null )
-            throw new UnsupportedOperationException( "not yet evaluated" );
-        
-        return _result instanceof MtsVarArgs ? _result.asVarArgs().count() : 1;
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public boolean isEmpty()
     {
-        return count() > 0;
+        throw new UnsupportedOperationException();
     }
     
     // ========================================
@@ -103,19 +84,28 @@ public class MtsTailcall extends MtsVarArgs
      */
     public MtsValue evaluate()
     {
-        MtsLog.EngineLog.fine( "Evaluating tailcall" );
+        if ( _target instanceof MtsTailcall )
+        {
+            MtsLog.EngineLog.fine( "Evaluating target tailcall" );
+            
+            MtsValue result = ( (MtsTailcall) _target ).evaluate();
+            _target = result.isVarArgs() ? result.get() : result;
+        }
         
+        MtsLog.EngineLog.fine( "Evaluating tailcall" );
         MtsValue result = _target.call( _args );
         
         while ( result instanceof MtsTailcall )
         {
+            MtsLog.EngineLog.fine( "Evaluating result tailcall" );
+            
             MtsTailcall next = (MtsTailcall) result;
             result = next.getTarget().call( next.getArguments() );
         }
         
         _target = null;
         _args = null;
-        return _result = result;
+        return result;
     }
     
     // ========================================
@@ -131,9 +121,9 @@ public class MtsTailcall extends MtsVarArgs
     @Override
     public String toString()
     {
-        if ( _result == null )
-            return "tailcall[" + _target + "(" + _args + ")]";
+        if ( _target == null )
+            return "tailcall";
         else
-            return "tailcall[" + _result.toString() + "]";
+            return "tailcall[" + _target + "(" + _args + ")]";
     }
 }

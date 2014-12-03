@@ -46,7 +46,7 @@ public class MtsStringLib
         
         if ( matcher.find( start ) )
         {
-            return MtsVarArgs.of( valueOf( matcher.start() ),
+            return MtsVarargs.of( valueOf( matcher.start() ),
                                   valueOf( matcher.end() ) );
         }
         else
@@ -56,7 +56,7 @@ public class MtsStringLib
     }
     
     @MtsNativeFunction
-    public static MtsString format( MtsVarArgs args )
+    public static MtsString format( MtsVarargs args )
     {
         String s = checkString( args, 0 );
         MtsValue[] argsFormat = args.subArgs( 1 ).toArray();

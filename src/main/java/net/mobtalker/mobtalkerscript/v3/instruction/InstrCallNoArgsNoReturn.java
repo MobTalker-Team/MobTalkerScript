@@ -14,12 +14,12 @@ public class InstrCallNoArgsNoReturn extends InstrCall
     // ========================================
     
     @Override
-    protected MtsVarArgs getCallArgs( MtsFrame frame )
+    protected final MtsVarargs getCallArgs( MtsFrame frame )
     {
         return EMPTY_VARARGS;
     }
     
     @Override
-    protected void pushResults( MtsFrame frame, MtsValue result )
+    protected final void pushResults( MtsFrame frame, MtsValue result )
     {}
 }

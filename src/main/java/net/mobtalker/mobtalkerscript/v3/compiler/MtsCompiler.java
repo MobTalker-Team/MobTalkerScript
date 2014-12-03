@@ -118,7 +118,7 @@ public class MtsCompiler extends Mts3BaseListener
     
     public static MtsFunctionPrototype loadStringChunk( String chunk, String source ) throws Exception
     {
-        checkArgument( !isNullOrEmpty( chunk ), "chunk cannot be null or empty" );
+        checkNotNull( chunk, "chunk" );
         
         ANTLRInputStream stream = new ANTLRInputStream( chunk );
         stream.name = source;

@@ -247,20 +247,20 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public final MtsValue call( MtsValue arg )
     {
-        return call( MtsVarArgs.of( arg ) );
+        return call( MtsVarargs.of( arg ) );
     }
     
     public final MtsValue call( MtsValue arg1, MtsValue arg2 )
     {
-        return call( MtsVarArgs.of( arg1, arg2 ) );
+        return call( MtsVarargs.of( arg1, arg2 ) );
     }
     
     public final MtsValue call( MtsValue arg1, MtsValue arg2, MtsValue arg3 )
     {
-        return call( MtsVarArgs.of( arg1, arg2, arg3 ) );
+        return call( MtsVarargs.of( arg1, arg2, arg3 ) );
     }
     
-    public MtsValue call( MtsVarArgs args )
+    public MtsValue call( MtsVarargs args )
     {
         MtsValue tag = getMetaTag( __CALL );
         
@@ -270,7 +270,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
         return tag.call( this, args );
     }
     
-    protected MtsValue doCall( MtsVarArgs args )
+    protected MtsValue doCall( MtsVarargs args )
     {
         throw new ScriptRuntimeException( "attempt to call a %s value", getType() );
     }
@@ -517,7 +517,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     /**
      * Equivalent to a Java typecast to {@link EvaluatedVarArgs}.
      */
-    public MtsVarArgs asVarArgs()
+    public MtsVarargs asVarArgs()
     {
         throw new WrongTypeException( MtsType.VARARGS, getType() );
     }

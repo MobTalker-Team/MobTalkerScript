@@ -87,7 +87,7 @@ public final class MtsTableLib
     // ========================================
     
     @MtsNativeFunction
-    public static MtsValue pack( MtsVarArgs args )
+    public static MtsValue pack( MtsVarargs args )
     {
         int count = args.count();
         MtsTable result = new MtsTable( count, 0 );
@@ -101,7 +101,7 @@ public final class MtsTableLib
     }
     
     @MtsNativeFunction
-    public static MtsVarArgs unpack( MtsValue argTable, MtsValue argFrom, MtsValue argTo )
+    public static MtsVarargs unpack( MtsValue argTable, MtsValue argFrom, MtsValue argTo )
     {
         MtsTableList list = checkTable( argTable, 0 ).list();
         int from = checkInteger( argFrom, 1, 1 ) - 1;
@@ -110,13 +110,13 @@ public final class MtsTableLib
         if ( ( from > to ) || ( to < from ) )
             return EMPTY_VARARGS;
         
-        return MtsVarArgs.of( new ArrayList<>( list.subList( from, Math.min( to, list.size() ) ) ) );
+        return MtsVarargs.of( new ArrayList<>( list.subList( from, Math.min( to, list.size() ) ) ) );
     }
     
     // ========================================
     
     @MtsNativeFunction
-    public static MtsValue random( MtsVarArgs args )
+    public static MtsValue random( MtsVarargs args )
     {
         if ( args.isEmpty() )
             return NIL;

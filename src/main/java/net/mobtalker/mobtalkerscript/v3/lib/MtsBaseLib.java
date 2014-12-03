@@ -39,7 +39,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( "assert" )
-    public MtsVarArgs assertMts( MtsVarArgs args )
+    public MtsVarargs assertMts( MtsVarargs args )
     {
         if ( !isTrue( args.get( 0 ) ) )
         {
@@ -78,20 +78,20 @@ public final class MtsBaseLib
         }
         
         Entry next = checkTable( argTable, 0 ).getINext( prev );
-        return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
+        return next == null ? EMPTY_VARARGS : MtsVarargs.of( next.getKey(), next.getValue() );
     }
     
     @MtsNativeFunction( "next" )
     public MtsValue next( MtsValue arg1, MtsValue arg2 )
     {
         Entry next = checkTable( arg1, 0 ).getNext( arg2 );
-        return next == null ? EMPTY_VARARGS : MtsVarArgs.of( next.getKey(), next.getValue() );
+        return next == null ? EMPTY_VARARGS : MtsVarargs.of( next.getKey(), next.getValue() );
     }
     
     // ========================================
     
     @MtsNativeFunction( "print" )
-    public void print( MtsVarArgs args )
+    public void print( MtsVarargs args )
     {
         if ( args.count() > 0 )
         {
@@ -174,20 +174,26 @@ public final class MtsBaseLib
     
     // ========================================
     
+    /**
+     * TODO Does not follow the Lua signature of load. Currently intended.
+     */
     @MtsNativeFunction( "load" )
-    public MtsFunction loadString( MtsVarArgs args )
+    public MtsValue loadString( MtsVarargs args )
     {
+        String chunk = checkString( args, 0, "" );
+        MtsValue env = args.get( 1 );
+        String sourceName = checkString( args, 2, "<load>" );
+        
         MtsFunctionPrototype p;
         try
         {
-            p = MtsCompiler.loadStringChunk( checkString( args, 0 ), "string" );
+            p = MtsCompiler.loadStringChunk( chunk, sourceName );
         }
         catch ( Exception ex )
         {
-            throw new ScriptRuntimeException( "Unable to load string: " + ex.getMessage() );
+            return MtsVarargs.of( NIL, valueOf( "Unable to load string: " + ex.getMessage() ) );
         }
         
-        MtsValue env = args.get( 1 );
         if ( env.isNil() )
         {
             env = _G;
@@ -199,10 +205,10 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( "pcall" )
-    public MtsValue pCall( MtsVarArgs args )
+    public MtsValue pCall( MtsVarargs args )
     {
         MtsValue f = args.get( 0 );
-        MtsVarArgs callArgs = args.subArgs( 1 );
+        MtsVarargs callArgs = args.subArgs( 1 );
         
         MtsValue result;
         try
@@ -210,13 +216,13 @@ public final class MtsBaseLib
             MtsValue callResults = f.call( callArgs );
             
             if ( callResults.isVarArgs() )
-                result = MtsVarArgs.of( TRUE, callResults.asVarArgs() );
+                result = MtsVarargs.of( TRUE, callResults.asVarArgs() );
             else
-                result = MtsVarArgs.of( TRUE, callResults );
+                result = MtsVarargs.of( TRUE, callResults );
         }
         catch ( ScriptRuntimeException ex )
         {
-            result = MtsVarArgs.of( FALSE, valueOf( ex.getMessage() ) );
+            result = MtsVarargs.of( FALSE, valueOf( ex.getMessage() ) );
         }
         
         return result;
@@ -225,7 +231,7 @@ public final class MtsBaseLib
     // ========================================
     
     @MtsNativeFunction( "select" )
-    public MtsValue select( MtsVarArgs args )
+    public MtsValue select( MtsVarargs args )
     {
         MtsValue arg1 = checkNotNil( args, 0 );
         if ( arg1.isString() && arg1.asString().toJava().equals( "#" ) )

@@ -43,17 +43,17 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
     }
     
     @MtsNativeFunction
-    public MtsVarArgs getHealth()
+    public MtsVarargs getHealth()
     {
-        return MtsVarArgs.of( valueOf( _logic.getHealth() ),
+        return MtsVarargs.of( valueOf( _logic.getHealth() ),
                               valueOf( _logic.getMaxHealth() ) );
     }
     
     @MtsNativeFunction
-    public MtsVarArgs getPosition()
+    public MtsVarargs getPosition()
     {
         WorldPosition position = _logic.getPosition();
-        return MtsVarArgs.of( valueOf( position.X ), valueOf( position.Y ), valueOf( position.Z ) );
+        return MtsVarargs.of( valueOf( position.X ), valueOf( position.Y ), valueOf( position.Z ) );
     }
     
     // ========================================
@@ -147,7 +147,7 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
             if ( item == null )
                 return NIL;
             
-            return MtsVarArgs.of( valueOf( item.Name ), valueOf( item.Meta ) );
+            return MtsVarargs.of( valueOf( item.Name ), valueOf( item.Meta ) );
         }
     }
     
@@ -158,6 +158,6 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
         if ( info == null )
             return null;
         
-        return MtsVarArgs.of( valueOf( info.Item.Name ), valueOf( info.Item.Meta ), valueOf( info.Count ) );
+        return MtsVarargs.of( valueOf( info.Item.Name ), valueOf( info.Item.Meta ), valueOf( info.Count ) );
     }
 }

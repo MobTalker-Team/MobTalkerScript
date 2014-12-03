@@ -29,6 +29,6 @@ public final class InstrCallNoReturn extends InstrCall
     // ========================================
     
     @Override
-    protected void pushResults( MtsFrame frame, MtsValue result )
+    protected final void pushResults( MtsFrame frame, MtsValue result )
     {}
 }

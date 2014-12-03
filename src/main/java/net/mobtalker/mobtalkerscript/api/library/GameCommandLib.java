@@ -21,7 +21,7 @@ import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.v3.value.MtsVarArgs;
+import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
 import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
 import com.google.common.collect.Lists;
@@ -36,7 +36,7 @@ public class GameCommandLib extends AbstractUnifiedLib<IGameCommandLibLogic>
     // ========================================
     
     @MtsNativeFunction
-    public MtsVarArgs execute( MtsVarArgs args )
+    public MtsVarargs execute( MtsVarargs args )
     {
         String command = checkString( args, 0 );
         
@@ -57,6 +57,6 @@ public class GameCommandLib extends AbstractUnifiedLib<IGameCommandLibLogic>
         }
         
         int executions = _logic.execute( command, arguments );
-        return MtsVarArgs.of( valueOf( executions > 0 ), valueOf( executions ) );
+        return MtsVarargs.of( valueOf( executions > 0 ), valueOf( executions ) );
     }
 }

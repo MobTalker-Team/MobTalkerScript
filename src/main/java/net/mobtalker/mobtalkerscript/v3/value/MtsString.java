@@ -95,7 +95,7 @@ public class MtsString extends MtsValue
         return of( sb.toString() );
     }
     
-    public static MtsString concat( MtsVarArgs values )
+    public static MtsString concat( MtsVarargs values )
     {
         if ( ( values == null ) || values.isEmpty() )
             return EMPTY_STRING;

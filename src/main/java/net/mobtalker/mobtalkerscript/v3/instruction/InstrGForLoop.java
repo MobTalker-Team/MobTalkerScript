@@ -54,7 +54,7 @@ public final class InstrGForLoop extends MtsJumpInstruction
         FrameValue indexVar = frame.getLocal( _index + 2 );
         MtsValue index = indexVar.get();
         
-        MtsVarArgs results = iterFunc.call( state, index ).asVarArgs();
+        MtsVarargs results = iterFunc.call( state, index ).asVarArgs();
         
         MtsValue nextIndex = results.get( 0 );
         if ( !nextIndex.isNil() )

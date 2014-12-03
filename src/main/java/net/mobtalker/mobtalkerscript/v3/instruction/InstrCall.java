@@ -61,7 +61,7 @@ public class InstrCall extends MtsInstruction
         // Need to be executed explicitly to make sure that 0 return value tail calls are evaluated.
         if ( result instanceof MtsTailcall )
         {
-            ( (MtsTailcall) result ).evaluate();
+            result = ( (MtsTailcall) result ).evaluate();
         }
         
         pushResults( frame, result );

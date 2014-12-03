@@ -30,8 +30,6 @@ public class MtsTailcall extends MtsVarArgs
     
     public MtsTailcall( MtsValue target, MtsVarArgs args )
     {
-        assert ( target != null ) && ( args != null );
-        
         _target = target;
         _args = args;
     }
@@ -54,7 +52,7 @@ public class MtsTailcall extends MtsVarArgs
     public MtsVarArgs subArgs( int start, int end )
     {
         if ( _result == null )
-            evaluate();
+            throw new UnsupportedOperationException( "not yet evaluated" );
         
         if ( _result.isVarArgs() )
             return _result.asVarArgs().subArgs( start, end );
@@ -66,7 +64,7 @@ public class MtsTailcall extends MtsVarArgs
     public MtsValue get( int i )
     {
         if ( _result == null )
-            evaluate();
+            throw new UnsupportedOperationException( "not yet evaluated" );
         
         return _result.get( i );
     }
@@ -75,7 +73,7 @@ public class MtsTailcall extends MtsVarArgs
     public MtsValue[] toArray()
     {
         if ( _result == null )
-            evaluate();
+            throw new UnsupportedOperationException( "not yet evaluated" );
         
         if ( _result.isVarArgs() )
             return _result.asVarArgs().toArray();
@@ -86,13 +84,16 @@ public class MtsTailcall extends MtsVarArgs
     @Override
     public int count()
     {
-        return ( _result == null ) || !( _result instanceof MtsVarArgs ) ? -1 : _result.asVarArgs().count();
+        if ( _result == null )
+            throw new UnsupportedOperationException( "not yet evaluated" );
+        
+        return _result instanceof MtsVarArgs ? _result.asVarArgs().count() : 1;
     }
     
     @Override
     public boolean isEmpty()
     {
-        return ( _result == null ) || !( _result instanceof MtsVarArgs ) ? false : _result.asVarArgs().isEmpty();
+        return count() > 0;
     }
     
     // ========================================
@@ -100,7 +101,7 @@ public class MtsTailcall extends MtsVarArgs
     /**
      * Executes this tail call and any subsequent returned tail calls.
      */
-    public void evaluate()
+    public MtsValue evaluate()
     {
         MtsLog.EngineLog.fine( "Evaluating tailcall" );
         
@@ -114,7 +115,7 @@ public class MtsTailcall extends MtsVarArgs
         
         _target = null;
         _args = null;
-        _result = result;
+        return _result = result;
     }
     
     // ========================================
@@ -131,7 +132,7 @@ public class MtsTailcall extends MtsVarArgs
     public String toString()
     {
         if ( _result == null )
-            return "tailcall[" + _target + "(" + _args + ")";
+            return "tailcall[" + _target + "(" + _args + ")]";
         else
             return "tailcall[" + _result.toString() + "]";
     }

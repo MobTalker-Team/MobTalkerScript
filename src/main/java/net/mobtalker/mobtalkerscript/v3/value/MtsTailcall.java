@@ -18,20 +18,22 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 import java.util.Iterator;
 
+import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
+
 public class MtsTailcall extends MtsVarArgs
 {
     private MtsValue _target;
     private MtsVarArgs _args;
-    private final int _nResults;
     private MtsValue _result;
     
     // ========================================
     
-    public MtsTailcall( MtsValue target, MtsVarArgs args, int nResults )
+    public MtsTailcall( MtsValue target, MtsVarArgs args )
     {
+        assert ( target != null ) && ( args != null );
+        
         _target = target;
         _args = args;
-        _nResults = nResults;
     }
     
     // ========================================
@@ -84,13 +86,13 @@ public class MtsTailcall extends MtsVarArgs
     @Override
     public int count()
     {
-        return _nResults;
+        return ( _result == null ) || !( _result instanceof MtsVarArgs ) ? -1 : _result.asVarArgs().count();
     }
     
     @Override
     public boolean isEmpty()
     {
-        return _nResults <= 0;
+        return ( _result == null ) || !( _result instanceof MtsVarArgs ) ? false : _result.asVarArgs().isEmpty();
     }
     
     // ========================================
@@ -100,6 +102,8 @@ public class MtsTailcall extends MtsVarArgs
      */
     public void evaluate()
     {
+        MtsLog.EngineLog.fine( "Evaluating tailcall" );
+        
         MtsValue result = _target.call( _args );
         
         while ( result instanceof MtsTailcall )
@@ -126,6 +130,9 @@ public class MtsTailcall extends MtsVarArgs
     @Override
     public String toString()
     {
-        return "tailcall";
+        if ( _result == null )
+            return "tailcall[" + _target + "(" + _args + ")";
+        else
+            return "tailcall[" + _result.toString() + "]";
     }
 }

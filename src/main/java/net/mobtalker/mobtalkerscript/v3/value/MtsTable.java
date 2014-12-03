@@ -288,6 +288,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
         return valueOf( toString() );
     }
     
+    @Override
     public String toString( boolean debug )
     {
         if ( !debug )
@@ -302,7 +303,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
             
             s.append( this == value ? "<self>" : value );
             
-            if ( iterator.hasNext() )
+            if ( iterator.hasNext() || ( _map.size() > 0 ) )
                 s.append( ", " );
         }
         

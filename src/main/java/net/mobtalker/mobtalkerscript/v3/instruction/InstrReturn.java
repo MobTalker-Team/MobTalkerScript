@@ -20,7 +20,6 @@ import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
@@ -46,15 +45,16 @@ public final class InstrReturn extends MtsInstruction
         {
             frame.push( EMPTY_VARARGS );
         }
-        else if ( _count > 1 )
+        else if ( frame.peek() instanceof MtsTailcall )
+        {
+            return;
+        }
+        else
         {
             ArrayList<MtsValue> values = new ArrayList<>( _count );
-            for ( int i = 0; i < _count; i++ )
-            {
+            
+            { // Unpack first (last) return value
                 MtsValue value = frame.pop();
-                
-                MtsLog.EngineLog.info( value.toString() );
-                
                 if ( value.isVarArgs() )
                 {
                     unpackVarargs( value.asVarArgs(), values );
@@ -65,7 +65,23 @@ public final class InstrReturn extends MtsInstruction
                 }
             }
             
-            frame.push( MtsVarArgs.of( Lists.reverse( values ) ) );
+            for ( int i = 1; i < _count; i++ )
+            {
+                values.add( frame.pop() );
+            }
+            
+            if ( values.size() > 1 )
+            {
+                frame.push( MtsVarArgs.of( Lists.reverse( values ) ) );
+            }
+            else if ( values.size() == 1 )
+            {
+                frame.push( MtsVarArgs.of( values.get( 0 ) ) );
+            }
+            else
+            {
+                frame.push( EMPTY_VARARGS );
+            }
         }
     }
     

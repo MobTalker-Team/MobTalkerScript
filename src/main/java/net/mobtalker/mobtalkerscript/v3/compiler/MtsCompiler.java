@@ -756,11 +756,11 @@ public class MtsCompiler extends Mts3BaseListener
         addInstr( InstrReturn( nValues ) );
     }
     
-    public void tailCall( int nArgs, int nReturn )
+    public void tailcallFunction( int nArgs )
     {
         CompilerLog.info( "Tailcall Function" );
         
-        addInstr( InstrTailcall( nArgs, nReturn ) );
+        addInstr( InstrTailcall( nArgs ) );
     }
     
     // ========================================
@@ -1331,7 +1331,15 @@ public class MtsCompiler extends Mts3BaseListener
         }
         
         visit( ctx.Args );
-        callFunction( nArgs, nReturn );
+        
+        if ( isTailcall( ctx ) )
+        {
+            tailcallFunction( nArgs );
+        }
+        else
+        {
+            callFunction( nArgs, nReturn );
+        }
     }
     
     private static int getArgCount( NameAndArgsContext ctx )
@@ -1354,6 +1362,15 @@ public class MtsCompiler extends Mts3BaseListener
             return 0;
         
         return 1;
+    }
+    
+    private static boolean isTailcall( NameAndArgsContext ctx )
+    {
+        ParserRuleContext parent = ctx.getParent();
+        return ( parent instanceof PrefixExprContext )
+               && ( parent.getParent().getParent() instanceof ReturnStmtContext )
+               && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
+//        return false;
     }
     
     // ========================================

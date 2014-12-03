@@ -115,6 +115,7 @@ public final class MtsFrame
         
         if ( EngineLog.isFinestEnabled() )
         {
+            EngineLog.finest( "Enter Frame" );
             EngineLog.finest( "Stack: " + formatStack() );
         }
         
@@ -143,6 +144,8 @@ public final class MtsFrame
         MtsValue result = pop();
         
         assert stackIsEmpty() : "Stack was not emptied! " + formatStack();
+        
+        EngineLog.finest( "Exit Frame" );
         return result;
     }
     

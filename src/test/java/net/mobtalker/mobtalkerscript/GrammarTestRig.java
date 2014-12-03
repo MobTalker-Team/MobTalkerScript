@@ -1,6 +1,6 @@
 package net.mobtalker.mobtalkerscript;
 
-import java.io.*;
+import java.io.Writer;
 import java.nio.file.*;
 import java.util.Set;
 import java.util.logging.*;
@@ -22,35 +22,18 @@ import com.google.common.collect.ImmutableSet;
 
 public class GrammarTestRig
 {
-    private static Mts3Parser getParser( CharStream stream )
-    {
-        Mts3Lexer lexer = new Mts3Lexer( stream );
-        
-        Mts3Parser parser = new Mts3Parser( new UnbufferedTokenStream( lexer, 100 ) );
-        parser.removeErrorListeners();
-        parser.addErrorListener( new MtsAntlrErrorListener() );
-        parser.setErrorHandler( new MtsErrorStrategy() );
-        parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
-        
-        return parser;
-    }
-    
     public static void main( String[] args ) throws Exception
     {
-        String path;
-        if ( ( args != null ) && ( args.length > 0 ) )
-        {
-            path = args[0];
-        }
-        else
-        {
-            System.out.print( "Enter file path: " );
-            
-            BufferedReader reader = new BufferedReader( new InputStreamReader( System.in ) );
-            path = reader.readLine();
-        }
+        MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
+        MtsLog.EngineLog.setLevel( Level.OFF );
         
-        Mts3Parser parser = getParser( new ANTLRFileStream( path ) );
+//        System.out.print( "Select test: " );
+//
+//        BufferedReader reader = new BufferedReader( new InputStreamReader( System.in ) );
+//        String path = reader.readLine();
+        String path = "calls.lua";
+        
+        Mts3Parser parser = getParser( new ANTLRFileStream( "src/test/resources/scripts/" + path ) );
         Mts3Parser.ChunkContext chunk;
         try
         {
@@ -60,28 +43,6 @@ public class GrammarTestRig
         {
             throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
         }
-        
-        MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-        MtsLog.EngineLog.setLevel( Level.ALL );
-        
-//        new LuaBaseListener()
-//        {
-//            @Override
-//            public void enterNameAndArgs( NameAndArgsContext ctx )
-//            {
-//                for ( ParserRuleContext parent = ctx; ( parent != null ) && !( parent instanceof BlockContext ); parent = parent.getParent() )
-//                {
-//                    System.out.print( parent.getClass().getSimpleName().replace( "Context", "" ) + " -> " );
-//                }
-//                System.out.println();
-//            }
-//
-//            @Override
-//            public void visitTerminal( TerminalNode node )
-//            {
-////                System.out.println( node.getText() );
-//            }
-//        }.visit( chunk );
         
 //        new TreeCleaner().visit( chunk );
 //        chunk.inspect( parser );
@@ -105,6 +66,19 @@ public class GrammarTestRig
 //        }
         
         new MtsClosure( prototype, new MtsGlobals() ).call();
+    }
+    
+    private static Mts3Parser getParser( CharStream stream )
+    {
+        Mts3Lexer lexer = new Mts3Lexer( stream );
+        
+        Mts3Parser parser = new Mts3Parser( new UnbufferedTokenStream( lexer, 100 ) );
+        parser.removeErrorListeners();
+        parser.addErrorListener( new MtsAntlrErrorListener() );
+        parser.setErrorHandler( new MtsErrorStrategy() );
+        parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
+        
+        return parser;
     }
     
     /**

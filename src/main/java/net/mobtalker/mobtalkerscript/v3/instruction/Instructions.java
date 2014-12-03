@@ -382,9 +382,9 @@ public class Instructions
         return ( count < _return.length ) ? _return[count] : new InstrReturn( count );
     }
     
-    public static InstrTailcall InstrTailcall( int nArgs, int nReturn )
+    public static InstrTailcall InstrTailcall( int nArgs )
     {
-        return new InstrTailcall( nArgs, nReturn );
+        return new InstrTailcall( nArgs );
     }
     
     // ========================================

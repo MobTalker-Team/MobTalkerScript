@@ -16,20 +16,22 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.util.*;
+
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
+
+import com.google.common.collect.Lists;
 
 public final class InstrTailcall extends MtsInstruction
 {
     private final int _nArgs;
-    private final int _nReturn;
     
     // ========================================
     
-    /* package */InstrTailcall( int nArgs, int nReturn )
+    /* package */InstrTailcall( int nArgs )
     {
         _nArgs = nArgs;
-        _nReturn = nReturn;
     }
     
     // ========================================
@@ -37,16 +39,47 @@ public final class InstrTailcall extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        MtsValue[] args = new MtsValue[_nArgs];
-        for ( int i = _nArgs - 1; i >= 0; i-- )
-        {
-            args[i] = frame.pop();
-        }
-        
+        MtsVarArgs args = getCallArgs( frame );
         MtsValue target = frame.pop();
         
-        frame.push( new MtsTailcall( target, MtsVarArgs.of( args ), _nReturn ) );
+        frame.push( new MtsTailcall( target, args ) );
     }
+    
+    protected MtsVarArgs getCallArgs( MtsFrame frame )
+    {
+        // TODO Not happy with this. See also InstrCall
+        
+        int nArgs = _nArgs;
+        List<MtsValue> args;
+        
+        MtsValue lastArg = frame.pop();
+        if ( lastArg.isVarArgs() )
+        {
+            MtsVarArgs varargs = lastArg.asVarArgs();
+            int nVarargs = varargs.count();
+            
+            args = new ArrayList<>( nArgs + nVarargs );
+            
+            for ( int i = nVarargs - 1; i >= 0; i-- )
+            {
+                args.add( varargs.get( i ) );
+            }
+        }
+        else
+        {
+            args = new ArrayList<>( nArgs );
+            args.add( lastArg );
+        }
+        
+        for ( int i = 1; i < nArgs; i++ )
+        {
+            args.add( frame.pop() );
+        }
+        
+        return MtsVarArgs.of( Lists.reverse( args ) );
+    }
+    
+    // ========================================
     
     @Override
     public boolean exits()
@@ -57,7 +90,7 @@ public final class InstrTailcall extends MtsInstruction
     @Override
     public int stackSizeChange()
     {
-        return 1 - _nReturn;
+        return 1 - _nArgs;
     }
     
     // ========================================
@@ -65,6 +98,6 @@ public final class InstrTailcall extends MtsInstruction
     @Override
     public String toString()
     {
-        return "TAILCALL " + _nArgs + " " + _nReturn;
+        return "TAILCALL " + _nArgs;
     }
 }

@@ -18,6 +18,7 @@ package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import java.util.*;
 
+import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
@@ -44,7 +45,17 @@ public class InstrCall extends MtsInstruction
         MtsVarArgs args = getCallArgs( frame );
         MtsValue target = frame.pop();
         
+        if ( MtsLog.EngineLog.isFineEnabled() )
+        {
+            MtsLog.EngineLog.fine( "Calling " + target + " with " + args );
+        }
+        
         MtsValue result = target.call( args );
+        
+        if ( MtsLog.EngineLog.isFineEnabled() )
+        {
+            MtsLog.EngineLog.fine( "Results: " + args );
+        }
         
         // Trampoline tail calls
         // Need to be executed explicitly to make sure that 0 return value tail calls are evaluated.
@@ -58,9 +69,7 @@ public class InstrCall extends MtsInstruction
     
     protected MtsVarArgs getCallArgs( MtsFrame frame )
     {
-        // If the last formal parameter was a call, the last argument are varargs.
-        // These varargs are expanded and added at the end of the parameter list.
-        // TODO Not quite happy with this solution
+        // TODO Not happy with this. See also InstrTailcall
         
         int nArgs = _nArgs;
         List<MtsValue> args;

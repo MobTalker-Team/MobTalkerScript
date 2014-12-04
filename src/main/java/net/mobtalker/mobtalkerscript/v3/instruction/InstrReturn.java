@@ -16,9 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
-import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.MtsTailcall;
 
 public final class InstrReturn extends MtsInstruction
 {
@@ -36,58 +35,12 @@ public final class InstrReturn extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        if ( _count == 0 )
-        {
-            frame.push( EMPTY_VARARGS );
-        }
-        else if ( frame.peek() instanceof MtsTailcall )
-        {
+        assert frame.count() == _count;
+        
+        if ( ( _count > 0 ) && ( frame.peek() instanceof MtsTailcall ) )
             return;
-        }
-        else
-        {
-            /*
-             * Possible scenarios
-             * [ a, b, c, d ]
-             * [ a, b, varargs[ c, d ] ]
-             * Must result in
-             * [ varargs[ a, b, c, d ] ]
-             */
-            
-            int nValues = _count;
-            MtsValue[] values;
-            
-            MtsValue value = frame.pop();
-            if ( value.isVarArgs() )
-            {
-                assert !( value instanceof MtsTailcall );
-                
-                int nVarargs = value.asVarArgs().count();
-                values = new MtsValue[( nValues - 1 ) + nVarargs];
-                
-                for ( int iValues = values.length - 1, iVarargs = nVarargs - 1; iVarargs >= 0; --iValues, --iVarargs )
-                {
-                    values[iValues] = value.get( iVarargs );
-                }
-            }
-            else
-            {
-                values = new MtsValue[nValues];
-                values[nValues - 1] = value;
-            }
-            
-            for ( int i = nValues - 2; i >= 0; --i )
-            {
-                values[i] = frame.pop();
-            }
-            
-            if ( values.length > 1 )
-                frame.push( MtsVarargs.of( values ) );
-            else if ( values.length == 1 )
-                frame.push( MtsVarargs.of( values[0] ) );
-            else
-                frame.push( EMPTY_VARARGS );
-        }
+        
+        frame.pack();
     }
     
     @Override

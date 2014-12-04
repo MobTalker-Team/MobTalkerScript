@@ -70,6 +70,11 @@ public abstract class MtsVarargs extends MtsValue implements Iterable<MtsValue>
         return EMPTY_VARARGS;
     }
     
+    public static MtsVarargs of( MtsValue[] values, MtsVarargs tail )
+    {
+        return new VarargsWithTail( values, tail );
+    }
+    
     // ========================================
     
     public MtsVarargs subArgs( int start )

@@ -183,6 +183,19 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
         return super.addAll( c );
     }
     
+    public boolean addAll( MtsVarargs values )
+    {
+        int limit = values.count();
+        ensureCapacity( _limit + limit );
+        
+        boolean modified = false;
+        for ( int i = 0; i < limit; ++i )
+            if ( add( values.get( i ) ) )
+                modified = true;
+        
+        return modified;
+    }
+    
     @Override
     public boolean addAll( int index, Collection<? extends MtsValue> c )
     {

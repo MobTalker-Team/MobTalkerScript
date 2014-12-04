@@ -58,42 +58,7 @@ public class InstrCall extends MtsInstruction
     
     protected MtsVarargs getCallArgs( MtsFrame frame )
     {
-        /*
-         * Possible scenarios
-         * [ a, b, c, d ]
-         * [ a, b, varargs[ c, d ] ]
-         * Must result in
-         * varargs[ a, b, c, d ]
-         */
-        
-        int nArgs = _nArgs;
-        MtsValue[] args;
-        
-        MtsValue value = frame.pop();
-        if ( value.isVarArgs() )
-        {
-            assert !( value instanceof MtsTailcall );
-            
-            int nVarargs = value.asVarArgs().count();
-            args = new MtsValue[( nArgs - 1 ) + nVarargs];
-            
-            for ( int iArgs = args.length - 1, iVarargs = nVarargs - 1; iVarargs >= 0; --iArgs, --iVarargs )
-            {
-                args[iArgs] = value.get( iVarargs );
-            }
-        }
-        else
-        {
-            args = new MtsValue[nArgs];
-            args[nArgs - 1] = value;
-        }
-        
-        for ( int i = nArgs - 2; i >= 0; --i )
-        {
-            args[i] = frame.pop();
-        }
-        
-        return MtsVarargs.of( args );
+        return frame.pop( _nArgs );
     }
     
     protected MtsValue getResults( MtsValue target, MtsVarargs args )

@@ -16,12 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import java.util.List;
-
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
-
-import com.google.common.collect.Lists;
 
 public class InstrStoreLst extends MtsInstruction
 {
@@ -39,10 +35,10 @@ public class InstrStoreLst extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        List<MtsValue> values = frame.pop( _count );
+        MtsVarargs values = frame.pop( _count );
         MtsTable t = frame.pop().asTable();
         
-        t.list().addAll( Lists.reverse( values ) );
+        t.list().addAll( values );
     }
     
     @Override

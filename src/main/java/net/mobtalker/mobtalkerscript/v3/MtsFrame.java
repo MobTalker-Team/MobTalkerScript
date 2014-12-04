@@ -145,7 +145,7 @@ public final class MtsFrame
         
         MtsValue result = pop();
         
-        assert stackIsEmpty() : "Stack was not emptied! " + formatStack();
+        assert isEmpty() : "Stack was not emptied! " + formatStack();
         
         EngineLog.finest( "Exit Frame" );
         return result;
@@ -221,31 +221,43 @@ public final class MtsFrame
     
     public MtsValue pop()
     {
-        if ( stackIsEmpty() )
+        if ( isEmpty() )
             throw new ScriptEngineException( "stack underflow" );
         
         return _stack[--_top];
     }
     
-    public List<MtsValue> pop( int count )
+    public MtsVarargs pop( int count )
     {
-        if ( count == 0 )
-            return Collections.emptyList();
-        
-        if ( count > stackCount() )
+        if ( count > _top )
             throw new ScriptEngineException( "stack underflow" );
         
-        MtsValue[] values = new MtsValue[count];
-        System.arraycopy( _stack, ( _top - count ), values, 0, count );
-        
-        _top -= count;
-        
-        return Arrays.asList( values );
+        if ( count == 0 )
+        {
+            return EMPTY_VARARGS;
+        }
+        else if ( peek().isVarArgs() )
+        {
+            MtsVarargs tail = pop().asVarArgs();
+            MtsValue[] values = new MtsValue[--count];
+            System.arraycopy( _stack, ( _top - count ), values, 0, count );
+            _top -= count;
+            
+            return MtsVarargs.of( values, tail );
+        }
+        else
+        {
+            MtsValue[] values = new MtsValue[count];
+            System.arraycopy( _stack, ( _top - count ), values, 0, count );
+            _top -= count;
+            
+            return MtsVarargs.of( values );
+        }
     }
     
     public MtsValue peek()
     {
-        if ( stackIsEmpty() )
+        if ( isEmpty() )
             throw new ScriptEngineException( "stack is empty" );
         
         return _stack[_top - 1];
@@ -258,6 +270,24 @@ public final class MtsFrame
         
         _stack[_top] = _stack[_top - 1];
         _top++;
+    }
+    
+    /**
+     * Packs the contents of the stack into a single {@link MtsVarargs} and pushes them onto the stack.
+     * The top of the stack is the last element of the resulting varargs.
+     */
+    public void pack()
+    {
+        pack( _top );
+    }
+    
+    /**
+     * Packs the top <code>count</code> values of the stack into a single {@link MtsVarargs} and pushes them onto the stack.
+     * The top of the stack is the last element of the resulting varargs.
+     */
+    public void pack( int count )
+    {
+        push( pop( count ) );
     }
     
     // ========================================
@@ -315,14 +345,14 @@ public final class MtsFrame
     
     // ========================================
     
-    public int stackCount()
+    public int count()
     {
         return _top;
     }
     
-    public boolean stackIsEmpty()
+    public boolean isEmpty()
     {
-        return _top <= 0;
+        return _top == 0;
     }
     
     // ========================================

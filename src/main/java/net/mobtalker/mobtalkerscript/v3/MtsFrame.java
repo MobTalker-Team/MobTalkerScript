@@ -18,14 +18,10 @@ package net.mobtalker.mobtalkerscript.v3;
 
 import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-
-import java.util.*;
-
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 public final class MtsFrame
 {
@@ -44,15 +40,15 @@ public final class MtsFrame
     private final MtsValue[] _stack;
     private int _top;
     
-    private final List<FrameValue> _locals;
-    private final List<FrameValue> _externals;
+    private final FrameValue[] _locals;
+    private final FrameValue[] _externals;
     private final MtsVarargs _varargs;
     
     private VariableDescription _lastVar;
     
     // ========================================
     
-    public MtsFrame( MtsClosure closure, MtsVarargs arguments, List<FrameValue> externals )
+    public MtsFrame( MtsClosure closure, MtsVarargs arguments, FrameValue[] externals )
     {
         _closure = closure;
         _ip = 0;
@@ -65,17 +61,17 @@ public final class MtsFrame
         _stack = new MtsValue[nStack];
         _top = 0;
         
-        ArrayList<FrameValue> locals = Lists.newArrayListWithCapacity( nLocals );
+        FrameValue[] locals = new FrameValue[nLocals];
         int i = 0;
         for ( ; i < nArgs; i++ )
         {
-            locals.add( new FrameValue( arguments.get( i ) ) );
+            locals[i] = new FrameValue( arguments.get( i ) );
         }
         _varargs = prototype.hasVarargs() ? arguments.subArgs( i ) : EMPTY_VARARGS;
         
         for ( ; i < nLocals; i++ )
         {
-            locals.add( new FrameValue() );
+            locals[i] = new FrameValue();
         }
         
         _locals = locals;
@@ -111,7 +107,7 @@ public final class MtsFrame
      */
     public MtsValue run()
     {
-        List<MtsInstruction> instructions = _closure.getPrototype().getInstructions();
+        MtsInstruction[] instructions = _closure.getPrototype().getInstructions();
         
         if ( EngineLog.isFinestEnabled() )
         {
@@ -121,14 +117,14 @@ public final class MtsFrame
         
         for ( ;; _ip++ )
         {
-            MtsInstruction instr = instructions.get( _ip );
+            MtsInstruction instr = instructions[_ip];
             
             if ( EngineLog.isInfoEnabled() )
             {
                 EngineLog.info( "Executing [%s:%s][%s] %s",
                                 _closure.getPrototype().getName(),
                                 _closure.getPrototype().getSourcePosition( _ip ).Line,
-                                formatInstructionPointer( instructions.size() ),
+                                formatInstructionPointer( instructions.length ),
                                 instr.toString( getClosure().getPrototype() ) );
             }
             
@@ -188,7 +184,7 @@ public final class MtsFrame
             _lastVar = _closure.getPrototype().getLocalDescription( i );
         }
         
-        return _locals.get( i );
+        return _locals[i];
     }
     
     public FrameValue getExternal( int i )
@@ -198,7 +194,7 @@ public final class MtsFrame
             _lastVar = _closure.getPrototype().getExternalDescription( i );
         }
         
-        return _externals.get( i );
+        return _externals[i];
     }
     
     // ========================================

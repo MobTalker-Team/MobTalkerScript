@@ -16,12 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import java.util.List;
-
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.MtsClosure;
-
-import com.google.common.collect.Lists;
 
 public class InstrClosure extends MtsIndexedInstruction
 {
@@ -36,25 +32,22 @@ public class InstrClosure extends MtsIndexedInstruction
     public void execute( MtsFrame frame )
     {
         MtsFunctionPrototype prototype = frame.getClosure().getPrototype().getNestedPrototype( _index );
-        List<FrameValue> externals = createExternals( frame, prototype );
-        MtsClosure closure = new MtsClosure( prototype, externals );
+        MtsClosure closure = new MtsClosure( prototype, createExternals( frame, prototype ) );
         
         frame.push( closure );
     }
     
-    private List<FrameValue> createExternals( MtsFrame frame, MtsFunctionPrototype prototype )
+    private FrameValue[] createExternals( MtsFrame frame, MtsFunctionPrototype prototype )
     {
         int nExternals = prototype.getExternalCount();
-        List<FrameValue> externals = Lists.newArrayListWithCapacity( nExternals );
+        FrameValue[] externals = new FrameValue[nExternals];
         
         for ( int i = 0; i < nExternals; i++ )
         {
             ExternalDescription descr = prototype.getExternalDescription( i );
-            
-            if ( descr.isParentLocal() )
-                externals.add( frame.getLocal( descr.getParentIndex() ) );
-            else
-                externals.add( frame.getExternal( descr.getParentIndex() ) );
+            externals[i] = descr.isParentLocal()
+                    ? frame.getLocal( descr.getParentIndex() )
+                    : frame.getExternal( descr.getParentIndex() );
         }
         
         return externals;

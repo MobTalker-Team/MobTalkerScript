@@ -172,8 +172,8 @@ public class FunctionTextReader
         return new MtsFunctionPrototype( ImmutableList.copyOf( instructions ),
                                          maxStackSize, nParams, hasVarargs,
                                          ImmutableList.copyOf( constants ),
-                                         ImmutableList.copyOf( externals ),
                                          ImmutableList.copyOf( locals ),
+                                         ImmutableList.copyOf( externals ),
                                          functionName,
                                          Collections.<SourcePosition> emptyList(),
                                          source, sourceLineStart, sourceLineEnd );

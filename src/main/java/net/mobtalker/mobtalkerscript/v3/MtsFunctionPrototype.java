@@ -28,14 +28,14 @@ import com.google.common.collect.Lists;
 
 public class MtsFunctionPrototype
 {
-    private final List<MtsInstruction> _instructions;
+    private final MtsInstruction[] _instructions;
     private final int _maxStackSize;
     
     private final int _nParams;
     private final boolean _hasVarargs;
-    private final List<MtsValue> _constants;
-    private final List<ExternalDescription> _externals;
-    private final List<LocalDescription> _locals;
+    private final MtsValue[] _constants;
+    private final LocalDescription[] _locals;
+    private final ExternalDescription[] _externals;
     
     private final List<MtsFunctionPrototype> _nestedPrototypes;
     
@@ -48,32 +48,28 @@ public class MtsFunctionPrototype
     
     // ========================================
     
-    public MtsFunctionPrototype( List<MtsInstruction> instructions,
-                                 int maxStackSize,
-                                 int nParams,
-                                 boolean hasVarargs,
+    public MtsFunctionPrototype( List<MtsInstruction> instructions, int maxStackSize,
+                                 int nParams, boolean hasVarargs,
                                  List<MtsValue> constants,
-                                 List<ExternalDescription> externals,
                                  List<LocalDescription> locals,
+                                 List<ExternalDescription> externals,
                                  String name,
                                  List<SourcePosition> lineNumbers,
-                                 String sourceName,
-                                 int sourceStart,
-                                 int sourceEnd )
+                                 String sourceName, int sourceStart, int sourceEnd )
     {
         checkNotNull( instructions );
         checkArgument( 0 <= maxStackSize, "Stack size cannot be negative: " + maxStackSize );
         checkArgument( maxStackSize <= 0xFE, "Stack size exceeds maximum " + maxStackSize );
         checkArgument( 0 <= nParams, "Parameter count cannot be negative: " + nParams );
         
-        _instructions = instructions;
+        _instructions = instructions.toArray( new MtsInstruction[instructions.size()] );
         _maxStackSize = maxStackSize;
         
         _nParams = nParams;
         _hasVarargs = hasVarargs;
-        _constants = constants;
-        _externals = externals;
-        _locals = locals;
+        _constants = constants.toArray( new MtsValue[constants.size()] );
+        _locals = locals.toArray( new LocalDescription[locals.size()] );
+        _externals = externals.toArray( new ExternalDescription[externals.size()] );
         
         _nestedPrototypes = Lists.newArrayList();
         
@@ -86,7 +82,7 @@ public class MtsFunctionPrototype
     
     // ========================================
     
-    public List<MtsInstruction> getInstructions()
+    public MtsInstruction[] getInstructions()
     {
         return _instructions;
     }
@@ -105,36 +101,36 @@ public class MtsFunctionPrototype
     
     public int getConstantCount()
     {
-        return _constants.size();
+        return _constants.length;
     }
     
     public MtsValue getConstant( int index )
     {
-        return _constants.get( index );
+        return _constants[index];
     }
     
     // ========================================
     
     public int getExternalCount()
     {
-        return _externals.size();
+        return _externals.length;
     }
     
     public ExternalDescription getExternalDescription( int index )
     {
-        return _externals.get( index );
+        return _externals[index];
     }
     
     // ========================================
     
     public int getLocalCount()
     {
-        return _locals.size();
+        return _locals.length;
     }
     
     public LocalDescription getLocalDescription( int index )
     {
-        return _locals.get( index );
+        return _locals[index];
     }
     
     public boolean hasVarargs()

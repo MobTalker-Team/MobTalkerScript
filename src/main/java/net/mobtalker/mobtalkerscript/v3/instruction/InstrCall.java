@@ -78,7 +78,7 @@ public class InstrCall extends MtsInstruction
             }
             
             // nReturn is -1 if the call site is the last formal parameter of a call
-            // We return the varargs as-is, so they can be expanded by the following call (see above)
+            // We return the varargs as-is, so they can be expanded by the following call
             if ( _nReturn == -1 )
             {
                 frame.push( result );

@@ -506,8 +506,8 @@ public class FunctionState
                                                            calculateMaxStackSize(),
                                                            _nParam, _isVarargs,
                                                            ImmutableList.copyOf( _constants ),
-                                                           ImmutableList.copyOf( _externals ),
                                                            ImmutableList.copyOf( _locals ),
+                                                           ImmutableList.copyOf( _externals ),
                                                            _name,
                                                            ImmutableList.copyOf( _lineNumbers ),
                                                            _sourceFile, _sourceLineStart, _sourceLineEnd );

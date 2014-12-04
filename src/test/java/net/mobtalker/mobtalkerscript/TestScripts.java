@@ -32,21 +32,20 @@ public class TestScripts
     {
         setUp();
         TestScripts test = new TestScripts();
-        MtsCompiler.loadStringChunk( ";", "" );
         
         BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
         in.readLine();
         
         test.testCalls();
         test.testConstructs();
-        test.testMath();
+        test.testVararg();
         
         System.out.println( "Done!" );
         in.readLine();
     }
     
     @BeforeClass
-    public static void setUp()
+    public static void setUp() throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
 //        MtsLog.CompilerLog.setLevel( Level.OFF );
@@ -63,19 +62,19 @@ public class TestScripts
     @Test
     public void testCalls() throws Exception
     {
-        run( "src/test/resources/scripts/test.calls.script" );
+        run( "src/test/resources/scripts/calls.lua" );
     }
     
     @Test
     public void testConstructs() throws Exception
     {
-        run( "src/test/resources/scripts/test.constructs.script" );
+        run( "src/test/resources/scripts/constructs.lua" );
     }
     
     @Test
-    public void testMath() throws Exception
+    public void testVararg() throws Exception
     {
-        run( "src/test/resources/scripts/test.math.script" );
+        run( "src/test/resources/scripts/vararg.lua" );
     }
     
 }

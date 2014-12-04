@@ -17,13 +17,8 @@
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-
-import java.util.*;
-
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
-
-import com.google.common.collect.Lists;
 
 public final class InstrReturn extends MtsInstruction
 {
@@ -51,46 +46,47 @@ public final class InstrReturn extends MtsInstruction
         }
         else
         {
-            ArrayList<MtsValue> values = new ArrayList<>( _count );
+            /*
+             * Possible scenarios
+             * [ a, b, c, d ]
+             * [ a, b, varargs[ c, d ] ]
+             * Must result in
+             * [ varargs[ a, b, c, d ] ]
+             */
             
-            { // Unpack first (last) return value
-                MtsValue value = frame.pop();
-                if ( value.isVarArgs() )
+            int nValues = _count;
+            MtsValue[] values;
+            
+            MtsValue value = frame.pop();
+            if ( value.isVarArgs() )
+            {
+                assert !( value instanceof MtsTailcall );
+                
+                int nVarargs = value.asVarArgs().count();
+                values = new MtsValue[( nValues - 1 ) + nVarargs];
+                
+                for ( int iValues = values.length - 1, iVarargs = nVarargs - 1; iVarargs >= 0; --iValues, --iVarargs )
                 {
-                    unpackVarargs( value.asVarArgs(), values );
+                    values[iValues] = value.get( iVarargs );
                 }
-                else
-                {
-                    values.add( value );
-                }
-            }
-            
-            for ( int i = 1; i < _count; i++ )
-            {
-                values.add( frame.pop() );
-            }
-            
-            if ( values.size() > 1 )
-            {
-                frame.push( MtsVarargs.of( Lists.reverse( values ) ) );
-            }
-            else if ( values.size() == 1 )
-            {
-                frame.push( MtsVarargs.of( values.get( 0 ) ) );
             }
             else
             {
-                frame.push( EMPTY_VARARGS );
+                values = new MtsValue[nValues];
+                values[nValues - 1] = value;
             }
-        }
-    }
-    
-    private static void unpackVarargs( MtsVarargs varargs, List<MtsValue> list )
-    {
-        int count = varargs.count();
-        for ( int i = count - 1; i >= 0; --i )
-        {
-            list.add( varargs.get( i ) );
+            
+            for ( int i = nValues - 2; i >= 0; --i )
+            {
+                values[i] = frame.pop();
+            }
+            
+            if ( values.length > 1 )
+                frame.push( MtsVarargs.of( values ) );
+            else if ( values.length == 1 )
+                frame.push( MtsVarargs.of( values[0] ) );
+            else
+                frame.push( EMPTY_VARARGS );
         }
     }
     

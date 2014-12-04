@@ -17,7 +17,7 @@
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
-import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
+import net.mobtalker.mobtalkerscript.v3.value.*;
 
 public final class InstrCallNoReturn extends InstrCall
 {
@@ -30,5 +30,10 @@ public final class InstrCallNoReturn extends InstrCall
     
     @Override
     protected final void pushResults( MtsFrame frame, MtsValue result )
-    {}
+    {
+        if ( result instanceof MtsTailcall )
+        {
+            ( (MtsTailcall) result ).evaluate();
+        }
+    }
 }

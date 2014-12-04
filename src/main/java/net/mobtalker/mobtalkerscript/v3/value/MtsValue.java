@@ -35,7 +35,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public static final MtsString EMPTY_STRING = new MtsString( "" );
     
-    public static final EvaluatedVarArgs EMPTY_VARARGS = new EvaluatedVarArgs();
+    public static final EvaluatedVarargs EMPTY_VARARGS = new EvaluatedVarargs();
     
     // ========================================
     
@@ -422,7 +422,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Checks if this value is a {@link EvaluatedVarArgs}.
+     * Checks if this value is a {@link EvaluatedVarargs}.
      */
     public boolean isVarArgs()
     {
@@ -515,7 +515,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     }
     
     /**
-     * Equivalent to a Java typecast to {@link EvaluatedVarArgs}.
+     * Equivalent to a Java typecast to {@link EvaluatedVarargs}.
      */
     public MtsVarargs asVarArgs()
     {

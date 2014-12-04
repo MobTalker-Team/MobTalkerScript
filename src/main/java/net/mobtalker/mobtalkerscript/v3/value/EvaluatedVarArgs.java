@@ -20,28 +20,28 @@ import java.util.*;
 
 import com.google.common.collect.Lists;
 
-/* package */class EvaluatedVarArgs extends MtsVarargs
+/* package */class EvaluatedVarargs extends MtsVarargs
 {
     private final List<MtsValue> _values;
     
     // ========================================
     
-    /* package */public EvaluatedVarArgs()
+    /* package */public EvaluatedVarargs()
     {
         _values = Collections.emptyList();
     }
     
-    public EvaluatedVarArgs( MtsValue[] values )
+    public EvaluatedVarargs( MtsValue[] values )
     {
         this( Arrays.asList( values ) );
     }
     
-    public EvaluatedVarArgs( List<MtsValue> values )
+    public EvaluatedVarargs( List<MtsValue> values )
     {
         _values = values;
     }
     
-    public EvaluatedVarArgs( MtsValue first, EvaluatedVarArgs rest )
+    public EvaluatedVarargs( MtsValue first, EvaluatedVarargs rest )
     {
         ArrayList<MtsValue> values = Lists.newArrayListWithCapacity( rest.count() + 1 );
         values.add( first );
@@ -53,7 +53,7 @@ import com.google.common.collect.Lists;
     // ========================================
     
     @Override
-    public EvaluatedVarArgs subArgs( int start, int end )
+    public EvaluatedVarargs subArgs( int start, int end )
     {
         if ( _values.size() < start )
             return EMPTY_VARARGS;
@@ -62,7 +62,7 @@ import com.google.common.collect.Lists;
         if ( end <= start )
             return EMPTY_VARARGS;
         
-        return new EvaluatedVarArgs( _values.subList( start, end ) );
+        return new EvaluatedVarargs( _values.subList( start, end ) );
     }
     
     // ========================================

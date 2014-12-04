@@ -24,48 +24,48 @@ public abstract class MtsVarargs extends MtsValue implements Iterable<MtsValue>
 {
     public static MtsVarargs of( MtsValue value )
     {
-        return new EvaluatedVarArgs( Collections.singletonList( value ) );
+        return new EvaluatedVarargs( Collections.singletonList( value ) );
     }
     
     public static MtsVarargs of( MtsValue e1, MtsValue e2 )
     {
-        return new EvaluatedVarArgs( ImmutableList.of( e1, e2 ) );
+        return new EvaluatedVarargs( ImmutableList.of( e1, e2 ) );
     }
     
     public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3 )
     {
-        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3 ) );
+        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3 ) );
     }
     
     public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4 )
     {
-        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4 ) );
+        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3, e4 ) );
     }
     
     public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5 )
     {
-        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4, e5 ) );
+        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3, e4, e5 ) );
     }
     
     public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5, MtsValue e6 )
     {
-        return new EvaluatedVarArgs( ImmutableList.of( e1, e2, e3, e4, e5, e6 ) );
+        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3, e4, e5, e6 ) );
     }
     
     public static MtsVarargs of( MtsValue[] values )
     {
-        return new EvaluatedVarArgs( Arrays.asList( values ) );
+        return new EvaluatedVarargs( Arrays.asList( values ) );
     }
     
     public static MtsVarargs of( List<MtsValue> values )
     {
-        return new EvaluatedVarArgs( values );
+        return new EvaluatedVarargs( values );
     }
     
     public static MtsVarargs of( MtsValue first, MtsVarargs rest )
     {
-        if ( rest instanceof EvaluatedVarArgs )
-            return new EvaluatedVarArgs( first, (EvaluatedVarArgs) rest );
+        if ( rest instanceof EvaluatedVarargs )
+            return new EvaluatedVarargs( first, (EvaluatedVarargs) rest );
         
         return EMPTY_VARARGS;
     }

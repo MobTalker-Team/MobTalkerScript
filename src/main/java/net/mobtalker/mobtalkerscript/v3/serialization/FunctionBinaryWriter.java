@@ -1,6 +1,9 @@
 package net.mobtalker.mobtalkerscript.v3.serialization;
 
+import static net.mobtalker.mobtalkerscript.v3.MtsGlobals.*;
+
 import java.io.*;
+import java.nio.file.*;
 import java.util.List;
 
 import net.mobtalker.mobtalkerscript.v3.*;
@@ -10,6 +13,22 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
 public class FunctionBinaryWriter
 {
+    public static void writeChunk( MtsFunctionPrototype prototype, Path path, OpenOption... options ) throws IOException
+    {
+        try (
+            BufferedOutputStream stream = new BufferedOutputStream( Files.newOutputStream( path, options ) ) )
+        {
+            writeChunk( prototype, stream );
+        }
+    }
+    
+    public static void writeChunk( MtsFunctionPrototype prototype, OutputStream stream ) throws IOException
+    {
+        new FunctionBinaryWriter().write( prototype, stream );
+    }
+    
+    // ========================================
+    
     public void write( MtsFunctionPrototype prototype, OutputStream stream ) throws IOException
     {
         write( prototype, new DataOutputStream( stream ) );
@@ -17,6 +36,9 @@ public class FunctionBinaryWriter
     
     private void write( MtsFunctionPrototype prototype, DataOutputStream stream ) throws IOException
     {
+        stream.writeBytes( "MTS" );
+        stream.writeByte( ( VERSION_MAJOR << 4 ) | VERSION_MINOR );
+        
         stream.writeUTF( prototype.getName() );
         stream.writeUTF( prototype.getSource() );
         stream.writeShort( prototype.getSourceLineStart() );
@@ -33,7 +55,7 @@ public class FunctionBinaryWriter
             if ( constant.isString() )
             {
                 stream.writeBoolean( true );
-                stream.writeUTF( constant.toString() );
+                stream.writeUTF( constant.asString().toJava() );
             }
             else
             {
@@ -43,7 +65,7 @@ public class FunctionBinaryWriter
         }
         
         int nLocals = prototype.getLocalCount();
-        stream.writeShort( nLocals );
+        stream.writeByte( nLocals );
         for ( int i = 0; i < nLocals; i++ )
         {
             LocalDescription local = prototype.getLocalDescription( i );
@@ -53,18 +75,18 @@ public class FunctionBinaryWriter
         }
         
         int nExternals = prototype.getExternalCount();
-        stream.writeShort( nExternals );
+        stream.writeByte( nExternals );
         for ( int i = 0; i < nExternals; i++ )
         {
             ExternalDescription external = prototype.getExternalDescription( i );
             stream.writeUTF( external.getName() );
-            stream.writeShort( external.getParentIndex() );
+            stream.writeByte( external.getParentIndex() );
             stream.writeBoolean( external.isParentLocal() );
         }
         
         MtsInstruction[] instrs = prototype.getInstructions();
         int nInstrs = instrs.length;
-        stream.writeInt( nLocals );
+        stream.writeShort( nInstrs );
         for ( int i = 0; i < nInstrs; i++ )
         {
             instrs[i].writeTo( stream );
@@ -75,7 +97,7 @@ public class FunctionBinaryWriter
         
         List<MtsFunctionPrototype> childs = prototype.getNestedPrototypes();
         int nChilds = childs.size();
-        stream.writeShort( nChilds );
+        stream.writeByte( nChilds );
         for ( int i = 0; i < nChilds; i++ )
         {
             write( childs.get( i ), stream );

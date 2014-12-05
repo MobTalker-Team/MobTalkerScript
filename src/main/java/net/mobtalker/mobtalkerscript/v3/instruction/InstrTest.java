@@ -59,13 +59,13 @@ public final class InstrTest extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "TEST " + getDistance();
+        return Instructions.TEST_NAME + " " + getDistance();
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x28 );
+        stream.writeByte( Instructions.TEST );
         stream.writeShort( getDistance() );
     }
 }

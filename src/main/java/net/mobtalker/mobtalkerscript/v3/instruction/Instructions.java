@@ -24,6 +24,128 @@ import com.google.common.collect.Maps;
 
 public class Instructions
 {
+    public static final int ADD = 0x01;
+    public static final String ADD_NAME = "ADD";
+    
+    public static final int AND = 0x02;
+    public static final String AND_NAME = "AND";
+    
+    public static final int CALL = 0x03;
+    public static final String CALL_NAME = "CALL";
+    
+    public static final int CLSR = 0x04;
+    public static final String CLSR_NAME = "CLSR";
+    
+    public static final int CONC = 0x05;
+    public static final String CONC_NAME = "CONC";
+    
+    public static final int DIV = 0x06;
+    public static final String DIV_NAME = "DIV";
+    
+    public static final int DUP = 0x07;
+    public static final String DUP_NAME = "DUP";
+    
+    public static final int EQ = 0x08;
+    public static final String EQ_NAME = "EQ";
+    
+    public static final int GFL = 0x09;
+    public static final String GFL_NAME = "GFL";
+    
+    public static final int JMP = 0x0A;
+    public static final String JMP_NAME = "JMP";
+    
+    public static final int LT = 0x0B;
+    public static final String LT_NAME = "LT";
+    
+    public static final int LTE = 0x0C;
+    public static final String LTE_NAME = "LTE";
+    
+    public static final int LDC = 0x0D;
+    public static final String LDC_NAME = "LDC";
+    
+    public static final int LDE = 0x0E;
+    public static final String LDE_NAME = "LDE";
+    
+    public static final int LDFALSE = 0x0F;
+    public static final String LDFALSE_NAME = "LDFALSE";
+    
+    public static final int LDL = 0x10;
+    public static final String LDL_NAME = "LDL";
+    
+    public static final int LDM = 0x11;
+    public static final String LDM_NAME = "LDM";
+    
+    public static final int LDNIL = 0x12;
+    public static final String LDNIL_NAME = "LDNIL";
+    
+    public static final int LDT = 0x13;
+    public static final String LDT_NAME = "LDT";
+    
+    public static final int LDTC = 0x14;
+    public static final String LDTC_NAME = "LDTC";
+    
+    public static final int LDTRUE = 0x15;
+    public static final String LDTRUE_NAME = "LDTRUE";
+    
+    public static final int MOD = 0x16;
+    public static final String MOD_NAME = "MOD";
+    
+    public static final int MUL = 0x17;
+    public static final String MUL_NAME = "MUL";
+    
+    public static final int NEG = 0x18;
+    public static final String NEG_NAME = "NEG";
+    
+    public static final int NEWTBL = 0x19;
+    public static final String NEWTBL_NAME = "NEWTBL";
+    
+    public static final int NFL = 0x1A;
+    public static final String NFL_NAME = "NFL";
+    
+    public static final int NFP = 0x1B;
+    public static final String NFP_NAME = "NFP";
+    
+    public static final int NOT = 0x1C;
+    public static final String NOT_NAME = "NOT";
+    
+    public static final int OR = 0x1D;
+    public static final String OR_NAME = "OR";
+    
+    public static final int POP = 0x1E;
+    public static final String POP_NAME = "POP";
+    
+    public static final int POW = 0x1F;
+    public static final String POW_NAME = "POW";
+    
+    public static final int RET = 0x20;
+    public static final String RET_NAME = "RET";
+    
+    public static final int SIZE = 0x21;
+    public static final String SIZE_NAME = "SIZE";
+    
+    public static final int STE = 0x22;
+    public static final String STE_NAME = "STE";
+    
+    public static final int STL = 0x23;
+    public static final String STL_NAME = "STL";
+    
+    public static final int STT = 0x24;
+    public static final String STT_NAME = "STT";
+    
+    public static final int SUB = 0x25;
+    public static final String SUB_NAME = "SUB";
+    
+    public static final int TCALL = 0x26;
+    public static final String TCALL_NAME = "TCALL";
+    
+    public static final int TEST = 0x27;
+    public static final String TEST_NAME = "TEST";
+    
+    public static final int VARARG = 0x28;
+    public static final String VARARG_NAME = "VARARG";
+    
+    // ========================================
+    
     private static final Map<String, MtsInstruction> _unaryOps;
     private static final InstrNeg _neg = new InstrNeg();
     private static final InstrNot _not = new InstrNot();
@@ -381,9 +503,9 @@ public class Instructions
         if ( ( nArgs == 0 ) && ( nReturn == 0 ) )
             return _callNoArgsNoReturn;
         if ( nArgs == 0 )
-            return /* ( nReturn <= _callNoArg.length ) ? _callNoArg[nReturn - 1] : */new InstrCallNoArgs( nReturn );
+            return new InstrCallNoArgs( nReturn );
         if ( nReturn == 0 )
-            return /* ( nArgs <= _callNoReturn.length ) ? _callNoReturn[nArgs - 1] : */new InstrCallNoReturn( nArgs );
+            return new InstrCallNoReturn( nArgs );
         
         return new InstrCall( nArgs, nReturn );
     }

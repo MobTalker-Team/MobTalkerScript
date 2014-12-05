@@ -4,11 +4,13 @@ import static java.lang.Integer.*;
 import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.*;
 import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.SourcePosition;
-import net.mobtalker.mobtalkerscript.v3.instruction.*;
+import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
 import org.apache.commons.lang3.*;
@@ -21,6 +23,22 @@ import com.google.common.io.LineReader;
  */
 public class FunctionTextReader
 {
+    public static MtsFunctionPrototype readChunk( Path path, Charset charset ) throws IOException
+    {
+        try (
+            BufferedReader reader = Files.newBufferedReader( path, charset ) )
+        {
+            return readChunk( reader );
+        }
+    }
+    
+    public static MtsFunctionPrototype readChunk( Readable readable ) throws IOException
+    {
+        return new FunctionTextReader().read( readable );
+    }
+    
+    // ========================================
+    
     public MtsFunctionPrototype read( Readable readable ) throws IOException
     {
         return read( new LineReader( readable ) );
@@ -195,14 +213,18 @@ public class FunctionTextReader
             }
         }
         
-        MtsFunctionPrototype prototype = new MtsFunctionPrototype( ImmutableList.copyOf( instructions ),
-                                                                   maxStackSize, nParams, hasVarargs,
+        MtsFunctionPrototype prototype = new MtsFunctionPrototype( functionName,
                                                                    ImmutableList.copyOf( constants ),
                                                                    ImmutableList.copyOf( locals ),
                                                                    ImmutableList.copyOf( externals ),
-                                                                   functionName,
+                                                                   nParams,
+                                                                   hasVarargs,
+                                                                   maxStackSize,
+                                                                   ImmutableList.copyOf( instructions ),
                                                                    sourcePositions,
-                                                                   source, sourceLineStart, sourceLineEnd );
+                                                                   source,
+                                                                   sourceLineStart,
+                                                                   sourceLineEnd );
         
         // Childs
         {
@@ -239,90 +261,88 @@ public class FunctionTextReader
         
         switch ( args[0] )
         {
-            case "ADD":
+            case ADD_NAME:
                 return InstrAdd();
-            case "AND":
+            case AND_NAME:
                 return InstrAnd( parseInt( args[1] ) );
-            case "CALL":
+            case CALL_NAME:
                 return InstrCall( parseInt( args[1] ), parseInt( args[2] ) );
-            case "CLOSURE":
+            case CLSR_NAME:
                 return InstrClosure( parseInt( args[1] ) );
-            case "CONCAT":
+            case CONC_NAME:
                 return InstrConcat( parseInt( args[1] ) );
-            case "DIV":
+            case DIV_NAME:
                 return InstrDiv();
-            case "DUP":
+            case DUP_NAME:
                 return InstrDup();
-            case "EQ":
+            case EQ_NAME:
                 return InstrEq();
-            case "GFORLOOP":
+            case GFL_NAME:
                 return InstrGForLoop( parseInt( args[1] ), parseInt( args[2] ), parseInt( args[3] ) );
-            case "JUMP":
+            case JMP_NAME:
                 return InstrJump( parseInt( args[1] ) );
-            case "LT":
+            case LT_NAME:
                 return InstrLessThen();
-            case "LTE":
+            case LTE_NAME:
                 return InstrLessThenEqual();
-            case "LINE":
-                return new InstrLine( parseInt( args[1] ) );
-            case "LOADC":
+            case LDC_NAME:
                 return InstrLoadC( parseInt( args[1] ) );
-            case "LOADE":
+            case LDE_NAME:
                 return InstrLoadE( parseInt( args[1] ) );
-            case "LOADFALSE":
+            case LDFALSE_NAME:
                 return InstrLoadFalse();
-            case "LOADL":
+            case LDL_NAME:
                 return InstrLoadL( parseInt( args[1] ) );
-            case "LOADM":
+            case LDM_NAME:
                 return InstrLoadM( parseInt( args[1] ) );
-            case "LOADNIL":
+            case LDNIL_NAME:
                 return InstrLoadNil( parseInt( args[1] ) );
-            case "LOADT":
+            case LDT_NAME:
                 return InstrLoadT();
-            case "LOADTC":
+            case LDTC_NAME:
                 return InstrLoadTC( parseInt( args[1] ) );
-            case "LOADTRUE":
+            case LDTRUE_NAME:
                 return InstrLoadTrue();
-            case "MOD":
+            case MOD_NAME:
                 return InstrMod();
-            case "MUL":
+            case MUL_NAME:
                 return InstrMul();
-            case "NEG":
+            case NEG_NAME:
                 return InstrNeg();
-            case "NEWTABLE":
+            case NEWTBL_NAME:
                 return InstrNewTable( parseInt( args[1] ), parseInt( args[2] ) );
-            case "NFORLOOP":
+            case NFL_NAME:
                 return InstrNForLoop( parseInt( args[1] ), parseInt( args[2] ) );
-            case "NFORPREP":
+            case NFP_NAME:
                 return InstrNForPrep( parseInt( args[1] ) );
-            case "NOT":
+            case NOT_NAME:
                 return InstrNot();
-            case "OR":
+            case OR_NAME:
                 return InstrOr( parseInt( args[1] ) );
-            case "POP":
+            case POP_NAME:
                 return InstrPop();
-            case "POW":
+            case POW_NAME:
                 return InstrPow();
-            case "RETURN":
+            case RET_NAME:
                 return InstrReturn( parseInt( args[1] ) );
-            case "SIZE":
+            case SIZE_NAME:
                 return InstrSize();
-            case "STOREE":
+            case STE_NAME:
                 return InstrStoreE( parseInt( args[1] ) );
-            case "STOREL":
+            case STL_NAME:
                 return InstrStoreL( parseInt( args[1] ) );
-            case "STORET":
+            case STT_NAME:
                 return InstrStoreT();
-            case "SUB":
+            case SUB_NAME:
                 return InstrSub();
-            case "TAILCALL":
+            case TCALL_NAME:
                 return InstrTailcall( parseInt( args[1] ) );
-            case "TEST":
+            case TEST_NAME:
                 return InstrTest( parseInt( args[1] ) );
-            case "VARARGS":
+            case VARARG_NAME:
                 return InstrVarargs( parseInt( args[1] ) );
             default:
-                throw new AssertionError();
+                throw new AssertionError( args[0] );
         }
     }
 }

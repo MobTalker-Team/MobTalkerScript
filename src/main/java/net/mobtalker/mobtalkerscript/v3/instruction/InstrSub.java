@@ -31,12 +31,12 @@ public class InstrSub extends MtsArithmeticInstruction
     @Override
     public String toString()
     {
-        return "SUB";
+        return Instructions.SUB_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x26 );
+        stream.writeByte( Instructions.SUB );
     }
 }

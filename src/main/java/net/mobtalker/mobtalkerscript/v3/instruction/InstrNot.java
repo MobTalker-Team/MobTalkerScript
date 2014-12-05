@@ -41,12 +41,12 @@ public class InstrNot extends MtsInstruction
     @Override
     public String toString()
     {
-        return "NOT";
+        return Instructions.NOT_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x1D );
+        stream.writeByte( Instructions.NOT );
     }
 }

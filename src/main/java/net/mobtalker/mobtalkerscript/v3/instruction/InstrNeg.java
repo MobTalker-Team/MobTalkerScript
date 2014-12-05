@@ -39,12 +39,12 @@ public class InstrNeg extends MtsInstruction
     @Override
     public String toString()
     {
-        return "NEG";
+        return Instructions.NEG_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x19 );
+        stream.writeByte( Instructions.NEG );
     }
 }

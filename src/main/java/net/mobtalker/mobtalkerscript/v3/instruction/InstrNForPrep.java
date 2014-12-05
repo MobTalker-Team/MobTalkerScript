@@ -58,7 +58,7 @@ public final class InstrNForPrep extends MtsIndexedInstruction
     @Override
     public String toString()
     {
-        return "NFORPREP " + _index;
+        return Instructions.NFP_NAME + " " + _index;
     }
     
     @Override
@@ -70,7 +70,7 @@ public final class InstrNForPrep extends MtsIndexedInstruction
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x1C );
-        stream.writeShort( _index );
+        stream.writeByte( Instructions.NFP );
+        stream.writeByte( _index );
     }
 }

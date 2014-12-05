@@ -31,12 +31,12 @@ public final class InstrPow extends MtsArithmeticInstruction
     @Override
     public String toString()
     {
-        return "POW";
+        return Instructions.POW_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x20 );
+        stream.writeByte( Instructions.POW );
     }
 }

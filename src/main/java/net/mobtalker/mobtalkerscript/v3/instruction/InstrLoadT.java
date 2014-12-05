@@ -41,12 +41,12 @@ public class InstrLoadT extends MtsInstruction
     @Override
     public String toString()
     {
-        return "LOADT";
+        return Instructions.LDT_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x14 );
+        stream.writeByte( Instructions.LDT );
     }
 }

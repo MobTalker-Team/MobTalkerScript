@@ -29,6 +29,7 @@ public final class InstrReturn extends MtsInstruction
     
     /* package */InstrReturn( int count )
     {
+        assert count >= 0;
         _count = count;
     }
     
@@ -62,13 +63,13 @@ public final class InstrReturn extends MtsInstruction
     @Override
     public String toString()
     {
-        return "RETURN " + _count;
+        return Instructions.RET_NAME + " " + _count;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x21 );
+        stream.writeByte( Instructions.RET );
         stream.writeByte( _count );
     }
 }

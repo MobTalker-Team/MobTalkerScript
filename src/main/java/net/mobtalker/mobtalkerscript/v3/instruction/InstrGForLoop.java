@@ -84,13 +84,13 @@ public final class InstrGForLoop extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return String.format( "GFORLOOP %s %s %s", _index, _values, getDistance() );
+        return Instructions.GFL_NAME + " " + _index + " " + _values + " " + getDistance();
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x09 );
+        stream.writeByte( Instructions.GFL );
         stream.writeByte( _index );
         stream.writeByte( _values );
         stream.writeByte( getDistance() );

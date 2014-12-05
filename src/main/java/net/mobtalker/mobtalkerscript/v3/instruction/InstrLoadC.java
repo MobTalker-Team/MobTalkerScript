@@ -46,7 +46,7 @@ public final class InstrLoadC extends MtsIndexedInstruction
     @Override
     public String toString()
     {
-        return "LOADC " + _index;
+        return Instructions.LDC_NAME + " " + _index;
     }
     
     @Override
@@ -58,7 +58,7 @@ public final class InstrLoadC extends MtsIndexedInstruction
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x0E );
+        stream.writeByte( Instructions.LDC );
         stream.writeShort( _index );
     }
 }

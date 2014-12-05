@@ -47,13 +47,13 @@ public final class InstrTailcall extends InstrCall
     @Override
     public String toString()
     {
-        return "TAIL" + super.toString();
+        return Instructions.TCALL_NAME + " " + getArgCount();
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x27 );
-        stream.writeInt( getArgCount() );
+        stream.writeByte( Instructions.TCALL );
+        stream.writeByte( getArgCount() );
     }
 }

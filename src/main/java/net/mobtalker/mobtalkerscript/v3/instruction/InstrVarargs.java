@@ -44,7 +44,7 @@ public class InstrVarargs extends MtsInstruction
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x29 );
+        stream.writeByte( Instructions.VARARG );
         stream.writeByte( _count );
     }
 }

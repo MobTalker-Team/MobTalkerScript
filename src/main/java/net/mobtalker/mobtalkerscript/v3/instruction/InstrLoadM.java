@@ -52,19 +52,19 @@ public final class InstrLoadM extends MtsIndexedInstruction
     @Override
     public String toString()
     {
-        return "LOADM " + _index;
+        return Instructions.LDM_NAME + " " + _index;
     }
     
     @Override
     public String toString( MtsFunctionPrototype proto )
     {
-        return toString() + " (" + proto.getConstant( _index ) + ")";
+        return toString() + " (" + proto.getConstant( _index ).asString().toJava() + ")";
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x12 );
+        stream.writeByte( Instructions.LDM );
         stream.writeShort( _index );
     }
 }

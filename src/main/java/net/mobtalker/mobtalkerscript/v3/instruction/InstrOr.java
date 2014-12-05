@@ -60,13 +60,13 @@ public final class InstrOr extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "OR " + getDistance();
+        return Instructions.OR_NAME + " " + getDistance();
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x1E );
-        stream.writeShort( getDistance() );
+        stream.writeByte( Instructions.OR );
+        stream.writeByte( getDistance() );
     }
 }

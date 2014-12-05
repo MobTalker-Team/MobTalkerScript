@@ -42,12 +42,12 @@ public class InstrStoreT extends MtsInstruction
     @Override
     public String toString()
     {
-        return "STORET";
+        return Instructions.STT_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x25 );
+        stream.writeByte( Instructions.STT );
     }
 }

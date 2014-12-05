@@ -31,12 +31,12 @@ public class InstrEqual extends MtsComparisonInstruction
     @Override
     public String toString()
     {
-        return "EQ";
+        return Instructions.EQ_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x08 );
+        stream.writeByte( Instructions.EQ );
     }
 }

@@ -31,12 +31,12 @@ public final class InstrAdd extends MtsArithmeticInstruction
     @Override
     public String toString()
     {
-        return "ADD";
+        return Instructions.ADD_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x01 );
+        stream.writeByte( Instructions.ADD );
     }
 }

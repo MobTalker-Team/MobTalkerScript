@@ -50,13 +50,13 @@ public final class InstrLoadNil extends MtsInstruction
     @Override
     public String toString()
     {
-        return "LOADNIL " + _count;
+        return Instructions.LDNIL_NAME + " " + _count;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x13 );
+        stream.writeByte( Instructions.LDNIL );
         stream.writeByte( _count );
     }
 }

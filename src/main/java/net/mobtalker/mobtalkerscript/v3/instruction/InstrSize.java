@@ -54,12 +54,12 @@ public class InstrSize extends MtsInstruction
     @Override
     public String toString()
     {
-        return "SIZE";
+        return Instructions.SIZE_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x22 );
+        stream.writeByte( Instructions.SIZE );
     }
 }

@@ -502,13 +502,13 @@ public class FunctionState
                 throw new IllegalStateException( "unknown label '" + label.getKey() + "'" );
         }
         
-        MtsFunctionPrototype p = new MtsFunctionPrototype( ImmutableList.copyOf( _instructions ),
-                                                           calculateMaxStackSize(),
-                                                           _nParam, _isVarargs,
+        MtsFunctionPrototype p = new MtsFunctionPrototype( _name,
                                                            ImmutableList.copyOf( _constants ),
-                                                           ImmutableList.copyOf( _locals ),
-                                                           ImmutableList.copyOf( _externals ),
-                                                           _name,
+                                                           ImmutableList.copyOf( _locals ), ImmutableList.copyOf( _externals ),
+                                                           _nParam,
+                                                           _isVarargs,
+                                                           calculateMaxStackSize(),
+                                                           ImmutableList.copyOf( _instructions ),
                                                            ImmutableList.copyOf( _lineNumbers ),
                                                            _sourceFile, _sourceLineStart, _sourceLineEnd );
         

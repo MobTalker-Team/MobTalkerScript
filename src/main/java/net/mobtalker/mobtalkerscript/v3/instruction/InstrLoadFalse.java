@@ -40,12 +40,12 @@ public final class InstrLoadFalse extends MtsInstruction
     @Override
     public String toString()
     {
-        return "LOADFALSE";
+        return Instructions.LDFALSE_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x10 );
+        stream.writeByte( Instructions.LDFALSE );
     }
 }

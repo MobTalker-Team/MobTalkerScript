@@ -66,7 +66,7 @@ public class InstrClosure extends MtsIndexedInstruction
     @Override
     public String toString()
     {
-        return "CLOSURE " + _index;
+        return Instructions.CLSR_NAME + " " + _index;
     }
     
     @Override
@@ -78,7 +78,7 @@ public class InstrClosure extends MtsIndexedInstruction
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x04 );
+        stream.writeByte( Instructions.CLSR );
         stream.writeByte( _index );
     }
 }

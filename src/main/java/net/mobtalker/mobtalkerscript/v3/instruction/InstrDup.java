@@ -39,12 +39,12 @@ public class InstrDup extends MtsInstruction
     @Override
     public String toString()
     {
-        return "DUP";
+        return Instructions.DUP_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x07 );
+        stream.writeByte( Instructions.DUP );
     }
 }

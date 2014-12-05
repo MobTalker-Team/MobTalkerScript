@@ -31,12 +31,12 @@ public final class InstrDiv extends MtsArithmeticInstruction
     @Override
     public String toString()
     {
-        return "DIV";
+        return Instructions.DIV_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x06 );
+        stream.writeByte( Instructions.DIV );
     }
 }

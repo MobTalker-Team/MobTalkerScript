@@ -46,7 +46,7 @@ public final class InstrLoadL extends MtsIndexedInstruction
     @Override
     public String toString()
     {
-        return "LOADL " + _index;
+        return Instructions.LDL_NAME + " " + _index;
     }
     
     @Override
@@ -58,7 +58,7 @@ public final class InstrLoadL extends MtsIndexedInstruction
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x11 );
-        stream.writeShort( _index );
+        stream.writeByte( Instructions.LDL );
+        stream.writeByte( _index );
     }
 }

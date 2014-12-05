@@ -31,12 +31,12 @@ public final class InstrLessThen extends MtsComparisonInstruction
     @Override
     public String toString()
     {
-        return "LT";
+        return Instructions.LT_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x0B );
+        stream.writeByte( Instructions.LT );
     }
 }

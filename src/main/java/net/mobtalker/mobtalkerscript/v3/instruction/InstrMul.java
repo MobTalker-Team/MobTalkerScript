@@ -31,12 +31,12 @@ public final class InstrMul extends MtsArithmeticInstruction
     @Override
     public String toString()
     {
-        return "MUL";
+        return Instructions.MUL_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x18 );
+        stream.writeByte( Instructions.MUL );
     }
 }

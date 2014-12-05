@@ -43,12 +43,13 @@ public class InstrJump extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "JUMP " + getDistance();
+        return Instructions.JMP_NAME + " " + getDistance();
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x0A );
+        stream.writeByte( Instructions.JMP );
+        stream.writeShort( getDistance() );
     }
 }

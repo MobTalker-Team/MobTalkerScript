@@ -21,8 +21,6 @@ import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
-import com.google.common.base.Strings;
-
 public final class MtsFrame
 {
     private static boolean DEBUG = true;
@@ -111,7 +109,7 @@ public final class MtsFrame
         if ( EngineLog.isFinestEnabled() )
         {
             EngineLog.finest( "Enter Frame" );
-            EngineLog.finest( "Stack: " + formatStack() );
+            EngineLog.finest( formatStack() );
         }
         
         for ( ;; _ip++ )
@@ -120,18 +118,14 @@ public final class MtsFrame
             
             if ( EngineLog.isInfoEnabled() )
             {
-                EngineLog.info( "Executing [%s:%s][%s] %s",
-                                _closure.getPrototype().getName(),
-                                _closure.getPrototype().getSourcePosition( _ip ).Line,
-                                formatInstructionPointer( instructions.length ),
-                                instr.toString( getClosure().getPrototype() ) );
+                EngineLog.info( formatExecutedInstruction( instr ) );
             }
             
             instr.execute( this );
             
             if ( EngineLog.isFinestEnabled() )
             {
-                EngineLog.finest( "Stack: " + formatStack() );
+                EngineLog.finest( formatStack() );
             }
             
             if ( instr.exits() )
@@ -140,10 +134,25 @@ public final class MtsFrame
         
         MtsValue result = pop();
         
-        assert isEmpty() : "Stack was not emptied! " + formatStack();
+        assert isEmpty() : formatStack();
         
         EngineLog.finest( "Exit Frame" );
         return result;
+    }
+    
+    private String formatExecutedInstruction( MtsInstruction instr )
+    {
+        MtsFunctionPrototype prototype = _closure.getPrototype();
+        return new StringBuilder( 50 ).append( "Executing " )
+                                      .append( '[' )
+                                      .append( prototype.getName() )
+                                      .append( ':' )
+                                      .append( prototype.getSourcePosition( _ip ).Line )
+                                      .append( "][" )
+                                      .append( Integer.toString( _ip ) )
+                                      .append( "] " )
+                                      .append( instr.toString( prototype ) )
+                                      .toString();
     }
     
     private String formatStack()
@@ -151,7 +160,9 @@ public final class MtsFrame
         if ( _top == 0 )
             return "[]";
         
-        StringBuilder s = new StringBuilder( "[" );
+        StringBuilder s = new StringBuilder( 50 );
+        s.append( "Stack: [" );
+        
         int i = 0;
         int limit = _top - 1;
         for ( ; i < limit; ++i )
@@ -161,12 +172,6 @@ public final class MtsFrame
         s.append( _stack[i].toString( DEBUG ) ).append( ']' );
         
         return s.toString();
-    }
-    
-    private String formatInstructionPointer( int count )
-    {
-        int l = Integer.toString( count ).length();
-        return Strings.padStart( Integer.toString( _ip ), l, '0' );
     }
     
     // ========================================

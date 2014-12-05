@@ -52,13 +52,13 @@ public class InstrConcat extends MtsInstruction
     @Override
     public String toString()
     {
-        return "CONCAT " + _count;
+        return Instructions.CONC_NAME + " " + _count;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x05 );
+        stream.writeByte( Instructions.CONC );
         stream.writeByte( _count );
     }
 }

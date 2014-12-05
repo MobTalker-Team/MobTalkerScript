@@ -100,13 +100,13 @@ public class InstrNewTable extends MtsInstruction
     @Override
     public String toString()
     {
-        return "NEWTABLE " + _nListElements + " " + _nMapElements;
+        return Instructions.NEWTBL_NAME + " " + _nListElements + " " + _nMapElements;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x1A );
+        stream.writeByte( Instructions.NEWTBL );
         stream.writeByte( _nListElements );
         stream.writeByte( _nMapElements );
     }

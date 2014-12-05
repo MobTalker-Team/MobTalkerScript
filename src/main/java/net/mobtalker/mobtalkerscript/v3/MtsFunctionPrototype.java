@@ -48,14 +48,14 @@ public class MtsFunctionPrototype
     
     // ========================================
     
-    public MtsFunctionPrototype( List<MtsInstruction> instructions, int maxStackSize,
-                                 int nParams, boolean hasVarargs,
-                                 List<MtsValue> constants,
-                                 List<LocalDescription> locals,
-                                 List<ExternalDescription> externals,
-                                 String name,
-                                 List<SourcePosition> lineNumbers,
-                                 String sourceName, int sourceStart, int sourceEnd )
+    public MtsFunctionPrototype( String name , List<MtsValue> constants ,
+                                 List<LocalDescription> locals , List<ExternalDescription> externals ,
+                                 int nParams ,
+                                 boolean hasVarargs ,
+                                 int maxStackSize ,
+                                 List<MtsInstruction> instructions ,
+                                 List<SourcePosition> lineNumbers ,
+                                 String sourceName , int sourceStart , int sourceEnd  )
     {
         checkNotNull( instructions );
         checkArgument( 0 <= maxStackSize, "Stack size cannot be negative: " + maxStackSize );

@@ -46,7 +46,7 @@ public final class InstrLoadE extends MtsIndexedInstruction
     @Override
     public String toString()
     {
-        return "LOADE " + _index;
+        return Instructions.LDE_NAME + " " + _index;
     }
     
     @Override
@@ -58,7 +58,7 @@ public final class InstrLoadE extends MtsIndexedInstruction
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x0F );
-        stream.writeShort( _index );
+        stream.writeByte( Instructions.LDE );
+        stream.writeByte( _index );
     }
 }

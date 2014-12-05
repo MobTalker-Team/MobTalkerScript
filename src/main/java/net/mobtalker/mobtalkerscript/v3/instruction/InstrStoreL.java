@@ -46,7 +46,7 @@ public final class InstrStoreL extends MtsIndexedInstruction
     @Override
     public String toString()
     {
-        return "STOREL " + _index;
+        return Instructions.STL_NAME + " " + _index;
     }
     
     @Override
@@ -58,7 +58,7 @@ public final class InstrStoreL extends MtsIndexedInstruction
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x24 );
-        stream.writeShort( _index );
+        stream.writeByte( Instructions.STL );
+        stream.writeByte( _index );
     }
 }

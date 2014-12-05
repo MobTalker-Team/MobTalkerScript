@@ -31,7 +31,9 @@ public class MtsGlobals extends MtsTable
     
     // ========================================
     
-    public static final MtsString VERSION = valueOf( "2.3.1-beta" );
+    public static final MtsString VERSION = valueOf( "3.0.1-beta" );
+    public static final int VERSION_MAJOR = 3;
+    public static final int VERSION_MINOR = 0;
     
     // ========================================
     

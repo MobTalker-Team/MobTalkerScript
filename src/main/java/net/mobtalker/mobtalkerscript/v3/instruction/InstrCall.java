@@ -124,13 +124,13 @@ public class InstrCall extends MtsInstruction
     @Override
     public String toString()
     {
-        return "CALL " + _nArgs + " " + _nReturn;
+        return Instructions.CALL_NAME + " " + _nArgs + " " + _nReturn;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x03 );
+        stream.writeByte( Instructions.CALL );
         stream.writeByte( _nArgs );
         stream.writeByte( _nReturn );
     }

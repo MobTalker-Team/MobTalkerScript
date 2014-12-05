@@ -86,14 +86,20 @@ public final class InstrNForLoop extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "NFORLOOP " + _index + " " + getDistance();
+        return Instructions.NFL_NAME + " " + _index + " " + getDistance();
+    }
+    
+    @Override
+    public String toString( MtsFunctionPrototype proto )
+    {
+        return toString() + " (" + proto.getLocalDescription( _index ).getName() + ")";
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x1B );
-        stream.writeShort( _index );
+        stream.writeByte( Instructions.NFL );
+        stream.writeByte( _index );
         stream.writeShort( getDistance() );
     }
 }

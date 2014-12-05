@@ -60,13 +60,13 @@ public final class InstrAnd extends MtsJumpInstruction
     @Override
     public String toString()
     {
-        return "AND " + getDistance();
+        return Instructions.AND_NAME + " " + getDistance();
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x02 );
-        stream.writeShort( getDistance() );
+        stream.writeByte( Instructions.AND );
+        stream.writeByte( getDistance() );
     }
 }

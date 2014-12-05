@@ -39,12 +39,12 @@ public class InstrPop extends MtsInstruction
     @Override
     public String toString()
     {
-        return "POP";
+        return Instructions.POP_NAME;
     }
     
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {
-        stream.writeShort( 0x1F );
+        stream.writeByte( Instructions.POP );
     }
 }

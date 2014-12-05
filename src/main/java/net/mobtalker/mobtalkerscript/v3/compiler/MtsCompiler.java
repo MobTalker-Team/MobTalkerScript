@@ -208,13 +208,7 @@ public class MtsCompiler extends Mts3BaseListener
         if ( _curPosition.equals( line, coloum ) )
             return;
         
-        SourcePosition old = _curPosition;
         _curPosition = new SourcePosition( line, coloum );
-        
-        if ( old.Line != line )
-        {
-            addInstr( new InstrLine( line ) );
-        }
     }
     
     public SourcePosition getSourcePosition()
@@ -229,10 +223,10 @@ public class MtsCompiler extends Mts3BaseListener
         _currentFunction.addInstruction( instr, _curPosition );
     }
     
-    public void discardValue()
-    {
-        addInstr( InstrPop() );
-    }
+//    public void discardValue()
+//    {
+//        addInstr( InstrPop() );
+//    }
     
     public void duplicateValue()
     {

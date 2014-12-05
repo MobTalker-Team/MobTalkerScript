@@ -646,12 +646,12 @@ public class MtsCompiler extends Mts3BaseListener
         
         if ( ">".equals( op ) )
         {
-            addInstr( InstrLte() );
+            addInstr( InstrLessThenEqual() );
             addInstr( InstrNot() );
         }
         else if ( ">=".equals( op ) )
         {
-            addInstr( InstrLt() );
+            addInstr( InstrLessThen() );
             addInstr( InstrNot() );
         }
         else if ( "~=".equals( op ) )

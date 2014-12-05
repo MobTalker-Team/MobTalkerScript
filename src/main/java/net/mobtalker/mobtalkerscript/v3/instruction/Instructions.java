@@ -50,6 +50,8 @@ public class Instructions
     private static final InstrLoadT _loadT = new InstrLoadT();
     private static final InstrStoreT _storeT = new InstrStoreT();
     
+    private static final InstrLoadTC[] _loadTC;
+    
     private static final InstrLoadL[] _loadL;
     private static final InstrLoadE[] _loadE;
     private static final InstrLoadC[] _loadC;
@@ -61,7 +63,7 @@ public class Instructions
     private static final InstrStoreL[] _storeL;
     private static final InstrStoreE[] _storeE;
     
-    private static final InstrVarargsAll _varargsAll = new InstrVarargsAll();
+    private static final InstrVarargs _varargsAll = new InstrVarargs( -1 );
     private static final InstrVarargs[] _varargs;
     
     private static final InstrCall _callNoArgsNoReturn;
@@ -94,8 +96,8 @@ public class Instructions
         
         _logicalOps = Maps.newHashMapWithExpectedSize( 3 );
         _logicalOps.put( "==", InstrEq() );
-        _logicalOps.put( "<", InstrLt() );
-        _logicalOps.put( "<=", InstrLte() );
+        _logicalOps.put( "<", InstrLessThen() );
+        _logicalOps.put( "<=", InstrLessThenEqual() );
         
         _loadNil = new InstrLoadNil[10];
         for ( int i = 0; i < _loadNil.length; i++ )
@@ -122,6 +124,10 @@ public class Instructions
         _loadC = new InstrLoadC[128];
         for ( int i = 0; i < _loadC.length; i++ )
             _loadC[i] = new InstrLoadC( i );
+        
+        _loadTC = new InstrLoadTC[1];
+        for ( int i = 0; i < _loadTC.length; i++ )
+            _loadTC[i] = new InstrLoadTC( i );
         
         _varargs = new InstrVarargs[5];
         for ( int i = 0; i < _varargs.length; i++ )
@@ -267,12 +273,12 @@ public class Instructions
         return _eq;
     }
     
-    public static InstrLessThen InstrLt()
+    public static InstrLessThen InstrLessThen()
     {
         return _lt;
     }
     
-    public static InstrLessThenEqual InstrLte()
+    public static InstrLessThenEqual InstrLessThenEqual()
     {
         return _lte;
     }
@@ -322,6 +328,11 @@ public class Instructions
     public static InstrLoadT InstrLoadT()
     {
         return _loadT;
+    }
+    
+    public static InstrLoadTC InstrLoadTC( int index )
+    {
+        return ( index < _loadTC.length ) ? _loadTC[index] : new InstrLoadTC( index );
     }
     
     public static InstrLoadM InstrLoadM( int index )

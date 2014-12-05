@@ -54,11 +54,10 @@ public final class MtsFrame
         _ip = 0;
         
         MtsFunctionPrototype prototype = closure.getPrototype();
-        int nStack = prototype.getMaxStackSize();
         int nLocals = prototype.getLocalCount();
         int nArgs = prototype.getParameterCount();
         
-        _stack = new MtsValue[nStack];
+        _stack = new MtsValue[prototype.getMaxStackSize()];
         _top = 0;
         
         FrameValue[] locals = new FrameValue[nLocals];
@@ -217,12 +216,16 @@ public final class MtsFrame
     
     public MtsValue pop()
     {
-        if ( isEmpty() )
+        if ( _top == 0 )
             throw new ScriptEngineException( "stack underflow" );
         
         return _stack[--_top];
     }
     
+    /**
+     * Packs the contents of the stack into a single {@link MtsVarargs} and returns them.
+     * The top of the stack is the last element of the resulting varargs.
+     */
     public MtsVarargs pop( int count )
     {
         if ( count > _top )
@@ -253,7 +256,7 @@ public final class MtsFrame
     
     public MtsValue peek()
     {
-        if ( isEmpty() )
+        if ( _top == 0 )
             throw new ScriptEngineException( "stack is empty" );
         
         return _stack[_top - 1];

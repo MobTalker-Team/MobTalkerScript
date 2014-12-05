@@ -150,6 +150,11 @@ public class MtsFunctionPrototype
         return _nestedPrototypes.get( i );
     }
     
+    public List<MtsFunctionPrototype> getNestedPrototypes()
+    {
+        return _nestedPrototypes;
+    }
+    
     // ========================================
     
     public String getName()

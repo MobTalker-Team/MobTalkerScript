@@ -1,23 +1,24 @@
 package net.mobtalker.mobtalkerscript;
 
-import java.io.Writer;
+import java.io.OutputStream;
 import java.nio.file.*;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.*;
 
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
-import net.mobtalker.mobtalkerscript.v3.*;
+import net.mobtalker.mobtalkerscript.v3.MtsFunctionPrototype;
 import net.mobtalker.mobtalkerscript.v3.compiler.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.EmptyStmtContext;
-import net.mobtalker.mobtalkerscript.v3.value.MtsClosure;
+import net.mobtalker.mobtalkerscript.v3.serialization.FunctionBinaryWriter;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.*;
 
-import com.google.common.base.Charsets;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableSet;
 
 public class GrammarTestRig
@@ -31,41 +32,73 @@ public class GrammarTestRig
 //
 //        BufferedReader reader = new BufferedReader( new InputStreamReader( System.in ) );
 //        String path = reader.readLine();
-        String path = "calls.lua";
+        String path = "constructs.lua";
+        MtsFunctionPrototype prototype;
         
-        Mts3Parser parser = getParser( new ANTLRFileStream( "src/test/resources/scripts/" + path ) );
-        Mts3Parser.ChunkContext chunk;
-        try
+        List<Long> runtimes = new ArrayList<>( 100 );
+        long min = Long.MAX_VALUE, max = Long.MIN_VALUE;
+        for ( int i = 0; i < 10; i++ )
         {
-            chunk = parser.chunk();
-        }
-        catch ( MtsSyntaxError ex )
-        {
-            throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
-        }
-        
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            
+//            Mts3Parser parser = getParser( new ANTLRFileStream( "src/test/resources/scripts/" + path ) );
+            Mts3Parser parser = getParser( new ANTLRFileStream( "d:\\Users\\Tobsen\\Desktop\\lua-5.2.2-tests\\api.lua" ) );
+            Mts3Parser.ChunkContext chunk;
+            try
+            {
+                chunk = parser.chunk();
+            }
+            catch ( MtsSyntaxError ex )
+            {
+                throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
+            }
+            
+            MtsCompiler compiler = new MtsCompiler( path, 0, 0 );
+            compiler.visit( chunk );
+            prototype = compiler.compile();
+            
+            try (
+                OutputStream stream = Files.newOutputStream( Paths.get( "D:\\test2" ),
+                                                             StandardOpenOption.CREATE,
+                                                             StandardOpenOption.TRUNCATE_EXISTING ) )
+            {
+                new FunctionBinaryWriter().write( prototype, stream );
+            }
+            
+//            try (
+//                Writer writer = Files.newBufferedWriter( Paths.get( "D:\\test" ), Charsets.UTF_8,
+//                                                         StandardOpenOption.CREATE,
+//                                                         StandardOpenOption.TRUNCATE_EXISTING ) )
+//            {
+//                new FunctionTextWriter().write( prototype, writer );
+//            }
+            
+//            try (
+//                Reader readable = Files.newBufferedReader( Paths.get( "D:\\test" ), Charsets.UTF_8 ) )
+//            {
+//                prototype = new FunctionTextReader().read( readable );
+//            }
+            
 //        new TreeCleaner().visit( chunk );
 //        chunk.inspect( parser );
-        
-        MtsCompiler compiler = new MtsCompiler( path, 0, 0 );
-        compiler.visit( chunk );
-        MtsFunctionPrototype prototype = compiler.compile();
-        
-        try (
-            Writer writer = Files.newBufferedWriter( Paths.get( "D:\\test" ), Charsets.UTF_8,
-                                                     StandardOpenOption.CREATE,
-                                                     StandardOpenOption.TRUNCATE_EXISTING ) )
-        {
-            new FunctionTextWriter().write( prototype, writer );
+            
+            long elapsed = stopwatch.stop().elapsed( TimeUnit.MICROSECONDS );
+            runtimes.add( elapsed );
+            min = elapsed < min ? elapsed : min;
+            max = elapsed > max ? elapsed : max;
         }
         
-//        try (
-//            Reader readable = Files.newBufferedReader( Paths.get( "D:\\test" ), Charsets.UTF_8 ) )
-//        {
-//            prototype = new FunctionTextReader().read( readable );
-//        }
+        System.out.println( min + ", " + avg( runtimes ) + ", " + max );
         
-        new MtsClosure( prototype, new MtsGlobals() ).call();
+//        new MtsClosure( prototype, new MtsGlobals() ).call();
+    }
+    
+    private static double avg( Collection<Long> c )
+    {
+        int sum = 0;
+        for ( long i : c )
+            sum += i;
+        return (double) sum / (double) c.size();
     }
     
     private static Mts3Parser getParser( CharStream stream )

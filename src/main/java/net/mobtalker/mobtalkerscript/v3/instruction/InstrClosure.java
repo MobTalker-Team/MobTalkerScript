@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.MtsClosure;
 
@@ -71,5 +73,12 @@ public class InstrClosure extends MtsIndexedInstruction
     public String toString( MtsFunctionPrototype proto )
     {
         return toString() + " (" + proto.getNestedPrototype( _index ).getName() + ")";
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x04 );
+        stream.writeByte( _index );
     }
 }

@@ -1,5 +1,7 @@
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 
 public class InstrVarargs extends MtsInstruction
@@ -19,7 +21,10 @@ public class InstrVarargs extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.pushVarargs( _count );
+        if ( _count == -1 )
+            frame.pushVarargs();
+        else
+            frame.pushVarargs( _count );
     }
     
     @Override
@@ -34,5 +39,12 @@ public class InstrVarargs extends MtsInstruction
     public String toString()
     {
         return "VARARGS " + _count;
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x29 );
+        stream.writeByte( _count );
     }
 }

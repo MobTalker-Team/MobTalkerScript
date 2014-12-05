@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
@@ -46,5 +48,12 @@ public final class InstrTailcall extends InstrCall
     public String toString()
     {
         return "TAIL" + super.toString();
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x27 );
+        stream.writeInt( getArgCount() );
     }
 }

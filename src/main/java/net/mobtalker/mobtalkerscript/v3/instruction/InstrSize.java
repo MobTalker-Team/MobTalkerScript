@@ -17,6 +17,9 @@
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
+
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
@@ -52,5 +55,11 @@ public class InstrSize extends MtsInstruction
     public String toString()
     {
         return "SIZE";
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x22 );
     }
 }

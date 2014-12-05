@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.MtsTailcall;
 
@@ -61,5 +63,12 @@ public final class InstrReturn extends MtsInstruction
     public String toString()
     {
         return "RETURN " + _count;
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x21 );
+        stream.writeByte( _count );
     }
 }

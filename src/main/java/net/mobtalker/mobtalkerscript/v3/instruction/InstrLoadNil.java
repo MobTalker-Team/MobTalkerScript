@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 
 public final class InstrLoadNil extends MtsInstruction
@@ -49,5 +51,12 @@ public final class InstrLoadNil extends MtsInstruction
     public String toString()
     {
         return "LOADNIL " + _count;
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x13 );
+        stream.writeByte( _count );
     }
 }

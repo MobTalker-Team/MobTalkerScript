@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
@@ -101,6 +103,16 @@ public class InstrCall extends MtsInstruction
     
     // ========================================
     
+    public int getArgCount()
+    {
+        return _nArgs;
+    }
+    
+    public int getReturnCount()
+    {
+        return _nReturn;
+    }
+    
     @Override
     public final int stackSizeChange()
     {
@@ -113,5 +125,13 @@ public class InstrCall extends MtsInstruction
     public String toString()
     {
         return "CALL " + _nArgs + " " + _nReturn;
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x03 );
+        stream.writeByte( _nArgs );
+        stream.writeByte( _nReturn );
     }
 }

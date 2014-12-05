@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.MtsString;
 
@@ -51,5 +53,12 @@ public class InstrConcat extends MtsInstruction
     public String toString()
     {
         return "CONCAT " + _count;
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x05 );
+        stream.writeByte( _count );
     }
 }

@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.MtsNumber;
 
@@ -85,5 +87,13 @@ public final class InstrNForLoop extends MtsJumpInstruction
     public String toString()
     {
         return "NFORLOOP " + _index + " " + getDistance();
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x1B );
+        stream.writeShort( _index );
+        stream.writeShort( getDistance() );
     }
 }

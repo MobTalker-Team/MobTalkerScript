@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
@@ -39,5 +41,11 @@ public final class InstrLoadFalse extends MtsInstruction
     public String toString()
     {
         return "LOADFALSE";
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x10 );
     }
 }

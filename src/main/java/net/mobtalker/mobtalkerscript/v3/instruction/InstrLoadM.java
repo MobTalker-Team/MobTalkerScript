@@ -16,6 +16,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
+
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
@@ -57,5 +59,12 @@ public final class InstrLoadM extends MtsIndexedInstruction
     public String toString( MtsFunctionPrototype proto )
     {
         return toString() + " (" + proto.getConstant( _index ) + ")";
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x12 );
+        stream.writeShort( _index );
     }
 }

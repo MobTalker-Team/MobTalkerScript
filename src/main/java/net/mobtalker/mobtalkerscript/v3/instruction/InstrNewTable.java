@@ -16,6 +16,7 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
+import java.io.*;
 import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
@@ -100,5 +101,13 @@ public class InstrNewTable extends MtsInstruction
     public String toString()
     {
         return "NEWTABLE " + _nListElements + " " + _nMapElements;
+    }
+    
+    @Override
+    public void writeTo( DataOutputStream stream ) throws IOException
+    {
+        stream.writeShort( 0x1A );
+        stream.writeByte( _nListElements );
+        stream.writeByte( _nMapElements );
     }
 }

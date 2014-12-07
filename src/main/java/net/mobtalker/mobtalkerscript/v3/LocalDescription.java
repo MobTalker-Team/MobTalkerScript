@@ -16,6 +16,9 @@
  */
 package net.mobtalker.mobtalkerscript.v3;
 
+/**
+ * Debug information about a local variable
+ */
 public class LocalDescription extends VariableDescription
 {
     private final int _start;
@@ -38,11 +41,17 @@ public class LocalDescription extends VariableDescription
     
     // ========================================
     
+    /**
+     * First instruction index where this local is defined
+     */
     public int getStart()
     {
         return _start;
     }
     
+    /**
+     * Last instruction index where this local is defined
+     */
     public int getEnd()
     {
         return _end;

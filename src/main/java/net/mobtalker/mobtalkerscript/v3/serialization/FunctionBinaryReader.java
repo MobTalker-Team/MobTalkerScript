@@ -87,8 +87,8 @@ public class FunctionBinaryReader
         for ( int i = 0; i < nExternals; i++ )
         {
             externals[i] = new ExternalDescription( stream.readUTF(), i,
-                                                    stream.readUnsignedByte(),
-                                                    stream.readBoolean() );
+                                                    stream.readBoolean(),
+                                                    stream.readUnsignedByte() );
         }
         
         int nInstrs = stream.readUnsignedShort();

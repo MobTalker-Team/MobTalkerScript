@@ -191,7 +191,7 @@ public class MtsCompiler extends Mts3BaseListener
     {
         _mainFunction = new FunctionState( null, "main", 0, true,
                                            sourceName, sourceLineStart, sourceLineEnd );
-        _mainFunction.addExternal( new ExternalDescription( ENV, 0, 0, true ) );
+        _mainFunction.addExternal( new ExternalDescription( ENV, 0, true, 0 ) );
         
         _currentFunction = _mainFunction;
         

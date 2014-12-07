@@ -441,7 +441,7 @@ public class FunctionState
         else
             parentIndex = _parent.getExternalIndex( name );
         
-        _externals.add( new ExternalDescription( name, index, parentIndex, isParentLocal ) );
+        _externals.add( new ExternalDescription( name, index, isParentLocal, parentIndex ) );
         return index;
     }
     

@@ -309,14 +309,13 @@ public class MtsCompiler extends Mts3BaseListener
     {
         CompilerLog.info( "Enter RepeatLoop" );
         
-        _currentFunction.enterLoop();
         enterBlock();
+        _currentFunction.enterLoop();
     }
     
     public void enterUntilConditon()
     {
         CompilerLog.info( "Enter UntilCondition" );
-        exitBlock();
     }
     
     public void exitRepeatLoop()
@@ -325,6 +324,7 @@ public class MtsCompiler extends Mts3BaseListener
         
         addInstr( InstrTest() );
         _currentFunction.exitLoop();
+        exitBlock();
     }
     
     // ========================================
@@ -1363,10 +1363,15 @@ public class MtsCompiler extends Mts3BaseListener
     private static boolean isTailcall( NameAndArgsContext ctx )
     {
         ParserRuleContext parent = ctx.getParent();
-        return ( parent instanceof PrefixExprContext )
-               && ( parent.getParent().getParent() instanceof ReturnStmtContext )
-               && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
-//        return false;
+        if ( ( parent instanceof PrefixExprContext )
+             && ( parent.getParent().getParent() instanceof ReturnStmtContext )
+             && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 ) )
+        {
+            for ( ParserRuleContext c = ctx; c != null; c = c.getParent() )
+                System.out.print( c.getClass().getName() + " <- " );
+            System.out.println();
+        }
+        return false;
     }
     
     // ========================================

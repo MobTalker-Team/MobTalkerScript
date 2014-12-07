@@ -76,6 +76,8 @@ public abstract class MtsValue implements Comparable<MtsValue>
     public static final MtsString __LT = valueOf( "__lt" );
     public static final MtsString __LTE = valueOf( "__lte" );
     public static final MtsString __TOSTRING = valueOf( "__tostring" );
+    public static final MtsString __PAIRS = valueOf( "__pairs" );
+    public static final MtsString __IPAIRS = valueOf( "__ipairs" );
     
     /**
      * Determines if this value has a meta table set.

@@ -132,14 +132,18 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     public MtsTable.Entry getINext( MtsNumber key )
     {
         checkNotNull( key );
-        
+        return getINext( key.toJavaInt() - 1 );
+    }
+    
+    public MtsTable.Entry getINext( int key )
+    {
         if ( isEmpty() )
             return null;
         
         if ( !_list.canAddOrSetAt( key ) )
             return null;
         
-        int next = key.asNumber().toJavaInt();
+        int next = key + 1;
         return new MtsTable.Entry( valueOf( next ), _list.get( next ) );
     }
     

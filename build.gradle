@@ -96,12 +96,7 @@ task cleanAntlr( type: Delete ) {
 
 license {    
     include "**/*.java"
-    excludes ([
-        "**/MtsParser.java", 
-        "**/MtsLexer.java", 
-        "**/MtsVisitor.java", 
-        "**/MtsBaseVisitor.java"
-    ])
+    exclude "**/generated/**"
     
     header project.file( 'HEADER' )    
     

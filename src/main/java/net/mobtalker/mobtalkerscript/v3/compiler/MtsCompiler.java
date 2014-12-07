@@ -98,6 +98,10 @@ import com.google.common.collect.Lists;
 
 public class MtsCompiler extends Mts3BaseListener
 {
+    private static final TokenFactory TokenFactory = new CommonTokenFactory( false );
+    
+    // ========================================
+    
     public static MtsFunctionPrototype loadFile( String path ) throws Exception
     {
         return loadFile( Paths.get( path ) );
@@ -111,7 +115,7 @@ public class MtsCompiler extends Mts3BaseListener
     public static MtsFunctionPrototype loadFile( Path path ) throws Exception
     {
         path = path.toRealPath();
-        return load( new ANTLRFileStream( path.toString() ) );
+        return loadChunk( new ANTLRFileStream( path.toString() ) );
     }
     
     // ========================================
@@ -123,12 +127,12 @@ public class MtsCompiler extends Mts3BaseListener
         ANTLRInputStream stream = new ANTLRInputStream( chunk );
         stream.name = source;
         
-        return load( stream );
+        return loadChunk( stream );
     }
     
     // ========================================
     
-    public static MtsFunctionPrototype load( CharStream stream ) throws IOException, MtsSyntaxError
+    public static MtsFunctionPrototype loadChunk( CharStream stream ) throws IOException, MtsSyntaxError
     {
         Mts3Parser parser = getParser( stream );
         
@@ -154,8 +158,6 @@ public class MtsCompiler extends Mts3BaseListener
         
         return compiler.compile();
     }
-    
-    private static final TokenFactory TokenFactory = new CommonTokenFactory( false );
     
     private static Mts3Parser getParser( CharStream stream )
     {

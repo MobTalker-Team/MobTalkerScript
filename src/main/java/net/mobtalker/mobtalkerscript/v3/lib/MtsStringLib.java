@@ -59,12 +59,11 @@ public class MtsStringLib
     public static MtsString format( MtsVarargs args )
     {
         String s = checkString( args, 0 );
-        MtsValue[] argsFormat = args.subArgs( 1 ).toArray();
         
-        Object[] format = new Object[argsFormat.length];
-        for ( int i = 0; i < argsFormat.length; i++ )
+        Object[] format = new Object[args.count() - 1];
+        for ( int i = 0; i < format.length; i++ )
         {
-            format[i] = argsFormat[i].toJava();
+            format[i] = args.get( i + 1 ).toJava();
         }
         
         return valueOf( String.format( s, format ) );
@@ -74,6 +73,71 @@ public class MtsStringLib
     public static MtsString lower( MtsValue argString )
     {
         return valueOf( checkString( argString, 0 ).toLowerCase() );
+    }
+    
+    @MtsNativeFunction
+    public static MtsFunction match( MtsValue argString, MtsValue argPattern )
+    {
+        String s = checkString( argString, 0 );
+        String patternStr = checkString( argPattern, 1 );
+        
+        Pattern pattern = Pattern.compile( patternStr );
+        Matcher matcher = pattern.matcher( s );
+        
+        return new MatchIterator( matcher, 0 );
+    }
+    
+    @MtsNativeFunction
+    public static MtsString padLeft( MtsValue argString, MtsValue argFill, MtsValue argLength )
+    {
+        return valueOf( StringUtils.leftPad( checkString( argString, 0 ),
+                                             checkInteger( argLength, 2 ),
+                                             checkString( argFill, 1 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsString padRight( MtsValue argString, MtsValue argFill, MtsValue argLength )
+    {
+        return valueOf( StringUtils.rightPad( checkString( argString, 0 ),
+                                              checkInteger( argLength, 2 ),
+                                              checkString( argFill, 1 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsString repeat( MtsValue argString, MtsValue argTimes, MtsValue argSeparator )
+    {
+        return valueOf( StringUtils.repeat( checkString( argString, 0 ),
+                                            checkString( argSeparator, 2, "" ),
+                                            checkIntegerWithMinimum( argTimes, 1, 0 ) ) );
+    }
+    
+    @MtsNativeFunction
+    public static MtsVarargs replace( MtsValue argString, MtsValue argPattern, MtsValue argReplacement, MtsValue argN )
+    {
+        String s = checkString( argString, 0 );
+        String patternStr = checkString( argPattern, 1 );
+        String replacementStr = checkString( argReplacement, 2 ); // TODO Can be table or function
+        int maxN = checkInteger( argN, 3, Integer.MAX_VALUE );
+        
+        Pattern pattern = Pattern.compile( patternStr );
+        Matcher matcher = pattern.matcher( s );
+        
+        boolean result = matcher.find();
+        if ( !result )
+            return MtsVarargs.of( argString, ZERO );
+        
+        int count = 0;
+        StringBuffer sb = new StringBuffer();
+        do
+        {
+            count++;
+            matcher.appendReplacement( sb, replacementStr );
+            result = matcher.find();
+        }
+        while ( result && ( count < maxN ) );
+        matcher.appendTail( sb );
+        
+        return MtsVarargs.of( valueOf( sb.toString() ), valueOf( count ) );
     }
     
     @MtsNativeFunction
@@ -98,12 +162,48 @@ public class MtsStringLib
             return valueOf( StringUtils.substring( s, from ) );
         else
             return valueOf( StringUtils.substring( s, from, to ) );
-
+        
     }
     
     @MtsNativeFunction
     public static MtsString upper( MtsValue argString )
     {
         return valueOf( checkString( argString, 0 ).toUpperCase() );
+    }
+    
+    // ========================================
+    
+    private static final class MatchIterator extends MtsFunction
+    {
+        private final Matcher _matcher;
+        private int _start;
+        
+        // ========================================
+        
+        public MatchIterator( Matcher matcher, int start )
+        {
+            _matcher = matcher;
+            _start = start;
+        }
+        
+        // ========================================
+        
+        @Override
+        public MtsValue call( MtsVarargs args )
+        {
+            if ( !_matcher.find( _start++ ) )
+                return NIL;
+            
+            if ( _matcher.groupCount() == 0 )
+                return valueOf( _matcher.group() );
+            
+            MtsString[] groups = new MtsString[_matcher.groupCount() - 1];
+            for ( int i = 0; i < groups.length; ++i )
+            {
+                groups[i] = valueOf( _matcher.group( i + 1 ) );
+            }
+            
+            return MtsVarargs.of( groups );
+        }
     }
 }

@@ -17,7 +17,7 @@
 package net.mobtalker.mobtalkerscript;
 
 import java.io.*;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.*;
@@ -48,8 +48,8 @@ public class TestScripts
     public static void setUp() throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-//        MtsLog.CompilerLog.setLevel( Level.OFF );
-//        MtsLog.EngineLog.setLevel( Level.OFF );
+        MtsLog.CompilerLog.setLevel( Level.OFF );
+        MtsLog.EngineLog.setLevel( Level.OFF );
     }
     
     private void run( String path ) throws Exception
@@ -69,6 +69,12 @@ public class TestScripts
     public void testConstructs() throws Exception
     {
         run( "src/test/resources/scripts/constructs.lua" );
+    }
+    
+    @Test
+    public void testLocals() throws Exception
+    {
+        run( "src/test/resources/scripts/locals.lua" );
     }
     
     @Test

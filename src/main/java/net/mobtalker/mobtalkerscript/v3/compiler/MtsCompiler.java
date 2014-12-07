@@ -1363,15 +1363,9 @@ public class MtsCompiler extends Mts3BaseListener
     private static boolean isTailcall( NameAndArgsContext ctx )
     {
         ParserRuleContext parent = ctx.getParent();
-        if ( ( parent instanceof PrefixExprContext )
-             && ( parent.getParent().getParent() instanceof ReturnStmtContext )
-             && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 ) )
-        {
-            for ( ParserRuleContext c = ctx; c != null; c = c.getParent() )
-                System.out.print( c.getClass().getName() + " <- " );
-            System.out.println();
-        }
-        return false;
+        return ( parent instanceof PrefixExprContext )
+               && ( parent.getParent().getParent() instanceof ReturnStmtContext )
+               && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
     }
     
     // ========================================

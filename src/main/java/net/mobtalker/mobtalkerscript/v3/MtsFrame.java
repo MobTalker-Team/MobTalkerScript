@@ -64,7 +64,7 @@ public final class MtsFrame
         {
             locals[i] = new FrameValue( arguments.get( i ) );
         }
-        _varargs = prototype.hasVarargs() ? arguments.subArgs( i ) : EMPTY_VARARGS;
+        _varargs = prototype.hasVarargs() ? arguments.subArgs( i ) : MtsVarargs.Empty;
         
         for ( ; i < nLocals; i++ )
         {
@@ -102,7 +102,7 @@ public final class MtsFrame
     /**
      * Executes the instructions given until an instruction signals a frame exit and returns the top of the stack.
      */
-    public MtsValue run()
+    public MtsVarargs run()
     {
         MtsInstruction[] instructions = _closure.getPrototype().getInstructions();
         
@@ -137,7 +137,8 @@ public final class MtsFrame
         assert isEmpty() : formatStack();
         
         EngineLog.finest( "Exit Frame" );
-        return result;
+        
+        return result instanceof MtsVarargs ? (MtsVarargs) result : MtsVarargs.of( result );
     }
     
     private String formatExecutedInstruction( MtsInstruction instr )
@@ -206,7 +207,7 @@ public final class MtsFrame
     public void push( MtsValue o )
     {
         if ( _top == _stack.length )
-            throw new ScriptEngineException( "stack overflow" );
+            throw new MtsEngineException( "stack overflow" );
         
         _stack[_top++] = o;
     }
@@ -222,7 +223,7 @@ public final class MtsFrame
     public MtsValue pop()
     {
         if ( _top == 0 )
-            throw new ScriptEngineException( "stack underflow" );
+            throw new MtsEngineException( "stack underflow" );
         
         return _stack[--_top];
     }
@@ -234,11 +235,11 @@ public final class MtsFrame
     public MtsVarargs pop( int count )
     {
         if ( count > _top )
-            throw new ScriptEngineException( "stack underflow" );
+            throw new MtsEngineException( "stack underflow" );
         
         if ( count == 0 )
         {
-            return EMPTY_VARARGS;
+            return MtsVarargs.Empty;
         }
         else if ( peek().isVarArgs() )
         {
@@ -262,7 +263,7 @@ public final class MtsFrame
     public MtsValue peek()
     {
         if ( _top == 0 )
-            throw new ScriptEngineException( "stack is empty" );
+            throw new MtsEngineException( "stack is empty" );
         
         return _stack[_top - 1];
     }
@@ -270,7 +271,7 @@ public final class MtsFrame
     public void duplicateTop()
     {
         if ( _top == _stack.length )
-            throw new ScriptEngineException( "stack overflow" );
+            throw new MtsEngineException( "stack overflow" );
         
         _stack[_top] = _stack[_top - 1];
         _top++;
@@ -298,14 +299,14 @@ public final class MtsFrame
     
     public void pushNil()
     {
-        push( NIL );
+        push( Nil );
     }
     
     public void pushNil( int count )
     {
         for ( int i = 0; i < count; i++ )
         {
-            push( NIL );
+            push( Nil );
         }
     }
     

@@ -19,7 +19,7 @@ package net.mobtalker.mobtalkerscript.v3.instruction;
 import java.io.*;
 
 import net.mobtalker.mobtalkerscript.v3.*;
-import net.mobtalker.mobtalkerscript.v3.value.MtsNumber;
+import net.mobtalker.mobtalkerscript.v3.value.*;
 
 /**
  * Jump instruction that only jumps if the top of the stack is not true.
@@ -49,8 +49,8 @@ public final class InstrNForLoop extends MtsJumpInstruction
     {
         FrameValue loopVar = frame.getLocal( _index );
         
-        MtsNumber loopVal = loopVar.get().asNumber();
-        MtsNumber limitVal = frame.getLocal( _index + 1 ).get().asNumber();
+        MtsValue loopVal = loopVar.get();
+        MtsValue limitVal = frame.getLocal( _index + 1 ).get();
         MtsNumber stepVal = frame.getLocal( _index + 2 ).get().asNumber();
         
         loopVal = loopVal.add( stepVal );

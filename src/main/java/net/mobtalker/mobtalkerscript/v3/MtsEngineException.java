@@ -17,28 +17,28 @@
 package net.mobtalker.mobtalkerscript.v3;
 
 /**
- * Thrown when a parser encounters an error
+ * Thrown when a script engine encounters an internal error.
  */
 @SuppressWarnings( "serial" )
-public class ScriptParserException extends RuntimeException
+public class MtsEngineException extends RuntimeException
 {
     
-    public ScriptParserException( String msg )
+    public MtsEngineException( String msg )
     {
         super( msg );
     }
     
-    public ScriptParserException( Exception parent )
+    public MtsEngineException( Exception parent )
     {
         super( parent );
     }
     
-    public ScriptParserException( String msg, Object... args )
+    public MtsEngineException( String msg, Object... args )
     {
         super( String.format( msg, args ) );
     }
     
-    public ScriptParserException( String msg, Exception parent, Object... args )
+    public MtsEngineException( String msg, Exception parent, Object... args )
     {
         super( String.format( msg, args ), parent );
     }

@@ -40,7 +40,7 @@ public class InstrCall extends MtsInstruction
     @Override
     public final void execute( MtsFrame frame )
     {
-        MtsVarargs args = getCallArgs( frame );
+        MtsVarargs args = _nArgs > 0 ? frame.pop( _nArgs ) : MtsVarargs.Empty;
         MtsValue target = frame.pop();
         
         if ( MtsLog.EngineLog.isFineEnabled() )
@@ -48,7 +48,7 @@ public class InstrCall extends MtsInstruction
             MtsLog.EngineLog.fine( "Calling " + target + " with " + args );
         }
         
-        MtsValue result = getResults( target, args );
+        MtsVarargs result = getResults( target, args );
         
         if ( MtsLog.EngineLog.isFineEnabled() )
         {
@@ -58,46 +58,30 @@ public class InstrCall extends MtsInstruction
         pushResults( frame, result );
     }
     
-    protected MtsVarargs getCallArgs( MtsFrame frame )
-    {
-        return frame.pop( _nArgs );
-    }
-    
-    protected MtsValue getResults( MtsValue target, MtsVarargs args )
+    protected MtsVarargs getResults( MtsValue target, MtsVarargs args )
     {
         return target.call( args );
     }
     
-    protected void pushResults( MtsFrame frame, MtsValue result )
+    protected void pushResults( MtsFrame frame, MtsVarargs results )
     {
-        if ( result.isVarArgs() )
+        if ( results instanceof MtsTailcall )
         {
-            if ( result instanceof MtsTailcall )
-            {
-                result = ( (MtsTailcall) result ).evaluate();
-                if ( !result.isVarArgs() )
-                    result = MtsVarargs.of( result );
-            }
-            
-            // nReturn is -1 if the call site is the last formal parameter of a call
-            // We return the varargs as-is, so they can be expanded by the following call
-            if ( _nReturn == -1 )
-            {
-                frame.push( result );
-            }
-            else
-            {
-                frame.push( result.asVarArgs(), _nReturn );
-            }
+            results = ( (MtsTailcall) results ).evaluate();
+        }
+        
+        if ( _nReturn == 0 )
+            return;
+        
+        // nReturn is -1 if the call site is the last formal parameter of a call
+        // We return the varargs as-is, so they can be expanded by the following call
+        if ( _nReturn == -1 )
+        {
+            frame.push( results );
         }
         else
         {
-            frame.push( result );
-            
-            if ( _nReturn != -1 )
-            {
-                frame.pushNil( _nReturn - 1 );
-            }
+            frame.push( results, _nReturn );
         }
     }
     

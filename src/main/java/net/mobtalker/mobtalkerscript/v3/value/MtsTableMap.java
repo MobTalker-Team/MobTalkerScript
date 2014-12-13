@@ -20,7 +20,7 @@ import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.v3.ScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.MtsScriptRuntimeException;
 
 /**
  * A HashMap specifically tailored for MobTalkerScript.
@@ -219,7 +219,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     public MtsValue get( Object key )
     {
         Map.Entry<MtsValue, MtsValue> result = getEntry( key );
-        return result == null ? NIL : result.getValue();
+        return result == null ? Nil : result.getValue();
     }
     
     public Entry<MtsValue, MtsValue> getEntry( Object key )
@@ -243,7 +243,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         assert key != null : "key was null";
         
         if ( key.isNil() )
-            throw new ScriptRuntimeException( "table index is nil" );
+            throw new MtsScriptRuntimeException( "table index is nil" );
         
         if ( value.isNil() )
             return remove( key );
@@ -267,7 +267,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         
         ensureCapacity( _count );
         
-        return NIL;
+        return Nil;
     }
     
     @Override
@@ -288,14 +288,14 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     /**
      * Contains-and-Remove
      * <p>
-     * Removes and returns the entry associated with the specified key in this table. Returns {@link #NIL} if this table
+     * Removes and returns the entry associated with the specified key in this table. Returns {@link #Nil} if this table
      * contained no mapping for this key.
      */
     @Override
     public MtsValue remove( Object key )
     {
         if ( !( key instanceof MtsValue ) )
-            return NIL;
+            return Nil;
         
         int hash = getHashFor( (MtsValue) key );
         int i = indexFor( hash, _entries.length );
@@ -322,7 +322,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             e = next;
         }
         
-        return NIL;
+        return Nil;
     }
     
     // ========================================
@@ -352,8 +352,8 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     /**
      * Returns the entry that follows (in arbitrary order) the entry associated with the given key.
      * <p>
-     * If <tt>key</tt> is {@link #NIL} the result is the same as {@link #getFirst()}. <br/>
-     * If no entry for <tt>key</tt> exists in this table a {@link ScriptRuntimeException} is thrown.
+     * If <tt>key</tt> is {@link #Nil} the result is the same as {@link #getFirst()}. <br/>
+     * If no entry for <tt>key</tt> exists in this table a {@link MtsScriptRuntimeException} is thrown.
      * <p>
      * If there are no entries after <tt>key</tt> the return value is <code>null</code>.
      */
@@ -372,7 +372,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
                 break;
         
         if ( next == null )
-            throw new ScriptRuntimeException( "invalid key" );
+            throw new MtsScriptRuntimeException( "invalid key" );
         
         next = next.next;
         if ( next == null )

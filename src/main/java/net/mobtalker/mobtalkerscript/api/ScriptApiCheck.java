@@ -17,7 +17,7 @@
 package net.mobtalker.mobtalkerscript.api;
 
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
-import net.mobtalker.mobtalkerscript.v3.BadArgumentException;
+import net.mobtalker.mobtalkerscript.v3.MtsArgumentException;
 import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
 public class ScriptApiCheck
@@ -28,7 +28,7 @@ public class ScriptApiCheck
         
         EntityReaction result = EntityReaction.forName( s );
         if ( result == null )
-            throw new BadArgumentException( i, "'%s' is not a valid reaction", s );
+            throw new MtsArgumentException( i, "'%s' is not a valid reaction", s );
         
         return result;
     }

@@ -102,7 +102,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
             return null;
         
         if ( _list.size() > 0 )
-            return new MtsTable.Entry( MtsValue.ONE, _list.get( 0 ) );
+            return new MtsTable.Entry( MtsNumber.One, _list.get( 0 ) );
         
         return (MtsTable.Entry) _map.getFirst();
     }
@@ -126,7 +126,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
             return (MtsTable.Entry) _map.getNext( key );
         
         int next = key.asNumber().toJavaInt();
-        return new MtsTable.Entry( valueOf( next ), _list.get( next ) );
+        return new MtsTable.Entry( MtsNumber.of( next ), _list.get( next ) );
     }
     
     public MtsTable.Entry getINext( MtsNumber key )
@@ -144,7 +144,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
             return null;
         
         int next = key + 1;
-        return new MtsTable.Entry( valueOf( next ), _list.get( next ) );
+        return new MtsTable.Entry( MtsNumber.of( next ), _list.get( next ) );
     }
     
     // ========================================
@@ -162,14 +162,14 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
      * <p>
      * First checks if <code>key</code> is present in this table.<br/>
      * If it is, call {@link #rawget(MtsValue) getRaw}.<br/>
-     * If it is not, look for a {@value MtsValue#__INDEX} meta tag.
+     * If it is not, look for a {@value MtsValue#__index} meta tag.
      * <p>
      * If there is no meta tag, call {@link #rawget(MtsValue) getRaw}.<br/>
      * If the tag is a table, repeat the operation on it.<br/>
      * Otherwise attempt to call it with <code>this</code> and <code>key</code> as the arguments.
      *
      * @see #rawget(MtsValue)
-     * @see MtsValue#__INDEX
+     * @see MtsValue#__index
      */
     @Override
     public MtsValue doGet( MtsValue key )
@@ -177,7 +177,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
         assert key != null : "key cannot be null";
         
         if ( isEmpty() || key.isNil() )
-            return NIL;
+            return Nil;
         
         MtsValue result = _list.get( key );
         return result.isNil() ? _map.get( key ) : result;
@@ -193,7 +193,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
         }
         else
         {
-            setEntry( valueOf( i + 1 ), value );
+            setEntry( MtsNumber.of( i + 1 ), value );
         }
     }
     
@@ -259,9 +259,9 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     // ========================================
     
     @Override
-    protected MtsNumber doGetLength()
+    public MtsNumber getLength()
     {
-        return valueOf( _list.size() );
+        return MtsNumber.of( _list.size() );
     }
     
     // ========================================
@@ -289,7 +289,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     @Override
     public MtsString toMtsString()
     {
-        return valueOf( toString() );
+        return MtsString.of( toString() );
     }
     
     @Override
@@ -398,7 +398,7 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
         public TableIterator( MtsTable table )
         {
             _table = table;
-            _next = table.getNext( NIL );
+            _next = table.getNext( Nil );
         }
         
         // ========================================

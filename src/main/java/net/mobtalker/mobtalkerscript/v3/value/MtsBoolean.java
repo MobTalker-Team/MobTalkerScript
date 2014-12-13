@@ -18,9 +18,21 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 public class MtsBoolean extends MtsValue
 {
+    public static final MtsBoolean True = new MtsBoolean( true );
+    public static final MtsBoolean False = new MtsBoolean( false );
+    
+    // ========================================
+    
+    public static MtsBoolean of( boolean b )
+    {
+        return b ? True : False;
+    }
+    
+    // ========================================
+    
     public static MtsBoolean parse( String s )
     {
-        return valueOf( Boolean.parseBoolean( s ) );
+        return of( Boolean.parseBoolean( s ) );
     }
     
     public static MtsBoolean parse( MtsString s )
@@ -31,7 +43,7 @@ public class MtsBoolean extends MtsValue
     public static MtsBoolean parse( MtsNumber n )
     {
         int i = (int) n.toJavaDouble();
-        return valueOf( i != 0.0D );
+        return of( i != 0.0D );
     }
     
     // ========================================
@@ -50,24 +62,24 @@ public class MtsBoolean extends MtsValue
         _obj = Boolean.valueOf( value );
         
         _string = Boolean.toString( value );
-        _stringValue = valueOf( _string );
+        _stringValue = MtsString.of( _string );
     }
     
     // ========================================
     
     public MtsBoolean or( MtsBoolean other )
     {
-        return valueOf( _value || other._value );
+        return of( _value || other._value );
     }
     
     public MtsBoolean and( MtsBoolean other )
     {
-        return valueOf( _value && other._value );
+        return of( _value && other._value );
     }
     
     public MtsBoolean not()
     {
-        return valueOf( !_value );
+        return of( !_value );
     }
     
     // ========================================
@@ -106,22 +118,18 @@ public class MtsBoolean extends MtsValue
         return this;
     }
     
-    public boolean toJavaValue()
-    {
-        return _value;
-    }
+    // ========================================
     
+    @Override
     public boolean isTrue()
     {
         return _value;
     }
     
-    // ========================================
-    
     @Override
     public Boolean toJava()
     {
-        return Boolean.valueOf( _value );
+        return _obj;
     }
     
     @Override

@@ -14,28 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.mobtalker.mobtalkerscript.v3.instruction;
+package net.mobtalker.mobtalkerscript.v3;
 
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-import net.mobtalker.mobtalkerscript.v3.MtsFrame;
-import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.MtsType;
 
-public class InstrCallNoArgsNoReturn extends InstrCall
+public class MtsArgumentException extends MtsScriptRuntimeException
 {
-    /* package */InstrCallNoArgsNoReturn()
+    public MtsArgumentException( String msg, Object... args )
     {
-        super( 0, 0 );
+        super( msg, args );
     }
     
-    // ========================================
-    
-    @Override
-    protected final MtsVarargs getCallArgs( MtsFrame frame )
+    public MtsArgumentException( int argIndex, String msg, Object... args )
     {
-        return EMPTY_VARARGS;
+        super( "bad argument #" + argIndex + " (" + msg + ")", args );
     }
     
-    @Override
-    protected final void pushResults( MtsFrame frame, MtsValue result )
-    {}
+    public MtsArgumentException( MtsType expected, MtsType actual )
+    {
+        super( "bad argument (%s expected, got %s)", expected, actual );
+    }
+    
+    public MtsArgumentException( int argIndex, MtsType expected, MtsType actual )
+    {
+        super( "bad argument #%s (%s expected, got %s)", argIndex, expected, actual );
+    }
 }

@@ -26,7 +26,7 @@ import java.util.Arrays;
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.SourcePosition;
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
-import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
+import net.mobtalker.mobtalkerscript.v3.value.*;
 
 public class FunctionBinaryReader
 {
@@ -71,8 +71,8 @@ public class FunctionBinaryReader
         for ( int i = 0; i < nConstants; i++ )
         {
             constants[i] = stream.readBoolean()
-                    ? MtsValue.valueOf( stream.readUTF() )
-                    : MtsValue.valueOf( stream.readDouble() );
+                    ? MtsString.of( stream.readUTF() )
+                    : MtsNumber.of( stream.readDouble() );
         }
         
         int nLocals = stream.readUnsignedByte();

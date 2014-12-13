@@ -16,6 +16,7 @@
  */
 package net.mobtalker.mobtalkerscript.v3;
 
+import static net.mobtalker.mobtalkerscript.v3.value.MtsMetaMethods.*;
 import static net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNatives.*;
 
 import java.io.*;
@@ -31,7 +32,7 @@ public class MtsGlobals extends MtsTable
     
     // ========================================
     
-    public static final MtsString VERSION = valueOf( "3.0.1-beta" );
+    public static final MtsString VERSION = MtsString.of( "3.0.1-beta" );
     public static final int VERSION_MAJOR = 3;
     public static final int VERSION_MINOR = 0;
     
@@ -67,8 +68,8 @@ public class MtsGlobals extends MtsTable
     {
         MtsTable lib = createLibrary( MtsStringLib.class );
         MtsTable mt = new MtsTable( 0, 2 );
-        mt.set( __INDEX, lib );
-        mt.set( __METATABLE, TRUE );
+        mt.set( __index, lib );
+        mt.set( __metatable, MtsBoolean.True );
         MtsType.STRING.setMetaTable( mt );
     }
     
@@ -80,7 +81,7 @@ public class MtsGlobals extends MtsTable
     
     public void loadLibrary( MtsValue lib )
     {
-        lib.call( EMPTY_STRING, this );
+        lib.call( MtsString.Empty, this );
     }
     
     // ========================================

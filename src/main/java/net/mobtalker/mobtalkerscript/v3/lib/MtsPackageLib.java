@@ -101,7 +101,7 @@ public class MtsPackageLib
                 }
                 catch ( Exception ex )
                 {
-                    throw new ScriptEngineException( ex );
+                    throw new MtsEngineException( ex );
                 }
                 
                 lib = new MtsClosure( p, _G ).call();
@@ -111,6 +111,6 @@ public class MtsPackageLib
             }
         }
         
-        throw new ScriptRuntimeException( "module '%s' not found", libName );
+        throw new MtsScriptRuntimeException( "module '%s' not found", libName );
     }
 }

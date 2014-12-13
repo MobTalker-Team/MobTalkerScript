@@ -21,7 +21,6 @@ import static com.google.common.base.Strings.*;
 import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v3.compiler.CompilerConstants.*;
 import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -421,7 +420,7 @@ public class MtsCompiler extends Mts3BaseListener
         {
             return _currentFunction.declareLocal( name );
         }
-        catch ( ScriptParserException ex )
+        catch ( MtsParserException ex )
         {
             throw new MtsSyntaxError( _sourceName, _curPosition, ex.getMessage() );
         }
@@ -486,7 +485,7 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void loadCharString( String s )
     {
-        loadConstant( valueOf( cleanString( s ) ) );
+        loadConstant( MtsString.of( cleanString( s ) ) );
     }
     
     public void loadInterpolatedString( String s )
@@ -512,7 +511,7 @@ public class MtsCompiler extends Mts3BaseListener
     public void loadBoolean( MtsBoolean b )
     {
         CompilerLog.info( "Load " + b.toString() );
-        addInstr( b == TRUE ? InstrLoadTrue() : InstrLoadFalse() );
+        addInstr( b == MtsBoolean.True ? InstrLoadTrue() : InstrLoadFalse() );
     }
     
     public void loadVarargs( int count )
@@ -541,7 +540,7 @@ public class MtsCompiler extends Mts3BaseListener
         { // Global
             loadEnvironment();
             
-            int constant = _currentFunction.getConstantIndex( valueOf( name ) );
+            int constant = _currentFunction.getConstantIndex( MtsString.of( name ) );
             addInstr( InstrLoadC( constant ) );
             addInstr( InstrStoreT() );
         }
@@ -570,7 +569,7 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void loadFromTable( String field )
     {
-        loadFromTable( valueOf( field ) );
+        loadFromTable( MtsString.of( field ) );
     }
     
     public void loadFromTable( MtsValue field )
@@ -590,7 +589,7 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void storeInTable( String field )
     {
-        storeInTable( valueOf( field ) );
+        storeInTable( MtsString.of( field ) );
     }
     
     public void storeInTable( MtsValue field )
@@ -603,7 +602,7 @@ public class MtsCompiler extends Mts3BaseListener
     {
         CompilerLog.info( "Load Method: " + name );
         
-        int index = _currentFunction.getConstantIndex( valueOf( name ) );
+        int index = _currentFunction.getConstantIndex( MtsString.of( name ) );
         addInstr( InstrLoadM( index ) );
     }
     
@@ -1077,7 +1076,7 @@ public class MtsCompiler extends Mts3BaseListener
     @Override
     public void enterNameField( NameFieldContext ctx )
     {
-        loadConstant( valueOf( ctx.Field.getText() ) );
+        loadConstant( MtsString.of( ctx.Field.getText() ) );
         visit( ctx.Expr );
     }
     
@@ -1233,7 +1232,7 @@ public class MtsCompiler extends Mts3BaseListener
             }
             
             loadLocal( choiceIndex );
-            loadConstant( valueOf( i + 1 ) );
+            loadConstant( MtsNumber.of( i + 1 ) );
             logicOperation( "==" );
             endIfCondition();
             visit( ctx.Options.get( i ).Block );
@@ -1285,7 +1284,7 @@ public class MtsCompiler extends Mts3BaseListener
         }
         else
         {
-            loadConstant( ONE );
+            loadConstant( MtsNumber.One );
         }
         
         enterNumericForLoop( ctx.Var.getText() );
@@ -1457,7 +1456,7 @@ public class MtsCompiler extends Mts3BaseListener
         }
         else
         {
-            loadConstant( valueOf( "scene" ) );
+            loadConstant( MtsString.of( "scene" ) );
         }
         
         callFunction( 1, 0 );

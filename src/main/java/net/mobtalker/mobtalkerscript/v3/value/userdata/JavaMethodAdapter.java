@@ -62,7 +62,7 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
     // ========================================
     
     @Override
-    public MtsValue call( MtsVarargs args )
+    public MtsVarargs call( MtsVarargs args )
     {
         Object instance = getCallInstance( args );
         Object[] convertedArgs = getCallArguments( args, _nParams );
@@ -75,17 +75,17 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
         catch ( InvocationTargetException ex )
         {
             Throwable cause = ex.getCause();
-            ScriptRuntimeException srex;
-            if ( cause instanceof ScriptRuntimeException )
+            MtsScriptRuntimeException srex;
+            if ( cause instanceof MtsScriptRuntimeException )
             {
-                srex = (ScriptRuntimeException) cause;
+                srex = (MtsScriptRuntimeException) cause;
             }
             else
             {
                 String msg = cause.getMessage();
                 StackTraceElement ste = cause.getStackTrace()[0];
                 
-                srex = new ScriptRuntimeException( msg );
+                srex = new MtsScriptRuntimeException( msg );
                 srex.addStackTraceElement( ste.toString() );
             }
             
@@ -94,12 +94,12 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
         }
         catch ( Exception ex )
         {
-            throw new ScriptEngineException( ex );
+            throw new MtsEngineException( ex );
         }
         
         if ( result == null )
-            return EMPTY_VARARGS;
+            return MtsVarargs.Empty;
         
-        return (MtsValue) result;
+        return result instanceof MtsVarargs ? (MtsVarargs) result : MtsVarargs.of( (MtsValue) result );
     }
 }

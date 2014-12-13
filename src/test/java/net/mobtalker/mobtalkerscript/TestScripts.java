@@ -16,8 +16,7 @@
  */
 package net.mobtalker.mobtalkerscript;
 
-import java.io.*;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.*;
@@ -28,28 +27,12 @@ import org.junit.*;
 
 public class TestScripts
 {
-    public static void main( String[] args ) throws Exception
-    {
-        setUp();
-        TestScripts test = new TestScripts();
-        
-        BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
-        in.readLine();
-        
-        test.testCalls();
-        test.testConstructs();
-        test.testVararg();
-        
-        System.out.println( "Done!" );
-        in.readLine();
-    }
-    
     @BeforeClass
     public static void setUp() throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-        MtsLog.CompilerLog.setLevel( Level.OFF );
-        MtsLog.EngineLog.setLevel( Level.OFF );
+//        MtsLog.CompilerLog.setLevel( Level.ALL );
+//        MtsLog.EngineLog.setLevel( Level.ALL );
     }
     
     private void run( String path ) throws Exception

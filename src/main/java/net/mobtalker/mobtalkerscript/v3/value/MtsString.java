@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.v3.ScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.MtsArithmeticException;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -28,7 +28,11 @@ import com.google.common.collect.Maps;
 
 public class MtsString extends MtsValue
 {
-    private static final HashMap<String, MtsString> CACHE = Maps.newHashMapWithExpectedSize( 2 << 10 );
+    private static final HashMap<String, MtsString> HEAP = Maps.newHashMapWithExpectedSize( 1028 );
+    
+    // ========================================
+    
+    public static final MtsString Empty = new MtsString( "" );
     
     // ========================================
     
@@ -36,22 +40,17 @@ public class MtsString extends MtsValue
     {
         checkNotNull( s );
         
-        if ( s.length() == 0 )
-            return EMPTY_STRING;
+        int length = s.length();
+        if ( length == 0 )
+            return Empty;
+        if ( length > 32 )
+            return new MtsString( s );
         
-        MtsString result = CACHE.get( s );
-        
-        if ( ( result == null ) )
+        MtsString result = HEAP.get( s );
+        if ( result == null )
         {
-            if ( s.length() <= 32 )
-            {
-                result = new MtsString( s );
-                CACHE.put( s, result );
-            }
-            else
-            {
-                return new MtsString( s );
-            }
+            result = new MtsString( s );
+            HEAP.put( s, result );
         }
         
         return result;
@@ -59,78 +58,38 @@ public class MtsString extends MtsValue
     
     // ========================================
     
-    public static MtsString concat( MtsValue value )
-    {
-        return value.toMtsString();
-    }
-    
-    public static MtsString concat( MtsValue first, MtsValue second )
-    {
-        return of( first.toMtsString().toJava()
-                   + second.toMtsString().toJava() );
-    }
-    
-    public static MtsString concat( MtsValue first, MtsValue second, MtsValue third )
-    {
-        return of( first.toMtsString().toJava()
-                   + second.toMtsString().toJava()
-                   + third.toMtsString().toJava() );
-    }
-    
-    public static MtsString concat( MtsValue first, MtsValue second, MtsValue third, MtsValue... others )
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append( first );
-        sb.append( second );
-        sb.append( third );
-        
-        if ( ( others != null ) && ( others.length > 0 ) )
-        {
-            for ( MtsValue value : others )
-            {
-                sb.append( value.toMtsString().toJava() );
-            }
-        }
-        
-        return of( sb.toString() );
-    }
-    
     public static MtsString concat( MtsVarargs values )
     {
         if ( ( values == null ) || values.isEmpty() )
-            return EMPTY_STRING;
+            return Empty;
         
-        int elements = values.count();
-        if ( elements == 1 )
+        switch ( values.count() )
         {
-            return values.get( 0 ).toMtsString();
-        }
-        else if ( elements > 2 )
-        {
-            StringBuilder sb = new StringBuilder();
-            for ( int i = 0; i < values.count(); i++ )
-            {
-                MtsValue value = values.get( i );
-                sb.append( value.toMtsString().toJava() );
-            }
-            
-            return of( sb.toString() );
-        }
-        else
-        {
-            return concat( values.get( 0 ), values.get( 1 ) );
+            case 1:
+                return values.get( 0 ).toMtsString();
+            case 2:
+                return values.get( 0 ).concat( values.get( 1 ) );
+            default:
+                StringBuilder sb = new StringBuilder();
+                for ( int i = 0; i < values.count(); i++ )
+                {
+                    MtsValue value = values.get( i );
+                    sb.append( value.toMtsString().toJava() );
+                }
+                
+                return of( sb.toString() );
         }
     }
     
     public static MtsString concat( Iterable<MtsValue> values )
     {
         if ( ( values == null ) )
-            return EMPTY_STRING;
+            return Empty;
         
         Iterator<MtsValue> iter = values.iterator();
         
         if ( !iter.hasNext() )
-            return EMPTY_STRING;
+            return Empty;
         
         MtsValue value = iter.next();
         if ( !iter.hasNext() )
@@ -149,6 +108,7 @@ public class MtsString extends MtsValue
     // ========================================
     
     private final String _value;
+    private MtsNumber _numberValue;
     
     // ========================================
     
@@ -161,9 +121,9 @@ public class MtsString extends MtsValue
     
     public MtsString intern()
     {
-        if ( !CACHE.containsKey( _value ) )
+        if ( !HEAP.containsKey( _value ) )
         {
-            CACHE.put( _value, this );
+            HEAP.put( _value, this );
             return this;
         }
         else
@@ -172,36 +132,150 @@ public class MtsString extends MtsValue
         }
     }
     
+    private MtsNumber coerceToNumber()
+    {
+        MtsNumber n = _numberValue;
+        if ( n == null )
+            _numberValue = n = MtsNumber.parse( _value );
+        if ( n.isNaN() )
+            throw new MtsArithmeticException( getType() );
+        return n;
+    }
+    
     // ========================================
     
     @Override
     protected MtsValue doGet( MtsValue key )
     {
-        return NIL;
+        return Nil;
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsNumber getLength()
+    {
+        return MtsNumber.of( _value.length() );
     }
     
     @Override
-    protected MtsBoolean doIsLess( MtsValue other )
+    public MtsValue unaryMinus()
     {
-        if ( !other.isString() )
-            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
-        
-        return valueOf( _value.compareTo( other.asString().toJava() ) < 0 );
+        return coerceToNumber().unaryMinus();
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsValue add( MtsValue b )
+    {
+        return b.addTo( coerceToNumber() );
     }
     
     @Override
-    protected MtsBoolean doIsLessOrEqual( MtsValue other )
+    protected MtsValue addTo( MtsNumber a )
     {
-        if ( !other.isString() )
-            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
-        
-        return valueOf( _value.compareTo( other.asString().toJava() ) <= 0 );
+        return a.add( coerceToNumber() );
     }
     
     @Override
-    protected MtsNumber doGetLength()
+    public MtsValue substract( MtsValue b )
     {
-        return valueOf( _value.length() );
+        return b.substractFrom( coerceToNumber() );
+    }
+    
+    @Override
+    protected MtsValue substractFrom( MtsNumber a )
+    {
+        return a.substract( coerceToNumber() );
+    }
+    
+    @Override
+    public MtsValue multiplyBy( MtsValue b )
+    {
+        return b.multiplyWith( coerceToNumber() );
+    }
+    
+    @Override
+    protected MtsValue multiplyWith( MtsNumber a )
+    {
+        return a.multiplyBy( coerceToNumber() );
+    }
+    
+    @Override
+    public MtsValue divideBy( MtsValue b )
+    {
+        return b.divideFrom( coerceToNumber() );
+    }
+    
+    @Override
+    protected MtsValue divideFrom( MtsNumber a )
+    {
+        return a.divideBy( coerceToNumber() );
+    }
+    
+    @Override
+    public MtsValue powerTo( MtsValue b )
+    {
+        return b.powerOf( coerceToNumber() );
+    }
+    
+    @Override
+    protected MtsValue powerOf( MtsNumber a )
+    {
+        return a.powerTo( coerceToNumber() );
+    }
+    
+    @Override
+    public MtsValue modulo( MtsValue b )
+    {
+        return b.moduloOf( coerceToNumber() );
+    }
+    
+    @Override
+    protected MtsValue moduloOf( MtsNumber a )
+    {
+        return a.modulo( coerceToNumber() );
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsString concat( MtsValue b )
+    {
+        return b.concatTo( _value );
+    }
+    
+    @Override
+    protected MtsString concatTo( String a )
+    {
+        return MtsString.of( a.concat( _value ) );
+    }
+    
+    // ========================================
+    
+    @Override
+    public MtsBoolean isLessThen( MtsValue other )
+    {
+        return isGreaterThen( this );
+    }
+    
+    @Override
+    protected MtsBoolean isGreaterThen( MtsString other )
+    {
+        return MtsBoolean.of( _value.compareTo( other.toJava() ) >= 0 );
+    }
+    
+    @Override
+    public MtsBoolean isLessThenOrEqual( MtsValue other )
+    {
+        return isGreaterThenOrEqual( this );
+    }
+    
+    @Override
+    protected MtsBoolean isGreaterThenOrEqual( MtsString other )
+    {
+        return MtsBoolean.of( _value.compareTo( other.toJava() ) > 0 );
     }
     
     // ========================================
@@ -245,6 +319,8 @@ public class MtsString extends MtsValue
     {
         return _value;
     }
+    
+    // ========================================
     
     @Override
     public String toString()

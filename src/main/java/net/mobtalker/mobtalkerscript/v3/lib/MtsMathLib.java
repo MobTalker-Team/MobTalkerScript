@@ -17,71 +17,70 @@
 package net.mobtalker.mobtalkerscript.v3.lib;
 
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-import net.mobtalker.mobtalkerscript.v3.BadArgumentException;
+import net.mobtalker.mobtalkerscript.v3.MtsArgumentException;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 import net.mobtalker.mobtalkerscript.v3.value.userdata.*;
 
 public final class MtsMathLib
 {
     @MtsNativeField
-    public static final MtsNumber PI = valueOf( Math.PI );
+    public static final MtsNumber PI = MtsNumber.of( Math.PI );
     
     @MtsNativeField
-    public static final MtsNumber E = valueOf( Math.E );
+    public static final MtsNumber E = MtsNumber.of( Math.E );
     
     @MtsNativeField
-    public static final MtsNumber Epsilon = valueOf( Double.longBitsToDouble( 0x3ca0000000000000L ) );
+    public static final MtsNumber Epsilon = MtsNumber.of( Double.longBitsToDouble( 0x3ca0000000000000L ) );
     
     // ========================================
     
     @MtsNativeFunction
-    public static MtsNumber abs( MtsValue arg1 )
+    public static MtsNumber abs( MtsValue arg )
     {
-        return valueOf( Math.abs( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.abs( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber ceil( MtsValue arg1 )
+    public static MtsNumber ceil( MtsValue arg )
     {
-        return valueOf( Math.ceil( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.ceil( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber cos( MtsValue arg1 )
+    public static MtsNumber cos( MtsValue arg )
     {
-        return valueOf( Math.cos( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.cos( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber cosH( MtsValue arg1 )
+    public static MtsNumber cosH( MtsValue arg )
     {
-        return valueOf( Math.cosh( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.cosh( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber floor( MtsValue arg1 )
+    public static MtsNumber floor( MtsValue arg )
     {
-        return valueOf( Math.floor( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.floor( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber log( MtsValue arg1 )
+    public static MtsNumber log( MtsValue arg )
     {
-        return valueOf( Math.log( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.log( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber log10( MtsValue arg1 )
+    public static MtsNumber log10( MtsValue arg )
     {
-        return valueOf( Math.log10( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.log10( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
     public static MtsNumber max( MtsVarargs args )
     {
         if ( args.isEmpty() )
-            throw new BadArgumentException( "got no value" );
+            throw new MtsArgumentException( "got no value" );
         
         double result = checkNumber( args, 0 );
         
@@ -90,14 +89,14 @@ public final class MtsMathLib
             result = Math.max( result, checkNumber( args, i ) );
         }
         
-        return valueOf( result );
+        return MtsNumber.of( result );
     }
     
     @MtsNativeFunction
     public static MtsNumber min( MtsVarargs args )
     {
         if ( args.isEmpty() )
-            throw new BadArgumentException( "got no value" );
+            throw new MtsArgumentException( "got no value" );
         
         double result = checkNumber( args, 0 );
         
@@ -106,82 +105,82 @@ public final class MtsMathLib
             result = Math.min( result, checkNumber( args, i ) );
         }
         
-        return valueOf( result );
+        return MtsNumber.of( result );
     }
     
     @MtsNativeFunction
-    public static MtsNumber pow( MtsValue arg1, MtsValue arg2 )
+    public static MtsNumber pow( MtsValue arg, MtsValue arg2 )
     {
-        return valueOf( Math.pow( checkNumber( arg1, 0 ), checkNumber( arg2, 1 ) ) );
+        return MtsNumber.of( Math.pow( checkNumber( arg, 0 ), checkNumber( arg2, 1 ) ) );
     }
     
     private static final java.util.Random _rnd = new java.util.Random();
     
     @MtsNativeFunction
-    public static MtsNumber random( MtsValue arg1, MtsValue arg2 )
+    public static MtsNumber random( MtsValue arg, MtsValue arg2 )
     {
         if ( arg2.isNil() )
         {
-            if ( arg1.isNil() )
-                return valueOf( _rnd.nextDouble() );
+            if ( arg.isNil() )
+                return MtsNumber.of( _rnd.nextDouble() );
             
-            return valueOf( 1 + _rnd.nextInt( checkInteger( arg1, 0 ) ) );
+            return MtsNumber.of( 1 + _rnd.nextInt( checkInteger( arg, 0 ) ) );
         }
         
-        return valueOf( checkInteger( arg1, 0 ) + _rnd.nextInt( checkInteger( arg2, 1 ) ) );
+        return MtsNumber.of( checkInteger( arg, 0 ) + _rnd.nextInt( checkInteger( arg2, 1 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber round( MtsValue arg1 )
+    public static MtsNumber round( MtsValue arg )
     {
-        return valueOf( Math.round( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.round( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber sin( MtsValue arg1 )
+    public static MtsNumber sin( MtsValue arg )
     {
-        return valueOf( Math.sin( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.sin( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber sinH( MtsValue arg1 )
+    public static MtsNumber sinH( MtsValue arg )
     {
-        return valueOf( Math.sinh( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.sinh( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber sign( MtsValue arg1 )
+    public static MtsNumber sign( MtsValue arg )
     {
-        return valueOf( Math.signum( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.signum( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber sqrt( MtsValue arg1 )
+    public static MtsNumber sqrt( MtsValue arg )
     {
-        return valueOf( Math.sqrt( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.sqrt( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber tan( MtsValue arg1 )
+    public static MtsNumber tan( MtsValue arg )
     {
-        return valueOf( Math.tan( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.tan( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber tanH( MtsValue arg1 )
+    public static MtsNumber tanH( MtsValue arg )
     {
-        return valueOf( Math.tanh( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.tanh( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber toDegrees( MtsValue arg1 )
+    public static MtsNumber toDegrees( MtsValue arg )
     {
-        return valueOf( Math.toDegrees( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.toDegrees( checkNumber( arg, 0 ) ) );
     }
     
     @MtsNativeFunction
-    public static MtsNumber toRadians( MtsValue arg1 )
+    public static MtsNumber toRadians( MtsValue arg )
     {
-        return valueOf( Math.toRadians( checkNumber( arg1, 0 ) ) );
+        return MtsNumber.of( Math.toRadians( checkNumber( arg, 0 ) ) );
     }
 }

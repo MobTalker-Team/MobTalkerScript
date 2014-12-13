@@ -41,7 +41,7 @@ public class InstanceAdapter extends MtsUserdata
             method = _classAdapter.getMethod( key.asString().toJava() );
         }
         
-        return method == null ? NIL : method;
+        return method == null ? Nil : method;
     }
     
     // ========================================

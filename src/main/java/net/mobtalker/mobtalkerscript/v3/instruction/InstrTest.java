@@ -16,8 +16,6 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-
 import java.io.*;
 
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
@@ -42,7 +40,7 @@ public final class InstrTest extends MtsJumpInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        if ( !isTrue( frame.pop() ) )
+        if ( !frame.pop().isTrue() )
         {
             super.execute( frame );
         }

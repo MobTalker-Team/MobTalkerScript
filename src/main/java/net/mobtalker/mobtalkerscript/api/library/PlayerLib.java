@@ -18,9 +18,8 @@ package net.mobtalker.mobtalkerscript.api.library;
 
 import static net.mobtalker.mobtalkerscript.api.ScriptApiConstants.*;
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.api.*;
-import net.mobtalker.mobtalkerscript.v3.BadArgumentException;
+import net.mobtalker.mobtalkerscript.v3.MtsArgumentException;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
@@ -36,7 +35,7 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     @MtsNativeFunction
     public MtsString getGameMode()
     {
-        return valueOf( _logic.getGameMode() );
+        return MtsString.of( _logic.getGameMode() );
     }
     
     // ========================================
@@ -44,7 +43,7 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     @MtsNativeFunction
     public MtsNumber getArmor()
     {
-        return valueOf( _logic.getArmor() );
+        return MtsNumber.of( _logic.getArmor() );
     }
     
     // ========================================
@@ -52,9 +51,9 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     @MtsNativeFunction
     public MtsVarargs getExperience()
     {
-        return MtsVarargs.of( valueOf( _logic.getExperienceLevel() ),
-                              valueOf( _logic.getExperience() ),
-                              valueOf( _logic.getExperienceRequired() ) );
+        return MtsVarargs.of( MtsNumber.of( _logic.getExperienceLevel() ),
+                              MtsNumber.of( _logic.getExperience() ),
+                              MtsNumber.of( _logic.getExperienceRequired() ) );
     }
     
     @MtsNativeFunction
@@ -66,7 +65,7 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     @MtsNativeFunction
     public MtsBoolean takeExperience( MtsValue argAmount )
     {
-        return valueOf( _logic.takeExperience( checkInteger( argAmount, 0 ) ) );
+        return MtsBoolean.of( _logic.takeExperience( checkInteger( argAmount, 0 ) ) );
     }
     
     // ========================================
@@ -76,10 +75,10 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     {
         String name = checkString( argItemName, 0 );
         if ( !_logic.isValidItem( name ) )
-            throw new BadArgumentException( 0, "unknown item name '%s'", name );
+            throw new MtsArgumentException( 0, "unknown item name '%s'", name );
         
-        return valueOf( _logic.getItemCount( name,
-                                             checkInteger( argItemMeta, 1, -1 ) ) );
+        return MtsNumber.of( _logic.getItemCount( name,
+                                                  checkInteger( argItemMeta, 1, -1 ) ) );
     }
     
     @MtsNativeFunction
@@ -87,11 +86,11 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     {
         String name = checkString( argItemName, 0 );
         if ( !_logic.isValidItem( name ) )
-            throw new BadArgumentException( 0, "unknown item name '%s'", name );
+            throw new MtsArgumentException( 0, "unknown item name '%s'", name );
         
-        return valueOf( _logic.giveItems( name,
-                                          checkIntegerWithMinimum( argItemCount, 1, 1, 1 ),
-                                          checkIntegerWithMinimum( argItemMeta, 2, 0, -1 ) ) );
+        return MtsBoolean.of( _logic.giveItems( name,
+                                                checkIntegerWithMinimum( argItemCount, 1, 1, 1 ),
+                                                checkIntegerWithMinimum( argItemMeta, 2, 0, -1 ) ) );
     }
     
     @MtsNativeFunction
@@ -99,11 +98,11 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
     {
         String name = checkString( argItemName, 0 );
         if ( !_logic.isValidItem( name ) )
-            throw new BadArgumentException( 0, "unknown item name '%s'", name );
+            throw new MtsArgumentException( 0, "unknown item name '%s'", name );
         
-        return valueOf( _logic.takeItems( name,
-                                          checkIntegerWithMinimum( argItemCount, 1, 1, 1 ),
-                                          checkIntegerWithMinimum( argItemMeta, 2, 0, -1 ) ) );
+        return MtsBoolean.of( _logic.takeItems( name,
+                                                checkIntegerWithMinimum( argItemCount, 1, 1, 1 ),
+                                                checkIntegerWithMinimum( argItemMeta, 2, 0, -1 ) ) );
     }
     
     @MtsNativeFunction
@@ -115,9 +114,9 @@ public final class PlayerLib extends AbstractUnifiedLib<IPlayerLibLogic>
         for ( ItemInfo item : inventory.getItems() )
         {
             MtsTable info = new MtsTable( 0, 3 );
-            info.set( KEY_ITEM_NAME, valueOf( item.Name ) );
-            info.set( KEY_ITEM_META, valueOf( item.Meta ) );
-            info.set( KEY_ITEM_COUNT, valueOf( inventory.getAmount( item ) ) );
+            info.set( KEY_ITEM_NAME, MtsString.of( item.Name ) );
+            info.set( KEY_ITEM_META, MtsNumber.of( item.Meta ) );
+            info.set( KEY_ITEM_COUNT, MtsNumber.of( inventory.getAmount( item ) ) );
             t.list().add( info );
         }
         

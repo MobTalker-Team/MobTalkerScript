@@ -188,9 +188,6 @@ public class Instructions
     private static final InstrVarargs _varargsAll = new InstrVarargs( -1 );
     private static final InstrVarargs[] _varargs;
     
-    private static final InstrCall _callNoArgsNoReturn;
-    private static final InstrCall[] _callNoReturn;
-    private static final InstrCall[] _callNoArg;
     private static final InstrReturn[] _return;
     
     // ========================================
@@ -254,15 +251,6 @@ public class Instructions
         _varargs = new InstrVarargs[5];
         for ( int i = 0; i < _varargs.length; i++ )
             _varargs[i] = new InstrVarargs( i + 1 );
-        
-        _callNoArgsNoReturn = new InstrCallNoArgsNoReturn();
-        _callNoReturn = new InstrCall[10];
-        _callNoArg = new InstrCall[10];
-        for ( int i = 0; i < 10; i++ )
-        {
-            _callNoReturn[i] = new InstrCallNoReturn( i + 1 );
-            _callNoArg[i] = new InstrCallNoArgs( i + 1 );
-        }
         
         _return = new InstrReturn[10];
         for ( int i = 0; i < _return.length; i++ )
@@ -500,13 +488,6 @@ public class Instructions
     
     public static InstrCall InstrCall( int nArgs, int nReturn )
     {
-        if ( ( nArgs == 0 ) && ( nReturn == 0 ) )
-            return _callNoArgsNoReturn;
-        if ( nArgs == 0 )
-            return new InstrCallNoArgs( nReturn );
-        if ( nReturn == 0 )
-            return new InstrCallNoReturn( nArgs );
-        
         return new InstrCall( nArgs, nReturn );
     }
     

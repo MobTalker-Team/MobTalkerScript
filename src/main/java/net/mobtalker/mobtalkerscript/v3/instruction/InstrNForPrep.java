@@ -19,7 +19,7 @@ package net.mobtalker.mobtalkerscript.v3.instruction;
 import java.io.*;
 
 import net.mobtalker.mobtalkerscript.v3.*;
-import net.mobtalker.mobtalkerscript.v3.value.MtsNumber;
+import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
 /**
  * Jump instruction that only jumps if the top of the stack is not true.
@@ -36,11 +36,11 @@ public final class InstrNForPrep extends MtsIndexedInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        MtsNumber stepVal = frame.pop().asNumber();
-        MtsNumber limitVal = frame.pop().asNumber();
-        MtsNumber loopVal = frame.pop().asNumber();
+        MtsValue stepVal = frame.pop();
+        MtsValue limitVal = frame.pop();
+        MtsValue loopVal = frame.pop();
         
-        loopVal = loopVal.sub( stepVal );
+        loopVal = loopVal.substract( stepVal );
         
         frame.getLocal( _index ).set( loopVal );
         frame.getLocal( _index + 1 ).set( limitVal );

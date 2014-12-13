@@ -18,14 +18,14 @@ package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import java.io.*;
 
-import net.mobtalker.mobtalkerscript.v3.value.MtsNumber;
+import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
-public class InstrSub extends MtsArithmeticInstruction
+public class InstrSub extends MtsBinaryArithmeticInstruction
 {
     @Override
-    protected MtsNumber calculate( MtsNumber a, MtsNumber b )
+    protected MtsValue calculate( MtsValue a, MtsValue b )
     {
-        return a.sub( b );
+        return a.substract( b );
     }
     
     @Override

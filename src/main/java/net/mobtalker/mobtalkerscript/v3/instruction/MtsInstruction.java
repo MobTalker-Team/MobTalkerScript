@@ -25,8 +25,8 @@ public abstract class MtsInstruction
 {
     public static MtsValue getMetaTag( MtsValue a, MtsValue b, MtsString key )
     {
-        MtsValue tag = a.getMetaTag( key );
-        return tag.isNil() ? b.getMetaTag( key ) : tag;
+        MtsValue tag = a.getMetaMethod( key );
+        return tag.isNil() ? b.getMetaMethod( key ) : tag;
     }
     
     // ========================================

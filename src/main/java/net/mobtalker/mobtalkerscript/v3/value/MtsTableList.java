@@ -267,7 +267,7 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     public MtsValue removeLast()
     {
         if ( _limit == 0 )
-            return NIL;
+            return Nil;
         
         _limit--;
         return _entries[_limit];
@@ -305,10 +305,10 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     public MtsValue get( MtsValue key )
     {
         if ( !key.isInteger() )
-            return NIL;
+            return Nil;
         int i = key.asNumber().toJavaInt() - 1;
         if ( ( i < 0 ) || ( _limit <= i ) )
-            return NIL;
+            return Nil;
         
         return _entries[i];
     }
@@ -380,7 +380,7 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
         MtsValue value;
         int i = _limit;
         // ++i is needed for conversion between 1-based and 0-based indices.
-        while ( !( value = map.remove( valueOf( ++i ) ) ).isNil() )
+        while ( !( value = map.remove( MtsNumber.of( ++i ) ) ).isNil() )
         {
             add( value );
         }
@@ -395,7 +395,7 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
         {
             t[i] = null;
             // ++i is needed for conversion between 1-based and 0-based indices.
-            map.put( valueOf( ++i ), value );
+            map.put( MtsNumber.of( ++i ), value );
         }
     }
     

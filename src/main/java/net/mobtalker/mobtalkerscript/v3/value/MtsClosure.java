@@ -51,14 +51,14 @@ public final class MtsClosure extends MtsFunction
     // ========================================
     
     @Override
-    public MtsValue call( MtsVarargs args )
+    public MtsVarargs call( MtsVarargs args )
     {
         MtsFrame frame = new MtsFrame( this, args, _externals );
         try
         {
             return frame.run();
         }
-        catch ( ScriptRuntimeException ex )
+        catch ( MtsScriptRuntimeException ex )
         {
             String source = _prototype.getSource();
             SourcePosition pos = _prototype.getSourcePosition( frame.getInstructionPointer() );

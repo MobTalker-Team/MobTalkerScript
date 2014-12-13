@@ -18,41 +18,18 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 import java.util.*;
 
-import com.google.common.collect.ImmutableList;
-
 public abstract class MtsVarargs extends MtsValue implements Iterable<MtsValue>
 {
+    public static final MtsVarargs Empty = new EmptyVarargs();
+    
+    // ========================================
+    
     public static MtsVarargs of( MtsValue value )
     {
-        return new EvaluatedVarargs( Collections.singletonList( value ) );
+        return new SingletonVarargs( value );
     }
     
-    public static MtsVarargs of( MtsValue e1, MtsValue e2 )
-    {
-        return new EvaluatedVarargs( ImmutableList.of( e1, e2 ) );
-    }
-    
-    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3 )
-    {
-        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3 ) );
-    }
-    
-    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4 )
-    {
-        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3, e4 ) );
-    }
-    
-    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5 )
-    {
-        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3, e4, e5 ) );
-    }
-    
-    public static MtsVarargs of( MtsValue e1, MtsValue e2, MtsValue e3, MtsValue e4, MtsValue e5, MtsValue e6 )
-    {
-        return new EvaluatedVarargs( ImmutableList.of( e1, e2, e3, e4, e5, e6 ) );
-    }
-    
-    public static MtsVarargs of( MtsValue[] values )
+    public static MtsVarargs of( MtsValue... values )
     {
         return new EvaluatedVarargs( Arrays.asList( values ) );
     }
@@ -64,10 +41,7 @@ public abstract class MtsVarargs extends MtsValue implements Iterable<MtsValue>
     
     public static MtsVarargs of( MtsValue first, MtsVarargs rest )
     {
-        if ( rest instanceof EvaluatedVarargs )
-            return new EvaluatedVarargs( first, (EvaluatedVarargs) rest );
-        
-        return EMPTY_VARARGS;
+        return new EvaluatedVarargs( first, rest );
     }
     
     public static MtsVarargs of( MtsValue[] values, MtsVarargs tail )

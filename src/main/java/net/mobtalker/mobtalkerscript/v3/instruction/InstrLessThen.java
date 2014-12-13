@@ -25,7 +25,7 @@ public final class InstrLessThen extends MtsComparisonInstruction
     @Override
     protected MtsBoolean compare( MtsValue a, MtsValue b )
     {
-        return a.isLess( b );
+        return a.isLessThen( b );
     }
     
     @Override

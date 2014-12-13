@@ -16,8 +16,6 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-
 import java.io.*;
 
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
@@ -27,7 +25,7 @@ public class InstrNot extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.push( isTrue( frame.pop() ) ? FALSE : TRUE );
+        frame.push( frame.pop().toMtsBoolean().not() );
     }
     
     @Override

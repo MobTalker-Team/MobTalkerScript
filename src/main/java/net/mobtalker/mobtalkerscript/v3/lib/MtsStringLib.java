@@ -34,7 +34,7 @@ public class MtsStringLib
         String s = checkString( argString, 0 );
         String patternStr = checkString( argPattern, 1 );
         int start = checkInteger( argStart, 2, 1 );
-        boolean plain = isTrue( argPlain );
+        boolean plain = argPlain.isTrue();
         
         if ( start > -1 )
         {
@@ -46,12 +46,12 @@ public class MtsStringLib
         
         if ( matcher.find( start ) )
         {
-            return MtsVarargs.of( valueOf( matcher.start() ),
-                                  valueOf( matcher.end() ) );
+            return MtsVarargs.of( MtsNumber.of( matcher.start() ),
+                                  MtsNumber.of( matcher.end() ) );
         }
         else
         {
-            return NIL;
+            return Nil;
         }
     }
     
@@ -66,13 +66,13 @@ public class MtsStringLib
             format[i] = args.get( i + 1 ).toJava();
         }
         
-        return valueOf( String.format( s, format ) );
+        return MtsString.of( String.format( s, format ) );
     }
     
     @MtsNativeFunction
     public static MtsString lower( MtsValue argString )
     {
-        return valueOf( checkString( argString, 0 ).toLowerCase() );
+        return MtsString.of( checkString( argString, 0 ).toLowerCase() );
     }
     
     @MtsNativeFunction
@@ -90,25 +90,25 @@ public class MtsStringLib
     @MtsNativeFunction
     public static MtsString padLeft( MtsValue argString, MtsValue argFill, MtsValue argLength )
     {
-        return valueOf( StringUtils.leftPad( checkString( argString, 0 ),
-                                             checkInteger( argLength, 2 ),
-                                             checkString( argFill, 1 ) ) );
+        return MtsString.of( StringUtils.leftPad( checkString( argString, 0 ),
+                                                  checkInteger( argLength, 2 ),
+                                                  checkString( argFill, 1 ) ) );
     }
     
     @MtsNativeFunction
     public static MtsString padRight( MtsValue argString, MtsValue argFill, MtsValue argLength )
     {
-        return valueOf( StringUtils.rightPad( checkString( argString, 0 ),
-                                              checkInteger( argLength, 2 ),
-                                              checkString( argFill, 1 ) ) );
+        return MtsString.of( StringUtils.rightPad( checkString( argString, 0 ),
+                                                   checkInteger( argLength, 2 ),
+                                                   checkString( argFill, 1 ) ) );
     }
     
     @MtsNativeFunction
     public static MtsString repeat( MtsValue argString, MtsValue argTimes, MtsValue argSeparator )
     {
-        return valueOf( StringUtils.repeat( checkString( argString, 0 ),
-                                            checkString( argSeparator, 2, "" ),
-                                            checkIntegerWithMinimum( argTimes, 1, 0 ) ) );
+        return MtsString.of( StringUtils.repeat( checkString( argString, 0 ),
+                                                 checkString( argSeparator, 2, "" ),
+                                                 checkIntegerWithMinimum( argTimes, 1, 0 ) ) );
     }
     
     @MtsNativeFunction
@@ -124,7 +124,7 @@ public class MtsStringLib
         
         boolean result = matcher.find();
         if ( !result )
-            return MtsVarargs.of( argString, ZERO );
+            return MtsVarargs.of( argString, MtsNumber.Zero );
         
         int count = 0;
         StringBuffer sb = new StringBuffer();
@@ -137,13 +137,13 @@ public class MtsStringLib
         while ( result && ( count < maxN ) );
         matcher.appendTail( sb );
         
-        return MtsVarargs.of( valueOf( sb.toString() ), valueOf( count ) );
+        return MtsVarargs.of( MtsString.of( sb.toString() ), MtsNumber.of( count ) );
     }
     
     @MtsNativeFunction
     public static MtsString reverse( MtsValue argString )
     {
-        return valueOf( StringUtils.reverse( checkString( argString, 0 ) ) );
+        return MtsString.of( StringUtils.reverse( checkString( argString, 0 ) ) );
     }
     
     @MtsNativeFunction
@@ -159,16 +159,16 @@ public class MtsStringLib
         }
         
         if ( to == -1 )
-            return valueOf( StringUtils.substring( s, from ) );
+            return MtsString.of( StringUtils.substring( s, from ) );
         else
-            return valueOf( StringUtils.substring( s, from, to ) );
+            return MtsString.of( StringUtils.substring( s, from, to ) );
         
     }
     
     @MtsNativeFunction
     public static MtsString upper( MtsValue argString )
     {
-        return valueOf( checkString( argString, 0 ).toUpperCase() );
+        return MtsString.of( checkString( argString, 0 ).toUpperCase() );
     }
     
     // ========================================
@@ -189,18 +189,18 @@ public class MtsStringLib
         // ========================================
         
         @Override
-        public MtsValue call( MtsVarargs args )
+        public MtsVarargs call( MtsVarargs args )
         {
             if ( !_matcher.find( _start++ ) )
-                return NIL;
+                return MtsVarargs.Empty;
             
             if ( _matcher.groupCount() == 0 )
-                return valueOf( _matcher.group() );
+                return MtsVarargs.of( MtsString.of( _matcher.group() ) );
             
             MtsString[] groups = new MtsString[_matcher.groupCount() - 1];
             for ( int i = 0; i < groups.length; ++i )
             {
-                groups[i] = valueOf( _matcher.group( i + 1 ) );
+                groups[i] = MtsString.of( _matcher.group( i + 1 ) );
             }
             
             return MtsVarargs.of( groups );

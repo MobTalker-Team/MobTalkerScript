@@ -16,27 +16,30 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
-import java.util.regex.Pattern;
-
-import net.mobtalker.mobtalkerscript.v3.ScriptRuntimeException;
-
-import org.apache.commons.lang3.StringUtils;
+import net.mobtalker.mobtalkerscript.v3.MtsLengthException;
 
 public final class MtsNumber extends MtsValue
 {
-    private static final MtsNumber[] CACHE = new MtsNumber[256];
+    public static final MtsNumber Zero;
+    public static final MtsNumber One;
     
-    static
-    {
-        for ( int i = 0; i < 256; i++ )
-            CACHE[i] = new MtsNumber( i - 127 );
-    }
+    public static final MtsNumber NaN = new MtsNumber( Double.NaN );
+    public static final MtsNumber PositiveInfinity = new MtsNumber( Double.POSITIVE_INFINITY );
+    public static final MtsNumber NegativeInfinity = new MtsNumber( Double.NEGATIVE_INFINITY );
     
     // ========================================
     
-    public static final MtsNumber NaN = new MtsNumber( Double.NaN );
-    public static final MtsNumber POSITIVE_INFINITY = new MtsNumber( Double.POSITIVE_INFINITY );
-    public static final MtsNumber NEGATIVE_INFINITY = new MtsNumber( Double.NEGATIVE_INFINITY );
+    private static final MtsNumber[] CACHE;
+    
+    static
+    {
+        CACHE = new MtsNumber[256];
+        for ( int i = 0; i < 256; i++ )
+            CACHE[i] = new MtsNumber( i - 127 );
+        
+        Zero = CACHE[127];
+        One = CACHE[128];
+    }
     
     // ========================================
     
@@ -59,41 +62,139 @@ public final class MtsNumber extends MtsValue
     
     // ========================================
     
-    public static MtsNumber parse( MtsString s ) throws NumberFormatException
+    public static MtsNumber parse( MtsString s )
     {
         return parse( s.toJava() );
     }
     
     public static MtsNumber parse( MtsBoolean b )
     {
-        return b.toJavaValue() ? ONE : ZERO;
+        return b.isTrue() ? One : Zero;
     }
     
-    private static final Pattern _hexNumPattern = Pattern.compile( "^\\s*[+-]?0x", Pattern.CASE_INSENSITIVE );
-    
-    public static MtsNumber parse( String s ) throws NumberFormatException
+    /**
+     * Does not throw an exception if <code>s</code> cannot be parsed, but returns {@link #NaN} instead.
+     */
+    public static MtsNumber parse( String s )
     {
-        String input = s.trim();
-        if ( _hexNumPattern.matcher( input ).find()
-             && ( StringUtils.lastIndexOfIgnoreCase( input, "p" ) < 0 ) )
-        {
-            input = input + "p0";
-        }
-        
         try
         {
-            return valueOf( Double.parseDouble( input ) );
+            return parseStrict( s );
         }
         catch ( NumberFormatException ex )
         {
-            throw new NumberFormatException( s );
+            return NaN;
         }
+    }
+    
+    public static MtsNumber parseStrict( String s ) throws NumberFormatException
+    {
+        if ( s.indexOf( '.' ) < 0 )
+            return of( parseJavaInteger( s ) );
+        else
+            return of( parseJavaDouble( s ) );
+    }
+    
+    /**
+     * Parses an integer according to the MTS rules for integers.
+     * <p>
+     * Does not allow leading or trailing whitespace.
+     */
+    public static long parseJavaInteger( String s ) throws NumberFormatException
+    {
+        int result = 0;
+        boolean negative = false;
+        int i = 0, len = s.length();
+        int limit = -Integer.MAX_VALUE;
+        int multmin;
+        int digit;
+        int radix = 10;
+        
+        if ( len <= 0 )
+            throw new NumberFormatException( s );
+        
+        char firstChar = s.charAt( 0 );
+        if ( firstChar < '0' )
+        { // Possible leading "+" or "-"
+            if ( firstChar == '-' )
+            {
+                negative = true;
+                limit = Integer.MIN_VALUE;
+            }
+            else if ( firstChar != '+' )
+                throw new NumberFormatException( s );
+            
+            if ( len == 1 ) // Cannot have lone "+" or "-"
+                throw new NumberFormatException( s );
+            
+            i++;
+        }
+        
+        // 0x or 0X prefix?
+        if ( len > 2 )
+        {
+            if ( ( s.charAt( i ) == '0' ) )
+            {
+                char x = s.charAt( i + 1 );
+                if ( ( x == 'x' ) || ( x == 'X' ) )
+                {
+                    radix = 16;
+                    i += 2;
+                }
+            }
+        }
+        
+        multmin = limit / radix;
+        while ( i < len )
+        {
+            // Accumulating negatively avoids surprises near MAX_VALUE
+            digit = Character.digit( s.charAt( i++ ), radix );
+            if ( digit < 0 )
+                throw new NumberFormatException( s );
+            if ( result < multmin )
+                throw new NumberFormatException( s );
+            result *= radix;
+            if ( result < ( limit + digit ) )
+                throw new NumberFormatException( s );
+            result -= digit;
+        }
+        
+        return negative ? result : -result;
+    }
+    
+    /**
+     * Parses a decimal according to the MTS rules for decimals.
+     * <p>
+     * Does not allow leading or trailing whitespace.
+     */
+    public static double parseJavaDouble( String s ) throws NumberFormatException
+    {
+        int i = 0, len = s.length();
+        
+        char firstChar = s.charAt( 0 );
+        if ( ( firstChar == '-' ) || ( firstChar == '+' ) )
+            i++;
+        
+        // 0x or 0X prefix?
+        if ( len > ( 2 + i ) )
+        {
+            if ( ( s.charAt( i ) == '0' ) )
+            {
+                char x = s.charAt( i + 1 );
+                
+                // parseDouble requires the exponent to be present. Append it if it isn't.
+                if ( ( ( x == 'x' ) || ( ( x == 'X' ) ) ) && ( ( s.lastIndexOf( 'p' ) < 0 ) && ( s.lastIndexOf( 'P' ) < 0 ) ) )
+                    s += "p0";
+            }
+        }
+        
+        return Double.parseDouble( s );
     }
     
     // ========================================
     
-    public static final double MAX_VALUE = Double.MAX_VALUE;
-    public static final double MIN_VALUE = Double.MIN_VALUE;
+    public static final double MaxValue = Double.MAX_VALUE;
+    public static final double MinValue = Double.MIN_VALUE;
     
     // ========================================
     
@@ -114,66 +215,130 @@ public final class MtsNumber extends MtsValue
     
     // ========================================
     
-    public MtsNumber add( MtsNumber other )
+    @Override
+    public MtsNumber getLength()
     {
-        return of( _value + other._value );
+        throw new MtsLengthException( getType() );
     }
     
-    public MtsNumber sub( MtsNumber other )
-    {
-        return of( _value - other._value );
-    }
-    
-    public MtsNumber mul( MtsNumber other )
-    {
-        return of( _value * other._value );
-    }
-    
-    public MtsNumber div( MtsNumber other )
-    {
-        return of( _value / other._value );
-    }
-    
-    public MtsNumber mod( MtsNumber other )
-    {
-        return of( _value % other._value );
-    }
-    
-    public MtsNumber pow( MtsNumber other )
-    {
-        return of( Math.pow( _value, other._value ) );
-    }
-    
-    public MtsNumber neg()
+    @Override
+    public MtsValue unaryMinus()
     {
         return of( -_value );
     }
     
-    public MtsNumber incr()
+    // ========================================
+    
+    @Override
+    public MtsValue add( MtsValue b )
     {
-        return of( _value + 1.0D );
+        return b.addTo( this );
     }
     
-    public MtsNumber decr()
+    @Override
+    protected MtsValue addTo( MtsNumber a )
     {
-        return of( _value - 1.0D );
+        return of( a.toJavaDouble() + _value );
+    }
+    
+    @Override
+    public MtsValue substract( MtsValue b )
+    {
+        return b.substractFrom( this );
+    }
+    
+    @Override
+    protected MtsNumber substractFrom( MtsNumber a )
+    {
+        return of( a.toJavaDouble() - _value );
+    }
+    
+    @Override
+    public MtsValue multiplyBy( MtsValue b )
+    {
+        return b.multiplyWith( this );
+    }
+    
+    @Override
+    protected MtsValue multiplyWith( MtsNumber a )
+    {
+        return of( a.toJavaDouble() * _value );
+    }
+    
+    @Override
+    public MtsValue divideBy( MtsValue b )
+    {
+        return b.divideFrom( this );
+    }
+    
+    @Override
+    protected MtsValue divideFrom( MtsNumber a )
+    {
+        return of( a.toJavaDouble() / _value );
+    }
+    
+    @Override
+    public MtsValue powerTo( MtsValue b )
+    {
+        return b.powerOf( this );
+    }
+    
+    @Override
+    protected MtsValue powerOf( MtsNumber a )
+    {
+        return of( Math.pow( a.toJavaDouble(), _value ) );
+    }
+    
+    @Override
+    public MtsValue modulo( MtsValue b )
+    {
+        return b.moduloOf( this );
+    }
+    
+    @Override
+    protected MtsValue moduloOf( MtsNumber a )
+    {
+        return of( a.toJavaDouble() % _value );
     }
     
     // ========================================
     
-    public MtsNumber floor()
+    @Override
+    public MtsString concat( MtsValue b )
     {
-        return of( Math.floor( _value ) );
+        return b.concatTo( toString() );
     }
     
-    public MtsNumber ceil()
+    @Override
+    protected MtsString concatTo( String a )
     {
-        return of( Math.ceil( _value ) );
+        return MtsString.of( a + toString() );
     }
     
-    public MtsNumber round()
+    // ========================================
+    
+    @Override
+    public MtsBoolean isLessThen( MtsValue other )
     {
-        return of( Math.round( _value ) );
+        return other.isGreaterThen( this );
+    }
+    
+    @Override
+    protected MtsBoolean isGreaterThen( MtsNumber other )
+    {
+        return MtsBoolean.of( _value > other.toJavaDouble() );
+    }
+    
+    @Override
+    public MtsBoolean isLessThenOrEqual( MtsValue other )
+    {
+        return other.isGreaterThenOrEqual( this );
+    }
+    
+    @Override
+    protected MtsBoolean isGreaterThenOrEqual( MtsNumber other )
+    {
+        return MtsBoolean.of( _value >= other.toJavaDouble() );
     }
     
     // ========================================
@@ -199,26 +364,6 @@ public final class MtsNumber extends MtsValue
     // ========================================
     
     @Override
-    protected MtsBoolean doIsLess( MtsValue other )
-    {
-        if ( !other.isNumber() )
-            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
-        
-        return valueOf( _value < other.asNumber().toJavaDouble() );
-    }
-    
-    @Override
-    protected MtsBoolean doIsLessOrEqual( MtsValue other )
-    {
-        if ( !other.isNumber() )
-            throw new ScriptRuntimeException( "attempt to compare %s with %s", getType(), other.getType() );
-        
-        return valueOf( _value <= other.asNumber()._value );
-    }
-    
-    // ========================================
-    
-    @Override
     public boolean isNumber()
     {
         return true;
@@ -227,7 +372,6 @@ public final class MtsNumber extends MtsValue
     @Override
     public boolean isInteger()
     {
-//        return DoubleMath.isMathematicalInteger( _value );
         return ( _value == Math.rint( _value ) ) && !Double.isInfinite( _value );
     }
     
@@ -242,7 +386,7 @@ public final class MtsNumber extends MtsValue
     @Override
     public MtsString toMtsString()
     {
-        return valueOf( toString() );
+        return MtsString.of( toString() );
     }
     
     @Override

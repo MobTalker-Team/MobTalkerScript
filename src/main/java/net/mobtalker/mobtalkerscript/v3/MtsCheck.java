@@ -26,7 +26,7 @@ public class MtsCheck
     public static MtsValue checkNotNil( MtsValue value )
     {
         if ( value.isNil() )
-            throw new BadArgumentException( "value cannot be nil" );
+            throw new MtsArgumentException( "value cannot be nil" );
         
         return value;
     }
@@ -34,7 +34,7 @@ public class MtsCheck
     public static MtsValue checkNotNil( MtsValue value, String msg )
     {
         if ( value.isNil() )
-            throw new BadArgumentException( msg );
+            throw new MtsArgumentException( msg );
         
         return value;
     }
@@ -42,7 +42,7 @@ public class MtsCheck
     public static MtsValue checkNotNil( MtsValue value, int i )
     {
         if ( value.isNil() )
-            throw new ScriptRuntimeException( "bad argument #%s (value expected, got %s)", i, value.getType() );
+            throw new MtsScriptRuntimeException( i, "bad argument #%s (value expected, got %s)", value.getType() );
         
         return value;
     }
@@ -57,7 +57,7 @@ public class MtsCheck
     public static MtsValue checkType( MtsValue value, int i, MtsType expected )
     {
         if ( !value.is( expected ) )
-            throw new BadArgumentException( i, expected, value.getType() );
+            throw new MtsArgumentException( i, expected, value.getType() );
         
         return value;
     }
@@ -69,7 +69,7 @@ public class MtsCheck
         if ( value.isTable() )
             return value.asTable();
         
-        throw new BadArgumentException( MtsType.TABLE, value.getType() );
+        throw new MtsArgumentException( MtsType.TABLE, value.getType() );
     }
     
     public static MtsTable checkTable( MtsValue value, int i )
@@ -77,7 +77,7 @@ public class MtsCheck
         if ( value.isTable() )
             return value.asTable();
         
-        throw new BadArgumentException( i, MtsType.TABLE, value.getType() );
+        throw new MtsArgumentException( i, MtsType.TABLE, value.getType() );
     }
     
     public static MtsTable checkTable( MtsVarargs args, int i )
@@ -92,7 +92,7 @@ public class MtsCheck
         if ( value.isString() )
             return value.asString().toJava();
         
-        throw new BadArgumentException( MtsType.STRING, value.getType() );
+        throw new MtsArgumentException( MtsType.STRING, value.getType() );
     }
     
     public static String checkString( MtsValue value, int i )
@@ -100,7 +100,7 @@ public class MtsCheck
         if ( value.isString() )
             return value.asString().toJava();
         
-        throw new BadArgumentException( i, MtsType.STRING, value.getType() );
+        throw new MtsArgumentException( i, MtsType.STRING, value.getType() );
     }
     
     public static String checkString( MtsValue value, int i, String fallback )
@@ -110,7 +110,7 @@ public class MtsCheck
         if ( value.isString() )
             return value.asString().toJava();
         
-        throw new BadArgumentException( i, "%s or %s expected, got %s", MtsType.STRING, MtsType.NIL, value.getType() );
+        throw new MtsArgumentException( i, "%s or %s expected, got %s", MtsType.STRING, MtsType.NIL, value.getType() );
     }
     
     public static String checkString( MtsVarargs args, int i )
@@ -130,7 +130,7 @@ public class MtsCheck
         if ( value.isNumber() )
             return value.asNumber().toJavaDouble();
         
-        throw new BadArgumentException( MtsType.NUMBER, value.getType() );
+        throw new MtsArgumentException( MtsType.NUMBER, value.getType() );
     }
     
     public static double checkNumber( MtsValue value, int i )
@@ -138,12 +138,50 @@ public class MtsCheck
         if ( value.isNumber() )
             return value.asNumber().toJavaDouble();
         
-        throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
+        throw new MtsArgumentException( i, MtsType.NUMBER, value.getType() );
     }
     
     public static double checkNumber( MtsVarargs args, int i )
     {
         return checkNumber( args.get( i ), i );
+    }
+    
+    public static double checkNumberWithCoercion( MtsValue value, int i )
+    {
+        if ( value.isNumber() )
+            return value.asNumber().toJavaDouble();
+        
+        if ( value.isString() )
+        {
+            try
+            {
+                return value.toMtsNumber().toJavaDouble();
+            }
+            catch ( NumberFormatException ex )
+            {}
+        }
+        
+        throw new MtsArgumentException( i, MtsType.NUMBER, value.getType() );
+    }
+    
+    public static double checkNumberWithCoercion( MtsValue value, int i, double fallback )
+    {
+        if ( value.isNil() )
+            return fallback;
+        if ( value.isNumber() )
+            return value.asNumber().toJavaDouble();
+        
+        if ( value.isString() )
+        {
+            try
+            {
+                return value.toMtsNumber().toJavaDouble();
+            }
+            catch ( NumberFormatException ex )
+            {}
+        }
+        
+        throw new MtsArgumentException( i, MtsType.NUMBER, value.getType() );
     }
     
     // ========================================
@@ -153,7 +191,7 @@ public class MtsCheck
         if ( value.isNumber() )
             return value.asNumber().toJavaInt();
         
-        throw new BadArgumentException( MtsType.NUMBER, value.getType() );
+        throw new MtsArgumentException( MtsType.NUMBER, value.getType() );
     }
     
     public static int checkInteger( MtsValue value, int i )
@@ -161,7 +199,7 @@ public class MtsCheck
         if ( value.isNumber() )
             return value.asNumber().toJavaInt();
         
-        throw new BadArgumentException( i, MtsType.NUMBER, value.getType() );
+        throw new MtsArgumentException( i, MtsType.NUMBER, value.getType() );
     }
     
     public static int checkInteger( MtsValue value, int i, int fallback )
@@ -171,7 +209,7 @@ public class MtsCheck
         if ( value.isNumber() )
             return value.asNumber().toJavaInt();
         
-        throw new BadArgumentException( i, "%s or %s expected, got %s", MtsType.NUMBER, MtsType.NIL, value.getType() );
+        throw new MtsArgumentException( i, "%s or %s expected, got %s", MtsType.NUMBER, MtsType.NIL, value.getType() );
     }
     
     public static int checkInteger( MtsVarargs args, int i )
@@ -188,7 +226,7 @@ public class MtsCheck
     {
         int v = checkInteger( value, i );
         if ( v < min )
-            throw new BadArgumentException( i, "number must be equal to or greater than %s, was %s", min, value );
+            throw new MtsArgumentException( i, "number must be equal to or greater than %s, was %s", min, value );
         
         return v;
     }
@@ -200,9 +238,47 @@ public class MtsCheck
         
         int v = checkInteger( value, i );
         if ( v < min )
-            throw new BadArgumentException( i, "number must be equal to or greater than %s, was %s", min, value );
+            throw new MtsArgumentException( i, "number must be equal to or greater than %s, was %s", min, value );
         
         return v;
+    }
+    
+    public static int checkIntegerWithCoercion( MtsValue value, int i )
+    {
+        if ( value.isNumber() )
+            return value.asNumber().toJavaInt();
+        
+        if ( value.isString() )
+        {
+            try
+            {
+                return value.toMtsNumber().toJavaInt();
+            }
+            catch ( NumberFormatException ex )
+            {}
+        }
+        
+        throw new MtsArgumentException( i, MtsType.NUMBER, value.getType() );
+    }
+    
+    public static int checkIntegerWithCoercion( MtsValue value, int i, int fallback )
+    {
+        if ( value.isNil() )
+            return fallback;
+        if ( value.isNumber() )
+            return value.asNumber().toJavaInt();
+        
+        if ( value.isString() )
+        {
+            try
+            {
+                return value.toMtsNumber().toJavaInt();
+            }
+            catch ( NumberFormatException ex )
+            {}
+        }
+        
+        throw new MtsArgumentException( i, MtsType.NUMBER, value.getType() );
     }
     
     // ========================================

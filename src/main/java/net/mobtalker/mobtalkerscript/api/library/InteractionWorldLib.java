@@ -1,23 +1,22 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.Map;
 
@@ -54,9 +53,9 @@ public class InteractionWorldLib
         for ( IWorldInfo world : worlds.values() )
         {
             MtsTable info = new MtsTable( 0, 2 );
-            info.set( "name", valueOf( world.getName() ) );
-            info.set( "type", valueOf( world.getType() ) );
-            t.set( valueOf( world.getID() ), info );
+            info.set( "name", MtsString.of( world.getName() ) );
+            info.set( "type", MtsString.of( world.getType() ) );
+            t.set( MtsNumber.of( world.getID() ), info );
         }
         
         return t;
@@ -65,14 +64,14 @@ public class InteractionWorldLib
     @MtsNativeFunction
     public MtsVarargs getDifficulty()
     {
-        return MtsVarargs.of( valueOf( _logic.getDifficulty() ),
-                              valueOf( _logic.isHardcore() ) );
+        return MtsVarargs.of( MtsString.of( _logic.getDifficulty() ),
+                              MtsBoolean.of( _logic.isHardcore() ) );
     }
     
     @MtsNativeFunction
     public MtsBoolean getGameRule( MtsValue argRuleName )
     {
-        return valueOf( _logic.getGameRule( checkString( argRuleName, 0 ) ) );
+        return MtsBoolean.of( _logic.getGameRule( checkString( argRuleName, 0 ) ) );
     }
     
     // ========================================
@@ -80,37 +79,37 @@ public class InteractionWorldLib
     @MtsNativeFunction
     public MtsNumber getID()
     {
-        return valueOf( _logic.getWorld().getID() );
+        return MtsNumber.of( _logic.getWorld().getID() );
     }
     
     @MtsNativeFunction
     public MtsString getName()
     {
-        return valueOf( _logic.getWorld().getName() );
+        return MtsString.of( _logic.getWorld().getName() );
     }
     
     @MtsNativeFunction
     public MtsString getType()
     {
-        return valueOf( _logic.getWorld().getType() );
+        return MtsString.of( _logic.getWorld().getType() );
     }
     
     @MtsNativeFunction
     public MtsNumber getTime()
     {
-        return valueOf( _logic.getWorld().getTime() );
+        return MtsNumber.of( _logic.getWorld().getTime() );
     }
     
     @MtsNativeFunction
     public MtsNumber getMoonphase()
     {
-        return valueOf( _logic.getWorld().getMoonphase() );
+        return MtsNumber.of( _logic.getWorld().getMoonphase() );
     }
     
     @MtsNativeFunction
     public MtsBoolean isDaytime()
     {
-        return valueOf( _logic.getWorld().isDaytime() );
+        return MtsBoolean.of( _logic.getWorld().isDaytime() );
     }
     
     // ========================================
@@ -118,20 +117,20 @@ public class InteractionWorldLib
     @MtsNativeFunction
     public MtsString getBiome()
     {
-        return valueOf( _logic.getBiome() );
+        return MtsString.of( _logic.getBiome() );
     }
     
     @MtsNativeFunction
     public MtsVarargs getClimate()
     {
-        return MtsVarargs.of( valueOf( _logic.getTemperature() ),
-                              valueOf( _logic.getHumidity() ) );
+        return MtsVarargs.of( MtsString.of( _logic.getTemperature() ),
+                              MtsString.of( _logic.getHumidity() ) );
     }
     
     @MtsNativeFunction
     public MtsVarargs getWeather()
     {
-        return MtsVarargs.of( valueOf( _logic.getWeather() ),
-                              valueOf( _logic.isThundering() ) );
+        return MtsVarargs.of( MtsString.of( _logic.getWeather() ),
+                              MtsBoolean.of( _logic.isThundering() ) );
     }
 }

@@ -25,7 +25,7 @@ public class InstrNeg extends MtsInstruction
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.push( MtsArithmeticInstruction.coerce( frame.pop() ).neg() );
+        frame.push( frame.pop().unaryMinus() );
     }
     
     @Override

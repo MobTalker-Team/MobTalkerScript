@@ -1,24 +1,24 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-
 import java.util.regex.*;
+
+import net.mobtalker.mobtalkerscript.v3.value.MtsString;
 
 public class StringInterpolator
 {
@@ -59,7 +59,7 @@ public class StringInterpolator
             if ( part.length() > 0 )
             {
                 nParts++;
-                c.loadConstant( valueOf( part ) );
+                c.loadConstant( MtsString.of( part ) );
             }
             
             nParts++;
@@ -93,11 +93,11 @@ public class StringInterpolator
         
         if ( end == 0 )
         {
-            c.loadConstant( valueOf( s ) );
+            c.loadConstant( MtsString.of( s ) );
         }
         else if ( end < s.length() )
         {
-            c.loadConstant( valueOf( s.substring( end ) ) );
+            c.loadConstant( MtsString.of( s.substring( end ) ) );
             c.concatStrings( nParts + 1 );
         }
         else

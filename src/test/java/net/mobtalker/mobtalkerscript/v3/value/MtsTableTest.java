@@ -36,66 +36,66 @@ public class MtsTableTest
     @Test
     public void testListReplace()
     {
-        t.set( valueOf( 1 ), valueOf( "a" ), true );
-        t.set( valueOf( 2 ), valueOf( "b" ), true );
-        t.set( valueOf( 3 ), valueOf( "c" ), true );
+        t.set( MtsNumber.of( 1 ), MtsString.of( "a" ), true );
+        t.set( MtsNumber.of( 2 ), MtsString.of( "b" ), true );
+        t.set( MtsNumber.of( 3 ), MtsString.of( "c" ), true );
         
-        assertTrue( t.containsKey( valueOf( 1 ) ) );
-        assertTrue( t.containsKey( valueOf( 2 ) ) );
-        assertTrue( t.containsKey( valueOf( 3 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 1 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 2 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 3 ) ) );
         assertEquals( t.list().size(), 3 );
         assertEquals( t.map().size(), 0 );
         
-        t.set( valueOf( 1 ), valueOf( "D" ), true );
-        t.set( valueOf( 2 ), valueOf( "E" ), true );
+        t.set( MtsNumber.of( 1 ), MtsString.of( "D" ), true );
+        t.set( MtsNumber.of( 2 ), MtsString.of( "E" ), true );
         
-        assertTrue( t.containsKey( valueOf( 1 ) ) );
-        assertTrue( t.containsKey( valueOf( 2 ) ) );
-        assertTrue( t.containsKey( valueOf( 3 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 1 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 2 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 3 ) ) );
         assertEquals( t.list().size(), 3 );
         assertEquals( t.map().size(), 0 );
         
-        assertEquals( valueOf( "D" ), t.get( valueOf( 1 ), true ) );
-        assertEquals( valueOf( "E" ), t.get( valueOf( 2 ), true ) );
-        assertEquals( valueOf( "c" ), t.get( valueOf( 3 ), true ) );
+        assertEquals( MtsString.of( "D" ), t.get( MtsNumber.of( 1 ), true ) );
+        assertEquals( MtsString.of( "E" ), t.get( MtsNumber.of( 2 ), true ) );
+        assertEquals( MtsString.of( "c" ), t.get( MtsNumber.of( 3 ), true ) );
     }
     
     @Test
     public void testHashGetSet()
     {
         // Hash part
-        t.set( valueOf( "a" ), valueOf( "foo" ) );
+        t.set( MtsString.of( "a" ), MtsString.of( "foo" ) );
         
-        assertTrue( t.containsKey( valueOf( "a" ) ) );
+        assertTrue( t.containsKey( MtsString.of( "a" ) ) );
         assertEquals( 1, t.size() );
-        assertEquals( valueOf( "foo" ), t.get( valueOf( "a" ) ) );
-        assertEquals( valueOf( "foo" ), t.get( "a" ) );
+        assertEquals( MtsString.of( "foo" ), t.get( MtsString.of( "a" ) ) );
+        assertEquals( MtsString.of( "foo" ), t.get( "a" ) );
         
-        t.set( valueOf( "a" ), valueOf( "bar" ) );
+        t.set( MtsString.of( "a" ), MtsString.of( "bar" ) );
         assertEquals( 1, t.size() );
-        assertEquals( valueOf( "bar" ), t.get( valueOf( "a" ) ) );
-        assertEquals( valueOf( "bar" ), t.get( "a" ) );
+        assertEquals( MtsString.of( "bar" ), t.get( MtsString.of( "a" ) ) );
+        assertEquals( MtsString.of( "bar" ), t.get( "a" ) );
         
         Random rnd = new Random();
         for ( int i = 0; i < 100; i++ )
         {
-            t.set( valueOf( "" + ( (char) i + 65 ) ), valueOf( rnd.nextInt() ) );
+            t.set( MtsString.of( "" + ( (char) i + 65 ) ), MtsNumber.of( rnd.nextInt() ) );
         }
         assertEquals( 101, t.size() );
         for ( int i = 0; i < 100; i++ )
         {
-            assertTrue( t.containsKey( valueOf( "" + ( (char) i + 65 ) ) ) );
+            assertTrue( t.containsKey( MtsString.of( "" + ( (char) i + 65 ) ) ) );
         }
         
-        t.set( valueOf( "b" ), valueOf( "lorom" ) );
+        t.set( MtsString.of( "b" ), MtsString.of( "lorom" ) );
         assertEquals( 102, t.size() );
-        assertTrue( t.containsKey( valueOf( "b" ) ) );
-        assertEquals( valueOf( "lorom" ), t.get( valueOf( "b" ) ) );
+        assertTrue( t.containsKey( MtsString.of( "b" ) ) );
+        assertEquals( MtsString.of( "lorom" ), t.get( MtsString.of( "b" ) ) );
         
-        t.set( valueOf( "b" ), NIL );
+        t.set( MtsString.of( "b" ), Nil );
         assertEquals( 101, t.size() );
-        assertFalse( t.containsKey( valueOf( "b" ) ) );
-        assertEquals( NIL, t.get( valueOf( "b" ) ) );
+        assertFalse( t.containsKey( MtsString.of( "b" ) ) );
+        assertEquals( Nil, t.get( MtsString.of( "b" ) ) );
         t.clear();
     }
     
@@ -103,31 +103,31 @@ public class MtsTableTest
     public void testListGetSet()
     {
         // List part
-        t.set( ONE, valueOf( "a" ) );
-        assertTrue( t.containsKey( ONE ) );
+        t.set( MtsNumber.One, MtsString.of( "a" ) );
+        assertTrue( t.containsKey( MtsNumber.One ) );
         assertEquals( 1, t.list().size() );
         
-        t.set( valueOf( 2 ), valueOf( "b" ) );
-        assertTrue( t.containsKey( valueOf( 2 ) ) );
+        t.set( MtsNumber.of( 2 ), MtsString.of( "b" ) );
+        assertTrue( t.containsKey( MtsNumber.of( 2 ) ) );
         assertEquals( 2, t.list().size() );
         
-        t.set( valueOf( 3 ), TRUE );
-        t.set( valueOf( 4 ), TRUE );
-        t.set( valueOf( 5 ), TRUE );
-        t.set( valueOf( 6 ), TRUE );
+        t.set( MtsNumber.of( 3 ), MtsBoolean.True );
+        t.set( MtsNumber.of( 4 ), MtsBoolean.True );
+        t.set( MtsNumber.of( 5 ), MtsBoolean.True );
+        t.set( MtsNumber.of( 6 ), MtsBoolean.True );
         assertEquals( 6, t.list().size() );
         
-        t.set( valueOf( 6 ), NIL );
-        assertFalse( t.containsKey( valueOf( 6 ) ) );
+        t.set( MtsNumber.of( 6 ), Nil );
+        assertFalse( t.containsKey( MtsNumber.of( 6 ) ) );
         assertEquals( 5, t.list().size() );
         
-        t.set( valueOf( 3 ), NIL );
+        t.set( MtsNumber.of( 3 ), Nil );
         assertEquals( 2, t.list().size() );
-        assertTrue( t.containsKey( valueOf( 5 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 5 ) ) );
         
-        t.set( valueOf( 3 ), TRUE );
+        t.set( MtsNumber.of( 3 ), MtsBoolean.True );
         assertEquals( 5, t.list().size() );
-        assertTrue( t.containsKey( valueOf( 5 ) ) );
+        assertTrue( t.containsKey( MtsNumber.of( 5 ) ) );
     }
     
     @Test
@@ -135,7 +135,7 @@ public class MtsTableTest
     {
         for ( int i = 0; i < 0xFFFFF; i++ )
         {
-            valueOf( i );
+            MtsNumber.of( i );
         }
         
         Random random;
@@ -149,17 +149,17 @@ public class MtsTableTest
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                map.put( valueOf( x ), valueOf( x ) );
+                map.put( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                map.remove( valueOf( x ) );
+                map.remove( MtsNumber.of( x ) );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                map.put( valueOf( x ), valueOf( x ) );
+                map.put( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
         }
         
@@ -174,17 +174,17 @@ public class MtsTableTest
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                map.put( valueOf( x ), valueOf( x ) );
+                map.put( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                map.remove( valueOf( x ) );
+                map.remove( MtsNumber.of( x ) );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                map.put( valueOf( x ), valueOf( x ) );
+                map.put( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
             elapsed = System.nanoTime() - start;
             best = elapsed < best ? elapsed : best;
@@ -200,17 +200,17 @@ public class MtsTableTest
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                table.set( valueOf( x ), valueOf( x ) );
+                table.set( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                table.set( valueOf( x ), NIL );
+                table.set( MtsNumber.of( x ), Nil );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                table.set( valueOf( x ), valueOf( x ) );
+                table.set( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
         }
         
@@ -225,17 +225,17 @@ public class MtsTableTest
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                table.set( valueOf( x ), valueOf( x ) );
+                table.set( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                table.set( valueOf( x ), NIL );
+                table.set( MtsNumber.of( x ), Nil );
             }
             for ( int i = 0; i < 0xFFFFF; i++ )
             {
                 int x = random.nextInt( 0xFFFF );
-                table.set( valueOf( x ), valueOf( x ) );
+                table.set( MtsNumber.of( x ), MtsNumber.of( x ) );
             }
             elapsed = System.nanoTime() - start;
             best = elapsed < best ? elapsed : best;

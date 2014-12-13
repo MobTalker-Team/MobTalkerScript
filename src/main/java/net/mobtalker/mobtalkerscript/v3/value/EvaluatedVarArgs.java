@@ -26,26 +26,33 @@ import com.google.common.collect.Lists;
     
     // ========================================
     
-    /* package */public EvaluatedVarargs()
-    {
-        _values = Collections.emptyList();
-    }
-    
-    public EvaluatedVarargs( MtsValue[] values )
+    /* package */EvaluatedVarargs( MtsValue[] values )
     {
         this( Arrays.asList( values ) );
     }
     
-    public EvaluatedVarargs( List<MtsValue> values )
+    /* package */EvaluatedVarargs( List<MtsValue> values )
     {
         _values = values;
     }
     
-    public EvaluatedVarargs( MtsValue first, EvaluatedVarargs rest )
+    /* package */EvaluatedVarargs( MtsValue first, MtsVarargs rest )
     {
-        ArrayList<MtsValue> values = Lists.newArrayListWithCapacity( rest.count() + 1 );
+        int count = rest.count() + 1;
+        ArrayList<MtsValue> values = Lists.newArrayListWithCapacity( count );
         values.add( first );
-        values.addAll( rest._values );
+        
+        if ( rest instanceof EvaluatedVarargs )
+        {
+            values.addAll( ( (EvaluatedVarargs) rest )._values );
+        }
+        else if ( count > 1 )
+        {
+            for ( MtsValue value : values )
+            {
+                values.add( value );
+            }
+        }
         
         _values = values;
     }
@@ -53,14 +60,14 @@ import com.google.common.collect.Lists;
     // ========================================
     
     @Override
-    public EvaluatedVarargs subArgs( int start, int end )
+    public MtsVarargs subArgs( int start, int end )
     {
         if ( _values.size() < start )
-            return EMPTY_VARARGS;
+            return Empty;
         
         end = Math.min( end, _values.size() );
         if ( end <= start )
-            return EMPTY_VARARGS;
+            return Empty;
         
         return new EvaluatedVarargs( _values.subList( start, end ) );
     }
@@ -74,7 +81,7 @@ import com.google.common.collect.Lists;
     public MtsValue get( int i )
     {
         if ( ( i < 0 ) || ( count() <= i ) )
-            return NIL;
+            return Nil;
         
         return _values.get( i );
     }

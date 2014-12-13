@@ -27,7 +27,7 @@ public final class FrameValue
     
     public FrameValue()
     {
-        this( NIL );
+        this( Nil );
     }
     
     public FrameValue( MtsValue value )

@@ -39,21 +39,23 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
     @MtsNativeFunction
     public MtsString getName()
     {
-        return valueOf( _logic.getName() );
+        return MtsString.of( _logic.getName() );
     }
     
     @MtsNativeFunction
     public MtsVarargs getHealth()
     {
-        return MtsVarargs.of( valueOf( _logic.getHealth() ),
-                              valueOf( _logic.getMaxHealth() ) );
+        return MtsVarargs.of( MtsNumber.of( _logic.getHealth() ),
+                              MtsNumber.of( _logic.getMaxHealth() ) );
     }
     
     @MtsNativeFunction
     public MtsVarargs getPosition()
     {
         WorldPosition position = _logic.getPosition();
-        return MtsVarargs.of( valueOf( position.X ), valueOf( position.Y ), valueOf( position.Z ) );
+        return MtsVarargs.of( MtsNumber.of( position.X ),
+                              MtsNumber.of( position.Y ),
+                              MtsNumber.of( position.Z ) );
     }
     
     // ========================================
@@ -61,7 +63,7 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
     @MtsNativeFunction
     public MtsBoolean isRiding()
     {
-        return valueOf( _logic.isRiding() );
+        return MtsBoolean.of( _logic.isRiding() );
     }
     
     // ========================================
@@ -78,9 +80,9 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
         for ( EffectInfo effect : effects )
         {
             MtsTable effectTable = new MtsTable( 0, 3 );
-            effectTable.set( KEY_EFFECT_NAME, valueOf( effect.Name ) );
-            effectTable.set( KEY_EFFECT_DURATION, valueOf( effect.Duration ) );
-            effectTable.set( KEY_EFFECT_AMPLIFIER, valueOf( effect.Amplifier ) );
+            effectTable.set( KEY_EFFECT_NAME, MtsString.of( effect.Name ) );
+            effectTable.set( KEY_EFFECT_DURATION, MtsNumber.of( effect.Duration ) );
+            effectTable.set( KEY_EFFECT_AMPLIFIER, MtsNumber.of( effect.Amplifier ) );
             t.list().add( effectTable );
         }
         
@@ -92,11 +94,11 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
     {
         String name = checkString( argEffect, 0 );
         if ( !_logic.isValidEffect( name ) )
-            throw new BadArgumentException( 0, "'%s' is not a valid potion effect", name );
+            throw new MtsArgumentException( 0, "'%s' is not a valid potion effect", name );
         
-        return valueOf( _logic.applyEffect( name,
-                                            checkIntegerWithMinimum( argDuration, 1, 0 ),
-                                            checkIntegerWithMinimum( argAmplifier, 2, 0, 0 ) ) );
+        return MtsBoolean.of( _logic.applyEffect( name,
+                                                  checkIntegerWithMinimum( argDuration, 1, 0 ),
+                                                  checkIntegerWithMinimum( argAmplifier, 2, 0, 0 ) ) );
     }
     
     @MtsNativeFunction
@@ -104,9 +106,9 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
     {
         String name = checkString( argEffect, 0 );
         if ( !_logic.isValidEffect( name ) )
-            throw new BadArgumentException( 0, "'%s' is not a valid potion effect", name );
+            throw new MtsArgumentException( 0, "'%s' is not a valid potion effect", name );
         
-        return valueOf( _logic.removeEffect( name ) );
+        return MtsBoolean.of( _logic.removeEffect( name ) );
     }
     
     @MtsNativeFunction
@@ -129,8 +131,8 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
             {
                 ItemInfo item = equipment.getItem( slot );
                 MtsTable info = new MtsTable( 0, 2 );
-                info.set( KEY_ITEM_NAME, valueOf( item.Name ) );
-                info.set( KEY_ITEM_META, valueOf( item.Meta ) );
+                info.set( KEY_ITEM_NAME, MtsString.of( item.Name ) );
+                info.set( KEY_ITEM_META, MtsNumber.of( item.Meta ) );
                 t.set( slot.getName(), info );
             }
             
@@ -141,13 +143,13 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
             String slotName = MtsCheck.checkString( argSlot, 0 );
             EquipmentSlot slot = EquipmentSlot.forName( slotName );
             if ( slot == null )
-                throw new BadArgumentException( 0, "'%s' is not a valid equipment slot", slotName );
+                throw new MtsArgumentException( 0, "'%s' is not a valid equipment slot", slotName );
             
             ItemInfo item = _logic.getEquipment( slot );
             if ( item == null )
-                return NIL;
+                return Nil;
             
-            return MtsVarargs.of( valueOf( item.Name ), valueOf( item.Meta ) );
+            return MtsVarargs.of( MtsString.of( item.Name ), MtsNumber.of( item.Meta ) );
         }
     }
     
@@ -158,6 +160,8 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
         if ( info == null )
             return null;
         
-        return MtsVarargs.of( valueOf( info.Item.Name ), valueOf( info.Item.Meta ), valueOf( info.Count ) );
+        return MtsVarargs.of( MtsString.of( info.Item.Name ),
+                              MtsNumber.of( info.Item.Meta ),
+                              MtsNumber.of( info.Count ) );
     }
 }

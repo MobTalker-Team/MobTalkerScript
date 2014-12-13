@@ -21,7 +21,7 @@ import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.util.*;
+import net.mobtalker.mobtalkerscript.util.PrettyPrinter;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
 import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
@@ -39,37 +39,36 @@ public final class MtsTableLib
         String sep = checkString( argSep, 1, "" );
         
         if ( arg3.isNil() )
-            return valueOf( list.concat( sep ) );
+            return MtsString.of( list.concat( sep ) );
         
         int from = checkInteger( arg3, 2 );
         
         if ( arg4.isNil() )
-            return valueOf( list.concat( sep, from ) );
+            return MtsString.of( list.concat( sep, from ) );
         
         int to = checkInteger( arg4, 3 );
         
-        return valueOf( list.concat( sep, from, to ) );
+        return MtsString.of( list.concat( sep, from, to ) );
     }
     
-    @MtsNativeFunction
-    public static MtsValue copy( MtsValue argTable, MtsValue argDeep )
-    {
-        MtsTable t = checkTable( argTable, 0 );
-        boolean deep = isTrue( argDeep );
-        
-        return deep ? new TableCloner().clone( t ) : new MtsTable( t );
-    }
+//    @MtsNativeFunction
+//    public static MtsValue copy( MtsValue argTable, MtsValue argDeep )
+//    {
+//        MtsTable t = checkTable( argTable, 0 );
+//
+//        return argDeep.isTrue() ? new TableCloner().clone( t ) : new MtsTable( t );
+//    }
     
     @MtsNativeFunction
     public static MtsNumber count( MtsValue argTable )
     {
-        return valueOf( checkTable( argTable, 0 ).size() );
+        return MtsNumber.of( checkTable( argTable, 0 ).size() );
     }
     
     @MtsNativeFunction
     public static MtsValue dump( MtsValue argValue, MtsValue argIndent )
     {
-        return valueOf( new PrettyPrinter( checkString( argIndent, 1, "    " ) ).print( argValue, null ) );
+        return MtsString.of( new PrettyPrinter( checkString( argIndent, 1, "    " ) ).print( argValue, null ) );
     }
     
     @MtsNativeFunction
@@ -108,9 +107,12 @@ public final class MtsTableLib
         int to = checkInteger( argTo, 2, list.size() );
         
         if ( ( from > to ) || ( to < from ) )
-            return EMPTY_VARARGS;
+            return MtsVarargs.Empty;
         
-        return MtsVarargs.of( new ArrayList<>( list.subList( from, Math.min( to, list.size() ) ) ) );
+        // TODO Implement a custom toArray with support for specifying the range
+        
+        List<MtsValue> copy = new ArrayList<>( list.subList( from, Math.min( to, list.size() ) ) );
+        return MtsVarargs.of( copy );
     }
     
     // ========================================
@@ -119,7 +121,7 @@ public final class MtsTableLib
     public static MtsValue random( MtsVarargs args )
     {
         if ( args.isEmpty() )
-            return NIL;
+            return Nil;
         
         if ( args.count() > 1 )
             return args.get( _rnd.nextInt( args.count() ) );
@@ -130,10 +132,9 @@ public final class MtsTableLib
             MtsTable t = arg1.asTable();
             
             if ( t.list().isEmpty() )
-                return NIL;
+                return Nil;
             
-            MtsNumber k = valueOf( _rnd.nextInt( t.list().size() ) + 1 );
-            return t.get( k );
+            return t.get( _rnd.nextInt( t.list().size() ) );
         }
         
         return arg1;

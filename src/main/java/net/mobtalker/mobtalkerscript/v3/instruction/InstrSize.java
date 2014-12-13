@@ -16,31 +16,16 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
-
 import java.io.*;
 
-import net.mobtalker.mobtalkerscript.v3.*;
-import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
+import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 
 public class InstrSize extends MtsInstruction
 {
     @Override
     public void execute( MtsFrame frame )
     {
-        MtsValue x = frame.pop();
-        if ( x.isTable() )
-        {
-            frame.push( valueOf( x.asTable().list().size() ) );
-        }
-        else if ( x.isString() )
-        {
-            frame.push( x.asString().getLength() );
-        }
-        else
-        {
-            throw new ScriptRuntimeException( "attempt to get length of a %s value", x.getType().getName() );
-        }
+        frame.push( frame.pop().getLength() );
     }
     
     @Override

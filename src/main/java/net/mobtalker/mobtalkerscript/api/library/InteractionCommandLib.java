@@ -17,11 +17,10 @@
 package net.mobtalker.mobtalkerscript.api.library;
 
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v3.ScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.MtsScriptRuntimeException;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
@@ -52,7 +51,7 @@ public class InteractionCommandLib
     {
         _logic.showText( checkString( argName, 0, "" ),
                          checkString( argText, 1 ),
-                         isTrue( argIsLast ) );
+                         argIsLast.isTrue() );
     }
     
     @MtsNativeFunction
@@ -62,7 +61,7 @@ public class InteractionCommandLib
         MtsValue arg1 = args.get( 1 );
         
         if ( arg1.isNil() )
-            throw new ScriptRuntimeException( "must provide at least one option" );
+            throw new MtsScriptRuntimeException( "must provide at least one option" );
         
         List<String> options;
         if ( arg1.isTable() )
@@ -84,7 +83,7 @@ public class InteractionCommandLib
             }
         }
         
-        return valueOf( _logic.showMenu( caption, options ) );
+        return MtsNumber.of( _logic.showMenu( caption, options ) );
     }
     
     @MtsNativeFunction

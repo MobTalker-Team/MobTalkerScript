@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 
 import java.util.Map;
 
-import net.mobtalker.mobtalkerscript.v3.ScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.MtsScriptRuntimeException;
 
 import org.junit.*;
 
@@ -35,30 +35,30 @@ public class MtsTableMapTest
         _map = new MtsTableMap( 0 );
     }
     
-    @Test( expected = ScriptRuntimeException.class )
+    @Test( expected = MtsScriptRuntimeException.class )
     public void testSetGet()
     {
-        assertEquals( NIL, _map.get( valueOf( "z" ) ) );
+        assertEquals( Nil, _map.get( MtsString.of( "z" ) ) );
         
-        _map.put( valueOf( "a" ), valueOf( "foo" ) );
+        _map.put( MtsString.of( "a" ), MtsString.of( "foo" ) );
         assertEquals( 1, _map.size() );
-        assertEquals( valueOf( "foo" ), _map.get( valueOf( "a" ) ) );
+        assertEquals( MtsString.of( "foo" ), _map.get( MtsString.of( "a" ) ) );
         
-        _map.put( valueOf( "b" ), valueOf( "bar" ) );
-        _map.put( valueOf( "c" ), valueOf( "caz" ) );
+        _map.put( MtsString.of( "b" ), MtsString.of( "bar" ) );
+        _map.put( MtsString.of( "c" ), MtsString.of( "caz" ) );
         assertEquals( 3, _map.size() );
-        assertEquals( valueOf( "caz" ), _map.get( valueOf( "c" ) ) );
-        assertEquals( valueOf( "bar" ), _map.get( valueOf( "b" ) ) );
+        assertEquals( MtsString.of( "caz" ), _map.get( MtsString.of( "c" ) ) );
+        assertEquals( MtsString.of( "bar" ), _map.get( MtsString.of( "b" ) ) );
         
-        _map.put( valueOf( "b" ), NIL );
+        _map.put( MtsString.of( "b" ), Nil );
         assertEquals( 2, _map.size() );
-        assertEquals( NIL, _map.get( valueOf( "b" ) ) );
+        assertEquals( Nil, _map.get( MtsString.of( "b" ) ) );
         
-        _map.put( valueOf( "a" ), valueOf( "abraz" ) );
+        _map.put( MtsString.of( "a" ), MtsString.of( "abraz" ) );
         assertEquals( 2, _map.size() );
-        assertEquals( valueOf( "abraz" ), _map.get( valueOf( "a" ) ) );
+        assertEquals( MtsString.of( "abraz" ), _map.get( MtsString.of( "a" ) ) );
         
-        _map.put( NIL, valueOf( "z" ) );
+        _map.put( Nil, MtsString.of( "z" ) );
     }
     
     @Test
@@ -66,14 +66,14 @@ public class MtsTableMapTest
     {
         assertEquals( 0, _map.size() );
         
-        _map.put( valueOf( "a" ), valueOf( "foo" ) );
+        _map.put( MtsString.of( "a" ), MtsString.of( "foo" ) );
         assertEquals( 1, _map.size() );
         
-        _map.put( valueOf( "b" ), valueOf( "bar" ) );
-        _map.put( valueOf( "c" ), valueOf( "caz" ) );
+        _map.put( MtsString.of( "b" ), MtsString.of( "bar" ) );
+        _map.put( MtsString.of( "c" ), MtsString.of( "caz" ) );
         assertEquals( 3, _map.size() );
         
-        _map.put( valueOf( "b" ), NIL );
+        _map.put( MtsString.of( "b" ), Nil );
         assertEquals( 2, _map.size() );
         
         _map.clear();
@@ -85,14 +85,14 @@ public class MtsTableMapTest
     {
         assertNull( _map.getFirst() );
         
-        _map.put( valueOf( "a" ), valueOf( "foo" ) );
+        _map.put( MtsString.of( "a" ), MtsString.of( "foo" ) );
         assertNotNull( _map.getFirst() );
         
-        _map.put( valueOf( "b" ), valueOf( "bar" ) );
-        _map.put( valueOf( "c" ), valueOf( "caz" ) );
+        _map.put( MtsString.of( "b" ), MtsString.of( "bar" ) );
+        _map.put( MtsString.of( "c" ), MtsString.of( "caz" ) );
         assertNotNull( _map.getFirst() );
         
-        _map.put( valueOf( "b" ), NIL );
+        _map.put( MtsString.of( "b" ), Nil );
         assertNotNull( _map.getFirst() );
         
         _map.clear();
@@ -102,20 +102,20 @@ public class MtsTableMapTest
     @Test
     public void testGetEntryAfter()
     {
-        assertNull( _map.getNext( NIL ) );
+        assertNull( _map.getNext( Nil ) );
         
-        _map.put( valueOf( "Lorem ipsum dolor sit amet," ), //
-                  valueOf( "a" ) );
-        _map.put( valueOf( " consectetuer adipiscing elit," ), //
-                  valueOf( "b" ) );
-        _map.put( valueOf( " sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat." ), //
-                  valueOf( "c" ) );
-        _map.put( valueOf( " Ut wisi enim ad minim veniam," ), //
-                  valueOf( "d" ) );
-        _map.put( valueOf( " quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat." ), //
-                  valueOf( "e" ) );
+        _map.put( MtsString.of( "Lorem ipsum dolor sit amet," ), //
+                  MtsString.of( "a" ) );
+        _map.put( MtsString.of( " consectetuer adipiscing elit," ), //
+                  MtsString.of( "b" ) );
+        _map.put( MtsString.of( " sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat." ), //
+                  MtsString.of( "c" ) );
+        _map.put( MtsString.of( " Ut wisi enim ad minim veniam," ), //
+                  MtsString.of( "d" ) );
+        _map.put( MtsString.of( " quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat." ), //
+                  MtsString.of( "e" ) );
         
-        MtsValue lastKey = NIL;
+        MtsValue lastKey = Nil;
         for ( int i = 0; i < 5; i++ )
         {
             Map.Entry<MtsValue, MtsValue> next = _map.getNext( lastKey );

@@ -16,27 +16,31 @@
  */
 package net.mobtalker.mobtalkerscript.v3;
 
-import net.mobtalker.mobtalkerscript.v3.value.MtsType;
-
-public class BadArgumentException extends ScriptRuntimeException
+/**
+ * Thrown when a parser encounters an error
+ */
+@SuppressWarnings( "serial" )
+public class MtsParserException extends RuntimeException
 {
-    public BadArgumentException( String msg, Object... args )
+    
+    public MtsParserException( String msg )
     {
-        super( msg, args );
+        super( msg );
     }
     
-    public BadArgumentException( int argIndex, String msg, Object... args )
+    public MtsParserException( Exception parent )
     {
-        super( "bad argument #" + argIndex + " (" + msg + ")", args );
+        super( parent );
     }
     
-    public BadArgumentException( MtsType expected, MtsType actual )
+    public MtsParserException( String msg, Object... args )
     {
-        super( "bad argument (%s expected, got %s)", expected, actual );
+        super( String.format( msg, args ) );
     }
     
-    public BadArgumentException( int argIndex, MtsType expected, MtsType actual )
+    public MtsParserException( String msg, Exception parent, Object... args )
     {
-        super( "bad argument #%s (%s expected, got %s)", argIndex, expected, actual );
+        super( String.format( msg, args ), parent );
     }
+    
 }

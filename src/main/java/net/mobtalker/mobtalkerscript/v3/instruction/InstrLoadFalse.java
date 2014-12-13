@@ -19,14 +19,14 @@ package net.mobtalker.mobtalkerscript.v3.instruction;
 import java.io.*;
 
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
-import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
+import net.mobtalker.mobtalkerscript.v3.value.MtsBoolean;
 
 public final class InstrLoadFalse extends MtsInstruction
 {
     @Override
     public void execute( MtsFrame frame )
     {
-        frame.push( MtsValue.FALSE );
+        frame.push( MtsBoolean.False );
     }
     
     @Override

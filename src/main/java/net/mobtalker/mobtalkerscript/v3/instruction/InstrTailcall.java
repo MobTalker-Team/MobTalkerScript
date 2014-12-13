@@ -31,15 +31,15 @@ public final class InstrTailcall extends InstrCall
     // ========================================
     
     @Override
-    protected final MtsValue getResults( MtsValue target, MtsVarargs args )
+    protected final MtsVarargs getResults( MtsValue target, MtsVarargs args )
     {
         return new MtsTailcall( target, args );
     }
     
     @Override
-    protected final void pushResults( MtsFrame frame, MtsValue result )
+    protected final void pushResults( MtsFrame frame, MtsVarargs results )
     {
-        frame.push( result );
+        frame.push( results );
     }
     
     // ========================================

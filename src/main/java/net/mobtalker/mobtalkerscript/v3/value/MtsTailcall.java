@@ -82,7 +82,7 @@ public final class MtsTailcall extends MtsVarargs
     /**
      * Executes this tail call and any subsequent returned tail calls.
      */
-    public MtsValue evaluate()
+    public MtsVarargs evaluate()
     {
         if ( _target instanceof MtsTailcall )
         {
@@ -93,7 +93,7 @@ public final class MtsTailcall extends MtsVarargs
         }
         
         MtsLog.EngineLog.fine( "Evaluating tailcall" );
-        MtsValue result = _target.call( _args );
+        MtsVarargs result = _target.call( _args );
         
         while ( result instanceof MtsTailcall )
         {

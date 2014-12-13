@@ -150,7 +150,7 @@ public class FunctionTextReader
                 {
                     String escaped = line.substring( 1, line.length() - 1 );
                     
-                    constants.add( MtsValue.valueOf( StringEscapeUtils.unescapeJava( escaped ) ) );
+                    constants.add( MtsString.of( StringEscapeUtils.unescapeJava( escaped ) ) );
                 }
                 else
                 {

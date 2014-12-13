@@ -1,22 +1,22 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
-public class MtsNil extends MtsValue
+public final class MtsNil extends MtsValue
 {
     private final MtsString stringValue;
     
@@ -24,7 +24,7 @@ public class MtsNil extends MtsValue
     
     /* package */MtsNil()
     {
-        stringValue = MtsValue.valueOf( "nil" );
+        stringValue = MtsString.of( "nil" );
     }
     
     // ========================================
@@ -52,21 +52,27 @@ public class MtsNil extends MtsValue
     @Override
     public MtsBoolean toMtsBoolean()
     {
-        return FALSE;
+        return MtsBoolean.False;
     }
     
     // ========================================
     
     @Override
-    public String toString()
+    public boolean isTrue()
     {
-        return "nil";
+        return false;
     }
     
     @Override
     public Object toJava()
     {
         return null;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "nil";
     }
     
     @Override

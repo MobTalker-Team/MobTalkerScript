@@ -16,41 +16,23 @@
  */
 package net.mobtalker.mobtalkerscript;
 
-import java.io.*;
 import java.util.logging.Logger;
 
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
-import net.mobtalker.mobtalkerscript.v2.*;
-import net.mobtalker.mobtalkerscript.v2.compiler.MtsCompiler;
-import net.mobtalker.mobtalkerscript.v2.value.MtsClosure;
+import net.mobtalker.mobtalkerscript.v3.*;
+import net.mobtalker.mobtalkerscript.v3.compiler.MtsCompiler;
+import net.mobtalker.mobtalkerscript.v3.value.MtsClosure;
 
 import org.junit.*;
 
 public class TestScripts
 {
-    public static void main( String[] args ) throws Exception
-    {
-        setUp();
-        TestScripts test = new TestScripts();
-        MtsCompiler.loadString( ";", "" );
-        
-        BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
-        in.readLine();
-        
-        test.testCalls();
-        test.testConstructs();
-        test.testMath();
-        
-        System.out.println( "Done!" );
-        in.readLine();
-    }
-    
     @BeforeClass
-    public static void setUp()
+    public static void setUp() throws Exception
     {
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-//        MtsLog.CompilerLog.setLevel( Level.OFF );
-//        MtsLog.EngineLog.setLevel( Level.OFF );
+//        MtsLog.CompilerLog.setLevel( Level.ALL );
+//        MtsLog.EngineLog.setLevel( Level.ALL );
     }
     
     private void run( String path ) throws Exception
@@ -63,19 +45,25 @@ public class TestScripts
     @Test
     public void testCalls() throws Exception
     {
-        run( "src/test/resources/scripts/test.calls.script" );
+        run( "src/test/resources/scripts/calls.lua" );
     }
     
     @Test
     public void testConstructs() throws Exception
     {
-        run( "src/test/resources/scripts/test.constructs.script" );
+        run( "src/test/resources/scripts/constructs.lua" );
     }
     
     @Test
-    public void testMath() throws Exception
+    public void testLocals() throws Exception
     {
-        run( "src/test/resources/scripts/test.math.script" );
+        run( "src/test/resources/scripts/locals.lua" );
+    }
+    
+    @Test
+    public void testVararg() throws Exception
+    {
+        run( "src/test/resources/scripts/vararg.lua" );
     }
     
 }

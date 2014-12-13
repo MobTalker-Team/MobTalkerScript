@@ -19,7 +19,7 @@ package net.mobtalker.mobtalkerscript.standalone.lib;
 import java.util.List;
 
 import net.mobtalker.mobtalkerscript.api.library.IInteractionCommandLibLogic;
-import net.mobtalker.mobtalkerscript.v2.MtsGlobals;
+import net.mobtalker.mobtalkerscript.v3.MtsGlobals;
 
 public class ConsoleInteractionCommandLibLogic implements IInteractionCommandLibLogic
 {

@@ -20,7 +20,7 @@ import java.util.List;
 
 import joptsimple.internal.Strings;
 import net.mobtalker.mobtalkerscript.api.library.IGameCommandLibLogic;
-import net.mobtalker.mobtalkerscript.v2.MtsGlobals;
+import net.mobtalker.mobtalkerscript.v3.MtsGlobals;
 
 public class ConsoleGameCommandLibLogic implements IGameCommandLibLogic
 {

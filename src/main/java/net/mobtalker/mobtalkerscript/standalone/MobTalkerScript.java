@@ -16,7 +16,7 @@
  */
 package net.mobtalker.mobtalkerscript.standalone;
 
-import static net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNatives.*;
+import static net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNatives.*;
 
 import java.nio.file.Paths;
 import java.util.logging.*;
@@ -28,9 +28,9 @@ import net.mobtalker.mobtalkerscript.api.library.*;
 import net.mobtalker.mobtalkerscript.standalone.lib.*;
 import net.mobtalker.mobtalkerscript.util.PrettyPrinter;
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
-import net.mobtalker.mobtalkerscript.v2.*;
-import net.mobtalker.mobtalkerscript.v2.compiler.*;
-import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v3.*;
+import net.mobtalker.mobtalkerscript.v3.compiler.*;
+import net.mobtalker.mobtalkerscript.v3.value.*;
 
 /**
  * Intended to be the entry point for an interactive shell for MobTalkerScript.
@@ -44,7 +44,7 @@ public class MobTalkerScript
         MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
         
         // Initialize the parser
-        MtsCompiler.loadString( ";", "" );
+        MtsCompiler.loadStringChunk( ";", "" );
         
         // Options
         OptionParser parser = new OptionParser();
@@ -95,14 +95,12 @@ public class MobTalkerScript
             
             if ( fileChunk != null )
             {
-                System.out.println( fileChunk.toString( true, true ) );
-                
                 try
                 {
                     new MtsClosure( fileChunk, _G ).call();
                     Thread.sleep( 100 );
                 }
-                catch ( ScriptRuntimeException ex )
+                catch ( MtsScriptRuntimeException ex )
                 {
                     _G.err.println( ex.createStackTrace() );
                     Thread.sleep( 100 );
@@ -122,7 +120,7 @@ public class MobTalkerScript
             MtsFunctionPrototype chunk;
             try
             {
-                chunk = MtsCompiler.loadString( line, "stdin" );
+                chunk = MtsCompiler.loadStringChunk( line, "stdin" );
             }
             catch ( MtsSyntaxError ex )
             {
@@ -142,7 +140,7 @@ public class MobTalkerScript
                     _G.out.print( new PrettyPrinter().print( result, "result" ) );
                 }
             }
-            catch ( ScriptRuntimeException ex )
+            catch ( MtsScriptRuntimeException ex )
             {
                 _G.err.println( ex.createStackTrace() );
                 Thread.sleep( 100 );

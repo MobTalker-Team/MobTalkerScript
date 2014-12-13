@@ -1,31 +1,30 @@
 /*
  * Copyright (C) 2013-2014 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
 import static net.mobtalker.mobtalkerscript.api.ScriptApiConstants.*;
-import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 
 import java.util.List;
 
 import net.mobtalker.mobtalkerscript.api.*;
-import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
-import net.mobtalker.mobtalkerscript.v2.value.*;
-import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
+import net.mobtalker.mobtalkerscript.v3.MtsArgumentException;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
 import com.google.common.base.Strings;
 
@@ -46,9 +45,9 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String objective = checkString( argObjectiveName, 1 );
         
         if ( !_logic.checkObjectiveDisplaySlot( slot ) )
-            throw new BadArgumentException( 0, "invalid display slot '%s'", slot );
+            throw new MtsArgumentException( 0, "invalid display slot '%s'", slot );
         if ( !_logic.hasObjective( objective ) )
-            throw new BadArgumentException( 1, "unknown objective '%s'", objective );
+            throw new MtsArgumentException( 1, "unknown objective '%s'", objective );
         
         _logic.setDisplayedObjective( slot, objective );
     }
@@ -59,7 +58,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String slot = checkString( argSlotName, 0 );
         
         if ( !_logic.checkObjectiveDisplaySlot( slot ) )
-            throw new BadArgumentException( 0, "invalid display slot '%s'", slot );
+            throw new MtsArgumentException( 0, "invalid display slot '%s'", slot );
         
         _logic.clearDisplayedObjective( slot );
     }
@@ -72,7 +71,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         MtsTable result = new MtsTable( 0, objectives.size() );
         for ( ScoreboardObjectiveInfo objective : objectives )
         {
-            result.set( valueOf( objective.Name ), valueOf( objective.Criteria ) );
+            result.set( MtsString.of( objective.Name ), MtsString.of( objective.Criteria ) );
         }
         
         return result;
@@ -81,7 +80,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
     @MtsNativeFunction
     public MtsBoolean hasObjective( MtsValue argName )
     {
-        return valueOf( _logic.hasObjective( checkString( argName, 0 ) ) );
+        return MtsBoolean.of( _logic.hasObjective( checkString( argName, 0 ) ) );
     }
     
     @MtsNativeFunction
@@ -92,15 +91,15 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String displayName = checkString( argDisplayName, 2, null );
         
         if ( Strings.isNullOrEmpty( name ) )
-            throw new BadArgumentException( 0, "name is empty" );
+            throw new MtsArgumentException( 0, "name is empty" );
         if ( name.length() > 16 )
-            throw new BadArgumentException( 0, "name must be no longer than 16 characters" );
+            throw new MtsArgumentException( 0, "name must be no longer than 16 characters" );
         if ( _logic.hasObjective( name ) )
-            throw new BadArgumentException( 0, "objective '%s' already exists", name );
+            throw new MtsArgumentException( 0, "objective '%s' already exists", name );
         if ( !_logic.hasCriteria( criteria ) )
-            throw new BadArgumentException( 1, "unknown criteria '%s'", criteria );
+            throw new MtsArgumentException( 1, "unknown criteria '%s'", criteria );
         if ( !Strings.isNullOrEmpty( displayName ) && ( displayName.length() > 32 ) )
-            throw new BadArgumentException( 2, "display name must be no longer than 32 characters" );
+            throw new MtsArgumentException( 2, "display name must be no longer than 32 characters" );
         
         _logic.addObjective( name, criteria, displayName );
     }
@@ -111,7 +110,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String name = checkString( argName, 0 );
         
         if ( !_logic.hasObjective( name ) )
-            throw new BadArgumentException( 0, "unknown objective '%s'", name );
+            throw new MtsArgumentException( 0, "unknown objective '%s'", name );
         
         _logic.removeObjective( name );
     }
@@ -127,7 +126,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         MtsTable result = new MtsTable( names.size(), 0 );
         for ( String name : names )
         {
-            result.add( valueOf( name ) );
+            result.list().add( MtsString.of( name ) );
         }
         
         return result;
@@ -141,7 +140,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         MtsTable result = new MtsTable( 0, scores.size() );
         for ( ScoreboardScoreInfo score : scores )
         {
-            result.set( valueOf( score.Objective.Name ), valueOf( score.Score ) );
+            result.set( MtsString.of( score.Objective.Name ), MtsNumber.of( score.Score ) );
         }
         
         return result;
@@ -154,9 +153,9 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String objective = checkString( argObjectiveName, 1 );
         
         if ( !_logic.hasObjective( objective ) )
-            throw new BadArgumentException( 1, "unknown objective '%s'", objective );
+            throw new MtsArgumentException( 1, "unknown objective '%s'", objective );
         
-        return valueOf( _logic.getPlayerScore( player, objective ).Score );
+        return MtsNumber.of( _logic.getPlayerScore( player, objective ).Score );
     }
     
     @MtsNativeFunction
@@ -164,7 +163,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
     {
         String objective = checkString( argObjectiveName, 1 );
         if ( !_logic.hasObjective( objective ) )
-            throw new BadArgumentException( 1, "unknown objective '%s'", objective );
+            throw new MtsArgumentException( 1, "unknown objective '%s'", objective );
         
         _logic.setPlayerScore( checkString( argPlayerName, 0 ),
                                objective,
@@ -176,11 +175,11 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
     {
         String objective = checkString( argObjectiveName, 1 );
         if ( !_logic.hasObjective( objective ) )
-            throw new BadArgumentException( 1, "unknown objective '%s'", objective );
+            throw new MtsArgumentException( 1, "unknown objective '%s'", objective );
         
-        return valueOf( _logic.increasePlayerScore( checkString( argPlayerName, 0 ),
-                                                    objective,
-                                                    checkIntegerWithMinimum( argValue, 2, 0, 1 ) ) );
+        return MtsNumber.of( _logic.increasePlayerScore( checkString( argPlayerName, 0 ),
+                                                         objective,
+                                                         checkIntegerWithMinimum( argValue, 2, 0, 1 ) ) );
     }
     
     @MtsNativeFunction
@@ -188,11 +187,11 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
     {
         String objective = checkString( argObjectiveName, 1 );
         if ( !_logic.hasObjective( objective ) )
-            throw new BadArgumentException( 1, "unknown objective '%s'", objective );
+            throw new MtsArgumentException( 1, "unknown objective '%s'", objective );
         
-        return valueOf( _logic.decreasePlayerScore( checkString( argPlayerName, 0 ),
-                                                    objective,
-                                                    checkIntegerWithMinimum( argValue, 2, 0, 1 ) ) );
+        return MtsNumber.of( _logic.decreasePlayerScore( checkString( argPlayerName, 0 ),
+                                                         objective,
+                                                         checkIntegerWithMinimum( argValue, 2, 0, 1 ) ) );
     }
     
     // ========================================
@@ -207,9 +206,9 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         for ( ScoreboardTeamInfo team : teams )
         {
             MtsTable info = new MtsTable( 0, 3 );
-            info.set( KEY_SCOREBOARD_TEAM_COLOR, valueOf( team.Color ) );
-            info.set( KEY_SCOREBOARD_TEAM_FRIENDLYFIRE, valueOf( team.FriendlyFire ) );
-            info.set( KEY_SCOREBOARD_TEAM_SEEFIRENDLYINVISIBLES, valueOf( team.CanSeeInvisibleMembers ) );
+            info.set( KEY_SCOREBOARD_TEAM_COLOR, MtsString.of( team.Color ) );
+            info.set( KEY_SCOREBOARD_TEAM_FRIENDLYFIRE, MtsBoolean.of( team.FriendlyFire ) );
+            info.set( KEY_SCOREBOARD_TEAM_SEEFIRENDLYINVISIBLES, MtsBoolean.of( team.CanSeeInvisibleMembers ) );
             result.set( team.Name, info );
         }
         
@@ -222,14 +221,14 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String teamName = checkString( argTeamName, 0 );
         
         if ( !_logic.hasTeam( teamName ) )
-            throw new BadArgumentException( 0, "unknown team '%s'", teamName );
+            throw new MtsArgumentException( 0, "unknown team '%s'", teamName );
         
         List<String> players = _logic.getTeamMembers( teamName );
         
         MtsTable result = new MtsTable( players.size(), 0 );
         for ( String player : players )
         {
-            result.add( valueOf( player ) );
+            result.list().add( MtsString.of( player ) );
         }
         
         return result;
@@ -242,13 +241,13 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String displayName = checkString( argDisplayName, 1, null );
         
         if ( _logic.hasTeam( name ) )
-            throw new BadArgumentException( 0, "team '%s' already exists", name );
+            throw new MtsArgumentException( 0, "team '%s' already exists", name );
         if ( Strings.isNullOrEmpty( name ) )
-            throw new BadArgumentException( 0, "empty team name" );
+            throw new MtsArgumentException( 0, "empty team name" );
         if ( name.length() > 16 )
-            throw new BadArgumentException( 0, "team name is too long", name );
+            throw new MtsArgumentException( 0, "team name is too long", name );
         if ( ( displayName != null ) && ( displayName.length() > 32 ) )
-            throw new BadArgumentException( 1, "display name is too long", displayName );
+            throw new MtsArgumentException( 1, "display name is too long", displayName );
         
         _logic.addTeam( name, displayName );
     }
@@ -259,7 +258,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String name = checkString( argTeamName, 0 );
         
         if ( !_logic.hasTeam( name ) )
-            throw new BadArgumentException( 0, "unknown team '%s'", name );
+            throw new MtsArgumentException( 0, "unknown team '%s'", name );
         
         _logic.removeTeam( name );
     }
@@ -270,7 +269,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String teamName = checkString( argTeamName, 0 );
         
         if ( !_logic.hasTeam( teamName ) )
-            throw new BadArgumentException( 0, "unknown team '%s'", teamName );
+            throw new MtsArgumentException( 0, "unknown team '%s'", teamName );
         
         _logic.addTeamMember( teamName, checkString( argPlayerName, 1 ) );
     }
@@ -280,7 +279,7 @@ public class ScoreboardLib extends AbstractUnifiedLib<IScoreboardLibLogic>
         String teamName = checkString( argTeamName, 0 );
         
         if ( !_logic.hasTeam( teamName ) )
-            throw new BadArgumentException( 0, "unknown team '%s'", teamName );
+            throw new MtsArgumentException( 0, "unknown team '%s'", teamName );
         
         _logic.removeTeamMember( teamName, checkString( argPlayerName, 1 ) );
     }

@@ -16,14 +16,13 @@
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
-import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 
 import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v2.ScriptRuntimeException;
-import net.mobtalker.mobtalkerscript.v2.value.*;
-import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
+import net.mobtalker.mobtalkerscript.v3.MtsScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
 import com.google.common.collect.Lists;
 
@@ -52,25 +51,25 @@ public class InteractionCommandLib
     {
         _logic.showText( checkString( argName, 0, "" ),
                          checkString( argText, 1 ),
-                         isTrue( argIsLast ) );
+                         argIsLast.isTrue() );
     }
     
     @MtsNativeFunction
-    public MtsValue showMenu( MtsVarArgs args )
+    public MtsValue showMenu( MtsVarargs args )
     {
         String caption = checkString( args, 0, "" );
         MtsValue arg1 = args.get( 1 );
         
         if ( arg1.isNil() )
-            throw new ScriptRuntimeException( "must provide at least one option" );
+            throw new MtsScriptRuntimeException( "must provide at least one option" );
         
         List<String> options;
         if ( arg1.isTable() )
         {
             MtsTable argOptions = arg1.asTable();
             
-            options = Lists.newArrayListWithCapacity( argOptions.listSize() );
-            for ( MtsValue arg : argOptions.listView() )
+            options = Lists.newArrayListWithCapacity( argOptions.list().size() );
+            for ( MtsValue arg : argOptions.list() )
             {
                 options.add( checkString( arg ) );
             }
@@ -84,7 +83,7 @@ public class InteractionCommandLib
             }
         }
         
-        return valueOf( _logic.showMenu( caption, options ) );
+        return MtsNumber.of( _logic.showMenu( caption, options ) );
     }
     
     @MtsNativeFunction

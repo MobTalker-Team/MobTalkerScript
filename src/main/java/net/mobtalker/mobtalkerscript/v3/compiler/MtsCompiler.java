@@ -97,7 +97,7 @@ import com.google.common.collect.Lists;
 
 public class MtsCompiler extends Mts3BaseListener
 {
-    private static final TokenFactory TokenFactory = new CommonTokenFactory( false );
+    private static final TokenFactory TokenFactory = new CommonTokenFactory( true );
     
     // ========================================
     
@@ -1421,9 +1421,13 @@ public class MtsCompiler extends Mts3BaseListener
         {
             ctx.Offsets.nTargets = 2;
             visit( ctx.Offsets );
+            
+            callFunction( 5, 0 );
         }
-        
-        callFunction( 5, 0 );
+        else
+        {
+            callFunction( 3, 0 );
+        }
     }
     
     @Override

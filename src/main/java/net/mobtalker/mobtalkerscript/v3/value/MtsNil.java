@@ -18,14 +18,8 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 public final class MtsNil extends MtsValue
 {
-    private final MtsString stringValue;
-    
-    // ========================================
-    
     /* package */MtsNil()
-    {
-        stringValue = MtsString.of( "nil" );
-    }
+    {}
     
     // ========================================
     
@@ -46,7 +40,7 @@ public final class MtsNil extends MtsValue
     @Override
     public MtsString toMtsString()
     {
-        return stringValue;
+        return MtsString.of( "nil" );
     }
     
     @Override

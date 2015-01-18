@@ -130,7 +130,7 @@ public class MtsTableTest
         assertTrue( t.containsKey( MtsNumber.of( 5 ) ) );
     }
     
-    @Test
+//    @Test
     public void testPerformance()
     {
         for ( int i = 0; i < 0xFFFFF; i++ )

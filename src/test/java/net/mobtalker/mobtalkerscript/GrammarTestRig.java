@@ -21,13 +21,12 @@ import java.util.*;
 import java.util.logging.*;
 
 import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
-import net.mobtalker.mobtalkerscript.v3.*;
+import net.mobtalker.mobtalkerscript.v3.MtsFunctionPrototype;
 import net.mobtalker.mobtalkerscript.v3.compiler.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.EmptyStmtContext;
 import net.mobtalker.mobtalkerscript.v3.serialization.*;
-import net.mobtalker.mobtalkerscript.v3.value.MtsClosure;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
@@ -44,7 +43,7 @@ public class GrammarTestRig
 //        MtsLog.CompilerLog.setLevel( Level.ALL );
         MtsLog.EngineLog.setLevel( Level.OFF );
         
-        String path = "locals.lua";
+        String path = "Creeper.script";
         MtsFunctionPrototype prototype = null;
         
 //        for ( int round = 0; round < 5; round++ )
@@ -56,7 +55,8 @@ public class GrammarTestRig
 //            {
 //                Stopwatch stopwatch = Stopwatch.createStarted();
         
-        Mts3Parser parser = getParser( new ANTLRFileStream( "src/test/resources/scripts/" + path ) );
+        Mts3Parser parser = getParser( new ANTLRFileStream( "D:\\Projects\\Java\\Minecraft\\Forge 10.14\\MobTalker2\\run\\mobtalker2\\scripts\\MobTalker2_TestSuite\\"
+                                                            + path ) );
         Mts3Parser.ChunkContext chunk;
         try
         {
@@ -81,8 +81,8 @@ public class GrammarTestRig
         
         prototype = FunctionBinaryReader.readChunk( Paths.get( "D:\\test_binary" ) );
         
-//        new TreeCleaner().visit( chunk );
-//        chunk.inspect( parser );
+        new TreeCleaner().visit( chunk );
+        chunk.inspect( parser );
         
 //                long elapsed = stopwatch.stop().elapsed( TimeUnit.MICROSECONDS );
 //                runtimes.add( elapsed );
@@ -95,7 +95,7 @@ public class GrammarTestRig
 //                               runs, ( min / 1000.0 ), ( max / 1000.0 ), ( avg( runtimes ) / 1000.0 ), ( all / 1000.0 ) );
 //        }
         
-        new MtsClosure( prototype, new MtsGlobals() ).call();
+//        new MtsClosure( prototype, new MtsGlobals() ).call();
     }
     
     private static double avg( Collection<Long> c )

@@ -24,11 +24,14 @@ import net.mobtalker.mobtalkerscript.v3.MtsArithmeticException;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.google.common.collect.Maps;
-
 public class MtsString extends MtsValue
 {
-    private static final HashMap<String, MtsString> HEAP = Maps.newHashMapWithExpectedSize( 1028 );
+    private static final HashMap<String, MtsString> HEAP;
+    
+    static
+    {
+        HEAP = new HashMap<>( 1028 );
+    }
     
     // ========================================
     

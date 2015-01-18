@@ -18,7 +18,7 @@ package net.mobtalker.mobtalkerscript.v3;
 
 import net.mobtalker.mobtalkerscript.v3.value.MtsType;
 
-public class MtsArithmeticException extends MtsScriptRuntimeException
+public class MtsArithmeticException extends MtsRuntimeException
 {
     public MtsArithmeticException( MtsType a )
     {

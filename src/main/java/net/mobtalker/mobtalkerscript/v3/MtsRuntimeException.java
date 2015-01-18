@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
  * Thrown when the execution of script code causes an exception.
  */
 @SuppressWarnings( "serial" )
-public class MtsScriptRuntimeException extends RuntimeException
+public class MtsRuntimeException extends RuntimeException
 {
     private final int _level;
     private final List<MtsStackTraceElement> _stackTrace;
@@ -37,23 +37,23 @@ public class MtsScriptRuntimeException extends RuntimeException
     
     // ========================================
     
-    public MtsScriptRuntimeException( String msg )
+    public MtsRuntimeException( String msg )
     {
         this( 0, msg );
     }
     
-    public MtsScriptRuntimeException( int level, String msg )
+    public MtsRuntimeException( int level, String msg )
     {
         super( msg );
         _level = Math.max( level, 0 );
     }
     
-    public MtsScriptRuntimeException( String msg, Object... args )
+    public MtsRuntimeException( String msg, Object... args )
     {
         this( 0, String.format( msg, args ) );
     }
     
-    public MtsScriptRuntimeException( int level, String msg, Object... args )
+    public MtsRuntimeException( int level, String msg, Object... args )
     {
         this( level, String.format( msg, args ) );
     }

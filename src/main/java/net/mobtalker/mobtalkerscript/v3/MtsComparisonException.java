@@ -18,7 +18,7 @@ package net.mobtalker.mobtalkerscript.v3;
 
 import net.mobtalker.mobtalkerscript.v3.value.MtsType;
 
-public class MtsComparisonException extends MtsScriptRuntimeException
+public class MtsComparisonException extends MtsRuntimeException
 {
     public MtsComparisonException( MtsType a, MtsType b )
     {

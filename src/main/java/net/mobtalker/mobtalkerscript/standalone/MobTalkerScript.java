@@ -100,7 +100,7 @@ public class MobTalkerScript
                     new MtsClosure( fileChunk, _G ).call();
                     Thread.sleep( 100 );
                 }
-                catch ( MtsScriptRuntimeException ex )
+                catch ( MtsRuntimeException ex )
                 {
                     _G.err.println( ex.createStackTrace() );
                     Thread.sleep( 100 );
@@ -140,7 +140,7 @@ public class MobTalkerScript
                     _G.out.print( new PrettyPrinter().print( result, "result" ) );
                 }
             }
-            catch ( MtsScriptRuntimeException ex )
+            catch ( MtsRuntimeException ex )
             {
                 _G.err.println( ex.createStackTrace() );
                 Thread.sleep( 100 );

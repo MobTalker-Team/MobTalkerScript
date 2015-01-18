@@ -42,7 +42,7 @@ public class MtsCheck
     public static MtsValue checkNotNil( MtsValue value, int i )
     {
         if ( value.isNil() )
-            throw new MtsScriptRuntimeException( i, "bad argument #%s (value expected, got %s)", value.getType() );
+            throw new MtsRuntimeException( i, "bad argument #%s (value expected, got %s)", value.getType() );
         
         return value;
     }

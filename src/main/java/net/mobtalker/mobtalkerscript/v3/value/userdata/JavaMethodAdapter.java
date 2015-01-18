@@ -75,17 +75,17 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
         catch ( InvocationTargetException ex )
         {
             Throwable cause = ex.getCause();
-            MtsScriptRuntimeException srex;
-            if ( cause instanceof MtsScriptRuntimeException )
+            MtsRuntimeException srex;
+            if ( cause instanceof MtsRuntimeException )
             {
-                srex = (MtsScriptRuntimeException) cause;
+                srex = (MtsRuntimeException) cause;
             }
             else
             {
                 String msg = cause.getMessage();
                 StackTraceElement ste = cause.getStackTrace()[0];
                 
-                srex = new MtsScriptRuntimeException( msg );
+                srex = new MtsRuntimeException( msg );
                 srex.addStackTraceElement( ste.toString() );
             }
             

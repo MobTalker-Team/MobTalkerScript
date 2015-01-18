@@ -18,7 +18,7 @@ package net.mobtalker.mobtalkerscript.v3;
 
 import net.mobtalker.mobtalkerscript.v3.value.MtsType;
 
-public class MtsTypeException extends MtsScriptRuntimeException
+public class MtsTypeException extends MtsRuntimeException
 {
     public MtsTypeException( MtsType expected, MtsType actual )
     {

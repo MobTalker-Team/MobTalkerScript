@@ -43,7 +43,7 @@ public final class MtsBaseLib
     public static MtsVarargs assertMts( MtsVarargs args )
     {
         if ( !args.get( 0 ).isTrue() )
-            throw new MtsScriptRuntimeException( checkString( args, 1, "assertion failed!" ) );
+            throw new MtsRuntimeException( checkString( args, 1, "assertion failed!" ) );
         
         return args;
     }
@@ -51,7 +51,7 @@ public final class MtsBaseLib
     @MtsNativeFunction( "error" )
     public static void error( MtsVarargs args )
     {
-        throw new MtsScriptRuntimeException( args.get( 0 ).toMtsString().toJava(),
+        throw new MtsRuntimeException( args.get( 0 ).toMtsString().toJava(),
                                              checkInteger( args, 1, 1 ) - 1 );
     }
     
@@ -142,7 +142,7 @@ public final class MtsBaseLib
         
         MtsValue mm = t.getMetaMethod( __metatable );
         if ( !mm.isNil() )
-            throw new MtsScriptRuntimeException( "cannot retrieve a protected metatable" );
+            throw new MtsRuntimeException( "cannot retrieve a protected metatable" );
         
         return t.getMetaTable();
     }
@@ -154,7 +154,7 @@ public final class MtsBaseLib
         
         MtsValue mm = t.getMetaMethod( __metatable );
         if ( !mm.isNil() )
-            throw new MtsScriptRuntimeException( "cannot change a protected metatable" );
+            throw new MtsRuntimeException( "cannot change a protected metatable" );
         
         t.setMetaTable( argMetatable );
         return t;
@@ -231,7 +231,7 @@ public final class MtsBaseLib
             else
                 result = MtsVarargs.of( MtsBoolean.True, callResults );
         }
-        catch ( MtsScriptRuntimeException ex )
+        catch ( MtsRuntimeException ex )
         {
             result = MtsVarargs.of( MtsBoolean.False, MtsString.of( ex.getMessage() ) );
         }

@@ -48,7 +48,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public void setMetaTable( MtsValue table )
     {
-        new MtsScriptRuntimeException( "attempt to set metatable of a %s value", getType() );
+        new MtsRuntimeException( "attempt to set metatable of a %s value", getType() );
     }
     
     public final MtsValue getMetaMethod( MtsString tag )
@@ -85,7 +85,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
      * @param key The key used to index this value.
      * @param useMetaTag Specifies if the {@value #__index} meta tag should be used.
      * @return The result of the lookup for a value for <code>key</code>.
-     * @throws MtsScriptRuntimeException If this value cannot be indexed.
+     * @throws MtsRuntimeException If this value cannot be indexed.
      */
     public final MtsValue get( MtsValue key, boolean useMetaTag )
     {
@@ -106,7 +106,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     protected MtsValue doGet( MtsValue key )
     {
-        throw new MtsScriptRuntimeException( "attempt to index a %s value", getType() );
+        throw new MtsRuntimeException( "attempt to index a %s value", getType() );
     }
     
     /**
@@ -186,7 +186,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     protected void doSet( MtsValue key, MtsValue value )
     {
-        throw new MtsScriptRuntimeException( "attempt to index a %s value", getType() );
+        throw new MtsRuntimeException( "attempt to index a %s value", getType() );
     }
     
     // ========================================
@@ -211,7 +211,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     {
         MtsValue tag = getMetaMethod( __call );
         if ( tag.isNil() )
-            throw new MtsScriptRuntimeException( "attempt to call a %s value", getType() );
+            throw new MtsRuntimeException( "attempt to call a %s value", getType() );
         
         return tag.call( MtsVarargs.of( this, args ) );
     }

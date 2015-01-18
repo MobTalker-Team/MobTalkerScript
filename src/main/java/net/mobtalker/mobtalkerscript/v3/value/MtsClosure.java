@@ -58,7 +58,7 @@ public final class MtsClosure extends MtsFunction
         {
             return frame.run();
         }
-        catch ( MtsScriptRuntimeException ex )
+        catch ( MtsRuntimeException ex )
         {
             String source = _prototype.getSource();
             SourcePosition pos = _prototype.getSourcePosition( frame.getInstructionPointer() );

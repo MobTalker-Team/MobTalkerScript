@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 
 import java.util.Map;
 
-import net.mobtalker.mobtalkerscript.v3.MtsScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.MtsRuntimeException;
 
 import org.junit.*;
 
@@ -35,7 +35,7 @@ public class MtsTableMapTest
         _map = new MtsTableMap( 0 );
     }
     
-    @Test( expected = MtsScriptRuntimeException.class )
+    @Test( expected = MtsRuntimeException.class )
     public void testSetGet()
     {
         assertEquals( Nil, _map.get( MtsString.of( "z" ) ) );

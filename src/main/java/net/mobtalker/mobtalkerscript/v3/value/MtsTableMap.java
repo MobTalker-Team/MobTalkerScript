@@ -20,7 +20,7 @@ import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.v3.MtsScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.MtsRuntimeException;
 
 /**
  * A HashMap specifically tailored for MobTalkerScript.
@@ -243,7 +243,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         assert key != null : "key was null";
         
         if ( key.isNil() )
-            throw new MtsScriptRuntimeException( "table index is nil" );
+            throw new MtsRuntimeException( "table index is nil" );
         
         if ( value.isNil() )
             return remove( key );
@@ -353,7 +353,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
      * Returns the entry that follows (in arbitrary order) the entry associated with the given key.
      * <p>
      * If <tt>key</tt> is {@link #Nil} the result is the same as {@link #getFirst()}. <br/>
-     * If no entry for <tt>key</tt> exists in this table a {@link MtsScriptRuntimeException} is thrown.
+     * If no entry for <tt>key</tt> exists in this table a {@link MtsRuntimeException} is thrown.
      * <p>
      * If there are no entries after <tt>key</tt> the return value is <code>null</code>.
      */
@@ -372,7 +372,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
                 break;
         
         if ( next == null )
-            throw new MtsScriptRuntimeException( "invalid key" );
+            throw new MtsRuntimeException( "invalid key" );
         
         next = next.next;
         if ( next == null )

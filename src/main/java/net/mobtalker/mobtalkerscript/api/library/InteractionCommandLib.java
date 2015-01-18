@@ -20,7 +20,7 @@ import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 
 import java.util.List;
 
-import net.mobtalker.mobtalkerscript.v3.MtsScriptRuntimeException;
+import net.mobtalker.mobtalkerscript.v3.MtsRuntimeException;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
@@ -61,7 +61,7 @@ public class InteractionCommandLib
         MtsValue arg1 = args.get( 1 );
         
         if ( arg1.isNil() )
-            throw new MtsScriptRuntimeException( "must provide at least one option" );
+            throw new MtsRuntimeException( "must provide at least one option" );
         
         List<String> options;
         if ( arg1.isTable() )

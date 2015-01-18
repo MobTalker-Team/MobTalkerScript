@@ -111,6 +111,6 @@ public class MtsPackageLib
             }
         }
         
-        throw new MtsScriptRuntimeException( "module '%s' not found", libName );
+        throw new MtsRuntimeException( "module '%s' not found", libName );
     }
 }

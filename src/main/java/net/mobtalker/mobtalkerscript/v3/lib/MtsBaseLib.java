@@ -198,7 +198,7 @@ public final class MtsBaseLib
         MtsFunctionPrototype p;
         try
         {
-            p = MtsCompiler.loadStringChunk( chunk, sourceName );
+            p = MtsCompiler.loadChunk( chunk, sourceName );
         }
         catch ( Exception ex )
         {

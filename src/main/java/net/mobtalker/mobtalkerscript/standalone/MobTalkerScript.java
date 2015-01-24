@@ -40,7 +40,7 @@ public class MobTalkerScript
         System.out.print( "Loading...\r" );
         
         // Initialize the parser
-        MtsCompiler.loadStringChunk( ";", "" );
+        MtsCompiler.loadChunk( ";", "" );
         
         // Options
         OptionParser parser = new OptionParser();
@@ -107,7 +107,7 @@ public class MobTalkerScript
             MtsFunctionPrototype chunk;
             try
             {
-                chunk = MtsCompiler.loadStringChunk( line, "stdin" );
+                chunk = MtsCompiler.loadChunk( line, "stdin" );
             }
             catch ( MtsSyntaxError ex )
             {

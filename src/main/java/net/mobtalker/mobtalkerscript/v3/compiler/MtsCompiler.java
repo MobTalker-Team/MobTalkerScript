@@ -117,7 +117,7 @@ public class MtsCompiler extends Mts3BaseListener
     
     // ========================================
     
-    public static MtsFunctionPrototype loadStringChunk( String chunk, String source ) throws Exception
+    public static MtsFunctionPrototype loadChunk( String chunk, String source ) throws Exception
     {
         checkNotNull( chunk, "chunk" );
         
@@ -156,11 +156,19 @@ public class MtsCompiler extends Mts3BaseListener
         return compiler.compile();
     }
     
-    private static Mts3Parser getParser( CharStream stream )
+    // ========================================
+    
+    public static Mts3Lexer getLexer( CharStream stream )
     {
         Mts3Lexer lexer = new Mts3Lexer( stream );
         lexer.setTokenFactory( TokenFactory );
         
+        return lexer;
+    }
+    
+    public static Mts3Parser getParser( CharStream stream )
+    {
+        Mts3Lexer lexer = getLexer( stream );
         Mts3Parser parser = new Mts3Parser( new UnbufferedTokenStream( lexer, 100 ) );
         parser.removeErrorListeners();
         parser.addErrorListener( new MtsAntlrErrorListener() );

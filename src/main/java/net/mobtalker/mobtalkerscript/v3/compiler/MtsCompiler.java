@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,14 +18,12 @@ package net.mobtalker.mobtalkerscript.v3.compiler;
 
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Strings.*;
-import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v3.compiler.CompilerConstants.*;
 import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.Level;
 
 import net.mobtalker.mobtalkerscript.util.StringEscapeUtil;
 import net.mobtalker.mobtalkerscript.v3.*;
@@ -238,8 +236,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void enterFunction( String name, int sourceLineStart, int sourceLineEnd, List<String> params, boolean isVarargs )
     {
-        CompilerLog.info( "Enter Function: " + name );
-        
         FunctionState child = new FunctionState( _currentFunction, name, params.size(), isVarargs,
                                                  _sourceName, sourceLineStart, sourceLineEnd );
         _currentFunction.addChild( child );
@@ -253,8 +249,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void exitFunction()
     {
-        CompilerLog.info( "Exit Function " );
-        
         addInstr( InstrReturn( 0 ) );
         _currentFunction = _currentFunction.getParent();
     }
@@ -263,15 +257,11 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void enterBlock()
     {
-        CompilerLog.info( "Enter Block" );
-        
         _currentFunction.enterBlock( _curPosition );
     }
     
     public void exitBlock()
     {
-        CompilerLog.info( "Exit Block" );
-        
         _currentFunction.exitBlock();
     }
     
@@ -279,15 +269,11 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void enterWhileLoop()
     {
-        CompilerLog.info( "Enter WhileLoop" );
-        
         _currentFunction.enterLoop();
     }
     
     public void enterWhileBody()
     {
-        CompilerLog.info( "Enter WhileBody" );
-        
         addInstr( InstrTest() );
         _currentFunction.markBreak();
         enterBlock();
@@ -295,8 +281,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void exitWhileLoop()
     {
-        CompilerLog.info( "Exit WhileLoop" );
-        
         addInstr( InstrJump() );
         _currentFunction.exitLoop();
         exitBlock();
@@ -306,21 +290,15 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void enterRepeatLoop()
     {
-        CompilerLog.info( "Enter RepeatLoop" );
-        
         enterBlock();
         _currentFunction.enterLoop();
     }
     
     public void enterUntilConditon()
-    {
-        CompilerLog.info( "Enter UntilCondition" );
-    }
+    {}
     
     public void exitRepeatLoop()
     {
-        CompilerLog.info( "Exit RepeatLoop" );
-        
         addInstr( InstrTest() );
         _currentFunction.exitLoop();
         exitBlock();
@@ -351,8 +329,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void breakLoop()
     {
-        CompilerLog.info( "Break Loop" );
-        
         addInstr( InstrJump() );
         _currentFunction.markBreak();
     }
@@ -361,37 +337,31 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void enterIfThenElseBlock()
     {
-        CompilerLog.info( "Enter if-then-else" );
         _currentFunction.enterIfThenElse();
     }
     
     public void enterIfCondition()
     {
-        CompilerLog.info( "Enter if condition" );
         _currentFunction.enterIfCondition();
     }
     
     public void endIfCondition()
     {
-        CompilerLog.info( "Enter then block" );
         _currentFunction.endIfCondition();
     }
     
     public void endThenBlock()
     {
-        CompilerLog.info( "Exit then block" );
         _currentFunction.endThenBlock();
     }
     
     public void enterElseBlock()
     {
-        CompilerLog.info( "Enter else block" );
         _currentFunction.enterElseBlock();
     }
     
     public void exitIfThenElse()
     {
-        CompilerLog.info( "Exit if-then-else" );
         _currentFunction.exitIfThenElse();
     }
     
@@ -399,13 +369,11 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void declareLabel( String name )
     {
-        CompilerLog.info( "Declare label: " + name );
         _currentFunction.addLabel( name );
     }
     
     public void gotoLabel( String name )
     {
-        CompilerLog.info( "Goto label: " + name );
         _currentFunction.gotoLabel( name );
     }
     
@@ -415,7 +383,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public LocalDescription declareLocal( String name )
     {
-        CompilerLog.info( "Declare local: " + name );
         try
         {
             return _currentFunction.declareLocal( name );
@@ -428,7 +395,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public LocalDescription declareAnonymousLocal( String name )
     {
-        CompilerLog.info( "Declare internal: " + name );
         return _currentFunction.declareAnonymousLocal( name );
     }
     
@@ -448,8 +414,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void loadVariable( String name )
     {
-        CompilerLog.info( "Load Variable: " + name );
-        
         if ( _currentFunction.isLocal( name ) )
         { // Local
             int index = _currentFunction.getLocalIndex( name );
@@ -477,8 +441,6 @@ public class MtsCompiler extends Mts3BaseListener
         checkNotNull( value != null, "value cannot be null" );
         checkArgument( !value.isNil(), "value cannot be nil" );
         
-        CompilerLog.info( "Load constant: " + value );
-        
         int index = _currentFunction.getConstantIndex( value );
         addInstr( InstrLoadC( index ) );
     }
@@ -498,25 +460,21 @@ public class MtsCompiler extends Mts3BaseListener
         if ( count < 1 )
             return;
         
-        CompilerLog.info( "Load nil " + count );
         addInstr( InstrLoadNil( count ) );
     }
     
     public void loadBoolean( boolean b )
     {
-        CompilerLog.info( "Load " + Boolean.toString( b ) );
         addInstr( b ? InstrLoadTrue() : InstrLoadFalse() );
     }
     
     public void loadBoolean( MtsBoolean b )
     {
-        CompilerLog.info( "Load " + b.toString() );
         addInstr( b == MtsBoolean.True ? InstrLoadTrue() : InstrLoadFalse() );
     }
     
     public void loadVarargs( int count )
     {
-        CompilerLog.info( "Load varargs " + count );
         addInstr( InstrVarargs( count ) );
     }
     
@@ -524,8 +482,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void storeVariable( String name )
     {
-        CompilerLog.info( "Store Variable: " + name );
-        
         if ( _currentFunction.isLocal( name ) )
         { // Local
             int index = _currentFunction.getLocalIndex( name );
@@ -555,15 +511,12 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void createTable( int listElements, int hashPairs )
     {
-        CompilerLog.info( "Create Table" );
         
         addInstr( InstrNewTable( listElements, hashPairs ) );
     }
     
     public void loadFromTable()
     {
-        CompilerLog.info( "Load from Table" );
-        
         addInstr( InstrLoadT() );
     }
     
@@ -574,16 +527,12 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void loadFromTable( MtsValue field )
     {
-        CompilerLog.info( "Load from Table: " + field );
-        
         int index = _currentFunction.getConstantIndex( field );
         addInstr( new InstrLoadTC( index ) );
     }
     
     public void storeInTable()
     {
-        CompilerLog.info( "Store in Table" );
-        
         addInstr( InstrStoreT() );
     }
     
@@ -600,8 +549,6 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void loadMethod( String name )
     {
-        CompilerLog.info( "Load Method: " + name );
-        
         int index = _currentFunction.getConstantIndex( MtsString.of( name ) );
         addInstr( InstrLoadM( index ) );
     }
@@ -615,30 +562,21 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void assignmentOperation( String op )
     {
-        CompilerLog.info( "Operator: " + op );
-        
         throw new UnsupportedOperationException();
     }
     
     public void unaryOperation( String op )
     {
-        CompilerLog.info( "Operator: " + op );
-        
         addInstr( InstrUnaryOp( op ) );
     }
     
     public void binaryOperation( String op )
     {
-        // Beware of the '%' operator
-        CompilerLog.log( Level.INFO, "Operator: " + op );
-        
         addInstr( InstrBinaryOp( op ) );
     }
     
     public void logicOperation( String op )
     {
-        CompilerLog.info( "Operator: " + op );
-        
         if ( ">".equals( op ) )
         {
             addInstr( InstrLessThenEqual() );
@@ -667,8 +605,6 @@ public class MtsCompiler extends Mts3BaseListener
      */
     public void enterConditionalBlock( String op )
     {
-        CompilerLog.info( "Enter conditional: " + op );
-        
         if ( "and".equals( op ) )
         {
             addInstr( InstrAnd() );
@@ -690,8 +626,6 @@ public class MtsCompiler extends Mts3BaseListener
      */
     public void exitConditionalBlock()
     {
-        CompilerLog.info( "Exit conditional" );
-        
         _currentFunction.setPendingJump( 1 );
     }
     
@@ -728,8 +662,6 @@ public class MtsCompiler extends Mts3BaseListener
      */
     public void createClosure()
     {
-        CompilerLog.info( "Create Closure" );
-        
         List<FunctionState> childs = _currentFunction.getChilds();
         addInstr( InstrClosure( childs.size() - 1 ) );
     }
@@ -739,22 +671,16 @@ public class MtsCompiler extends Mts3BaseListener
      */
     public void callFunction( int nArgs, int nReturn )
     {
-        CompilerLog.info( "Call Function" );
-        
         addInstr( InstrCall( nArgs, nReturn ) );
     }
     
     public void returnFunction( int nValues )
     {
-        CompilerLog.info( "Return Function" );
-        
         addInstr( InstrReturn( nValues ) );
     }
     
     public void tailcallFunction( int nArgs )
     {
-        CompilerLog.info( "Tailcall Function" );
-        
         addInstr( InstrTailcall( nArgs ) );
     }
     

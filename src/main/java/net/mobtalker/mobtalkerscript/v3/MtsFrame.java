@@ -1,22 +1,21 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v3;
 
-import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.*;
@@ -106,27 +105,10 @@ public final class MtsFrame
     {
         MtsInstruction[] instructions = _closure.getPrototype().getInstructions();
         
-        if ( EngineLog.isFinestEnabled() )
-        {
-            EngineLog.finest( "Enter Frame" );
-            EngineLog.finest( formatStack() );
-        }
-        
         for ( ;; _ip++ )
         {
             MtsInstruction instr = instructions[_ip];
-            
-            if ( EngineLog.isInfoEnabled() )
-            {
-                EngineLog.info( formatExecutedInstruction( instr ) );
-            }
-            
             instr.execute( this );
-            
-            if ( EngineLog.isFinestEnabled() )
-            {
-                EngineLog.finest( formatStack() );
-            }
             
             if ( instr.exits() )
                 break;
@@ -135,26 +117,23 @@ public final class MtsFrame
         MtsValue result = pop();
         
         assert isEmpty() : formatStack();
-        
-        EngineLog.finest( "Exit Frame" );
-        
         return result instanceof MtsVarargs ? (MtsVarargs) result : MtsVarargs.of( result );
     }
     
-    private String formatExecutedInstruction( MtsInstruction instr )
-    {
-        MtsFunctionPrototype prototype = _closure.getPrototype();
-        return new StringBuilder( 50 ).append( "Executing " )
-                                      .append( '[' )
-                                      .append( prototype.getName() )
-                                      .append( ':' )
-                                      .append( prototype.getSourcePosition( _ip ).Line )
-                                      .append( "][" )
-                                      .append( Integer.toString( _ip ) )
-                                      .append( "] " )
-                                      .append( instr.toString( prototype ) )
-                                      .toString();
-    }
+//    private String formatExecutedInstruction( MtsInstruction instr )
+//    {
+//        MtsFunctionPrototype prototype = _closure.getPrototype();
+//        return new StringBuilder( 50 ).append( "Executing " )
+//                                      .append( '[' )
+//                                      .append( prototype.getName() )
+//                                      .append( ':' )
+//                                      .append( prototype.getSourcePosition( _ip ).Line )
+//                                      .append( "][" )
+//                                      .append( Integer.toString( _ip ) )
+//                                      .append( "] " )
+//                                      .append( instr.toString( prototype ) )
+//                                      .toString();
+//    }
     
     private String formatStack()
     {

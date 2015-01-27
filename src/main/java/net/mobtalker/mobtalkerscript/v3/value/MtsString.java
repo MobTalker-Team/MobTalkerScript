@@ -148,7 +148,7 @@ public class MtsString extends MtsValue
     // ========================================
     
     @Override
-    protected MtsValue doGet( MtsValue key )
+    protected MtsValue getRaw( MtsValue key )
     {
         return Nil;
     }

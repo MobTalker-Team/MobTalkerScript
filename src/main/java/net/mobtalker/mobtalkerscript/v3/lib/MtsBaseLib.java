@@ -86,7 +86,7 @@ public final class MtsBaseLib
     @MtsNativeFunction( "pairs" )
     public static MtsValue pairs( MtsValue arg )
     {
-        MtsValue mm = arg.getMetaMethod( __pairs );
+        MtsValue mm = arg.getMetaTag( __pairs );
         if ( !mm.isNil() )
             return mm.call( arg );
         else
@@ -96,7 +96,7 @@ public final class MtsBaseLib
     @MtsNativeFunction( "ipairs" )
     public static MtsValue ipairs( MtsValue arg )
     {
-        MtsValue mm = arg.getMetaMethod( __ipairs );
+        MtsValue mm = arg.getMetaTag( __ipairs );
         if ( !mm.isNil() )
             return mm.call( arg );
         else
@@ -140,7 +140,7 @@ public final class MtsBaseLib
     {
         MtsTable t = checkTable( argTable, 0 );
         
-        MtsValue mm = t.getMetaMethod( __metatable );
+        MtsValue mm = t.getMetaTag( __metatable );
         if ( !mm.isNil() )
             throw new MtsRuntimeException( "cannot retrieve a protected metatable" );
         
@@ -152,7 +152,7 @@ public final class MtsBaseLib
     {
         MtsTable t = checkTable( argTable, 0 );
         
-        MtsValue mm = t.getMetaMethod( __metatable );
+        MtsValue mm = t.getMetaTag( __metatable );
         if ( !mm.isNil() )
             throw new MtsRuntimeException( "cannot change a protected metatable" );
         

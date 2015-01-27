@@ -33,7 +33,7 @@ public class InstanceAdapter extends MtsUserdata
     // ========================================
     
     @Override
-    protected MtsValue doGet( MtsValue key )
+    protected MtsValue getRaw( MtsValue key )
     {
         MtsValue method = null;
         if ( key.isString() )

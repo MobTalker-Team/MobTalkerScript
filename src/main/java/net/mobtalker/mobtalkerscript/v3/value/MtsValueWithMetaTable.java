@@ -14,41 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.mobtalker.mobtalkerscript.v3.value.userdata;
+package net.mobtalker.mobtalkerscript.v3.value;
 
-import net.mobtalker.mobtalkerscript.v3.value.*;
-
-public class InstanceAdapter extends MtsUserdata
+public abstract class MtsValueWithMetaTable extends MtsValue
 {
-    private final ClassAdapter _classAdapter;
-    
-    // ========================================
-    
-    /* package */InstanceAdapter( ClassAdapter classAdapter, Object value )
-    {
-        super( value );
-        _classAdapter = classAdapter;
-    }
+    private MtsTable _metaTable;
     
     // ========================================
     
     @Override
-    protected MtsValue getRaw( MtsValue key )
+    public boolean hasMetaTable()
     {
-        MtsValue method = null;
-        if ( key.isString() )
-        {
-            method = _classAdapter.getMethod( key.asString().toJava() );
-        }
-        
-        return method == null ? Nil : method;
+        return _metaTable != null;
     }
     
-    // ========================================
+    @Override
+    public MtsTable getMetaTable()
+    {
+        return _metaTable;
+    }
     
     @Override
-    public MtsType getType()
+    public void setMetaTable( MtsValue t )
     {
-        return _classAdapter.getType();
+        _metaTable = t.isTable() ? t.asTable() : null;
     }
 }

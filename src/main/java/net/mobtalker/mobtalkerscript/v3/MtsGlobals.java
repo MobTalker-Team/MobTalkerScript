@@ -53,7 +53,7 @@ public class MtsGlobals extends MtsTable
         
         set( "_VERSION", VERSION );
         
-        createLibrary( new MtsBaseLib( this ), this );
+        createLibrary( this, new MtsBaseLib( this ) );
         set( "Math", createLibrary( MtsMathLib.class ) );
         set( "Table", createLibrary( MtsTableLib.class ) );
         
@@ -61,7 +61,7 @@ public class MtsGlobals extends MtsTable
         createStringLib();
         
         PackageLib = new MtsPackageLib( this );
-        createLibrary( PackageLib, this );
+        createLibrary( this, PackageLib );
     }
     
     private void createStringLib()

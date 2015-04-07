@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,6 +26,7 @@ import java.util.*;
 public final class MtsTableList extends AbstractList<MtsValue> implements RandomAccess
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
+    private static final MtsValue[] EMTPY_ARRAY = new MtsValue[0];
     
     // ========================================
     
@@ -36,13 +37,21 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     
     /* package */MtsTableList( int initialCapacity )
     {
-        int capacity = 1;
-        while ( capacity < initialCapacity )
+        if ( initialCapacity == 0 )
         {
-            capacity <<= 1;
+            _entries = EMTPY_ARRAY;
+        }
+        else
+        {
+            int capacity = 1;
+            while ( capacity < initialCapacity )
+            {
+                capacity <<= 1;
+            }
+            
+            _entries = new MtsValue[capacity];
         }
         
-        _entries = new MtsValue[capacity];
         _limit = 0;
     }
     

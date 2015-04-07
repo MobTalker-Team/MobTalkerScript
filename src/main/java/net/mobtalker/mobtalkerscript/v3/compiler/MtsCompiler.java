@@ -95,7 +95,7 @@ import com.google.common.collect.Lists;
 
 public class MtsCompiler extends Mts3BaseListener
 {
-    private static final TokenFactory TokenFactory = new CommonTokenFactory( true );
+    private static final TokenFactory TokenFactory = new CommonTokenFactory( false );
     
     // ========================================
     
@@ -169,7 +169,8 @@ public class MtsCompiler extends Mts3BaseListener
     public static Mts3Parser getParser( CharStream stream )
     {
         Mts3Lexer lexer = getLexer( stream );
-        Mts3Parser parser = new Mts3Parser( new UnbufferedTokenStream( lexer, 100 ) );
+        
+        Mts3Parser parser = new Mts3Parser( new CommonTokenStream( lexer ) );
         parser.removeErrorListeners();
         parser.addErrorListener( new MtsAntlrErrorListener() );
         parser.setErrorHandler( new MtsErrorStrategy() );

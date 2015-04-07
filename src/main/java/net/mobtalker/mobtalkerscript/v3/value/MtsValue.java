@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 /**
  * Base class for any value used by MobTalkerScript.
  */
-public abstract class MtsValue implements Comparable<MtsValue>
+public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
 {
     public static final MtsNil Nil = new MtsNil();
     
@@ -98,7 +98,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
             if ( tag.isFunction() )
                 result = tag.call( this, key );
             else if ( !tag.isNil() )
-                result = tag.get( key ).get();
+                result = tag.get( key );
         }
         
         return result;
@@ -192,21 +192,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     // ========================================
     // Calling
     
-    public final MtsVarargs call()
-    {
-        return call( MtsVarargs.Empty );
-    }
-    
-    public final MtsVarargs call( MtsValue arg )
-    {
-        return call( MtsVarargs.of( arg ) );
-    }
-    
-    public final MtsVarargs call( MtsValue... args )
-    {
-        return call( MtsVarargs.of( args ) );
-    }
-    
+    @Override
     public MtsVarargs call( MtsVarargs args )
     {
         MtsValue tag = getMetaTag( __call );
@@ -562,14 +548,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
     public MtsString asString()
     {
         throw new MtsTypeException( MtsType.STRING, getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsUserdata}.
-     */
-    public MtsUserdata asUserdata()
-    {
-        throw new MtsTypeException( MtsType.USERDATA, getType() );
     }
     
     /**

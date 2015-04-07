@@ -32,7 +32,7 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
     @Override
     protected Object getCallInstance( MtsVarargs args )
     {
-        return args.get( 0 ).asUserdata().getObject();
+        return args.get( 0 );
     }
     
     @Override

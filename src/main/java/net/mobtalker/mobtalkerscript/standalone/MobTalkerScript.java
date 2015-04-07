@@ -141,35 +141,35 @@ public class MobTalkerScript
         DummyPlayer dummyPlayer = new DummyPlayer( "Player", new WorldPosition( 0, 0, 0 ) );
         
         {
-            createLibrary( new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ), env );
+            createLibrary( env, new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ) );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new GameCommandLib( new ConsoleGameCommandLibLogic( env ) ), lib );
+            createLibrary( lib, new GameCommandLib( new ConsoleGameCommandLibLogic( env ) ) );
             env.set( "Command", lib );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new EntityLib( new ConsoleEntityLibLogic( dummyCreature ) ), lib );
-            createLibrary( new CreatureLib( new ConsoleCreatureLibLogic( dummyCreature ) ), lib );
+            createLibrary( lib, new EntityLib( new ConsoleEntityLibLogic( dummyCreature ) ) );
+            createLibrary( lib, new CreatureLib( new ConsoleCreatureLibLogic( dummyCreature ) ) );
             env.set( "Entity", lib );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new EntityLib( new ConsoleEntityLibLogic( dummyPlayer ) ), lib );
-            createLibrary( new PlayerLib( new ConsolePlayerLibLogic( dummyPlayer ) ), lib );
+            createLibrary( lib, new EntityLib( new ConsoleEntityLibLogic( dummyPlayer ) ) );
+            createLibrary( lib, new PlayerLib( new ConsolePlayerLibLogic( dummyPlayer ) ) );
             env.set( "Player", lib );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new InteractionWorldLib( new ConsoleInteractionWorldLibLogic() ), lib );
+            createLibrary( lib, new InteractionWorldLib( new ConsoleInteractionWorldLibLogic() ) );
             env.set( "World", lib );
         }
-        {
-            MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new ScoreboardLib( new ConsoleScoreboardLibLogic() ), lib );
-            env.set( "Scoreboard", lib );
-        }
+//        {
+//            MtsTable lib = new MtsTable( 0, 0 );
+//            createLibrary( new ScoreboardLib( new ConsoleScoreboardLibLogic() ), lib );
+//            env.set( "Scoreboard", lib );
+//        }
     }
     
     // ========================================

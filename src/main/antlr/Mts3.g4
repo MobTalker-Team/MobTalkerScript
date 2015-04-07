@@ -380,7 +380,7 @@ NAME
 
 COMMENT
     : '--[' NESTED_STR ']' 
-        -> skip //channel(HIDDEN)
+        -> channel(HIDDEN)
     ;
 
 LINE_COMMENT
@@ -390,7 +390,7 @@ LINE_COMMENT
     | '[' '='* ~('='|'['|'\r'|'\n') ~('\r'|'\n')*   // --[==AA
     | ~('['|'\r'|'\n') ~('\r'|'\n')*                // --AAA
     ) ('\r\n'|'\r'|'\n'|EOF)
-        -> skip //channel(HIDDEN)
+        -> channel(HIDDEN)
     ;
 
 WS
@@ -399,5 +399,5 @@ WS
 
 SHEBANG
     : '#' '!' ~('\n'|'\r')* 
-        -> skip //channel(HIDDEN)
+        -> channel(HIDDEN)
     ;

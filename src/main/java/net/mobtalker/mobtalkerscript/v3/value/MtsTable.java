@@ -26,7 +26,7 @@ import java.util.*;
  *
  * It uses two storage formats; a list for storing consecutive indices and a hash map for any other value.
  */
-public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Entry>
+public class MtsTable extends MtsValueWithMetaTable implements Iterable<MtsTable.Entry>
 {
     private final MtsTableList _list;
     private final MtsTableMap _map;
@@ -64,26 +64,6 @@ public class MtsTable extends MtsMetaTableValue implements Iterable<MtsTable.Ent
     public boolean isEmpty()
     {
         return size() == 0;
-    }
-    
-    public void ensureListCapacity( int capacity )
-    {
-        _list.ensureCapacity( capacity );
-    }
-    
-    public void ensureMapCapacity( int capacity )
-    {
-        _map.ensureCapacity( capacity );
-    }
-    
-    public void ensureListSpace( int space )
-    {
-        _list.ensureCapacity( space );
-    }
-    
-    public void ensureMapSpace( int space )
-    {
-        _map.ensureCapacity( space );
     }
     
     // ========================================

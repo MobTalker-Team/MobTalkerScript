@@ -105,8 +105,11 @@ public class MtsTable extends MtsValueWithMetaTable implements Iterable<MtsTable
         if ( !_list.canAddOrSetAt( key ) )
             return (MtsTable.Entry) _map.getNext( key );
         
-        int next = key.asNumber().toJavaInt();
-        return new MtsTable.Entry( MtsNumber.of( next ), _list.get( next ) );
+        int next = key.asNumber().toJavaInt(); // Zero-based index
+        if ( !_list.canGetOrRemoveAt( next ) )
+            return null;
+        
+        return new MtsTable.Entry( MtsNumber.of( next + 1 ), _list.get( next ) );
     }
     
     public MtsTable.Entry getINext( MtsNumber key )

@@ -350,11 +350,14 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     
     public String concat( String sep, int from, int to )
     {
-        if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
+        if ( ( _limit == 0 ) || ( from < 0 ) || ( to < from ) )
             return "";
         
+        from = Math.max( 0, from );
+        to = Math.min( _limit, to );
+        
         StringBuilder s = new StringBuilder( _entries[from].toMtsString().toJava() );
-        for ( int i = from + 1; i <= to; i++ )
+        for ( int i = from + 1; i < to; i++ )
         {
             s.append( sep ).append( _entries[i].toMtsString().toJava() );
         }

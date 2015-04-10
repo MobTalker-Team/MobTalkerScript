@@ -205,6 +205,13 @@ end
 a,b = F(1)~=nil; assert(a == true and b == nil);
 a,b = F(nil)==nil; assert(a == true and b == nil)
 
+
+----------------------------------------------------------------
+for i = 0, 10 do end
+for i = 10, 0, -1 do end
+
+for k,v in next, { "a", "b", "c" } do end
+
 --[=[----------------------------------------------------------------
 -- creates all combinations of 
 -- [not] ([not] arg op [not] (arg op [not] arg ))

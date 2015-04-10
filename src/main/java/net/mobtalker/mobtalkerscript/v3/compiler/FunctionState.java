@@ -246,11 +246,12 @@ public class FunctionState
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
                               iterIndex, stateIndex, indexIndex );
         
-        int lastIndex = -1;
+        int lastIndex = indexIndex;
         for ( String varName : varNames )
         {
             int varIndex = declareLocal( varName ).getIndex();
             assert ( lastIndex + 1 ) == varIndex;
+            lastIndex = varIndex;
         }
         
         addInstruction( InstrStoreL( indexIndex ) );

@@ -1057,8 +1057,7 @@ public class MtsCompiler extends Mts3BaseListener
                 {
                     expr.nResults = i < nTargets ? nTargets - i : 0;
                     
-                    if ( ( expr instanceof PrefixExprContext )
-                         || ( expr instanceof VarargsExprContext ) )
+                    if ( isCallOrVarargs( expr ) )
                     {
                         unsatisfiedTargets = 0;
                     }
@@ -1073,6 +1072,15 @@ public class MtsCompiler extends Mts3BaseListener
             
             loadNil( unsatisfiedTargets );
         }
+    }
+    
+    private static boolean isCallOrVarargs( ExprContext ctx )
+    {
+        if ( ctx instanceof VarargsExprContext )
+            return true;
+        if ( ctx instanceof PrefixExprContext )
+            return !( (PrefixExprContext) ctx ).Calls.isEmpty();
+        return false;
     }
     
     // ========================================

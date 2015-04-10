@@ -26,7 +26,6 @@ import java.util.*;
 public final class MtsTableList extends AbstractList<MtsValue> implements RandomAccess
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
-    private static final MtsValue[] EMTPY_ARRAY = new MtsValue[0];
     
     // ========================================
     
@@ -37,21 +36,13 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     
     /* package */MtsTableList( int initialCapacity )
     {
-        if ( initialCapacity == 0 )
+        int capacity = 1;
+        while ( capacity < initialCapacity )
         {
-            _entries = EMTPY_ARRAY;
-        }
-        else
-        {
-            int capacity = 1;
-            while ( capacity < initialCapacity )
-            {
-                capacity <<= 1;
-            }
-            
-            _entries = new MtsValue[capacity];
+            capacity <<= 1;
         }
         
+        _entries = new MtsValue[capacity];
         _limit = 0;
     }
     
@@ -413,5 +404,19 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     public void sort()
     {
         Arrays.sort( _entries );
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder( "[" );
+        for ( Iterator<MtsValue> iterator = iterator(); iterator.hasNext(); )
+        {
+            MtsValue value = iterator.next();
+            s.append( value.toString( false ) );
+        }
+        return s.append( "]" ).toString();
     }
 }

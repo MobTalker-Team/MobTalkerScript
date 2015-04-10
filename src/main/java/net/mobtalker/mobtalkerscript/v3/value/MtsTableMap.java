@@ -420,6 +420,28 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     
     // ========================================
     
+    @Override
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder( "[" );
+        for ( Iterator<Map.Entry<MtsValue, MtsValue>> iterator = entrySet().iterator(); iterator.hasNext(); )
+        {
+            Map.Entry<MtsValue, MtsValue> e = iterator.next();
+            MtsValue key = e.getKey();
+            MtsValue value = e.getValue();
+            
+            s.append( key.toString( false ) )
+             .append( '=' )
+             .append( value.toString( false ) );
+            
+            if ( iterator.hasNext() )
+                s.append( ", " );
+        }
+        return s.append( "]" ).toString();
+    }
+    
+    // ========================================
+    
     /**
      * Each entry is a Key-Value mapping as well as a bucket.
      * Values with the same hash are appended to each other in single-linked list style.

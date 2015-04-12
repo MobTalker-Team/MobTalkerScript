@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -350,11 +350,14 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     
     public String concat( String sep, int from, int to )
     {
-        if ( ( _limit == 0 ) || ( from < 0 ) || ( _limit <= to ) || ( to < from ) )
+        if ( ( _limit == 0 ) || ( from < 0 ) || ( to < from ) )
             return "";
         
+        from = Math.max( 0, from );
+        to = Math.min( _limit, to );
+        
         StringBuilder s = new StringBuilder( _entries[from].toMtsString().toJava() );
-        for ( int i = from + 1; i <= to; i++ )
+        for ( int i = from + 1; i < to; i++ )
         {
             s.append( sep ).append( _entries[i].toMtsString().toJava() );
         }
@@ -404,5 +407,19 @@ public final class MtsTableList extends AbstractList<MtsValue> implements Random
     public void sort()
     {
         Arrays.sort( _entries );
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder( "[" );
+        for ( Iterator<MtsValue> iterator = iterator(); iterator.hasNext(); )
+        {
+            MtsValue value = iterator.next();
+            s.append( value.toString( false ) );
+        }
+        return s.append( "]" ).toString();
     }
 }

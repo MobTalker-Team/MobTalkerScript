@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -14,41 +14,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.mobtalker.mobtalkerscript.v3.value.userdata;
+package net.mobtalker.mobtalkerscript.v3.value;
 
-import net.mobtalker.mobtalkerscript.v3.value.*;
-
-public class InstanceAdapter extends MtsUserdata
+public abstract class MtsValueWithMetaTable extends MtsValue
 {
-    private final ClassAdapter _classAdapter;
+    private MtsTable _metaTable;
     
     // ========================================
     
-    /* package */InstanceAdapter( ClassAdapter classAdapter, Object value )
+    @Override
+    public boolean hasMetaTable()
     {
-        super( value );
-        _classAdapter = classAdapter;
+        return _metaTable != null;
+    }
+    
+    @Override
+    public MtsTable getMetaTable()
+    {
+        return _metaTable;
+    }
+    
+    @Override
+    public void setMetaTable( MtsValue t )
+    {
+        _metaTable = t.isTable() ? t.asTable() : null;
     }
     
     // ========================================
     
     @Override
-    protected MtsValue doGet( MtsValue key )
+    protected MtsValue getRaw( MtsValue key )
     {
-        MtsValue method = null;
-        if ( key.isString() )
-        {
-            method = _classAdapter.getMethod( key.asString().toJava() );
-        }
-        
-        return method == null ? Nil : method;
-    }
-    
-    // ========================================
-    
-    @Override
-    public MtsType getType()
-    {
-        return _classAdapter.getType();
+        return Nil;
     }
 }

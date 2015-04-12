@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -18,18 +18,14 @@ package net.mobtalker.mobtalkerscript;
 
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.*;
 
-import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.MtsFunctionPrototype;
 import net.mobtalker.mobtalkerscript.v3.compiler.*;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.EmptyStmtContext;
 import net.mobtalker.mobtalkerscript.v3.serialization.*;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.*;
 
 import com.google.common.base.Charsets;
@@ -39,10 +35,6 @@ public class GrammarTestRig
 {
     public static void main( String[] args ) throws Exception
     {
-        MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-//        MtsLog.CompilerLog.setLevel( Level.ALL );
-        MtsLog.EngineLog.setLevel( Level.OFF );
-        
         String path = "Creeper.script";
         MtsFunctionPrototype prototype = null;
         
@@ -55,8 +47,8 @@ public class GrammarTestRig
 //            {
 //                Stopwatch stopwatch = Stopwatch.createStarted();
         
-        Mts3Parser parser = getParser( new ANTLRFileStream( "D:\\Projects\\Java\\Minecraft\\Forge 10.14\\MobTalker2\\run\\mobtalker2\\scripts\\MobTalker2_TestSuite\\"
-                                                            + path ) );
+        Mts3Parser parser = MtsCompiler.getParser( new ANTLRFileStream( "D:\\Projects\\Java\\Minecraft\\Forge 10.14\\MobTalker2\\run\\mobtalker2\\scripts\\MobTalker2_TestSuite\\"
+                                                                        + path ) );
         Mts3Parser.ChunkContext chunk;
         try
         {
@@ -104,19 +96,6 @@ public class GrammarTestRig
         for ( long i : c )
             sum += i;
         return (double) sum / (double) c.size();
-    }
-    
-    private static Mts3Parser getParser( CharStream stream )
-    {
-        Mts3Lexer lexer = new Mts3Lexer( stream );
-        
-        Mts3Parser parser = new Mts3Parser( new UnbufferedTokenStream( lexer, 100 ) );
-        parser.removeErrorListeners();
-        parser.addErrorListener( new MtsAntlrErrorListener() );
-        parser.setErrorHandler( new MtsErrorStrategy() );
-        parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
-        
-        return parser;
     }
     
     /**

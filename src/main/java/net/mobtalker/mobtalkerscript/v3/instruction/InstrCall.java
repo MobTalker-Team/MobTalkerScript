@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -18,7 +18,6 @@ package net.mobtalker.mobtalkerscript.v3.instruction;
 
 import java.io.*;
 
-import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
@@ -43,19 +42,7 @@ public class InstrCall extends MtsInstruction
         MtsVarargs args = _nArgs > 0 ? frame.pop( _nArgs ) : MtsVarargs.Empty;
         MtsValue target = frame.pop();
         
-        if ( MtsLog.EngineLog.isFineEnabled() )
-        {
-            MtsLog.EngineLog.fine( "Calling " + target + " with " + args );
-        }
-        
-        MtsVarargs result = getResults( target, args );
-        
-        if ( MtsLog.EngineLog.isFineEnabled() )
-        {
-            MtsLog.EngineLog.fine( "Results: " + result );
-        }
-        
-        pushResults( frame, result );
+        pushResults( frame, getResults( target, args ) );
     }
     
     protected MtsVarargs getResults( MtsValue target, MtsVarargs args )

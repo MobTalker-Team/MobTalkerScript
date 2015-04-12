@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -16,8 +16,10 @@
  */
 package net.mobtalker.mobtalkerscript.v3;
 
-import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
+
+import java.util.Arrays;
+
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
@@ -106,52 +108,36 @@ public final class MtsFrame
     {
         MtsInstruction[] instructions = _closure.getPrototype().getInstructions();
         
-        if ( EngineLog.isFinestEnabled() )
-        {
-            EngineLog.finest( "Enter Frame" );
-            EngineLog.finest( formatStack() );
-        }
+//        System.out.println( formatStack() );
         
         for ( ;; _ip++ )
         {
             MtsInstruction instr = instructions[_ip];
             
-            if ( EngineLog.isInfoEnabled() )
-            {
-                EngineLog.info( formatExecutedInstruction( instr ) );
-            }
+//            System.out.println( formatExecutedInstruction( instr ) );
             
             instr.execute( this );
             
-            if ( EngineLog.isFinestEnabled() )
-            {
-                EngineLog.finest( formatStack() );
-            }
+//            System.out.println( formatStack() );
             
             if ( instr.exits() )
                 break;
         }
         
+//        System.out.println( formatStack() );
+        
         MtsValue result = pop();
         
         assert isEmpty() : formatStack();
-        
-        EngineLog.finest( "Exit Frame" );
-        
         return result instanceof MtsVarargs ? (MtsVarargs) result : MtsVarargs.of( result );
     }
     
     private String formatExecutedInstruction( MtsInstruction instr )
     {
         MtsFunctionPrototype prototype = _closure.getPrototype();
-        return new StringBuilder( 50 ).append( "Executing " )
-                                      .append( '[' )
-                                      .append( prototype.getName() )
-                                      .append( ':' )
-                                      .append( prototype.getSourcePosition( _ip ).Line )
-                                      .append( "][" )
-                                      .append( Integer.toString( _ip ) )
-                                      .append( "] " )
+        return new StringBuilder( 50 ).append( "Executing [" ).append( prototype.getName() )
+                                      .append( ':' ).append( prototype.getSourcePosition( _ip ).Line )
+                                      .append( "][" ).append( Integer.toString( _ip ) ).append( "] " )
                                       .append( instr.toString( prototype ) )
                                       .toString();
     }
@@ -371,8 +357,8 @@ public final class MtsFrame
         s.append( ", Last used Variable or Constant: " ).append( _lastVar );
         s.append( "]\n" );
         
-        s.append( " Locals    " ).append( _locals.toString() ).append( "\n" );
-        s.append( " Externals " ).append( _externals.toString() ).append( "\n" );
+        s.append( " Locals    " ).append( Arrays.toString( _locals ) ).append( "\n" );
+        s.append( " Externals " ).append( Arrays.toString( _externals ) ).append( "\n" );
         s.append( " Stack     " ).append( formatStack() );
         
         return s.toString();

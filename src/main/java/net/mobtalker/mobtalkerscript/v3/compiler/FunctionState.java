@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,6 @@
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
 import static com.google.common.base.Preconditions.*;
-import static net.mobtalker.mobtalkerscript.util.logging.MtsLog.*;
 import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
 
 import java.util.*;
@@ -121,8 +120,6 @@ public class FunctionState
     {
         _instructions.add( instr );
         _lineNumbers.add( pos );
-        
-        CompilerLog.fine( "  Instruction: %s (%s)", instr, currentIndex() );
         
         return currentIndex();
     }
@@ -249,11 +246,12 @@ public class FunctionState
         /*   */: String.format( "Loop variable indices are not consecutive! (%s,%s,%s)",
                               iterIndex, stateIndex, indexIndex );
         
-        int lastIndex = -1;
+        int lastIndex = indexIndex;
         for ( String varName : varNames )
         {
             int varIndex = declareLocal( varName ).getIndex();
             assert ( lastIndex + 1 ) == varIndex;
+            lastIndex = varIndex;
         }
         
         addInstruction( InstrStoreL( indexIndex ) );
@@ -504,13 +502,16 @@ public class FunctionState
         
         MtsFunctionPrototype p = new MtsFunctionPrototype( _name,
                                                            ImmutableList.copyOf( _constants ),
-                                                           ImmutableList.copyOf( _locals ), ImmutableList.copyOf( _externals ),
+                                                           ImmutableList.copyOf( _locals ),
+                                                           ImmutableList.copyOf( _externals ),
                                                            _nParam,
                                                            _isVarargs,
                                                            calculateMaxStackSize(),
                                                            ImmutableList.copyOf( _instructions ),
                                                            ImmutableList.copyOf( _lineNumbers ),
-                                                           _sourceFile, _sourceLineStart, _sourceLineEnd );
+                                                           _sourceFile,
+                                                           _sourceLineStart,
+                                                           _sourceLineEnd );
         
         for ( FunctionState child : _childs )
         {

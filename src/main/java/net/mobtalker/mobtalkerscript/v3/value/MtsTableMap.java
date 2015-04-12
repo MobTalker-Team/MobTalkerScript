@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -416,6 +416,28 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     {
         Collection<MtsValue> result = _valuesCollection;
         return result != null ? result : ( _valuesCollection = new ValuesCollection() );
+    }
+    
+    // ========================================
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder( "[" );
+        for ( Iterator<Map.Entry<MtsValue, MtsValue>> iterator = entrySet().iterator(); iterator.hasNext(); )
+        {
+            Map.Entry<MtsValue, MtsValue> e = iterator.next();
+            MtsValue key = e.getKey();
+            MtsValue value = e.getValue();
+            
+            s.append( key.toString( false ) )
+             .append( '=' )
+             .append( value.toString( false ) );
+            
+            if ( iterator.hasNext() )
+                s.append( ", " );
+        }
+        return s.append( "]" ).toString();
     }
     
     // ========================================

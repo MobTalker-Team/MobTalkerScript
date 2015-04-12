@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -16,9 +16,6 @@
  */
 package net.mobtalker.mobtalkerscript;
 
-import java.util.logging.Logger;
-
-import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.MtsCompiler;
 import net.mobtalker.mobtalkerscript.v3.value.MtsClosure;
@@ -29,11 +26,7 @@ public class TestScripts
 {
     @BeforeClass
     public static void setUp() throws Exception
-    {
-        MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-//        MtsLog.CompilerLog.setLevel( Level.ALL );
-//        MtsLog.EngineLog.setLevel( Level.ALL );
-    }
+    {}
     
     private void run( String path ) throws Exception
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -113,7 +113,7 @@ public class StringInterpolator
         {
             i = s.indexOf( '$', from );
         }
-        while ( ( i > 0 ) && ( s.charAt( i - 1 ) != '\\' ) );
+        while ( ( i > 0 ) && ( s.charAt( i - 1 ) == '\\' ) );
         
         return i;
     }

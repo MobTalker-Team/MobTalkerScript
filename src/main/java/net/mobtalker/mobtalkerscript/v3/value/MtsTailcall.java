@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,8 +17,6 @@
 package net.mobtalker.mobtalkerscript.v3.value;
 
 import java.util.Iterator;
-
-import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
 
 public final class MtsTailcall extends MtsVarargs
 {
@@ -86,19 +84,14 @@ public final class MtsTailcall extends MtsVarargs
     {
         if ( _target instanceof MtsTailcall )
         {
-            MtsLog.EngineLog.fine( "Evaluating target tailcall" );
-            
             MtsValue result = ( (MtsTailcall) _target ).evaluate();
             _target = result.isVarArgs() ? result.get() : result;
         }
         
-        MtsLog.EngineLog.fine( "Evaluating tailcall" );
         MtsVarargs result = _target.call( _args );
         
         while ( result instanceof MtsTailcall )
         {
-            MtsLog.EngineLog.fine( "Evaluating result tailcall" );
-            
             MtsTailcall next = (MtsTailcall) result;
             result = next.getTarget().call( next.getArguments() );
         }

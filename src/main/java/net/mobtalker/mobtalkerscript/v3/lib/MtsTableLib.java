@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -41,12 +41,12 @@ public final class MtsTableLib
         if ( arg3.isNil() )
             return MtsString.of( list.concat( sep ) );
         
-        int from = checkInteger( arg3, 2 );
+        int from = checkInteger( arg3, 2 ) - 1;
         
         if ( arg4.isNil() )
             return MtsString.of( list.concat( sep, from ) );
         
-        int to = checkInteger( arg4, 3 );
+        int to = checkInteger( arg4, 3 ) - 1;
         
         return MtsString.of( list.concat( sep, from, to ) );
     }

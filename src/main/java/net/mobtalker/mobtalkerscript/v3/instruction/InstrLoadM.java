@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -35,7 +35,7 @@ public final class InstrLoadM extends MtsIndexedInstruction
     {
         MtsValue table = frame.pop();
         MtsValue key = frame.getConstant( _index );
-        MtsValue method = table.get( key );
+        MtsValue method = table.get( key, true );
         
         frame.push( method );
         frame.push( table );

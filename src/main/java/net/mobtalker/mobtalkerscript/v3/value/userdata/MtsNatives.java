@@ -1,16 +1,16 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
- *
+ * Copyright (C) 2013-2015 Chimaine
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,38 +20,43 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable;
 
 public class MtsNatives
 {
-    public static InstanceAdapter wrapInstance( Object instance )
+    public static MtsTable createLibrary( Class<?> first, Class<?>... others )
     {
-        ClassAdapter classAdapter = ClassAdapter.get( instance.getClass() );
-        return new InstanceAdapter( classAdapter, instance );
+        MtsTable lib = LibraryAdapter.bind( first );
+        for ( Class<?> c : others )
+        {
+            LibraryAdapter.bind( c, lib );
+        }
+        
+        return lib;
     }
     
-    // ========================================
-    
-    public static MtsTable asMetatable( Object instance )
+    public static MtsTable createLibrary( Object first, Object... others )
     {
-        return LibraryAdapter.bind( instance );
+        MtsTable lib = LibraryAdapter.bind( first );
+        for ( Object o : others )
+        {
+            LibraryAdapter.bind( o, lib );
+        }
+        
+        return lib;
     }
     
-    // ========================================
-    
-    public static MtsTable createLibrary( Class<?> library )
+    public static void createLibrary( MtsTable table, Class<?> first, Class<?>... others )
     {
-        return LibraryAdapter.bind( library );
+        LibraryAdapter.bind( first, table );
+        for ( Class<?> c : others )
+        {
+            LibraryAdapter.bind( c, table );
+        }
     }
     
-    public static MtsTable createLibrary( Object library )
+    public static void createLibrary( MtsTable table, Object first, Object... others )
     {
-        return LibraryAdapter.bind( library );
-    }
-    
-    public static void createLibrary( Class<?> library, MtsTable table )
-    {
-        LibraryAdapter.bind( library, table );
-    }
-    
-    public static void createLibrary( Object library, MtsTable table )
-    {
-        LibraryAdapter.bind( library, table );
+        LibraryAdapter.bind( first, table );
+        for ( Object o : others )
+        {
+            LibraryAdapter.bind( o, table );
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 /**
  * Base class for any value used by MobTalkerScript.
  */
-public abstract class MtsValue implements Comparable<MtsValue>
+public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
 {
     public static final MtsNil Nil = new MtsNil();
     
@@ -51,7 +51,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
         new MtsRuntimeException( "attempt to set metatable of a %s value", getType() );
     }
     
-    public final MtsValue getMetaMethod( MtsString tag )
+    public final MtsValue getMetaTag( MtsString tag )
     {
         return hasMetaTable() ? getMetaTable().get( tag ) : Nil;
     }
@@ -89,22 +89,22 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     public final MtsValue get( MtsValue key, boolean useMetaTag )
     {
-        MtsValue result = doGet( key );
+        MtsValue result = getRaw( key );
         
         if ( result.isNil() && useMetaTag )
         {
-            MtsValue tag = getMetaMethod( __index );
+            MtsValue tag = getMetaTag( __index );
             
             if ( tag.isFunction() )
                 result = tag.call( this, key );
             else if ( !tag.isNil() )
-                result = tag.get( key ).get();
+                result = tag.get( key );
         }
         
         return result;
     }
     
-    protected MtsValue doGet( MtsValue key )
+    protected MtsValue getRaw( MtsValue key )
     {
         throw new MtsRuntimeException( "attempt to index a %s value", getType() );
     }
@@ -169,10 +169,10 @@ public abstract class MtsValue implements Comparable<MtsValue>
     {
         if ( useMetaTag )
         {
-            MtsValue tag = getMetaMethod( __newindex );
+            MtsValue tag = getMetaTag( __newindex );
             
             if ( tag.isNil() )
-                doSet( key, value );
+                setRaw( key, value );
             else if ( tag.isFunction() )
                 tag.call( this, key, value );
             else
@@ -180,11 +180,11 @@ public abstract class MtsValue implements Comparable<MtsValue>
         }
         else
         {
-            doSet( key, value );
+            setRaw( key, value );
         }
     }
     
-    protected void doSet( MtsValue key, MtsValue value )
+    protected void setRaw( MtsValue key, MtsValue value )
     {
         throw new MtsRuntimeException( "attempt to index a %s value", getType() );
     }
@@ -192,24 +192,10 @@ public abstract class MtsValue implements Comparable<MtsValue>
     // ========================================
     // Calling
     
-    public final MtsVarargs call()
-    {
-        return call( MtsVarargs.Empty );
-    }
-    
-    public final MtsVarargs call( MtsValue arg )
-    {
-        return call( MtsVarargs.of( arg ) );
-    }
-    
-    public final MtsVarargs call( MtsValue... args )
-    {
-        return call( MtsVarargs.of( args ) );
-    }
-    
+    @Override
     public MtsVarargs call( MtsVarargs args )
     {
-        MtsValue tag = getMetaMethod( __call );
+        MtsValue tag = getMetaTag( __call );
         if ( tag.isNil() )
             throw new MtsRuntimeException( "attempt to call a %s value", getType() );
         
@@ -221,7 +207,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public MtsNumber getLength()
     {
-        MtsValue tag = getMetaMethod( __len );
+        MtsValue tag = getMetaTag( __len );
         if ( tag.isNil() )
             throw new MtsLengthException( getType() );
         
@@ -230,7 +216,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     public MtsValue unaryMinus()
     {
-        MtsValue tag = getMetaMethod( __unm );
+        MtsValue tag = getMetaTag( __unm );
         if ( tag.isNil() )
             throw new MtsArithmeticException( getType() );
         
@@ -242,10 +228,10 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     private static MtsValue performArithmetic( MtsValue a, MtsValue b, MtsString operation )
     {
-        MtsValue tag = a.getMetaMethod( operation );
+        MtsValue tag = a.getMetaTag( operation );
         if ( tag.isNil() )
         {
-            tag = b.getMetaMethod( operation );
+            tag = b.getMetaTag( operation );
             if ( tag.isNil() )
                 throw new MtsArithmeticException( a.getType() );
         }
@@ -255,7 +241,7 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     private MtsValue performArithmeticWith( MtsValue a, MtsString operation )
     {
-        MtsValue tag = getMetaMethod( operation );
+        MtsValue tag = getMetaTag( operation );
         if ( tag.isNil() )
             throw new MtsArithmeticException( getType() );
         
@@ -327,10 +313,10 @@ public abstract class MtsValue implements Comparable<MtsValue>
     
     private static MtsString performConcatenation( MtsValue a, MtsValue b )
     {
-        MtsValue tag = a.getMetaMethod( __concat );
+        MtsValue tag = a.getMetaTag( __concat );
         if ( tag.isNil() )
         {
-            tag = b.getMetaMethod( __concat );
+            tag = b.getMetaTag( __concat );
             if ( tag.isNil() )
                 throw new MtsConcatenationException( a.getType() );
         }
@@ -359,10 +345,10 @@ public abstract class MtsValue implements Comparable<MtsValue>
      */
     private static MtsBoolean performComparison( MtsValue a, MtsValue b, MtsString op )
     {
-        MtsValue tag = a.getMetaMethod( op );
+        MtsValue tag = a.getMetaTag( op );
         if ( tag.isNil() )
         {
-            tag = b.getMetaMethod( op );
+            tag = b.getMetaTag( op );
             if ( tag.isNil() )
                 throw new MtsComparisonException( a.getType(), b.getType() );
         }
@@ -412,8 +398,8 @@ public abstract class MtsValue implements Comparable<MtsValue>
         if ( equals( b ) )
             return MtsBoolean.True;
         
-        MtsValue tagA = getMetaMethod( __eq );
-        if ( tagA.isNil() || !tagA.equals( getMetaMethod( __eq ) ) )
+        MtsValue tagA = getMetaTag( __eq );
+        if ( tagA.isNil() || !tagA.equals( getMetaTag( __eq ) ) )
             return MtsBoolean.False;
         
         return tagA.call( this, b ).get().toMtsBoolean();
@@ -562,19 +548,6 @@ public abstract class MtsValue implements Comparable<MtsValue>
     public MtsString asString()
     {
         throw new MtsTypeException( MtsType.STRING, getType() );
-    }
-    
-    /**
-     * Equivalent to a Java typecast to {@link MtsUserdata}.
-     */
-    public MtsUserdata asUserdata()
-    {
-        throw new MtsTypeException( MtsType.USERDATA, getType() );
-    }
-    
-    public <T> T asNative()
-    {
-        throw new MtsTypeException( MtsType.USERDATA, getType() );
     }
     
     /**

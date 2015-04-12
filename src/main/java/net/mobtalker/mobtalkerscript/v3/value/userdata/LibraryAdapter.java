@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -109,7 +109,7 @@ import com.google.common.collect.Maps;
     {
         Set<Entry<String, Method>> methods = _methods.entrySet();
         
-        t.ensureMapCapacity( t.map().size() + methods.size() );
+        t.map().ensureSpace( methods.size() );
         
         for ( Entry<String, Method> entry : methods )
         {

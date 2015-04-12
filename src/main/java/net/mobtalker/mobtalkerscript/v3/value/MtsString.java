@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -71,7 +71,7 @@ public class MtsString extends MtsValue
             case 1:
                 return values.get( 0 ).toMtsString();
             case 2:
-                return values.get( 0 ).concat( values.get( 1 ) );
+                return values.get( 0 ).toMtsString().concat( values.get( 1 ).toMtsString() );
             default:
                 StringBuilder sb = new StringBuilder();
                 for ( int i = 0; i < values.count(); i++ )
@@ -148,7 +148,7 @@ public class MtsString extends MtsValue
     // ========================================
     
     @Override
-    protected MtsValue doGet( MtsValue key )
+    protected MtsValue getRaw( MtsValue key )
     {
         return Nil;
     }

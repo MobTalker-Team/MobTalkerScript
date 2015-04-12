@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,8 @@ import java.lang.reflect.*;
 
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.*;
+
+import com.google.common.base.Throwables;
 
 /* package */abstract class JavaMethodAdapter extends MtsFunction
 {
@@ -74,23 +76,14 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
         }
         catch ( InvocationTargetException ex )
         {
-            Throwable cause = ex.getCause();
-            MtsRuntimeException srex;
+            Throwable cause = Throwables.getRootCause( ex );
             if ( cause instanceof MtsRuntimeException )
             {
-                srex = (MtsRuntimeException) cause;
-            }
-            else
-            {
-                String msg = cause.getMessage();
-                StackTraceElement ste = cause.getStackTrace()[0];
-                
-                srex = new MtsRuntimeException( msg );
-                srex.addStackTraceElement( ste.toString() );
+                MtsRuntimeException srex = (MtsRuntimeException) cause;
+                srex.addStackTraceElement( _name );
             }
             
-            srex.addStackTraceElement( _name );
-            throw srex;
+            throw Throwables.propagate( cause );
         }
         catch ( Exception ex )
         {

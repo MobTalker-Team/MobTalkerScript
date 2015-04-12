@@ -1,16 +1,16 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
- * 
+ * Copyright (C) 2013-2015 Chimaine
+ *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -86,7 +86,7 @@ public final class MtsBaseLib
     @MtsNativeFunction( "pairs" )
     public static MtsValue pairs( MtsValue arg )
     {
-        MtsValue mm = arg.getMetaMethod( __pairs );
+        MtsValue mm = arg.getMetaTag( __pairs );
         if ( !mm.isNil() )
             return mm.call( arg );
         else
@@ -96,7 +96,7 @@ public final class MtsBaseLib
     @MtsNativeFunction( "ipairs" )
     public static MtsValue ipairs( MtsValue arg )
     {
-        MtsValue mm = arg.getMetaMethod( __ipairs );
+        MtsValue mm = arg.getMetaTag( __ipairs );
         if ( !mm.isNil() )
             return mm.call( arg );
         else
@@ -140,7 +140,7 @@ public final class MtsBaseLib
     {
         MtsTable t = checkTable( argTable, 0 );
         
-        MtsValue mm = t.getMetaMethod( __metatable );
+        MtsValue mm = t.getMetaTag( __metatable );
         if ( !mm.isNil() )
             throw new MtsRuntimeException( "cannot retrieve a protected metatable" );
         
@@ -152,7 +152,7 @@ public final class MtsBaseLib
     {
         MtsTable t = checkTable( argTable, 0 );
         
-        MtsValue mm = t.getMetaMethod( __metatable );
+        MtsValue mm = t.getMetaTag( __metatable );
         if ( !mm.isNil() )
             throw new MtsRuntimeException( "cannot change a protected metatable" );
         
@@ -198,7 +198,7 @@ public final class MtsBaseLib
         MtsFunctionPrototype p;
         try
         {
-            p = MtsCompiler.loadStringChunk( chunk, sourceName );
+            p = MtsCompiler.loadChunk( chunk, sourceName );
         }
         catch ( Exception ex )
         {

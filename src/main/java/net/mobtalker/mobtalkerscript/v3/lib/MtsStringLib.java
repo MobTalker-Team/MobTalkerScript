@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -53,6 +53,31 @@ public class MtsStringLib
         {
             return Nil;
         }
+    }
+    
+    @MtsNativeFunction
+    public static MtsString join( MtsVarargs args )
+    {
+        if ( ( args.isNil() ) || ( args.count() < 2 ) )
+            return MtsString.Empty;
+        
+        if ( args.count() == 2 )
+            return args.get( 1 ).toMtsString();
+        
+        String sep = args.get( 0 ).toMtsString().toJava();
+        
+        StringBuilder sb = new StringBuilder();
+        
+        int limit = args.count() - 1;
+        for ( int i = 1; i < limit; i++ )
+        {
+            MtsValue value = args.get( i );
+            sb.append( value.toMtsString().toJava() )
+              .append( sep );
+        }
+        sb.append( args.get( limit ).toMtsString().toJava() );
+        
+        return MtsString.of( sb.toString() );
     }
     
     @MtsNativeFunction

@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -71,7 +71,7 @@ public class MtsString extends MtsValue
             case 1:
                 return values.get( 0 ).toMtsString();
             case 2:
-                return values.get( 0 ).concat( values.get( 1 ) );
+                return values.get( 0 ).toMtsString().concat( values.get( 1 ).toMtsString() );
             default:
                 StringBuilder sb = new StringBuilder();
                 for ( int i = 0; i < values.count(); i++ )

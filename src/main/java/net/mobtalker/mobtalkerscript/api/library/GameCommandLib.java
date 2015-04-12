@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -16,13 +16,12 @@
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
-import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 
 import java.util.*;
 
-import net.mobtalker.mobtalkerscript.v2.value.MtsVarArgs;
-import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
 import com.google.common.collect.Lists;
 
@@ -36,7 +35,7 @@ public class GameCommandLib extends AbstractUnifiedLib<IGameCommandLibLogic>
     // ========================================
     
     @MtsNativeFunction
-    public MtsVarArgs execute( MtsVarArgs args )
+    public MtsVarargs execute( MtsVarargs args )
     {
         String command = checkString( args, 0 );
         
@@ -57,6 +56,6 @@ public class GameCommandLib extends AbstractUnifiedLib<IGameCommandLibLogic>
         }
         
         int executions = _logic.execute( command, arguments );
-        return MtsVarArgs.of( valueOf( executions > 0 ), valueOf( executions ) );
+        return MtsVarargs.of( MtsBoolean.of( executions > 0 ), MtsNumber.of( executions ) );
     }
 }

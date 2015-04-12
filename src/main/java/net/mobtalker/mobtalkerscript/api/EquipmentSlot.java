@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,6 +17,8 @@
 package net.mobtalker.mobtalkerscript.api;
 
 import java.util.HashMap;
+
+import net.mobtalker.mobtalkerscript.v3.value.MtsString;
 
 import com.google.common.collect.Maps;
 
@@ -49,11 +51,13 @@ public enum EquipmentSlot
     
     private final String _name;
     private final int _id;
+    private final MtsString _key;
     
     private EquipmentSlot( String name, int id )
     {
         _name = name;
         _id = id;
+        _key = MtsString.of( name );
     }
     
     public String getName()
@@ -64,5 +68,10 @@ public enum EquipmentSlot
     public int getID()
     {
         return _id;
+    }
+    
+    public MtsString getKey()
+    {
+        return _key;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -33,6 +33,8 @@ public interface ICreatureLibLogic
     void setReaction( String key, EntityReaction reaction );
     
     EntityReaction getReaction( String key );
+    
+    void resetReaction( String key );
     
     // ========================================
     

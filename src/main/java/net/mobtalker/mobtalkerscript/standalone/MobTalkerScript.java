@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -16,10 +16,9 @@
  */
 package net.mobtalker.mobtalkerscript.standalone;
 
-import static net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNatives.*;
+import static net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNatives.*;
 
 import java.nio.file.Paths;
-import java.util.logging.*;
 
 import joptsimple.*;
 import joptsimple.internal.Strings;
@@ -27,10 +26,9 @@ import net.mobtalker.mobtalkerscript.api.WorldPosition;
 import net.mobtalker.mobtalkerscript.api.library.*;
 import net.mobtalker.mobtalkerscript.standalone.lib.*;
 import net.mobtalker.mobtalkerscript.util.PrettyPrinter;
-import net.mobtalker.mobtalkerscript.util.logging.MtsLog;
-import net.mobtalker.mobtalkerscript.v2.*;
-import net.mobtalker.mobtalkerscript.v2.compiler.*;
-import net.mobtalker.mobtalkerscript.v2.value.*;
+import net.mobtalker.mobtalkerscript.v3.*;
+import net.mobtalker.mobtalkerscript.v3.compiler.*;
+import net.mobtalker.mobtalkerscript.v3.value.*;
 
 /**
  * Intended to be the entry point for an interactive shell for MobTalkerScript.
@@ -41,32 +39,21 @@ public class MobTalkerScript
     {
         System.out.print( "Loading...\r" );
         
-        MtsLog.setLogger( Logger.getLogger( "MTS" ), true );
-        
         // Initialize the parser
-        MtsCompiler.loadString( ";", "" );
+        MtsCompiler.loadChunk( ";", "" );
         
         // Options
         OptionParser parser = new OptionParser();
-        OptionSpec<String> compilerLogLevel = parser.accepts( "compilerLog" )
-                                                    .withRequiredArg()
-                                                    .defaultsTo( "OFF" );
-        OptionSpec<String> engineLogLevel = parser.accepts( "engineLog" )
-                                                  .withRequiredArg()
-                                                  .defaultsTo( "OFF" );
         OptionSpec<String> files = parser.nonOptions();
         
         OptionSet options = parser.parse( args );
-        
-        MtsLog.CompilerLog.setLevel( Level.parse( options.valueOf( compilerLogLevel ) ) );
-        MtsLog.EngineLog.setLevel( Level.parse( options.valueOf( engineLogLevel ) ) );
         
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
         createLibraries( _G );
         
         _G.out.println( "MobTalkerScript " //
-                        + MtsGlobals.VERSION.asJavaString()
+                        + MtsGlobals.VERSION.toJava()
                         + " Copyright (c) 2013-2014 Chimaine" );
         _G.out.println( "This is free software licensed under the GNU Lesser General Public License version 3." );
         
@@ -77,7 +64,7 @@ public class MobTalkerScript
             
             _G.out.println( "Loading file '" + path + "'" );
             
-            _G.PackageLib.setBasePath( Paths.get( path ).getParent().toString() );
+            _G.PackageLib.setBasePath( Paths.get( path ).toAbsolutePath().getParent().toString() );
             
             MtsFunctionPrototype fileChunk = null;
             try
@@ -100,7 +87,7 @@ public class MobTalkerScript
                     new MtsClosure( fileChunk, _G ).call();
                     Thread.sleep( 100 );
                 }
-                catch ( ScriptRuntimeException ex )
+                catch ( MtsRuntimeException ex )
                 {
                     _G.err.println( ex.createStackTrace() );
                     Thread.sleep( 100 );
@@ -120,7 +107,7 @@ public class MobTalkerScript
             MtsFunctionPrototype chunk;
             try
             {
-                chunk = MtsCompiler.loadString( line, "stdin" );
+                chunk = MtsCompiler.loadChunk( line, "stdin" );
             }
             catch ( MtsSyntaxError ex )
             {
@@ -140,53 +127,53 @@ public class MobTalkerScript
                     _G.out.print( new PrettyPrinter().print( result, "result" ) );
                 }
             }
-            catch ( ScriptRuntimeException ex )
+            catch ( MtsRuntimeException ex )
             {
                 _G.err.println( ex.createStackTrace() );
                 Thread.sleep( 100 );
             }
         }
     }
-
+    
     private static void createLibraries( MtsGlobals env )
     {
         DummyCreature dummyCreature = new DummyCreature( "DummyMob", 10, 10, new WorldPosition( 0, 0, 0 ) );
         DummyPlayer dummyPlayer = new DummyPlayer( "Player", new WorldPosition( 0, 0, 0 ) );
-
+        
         {
-            createLibrary( new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ), env );
+            createLibrary( env, new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ) );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new GameCommandLib( new ConsoleGameCommandLibLogic( env ) ), lib );
+            createLibrary( lib, new GameCommandLib( new ConsoleGameCommandLibLogic( env ) ) );
             env.set( "Command", lib );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new EntityLib( new ConsoleEntityLibLogic( dummyCreature ) ), lib );
-            createLibrary( new CreatureLib( new ConsoleCreatureLibLogic( dummyCreature ) ), lib );
+            createLibrary( lib, new EntityLib( new ConsoleEntityLibLogic( dummyCreature ) ) );
+            createLibrary( lib, new CreatureLib( new ConsoleCreatureLibLogic( dummyCreature ) ) );
             env.set( "Entity", lib );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new EntityLib( new ConsoleEntityLibLogic( dummyPlayer ) ), lib );
-            createLibrary( new PlayerLib( new ConsolePlayerLibLogic( dummyPlayer ) ), lib );
+            createLibrary( lib, new EntityLib( new ConsoleEntityLibLogic( dummyPlayer ) ) );
+            createLibrary( lib, new PlayerLib( new ConsolePlayerLibLogic( dummyPlayer ) ) );
             env.set( "Player", lib );
         }
         {
             MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new InteractionWorldLib( new ConsoleInteractionWorldLibLogic() ), lib );
+            createLibrary( lib, new InteractionWorldLib( new ConsoleInteractionWorldLibLogic() ) );
             env.set( "World", lib );
         }
-        {
-            MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( new ScoreboardLib( new ConsoleScoreboardLibLogic() ), lib );
-            env.set( "Scoreboard", lib );
-        }
+//        {
+//            MtsTable lib = new MtsTable( 0, 0 );
+//            createLibrary( new ScoreboardLib( new ConsoleScoreboardLibLogic() ), lib );
+//            env.set( "Scoreboard", lib );
+//        }
     }
     
     // ========================================
-
+    
     private MobTalkerScript()
     {}
     

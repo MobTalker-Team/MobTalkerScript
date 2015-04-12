@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,12 +17,11 @@
 package net.mobtalker.mobtalkerscript.api.library;
 
 import static net.mobtalker.mobtalkerscript.api.ScriptApiCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.MtsCheck.*;
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 import net.mobtalker.mobtalkerscript.api.*;
-import net.mobtalker.mobtalkerscript.v2.BadArgumentException;
-import net.mobtalker.mobtalkerscript.v2.value.MtsValue;
-import net.mobtalker.mobtalkerscript.v2.value.userdata.MtsNativeFunction;
+import net.mobtalker.mobtalkerscript.v3.MtsArgumentException;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 
 public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
 {
@@ -47,11 +46,11 @@ public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
         String slotName = checkString( argSlot, 0 );
         EquipmentSlot slot = EquipmentSlot.forName( slotName );
         if ( slot == null )
-            throw new BadArgumentException( 0, "'%s' is not a valid equipment slot", slotName );
+            throw new MtsArgumentException( 0, "'%s' is not a valid equipment slot", slotName );
         
         String itemName = checkString( argItemName, 1 );
         if ( !_logic.isValidItem( itemName ) )
-            throw new BadArgumentException( 1, "unknown item name '%s'", itemName );
+            throw new MtsArgumentException( 1, "unknown item name '%s'", itemName );
         
         int meta = checkIntegerWithMinimum( argMeta, 2, 0, 0 );
         
@@ -63,7 +62,7 @@ public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
     @MtsNativeFunction
     public MtsValue getReaction( MtsValue argKey )
     {
-        return valueOf( _logic.getReaction( checkString( argKey, 0 ) ).getName() );
+        return MtsString.of( _logic.getReaction( checkString( argKey, 0 ) ).getName() );
     }
     
     @MtsNativeFunction
@@ -71,6 +70,11 @@ public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
     {
         _logic.setReaction( checkString( argKey, 0 ),
                             checkReaction( argReaction, 1 ) );
+    }
+    
+    public void resetReaction( MtsValue argKey )
+    {
+        _logic.resetReaction( checkString( argKey, 0 ) );
     }
     
     // ========================================

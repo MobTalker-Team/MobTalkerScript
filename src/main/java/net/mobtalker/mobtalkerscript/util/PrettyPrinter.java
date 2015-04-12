@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -16,12 +16,10 @@
  */
 package net.mobtalker.mobtalkerscript.util;
 
-import static net.mobtalker.mobtalkerscript.v2.value.MtsValue.*;
+import java.util.*;
 
-import java.util.Set;
-
-import net.mobtalker.mobtalkerscript.v2.value.*;
-import net.mobtalker.mobtalkerscript.v2.value.MtsTable.Entry;
+import net.mobtalker.mobtalkerscript.v3.value.*;
+import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +31,7 @@ public class PrettyPrinter
     private final String _indent;
     
     // ========================================
-
+    
     public PrettyPrinter()
     {
         this( "    " );
@@ -46,7 +44,7 @@ public class PrettyPrinter
     }
     
     // ========================================
-
+    
     public String print( MtsValue v, String name )
     {
         StringBuilder s = new StringBuilder();
@@ -57,12 +55,12 @@ public class PrettyPrinter
     private void print( MtsValue v, String name, StringBuilder s, String indent )
     {
         s.append( indent );
-
+        
         if ( !StringUtils.isEmpty( name ) )
         {
             s.append( name ).append( " = " );
         }
-
+        
         if ( v.isTable() )
         {
             MtsTable t = v.asTable();
@@ -79,6 +77,11 @@ public class PrettyPrinter
                 s.append( indent ).append( "};\n" );
             }
         }
+        else if ( v.isVarArgs() )
+        {
+            MtsVarargs args = v.asVarArgs();
+            s.append( Arrays.toString( args.toArray() ) + "\n" );
+        }
         else
         {
             s.append( v ).append( ";\n" );
@@ -87,12 +90,9 @@ public class PrettyPrinter
     
     private void tablePrint( MtsTable t, StringBuilder s, String indent )
     {
-        MtsValue k = NIL;
-        Entry entry;
-        while ( ( entry = t.getNext( k ) ) != null )
+        for ( Entry e : t )
         {
-            k = entry.getKey();
-            tableEntryPrint( k, entry.getValue(), s, indent );
+            tableEntryPrint( e.getKey(), e.getValue(), s, indent );
         }
     }
     
@@ -110,7 +110,7 @@ public class PrettyPrinter
             {
                 _cache.add( v );
             }
-
+            
             print( v, "[" + k + "]", s, indent );
         }
     }

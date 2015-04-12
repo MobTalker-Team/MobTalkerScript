@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Chimaine
+ * Copyright (C) 2013-2015 Chimaine
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -53,12 +53,6 @@ public class ConsoleCreatureLibLogic implements ICreatureLibLogic
     }
     
     @Override
-    public void setReaction( String key, EntityReaction reaction )
-    {
-        // TODO
-    }
-    
-    @Override
     public EntityReaction getReaction( String key )
     {
         // TODO
@@ -66,9 +60,21 @@ public class ConsoleCreatureLibLogic implements ICreatureLibLogic
     }
     
     @Override
+    public void setReaction( String key, EntityReaction reaction )
+    {
+        // TODO
+    }
+    
+    @Override
+    public void resetReaction( String key )
+    {
+        // TODO
+    }
+    
+    @Override
     public void follow( String key )
     {
-        // TODO Auto-generated method stub
+        // TODO
     }
     
     @Override

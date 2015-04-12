@@ -19,12 +19,12 @@ if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
-version = "2.3.0-beta"
-group = "net.mobtalker.mobtalkerscript"
+group = "net.mobtalker"
 archivesBaseName = "MobTalkerScript"
+version = "3.0.0-beta"
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -40,11 +40,11 @@ dependencies {
 }
 
 jar {
-    from 'LICENSE'
+    from 'LICENSE-MobTalkerScript', 'LICENSE-GPL', 'LICENSE-LGPL'
 }
 
 shadowJar {
-    from 'LICENSE'
+    from 'LICENSE-MobTalkerScript', 'LICENSE-GPL', 'LICENSE-LGPL'
     exclude 'META-INF', 'META-INF/**'
 
     manifest {
@@ -56,7 +56,7 @@ shadowJar {
 
 task sourceJar( type: Jar ) {
     from sourceSets.main.allSource
-    classifier = 'src'
+    classifier = 'sources'
 }
 
 artifacts {
@@ -65,29 +65,27 @@ artifacts {
 }
 
 task generateAntlr( type: JavaExec ) {
-    def grammarFile = 'src/main/antlr/Mts.g4'
-    def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v2/compiler/antlr/'
+    def grammarFile = 'src/main/antlr/Mts3.g4'
+    def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v3/compiler/antlr/generated'
 
     main 'org.antlr.v4.Tool'
+    classpath 'src/main/antlr/templates'
     classpath buildscript.configurations.classpath
     
     inputs.file grammarFile
-    outputs.files(
-        "${outputDir}/MtsParser.java",
-        "${outputDir}/MtsLexer.java",
-        "${outputDir}/MtsVisitor.java",
-        "${outputDir}/MtsBaseVisitor.java",
-        "${outputDir}/Mts.tokens",
-        "${outputDir}/MtsLexer.tokens"
-    )
+    inputs.file 'src/main/antlr/templates/org/antlr/v4/tool/templates/codegen/Java/Java.stg'
+    //outputs.dir( "${outputDir}" )
     
     args = [ 
         grammarFile,
         '-o', outputDir,
-        '-package', 'net.mobtalker.mobtalkerscript.v2.compiler.antlr',
-        '-visitor',
-        '-no-listener',
-        '-encoding', 'UTF-8'
+        '-package', 'net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated',
+        '-no-visitor',
+        '-listener',
+        //'-no-listener',
+        '-encoding', 'UTF-8',
+        //'-Xlog',
+        //'-XdbgST'
     ]
 }
 tasks.compileJava.dependsOn generateAntlr
@@ -98,12 +96,7 @@ task cleanAntlr( type: Delete ) {
 
 license {    
     include "**/*.java"
-    excludes ([
-        "**/MtsParser.java", 
-        "**/MtsLexer.java", 
-        "**/MtsVisitor.java", 
-        "**/MtsBaseVisitor.java"
-    ])
+    exclude "**/generated/**"
     
     header project.file( 'HEADER' )    
     

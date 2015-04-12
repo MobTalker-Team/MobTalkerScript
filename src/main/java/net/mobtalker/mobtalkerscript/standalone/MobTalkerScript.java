@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,34 +38,34 @@ public class MobTalkerScript
     public static void main( String[] args ) throws Exception
     {
         System.out.print( "Loading...\r" );
-        
+
         // Initialize the parser
         MtsCompiler.loadChunk( ";", "" );
-        
+
         // Options
         OptionParser parser = new OptionParser();
         OptionSpec<String> files = parser.nonOptions();
-        
+
         OptionSet options = parser.parse( args );
-        
+
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
         createLibraries( _G );
-        
+
         _G.out.println( "MobTalkerScript " //
                         + MtsGlobals.VERSION.toJava()
                         + " Copyright (c) 2013-2014 Chimaine" );
         _G.out.println( "This is free software licensed under the GNU Lesser General Public License version 3." );
-        
+
         // Load specified file if any
         if ( !Strings.isNullOrEmpty( options.valueOf( files ) ) )
         {
             String path = options.valueOf( files );
-            
+
             _G.out.println( "Loading file '" + path + "'" );
-            
+
             _G.PackageLib.setBasePath( Paths.get( path ).toAbsolutePath().getParent().toString() );
-            
+
             MtsFunctionPrototype fileChunk = null;
             try
             {
@@ -79,7 +79,7 @@ public class MobTalkerScript
             {
                 ex.printStackTrace();
             }
-            
+
             if ( fileChunk != null )
             {
                 try
@@ -94,16 +94,16 @@ public class MobTalkerScript
                 }
             }
         }
-        
+
         // Interactive loop
         for ( ;; )
         {
             _G.out.print( "> " );
             String line = _G.in.readLine();
-            
+
             if ( ( line == null ) || line.equals( "exit" ) )
                 break;
-            
+
             MtsFunctionPrototype chunk;
             try
             {
@@ -115,14 +115,14 @@ public class MobTalkerScript
                 Thread.sleep( 100 );
                 continue;
             }
-            
+
             try
             {
                 MtsValue result = new MtsClosure( chunk, _G ).call();
                 Thread.sleep( 100 );
-                
+
                 if ( ( result.isVarArgs() && ( result.asVarArgs().count() > 0 ) )
-                     || ( !result.isNil() && !result.isVarArgs() ) )
+                        || ( !result.isNil() && !result.isVarArgs() ) )
                 {
                     _G.out.print( new PrettyPrinter().print( result, "result" ) );
                 }
@@ -134,12 +134,12 @@ public class MobTalkerScript
             }
         }
     }
-    
+
     private static void createLibraries( MtsGlobals env )
     {
         DummyCreature dummyCreature = new DummyCreature( "DummyMob", 10, 10, new WorldPosition( 0, 0, 0 ) );
         DummyPlayer dummyPlayer = new DummyPlayer( "Player", new WorldPosition( 0, 0, 0 ) );
-        
+
         {
             createLibrary( env, new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ) );
         }
@@ -171,10 +171,10 @@ public class MobTalkerScript
 //            env.set( "Scoreboard", lib );
 //        }
     }
-    
+
     // ========================================
-    
+
     private MobTalkerScript()
     {}
-    
+
 }

@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,70 +27,70 @@ public final class Stack<T>
     {
         return new Stack<T>();
     }
-    
+
     public static <T> Stack<T> newStack( int size )
     {
         return new Stack<T>( size );
     }
-    
+
     // ========================================
-    
+
     private T[] _array;
     private int _top;
-    
+
     // ========================================
-    
+
     public Stack()
     {
         this( 8 );
     }
-    
+
     @SuppressWarnings( "unchecked" )
     public Stack( int size )
     {
         _array = (T[]) new Object[size];
         _top = -1;
     }
-    
+
     // ========================================
-    
+
     @SuppressWarnings( "unchecked" )
     private void resizeIfNeeded()
     {
         if ( _array.length > _top )
             return;
-        
+
         int newSize = _array.length << 1;
-        
+
         T[] newArr = (T[]) new Object[newSize];
-        
+
         System.arraycopy( _array, 0, newArr, 0, _array.length );
         _array = newArr;
     }
-    
+
     public void push( T o )
     {
         _top++;
-        
+
         resizeIfNeeded();
-        
+
         _array[_top] = o;
     }
-    
+
     public T pop()
     {
         if ( isEmpty() ) { throw new NoSuchElementException( "Stack is empty" ); }
-        
+
         return _array[_top--];
     }
-    
+
     public T peek()
     {
         if ( isEmpty() ) { throw new NoSuchElementException( "Stack is empty" ); }
-        
+
         return _array[_top];
     }
-    
+
     /**
      * A < B
      * 0 1
@@ -147,7 +147,7 @@ public final class Stack<T>
     {
         if ( count < 2 ) { throw new IllegalArgumentException( "Must swap at least 2 elements" ); }
         if ( count > count() ) { throw new IllegalArgumentException( "Tried to swap more elements than there are on the stack" ); }
-        
+
         final int swaps = count / 2;
         final int start = ( _top + 1 ) - count;
         for ( int i = 0; i < swaps; i++ )
@@ -159,32 +159,32 @@ public final class Stack<T>
             _array[a] = tmp;
         }
     }
-    
+
     // ========================================
-    
+
     public int count()
     {
         return _top + 1;
     }
-    
+
     public boolean isEmpty()
     {
         return _top == -1;
     }
-    
+
     public void clear()
     {
         _top = -1;
     }
-    
+
     // ========================================
-    
+
     @Override
     public String toString()
     {
         StringBuilder s = new StringBuilder( "Stack [Count=" );
         s.append( count() ).append( "; " );
-        
+
         if ( count() > 1 )
         {
             for ( int i = _top; i > 0; i-- )
@@ -193,14 +193,14 @@ public final class Stack<T>
                 s.append( e ).append( "," );
             }
         }
-        
+
         if ( count() > 0 )
         {
             s.append( _array[0] );
         }
-        
+
         s.append( "]" );
-        
+
         return s.toString();
     }
 }

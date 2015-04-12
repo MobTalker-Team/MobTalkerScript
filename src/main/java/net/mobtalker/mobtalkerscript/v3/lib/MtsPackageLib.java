@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,14 +34,14 @@ public class MtsPackageLib
     private String _basePath;
     private final List<String> _searchPaths;
     private final MtsTable _loadedPackages;
-    
+
     // ========================================
-    
+
     public MtsPackageLib( MtsGlobals g )
     {
         this( g, "." );
     }
-    
+
     public MtsPackageLib( MtsGlobals g, String basePath )
     {
         _G = g;
@@ -49,19 +49,19 @@ public class MtsPackageLib
         _basePath = basePath;
         _searchPaths = Lists.newArrayList( "/?", "/lib/?" );
     }
-    
+
     // ========================================
-    
+
     public String getBasePath()
     {
         return _basePath;
     }
-    
+
     public void setBasePath( String basePath )
     {
         _basePath = basePath;
     }
-    
+
     /**
      * Adds a module to the list of known modules of this library.
      */
@@ -69,25 +69,25 @@ public class MtsPackageLib
     {
         _loadedPackages.set( name, module );
     }
-    
+
     // ========================================
-    
+
     @MtsNativeFunction( "require" )
     public MtsValue require( MtsValue arg )
     {
         String libName = checkString( arg, 0 );
         MtsValue lib = _loadedPackages.get( libName );
-        
+
         if ( !lib.isNil() )
             return lib;
-        
+
         for ( String pathPattern : _searchPaths )
         {
             pathPattern = _basePath + pathPattern;
             Path path = Paths.get( pathPattern.replace( "?", libName ) );
-            
+
             _G.out.println( "Searching path '" + path.toString() + " for module '" + libName + "'" );
-            
+
             if ( Files.exists( path ) )
             {
                 MtsFunctionPrototype p;
@@ -103,14 +103,14 @@ public class MtsPackageLib
                 {
                     throw new MtsEngineException( ex );
                 }
-                
+
                 lib = new MtsClosure( p, _G ).call();
                 _loadedPackages.set( libName, lib );
-                
+
                 return lib;
             }
         }
-        
+
         throw new MtsRuntimeException( "module '%s' not found", libName );
     }
 }

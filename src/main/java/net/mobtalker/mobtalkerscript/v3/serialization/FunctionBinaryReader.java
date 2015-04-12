@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,31 +33,31 @@ public class FunctionBinaryReader
     public static MtsFunctionPrototype readChunk( Path path ) throws IOException
     {
         try (
-            BufferedInputStream stream = new BufferedInputStream( Files.newInputStream( path ) ) )
-        {
+                BufferedInputStream stream = new BufferedInputStream( Files.newInputStream( path ) ) )
+                {
             return readChunk( stream );
-        }
+                }
     }
-    
+
     public static MtsFunctionPrototype readChunk( InputStream stream ) throws IOException
     {
         return new FunctionBinaryReader().read( stream );
     }
-    
+
     // ========================================
-    
+
     public MtsFunctionPrototype read( InputStream stream ) throws IOException
     {
         return read( new DataInputStream( stream ) );
     }
-    
+
     private MtsFunctionPrototype read( DataInputStream stream ) throws IOException
     {
         if ( !( ( stream.read() == 'M' ) && ( stream.read() == 'T' ) && ( stream.read() == 'S' ) ) )
             throw new IOException( "invalid file header" );
         if ( !( stream.read() == ( ( VERSION_MAJOR << 4 ) | VERSION_MINOR ) ) )
             throw new IOException( "incompatible file version" );
-        
+
         String name = stream.readUTF();
         String source = stream.readUTF();
         int sourceStart = stream.readUnsignedShort();
@@ -65,23 +65,23 @@ public class FunctionBinaryReader
         int paramCount = stream.readUnsignedByte();
         int maxStack = stream.readUnsignedByte();
         boolean hasVarargs = stream.readBoolean();
-        
+
         int nConstants = stream.readUnsignedShort();
         MtsValue[] constants = new MtsValue[nConstants];
         for ( int i = 0; i < nConstants; i++ )
         {
             constants[i] = stream.readBoolean()
                     ? MtsString.of( stream.readUTF() )
-                    : MtsNumber.of( stream.readDouble() );
+                            : MtsNumber.of( stream.readDouble() );
         }
-        
+
         int nLocals = stream.readUnsignedByte();
         LocalDescription[] locals = new LocalDescription[nLocals];
         for ( int i = 0; i < nLocals; i++ )
         {
             locals[i] = new LocalDescription( stream.readUTF(), i, stream.readUnsignedShort(), stream.readUnsignedShort() );
         }
-        
+
         int nExternals = stream.readUnsignedByte();
         ExternalDescription[] externals = new ExternalDescription[nExternals];
         for ( int i = 0; i < nExternals; i++ )
@@ -90,7 +90,7 @@ public class FunctionBinaryReader
                                                     stream.readBoolean(),
                                                     stream.readUnsignedByte() );
         }
-        
+
         int nInstrs = stream.readUnsignedShort();
         MtsInstruction[] instrs = new MtsInstruction[nInstrs];
         SourcePosition[] sourcePositions = new SourcePosition[nInstrs];
@@ -99,7 +99,7 @@ public class FunctionBinaryReader
             instrs[i] = readInstruction( stream );
             sourcePositions[i] = new SourcePosition( stream.readUnsignedShort(), stream.readUnsignedShort() );
         }
-        
+
         MtsFunctionPrototype prototype = new MtsFunctionPrototype( name,
                                                                    Arrays.asList( constants ),
                                                                    Arrays.asList( locals ),
@@ -108,16 +108,16 @@ public class FunctionBinaryReader
                                                                    Arrays.asList( instrs ),
                                                                    Arrays.asList( sourcePositions ),
                                                                    source, sourceStart, sourceEnd );
-        
+
         int nChilds = stream.readUnsignedByte();
         for ( int i = 0; i < nChilds; i++ )
         {
             prototype.addNestedPrototype( read( stream ) );
         }
-        
+
         return prototype;
     }
-    
+
     private static MtsInstruction readInstruction( DataInputStream stream ) throws IOException
     {
         int instr = stream.readUnsignedByte();

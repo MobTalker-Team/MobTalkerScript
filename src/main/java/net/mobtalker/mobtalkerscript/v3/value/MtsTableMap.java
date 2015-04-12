@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2013-2015 Chimaine
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,32 +29,32 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
 {
     private static final int MAXIMUM_CAPACITY = 1 << 30;
     private static final float LOAD_FACTOR = 0.75f;
-    
+
     // ========================================
-    
+
     private HashEntry[] _entries;
     private int _threshold;
     private int _count;
-    
+
     private EntrySet _entrySet;
     private KeysSet _keysSet;
     private ValuesCollection _valuesCollection;
-    
+
     // ========================================
-    
+
     /* package */MtsTableMap( int initialCapacity )
     {
         int capacity = 1;
         while ( capacity < initialCapacity )
             capacity <<= 1;
-        
+
         _entries = new HashEntry[capacity];
         _threshold = (int) ( capacity * LOAD_FACTOR );
         _count = 0;
     }
-    
+
     // ========================================
-    
+
     /**
      * Applies a supplemental hash function to a given hashCode, which
      * defends against poor quality hash functions. This is critical
@@ -69,7 +69,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         // number of collisions (approximately 8 at default load factor).
         return h ^ ( h >>> 20 ) ^ ( h >>> 12 ) ^ ( h >>> 7 ) ^ ( h >>> 4 );
     }
-    
+
     /**
      * Returns 0 for <code>null</code> or {@link MtsNil nil} values.
      */
@@ -77,7 +77,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     {
         return ( ( o == null ) || o.isNil() ) ? 0 : hash( o.hashCode() );
     }
-    
+
     /**
      * Returns index for hash code h.
      */
@@ -85,7 +85,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     {
         return h & ( length - 1 );
     }
-    
+
     /**
      * Rehashes the contents of this table into a new array with a
      * larger capacity. This method is called automatically when the
@@ -109,13 +109,13 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             _threshold = Integer.MAX_VALUE;
             return;
         }
-        
+
         HashEntry[] newTable = new HashEntry[newCapacity];
         transferEntries( newTable );
         _entries = newTable;
         _threshold = (int) ( newCapacity * LOAD_FACTOR );
     }
-    
+
     /*
      * Expand the table if the number of mappings to be added
      * is greater than or equal to threshold. This is conservative; the
@@ -145,19 +145,19 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             }
         }
     }
-    
+
     public void ensureSpace( int space )
     {
         ensureCapacity( _count + space );
     }
-    
+
     /**
      * Transfers all entries from current table to newTable (rehash the table).
      */
     private void transferEntries( HashEntry[] newTable )
     {
         int newCapacity = newTable.length;
-        
+
         HashEntry[] t = _entries;
         for ( int j = 0; j < t.length; j++ )
         {
@@ -177,80 +177,80 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             }
         }
     }
-    
+
     // ========================================
-    
+
     @Override
     public int size()
     {
         return _count;
     }
-    
+
     @Override
     public boolean isEmpty()
     {
         return _count == 0;
     }
-    
+
     @Override
     public boolean containsKey( Object key )
     {
         return getEntry( key ) != null;
     }
-    
+
     @Override
     public boolean containsValue( Object value )
     {
         if ( !( value instanceof MtsValue ) || isEmpty() )
             return false;
-        
+
         HashEntry[] entries = _entries;
         for ( int i = 0; i < entries.length; ++i )
             for ( HashEntry e = entries[i]; e != null; e = e.next )
                 if ( value.equals( e.value ) )
                     return true;
-        
+
         return false;
     }
-    
+
     // ========================================
-    
+
     @Override
     public MtsValue get( Object key )
     {
         Map.Entry<MtsValue, MtsValue> result = getEntry( key );
         return result == null ? Nil : result.getValue();
     }
-    
+
     public Entry<MtsValue, MtsValue> getEntry( Object key )
     {
         if ( !( key instanceof MtsValue ) || isEmpty() )
             return null;
-        
+
         int hash = getHashFor( (MtsValue) key );
         for ( HashEntry e = _entries[indexFor( hash, _entries.length )]; e != null; e = e.next )
             if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
                 return e;
-        
+
         return null;
     }
-    
+
     // ========================================
-    
+
     @Override
     public MtsValue put( MtsValue key, MtsValue value )
     {
         assert key != null : "key was null";
-        
+
         if ( key.isNil() )
             throw new MtsRuntimeException( "table index is nil" );
-        
+
         if ( value.isNil() )
             return remove( key );
-        
+
         int hash = getHashFor( key );
         int i = indexFor( hash, _entries.length );
-        
+
         for ( HashEntry entry = _entries[i]; entry != null; entry = entry.next )
         {
             if ( ( entry.hash == hash ) && Objects.equals( key, entry.key ) )
@@ -260,31 +260,31 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
                 return oldValue;
             }
         }
-        
+
         HashEntry e = _entries[i];
         _entries[i] = new HashEntry( key, hash, value, e );
         _count++;
-        
+
         ensureCapacity( _count );
-        
+
         return Nil;
     }
-    
+
     @Override
     public void putAll( Map<? extends MtsValue, ? extends MtsValue> map )
     {
         int nEntries = map.size();
         if ( nEntries == 0 )
             return;
-        
+
         ensureCapacity( _count + nEntries );
-        
+
         for ( Map.Entry<? extends MtsValue, ? extends MtsValue> e : map.entrySet() )
             put( e.getKey(), e.getValue() );
     }
-    
+
     // ========================================
-    
+
     /**
      * Contains-and-Remove
      * <p>
@@ -296,42 +296,42 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     {
         if ( !( key instanceof MtsValue ) )
             return Nil;
-        
+
         int hash = getHashFor( (MtsValue) key );
         int i = indexFor( hash, _entries.length );
-        
+
         HashEntry prev = _entries[i];
         HashEntry e = prev;
-        
+
         while ( e != null )
         {
             HashEntry next = e.next;
             if ( ( e.hash == hash ) && Objects.equals( key, e.key ) )
             {
                 _count--;
-                
+
                 if ( prev == e )
                     _entries[i] = next;
                 else
                     prev.next = next;
-                
+
                 return e.value;
             }
-            
+
             prev = e;
             e = next;
         }
-        
+
         return Nil;
     }
-    
+
     // ========================================
-    
+
     public Entry<MtsValue, MtsValue> getFirst()
     {
         if ( _count == 0 )
             return null;
-        
+
         HashEntry e = null;
         HashEntry[] t = _entries;
         for ( int i = 0; i < t.length; i++ )
@@ -340,15 +340,15 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             if ( e != null )
                 return e;
         }
-        
+
         return e;
     }
-    
+
     public Entry<MtsValue, MtsValue> getNext( Entry<MtsValue, MtsValue> entry )
     {
         return getNext( entry.getKey() );
     }
-    
+
     /**
      * Returns the entry that follows (in arbitrary order) the entry associated with the given key.
      * <p>
@@ -361,28 +361,28 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
     {
         if ( key.isNil() )
             return getFirst();
-        
+
         HashEntry next = null;
         int hash = getHashFor( key );
         HashEntry[] t = _entries;
-        
+
         int i = indexFor( hash, t.length );
         for ( next = t[i]; next != null; next = next.next )
             if ( ( next.hash == hash ) && Objects.equals( key, next.key ) )
                 break;
-        
+
         if ( next == null )
             throw new MtsRuntimeException( "invalid key" );
-        
+
         next = next.next;
         if ( next == null )
         {
             for ( i++; ( i < t.length ) && ( next == null ); next = t[i++] );
         }
-        
+
         return next;
     }
-    
+
     @Override
     public void clear()
     {
@@ -391,35 +391,35 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         {
             t[i] = null;
         }
-        
+
         _count = 0;
     }
-    
+
     // ========================================
-    
+
     @Override
     public Set<Map.Entry<MtsValue, MtsValue>> entrySet()
     {
         Set<Map.Entry<MtsValue, MtsValue>> result = _entrySet;
         return result != null ? result : ( _entrySet = new EntrySet() );
     }
-    
+
     @Override
     public Set<MtsValue> keySet()
     {
         Set<MtsValue> result = _keysSet;
         return result != null ? result : ( _keysSet = new KeysSet() );
     }
-    
+
     @Override
     public Collection<MtsValue> values()
     {
         Collection<MtsValue> result = _valuesCollection;
         return result != null ? result : ( _valuesCollection = new ValuesCollection() );
     }
-    
+
     // ========================================
-    
+
     @Override
     public String toString()
     {
@@ -429,19 +429,19 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             Map.Entry<MtsValue, MtsValue> e = iterator.next();
             MtsValue key = e.getKey();
             MtsValue value = e.getValue();
-            
+
             s.append( key.toString( false ) )
-             .append( '=' )
-             .append( value.toString( false ) );
-            
+            .append( '=' )
+            .append( value.toString( false ) );
+
             if ( iterator.hasNext() )
                 s.append( ", " );
         }
         return s.append( "]" ).toString();
     }
-    
+
     // ========================================
-    
+
     /**
      * Each entry is a Key-Value mapping as well as a bucket.
      * Values with the same hash are appended to each other in single-linked list style.
@@ -452,19 +452,19 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
          * Hash of the key when this entry was created.
          */
         final int hash;
-        
+
         /**
          * The next entry in the bucket list or <code>null</code> if this entry is the last in the list
          */
         HashEntry next;
-        
+
         HashEntry( MtsValue k, int h, MtsValue v, HashEntry n )
         {
             super( k, v );
             hash = h;
             next = n;
         }
-        
+
         @Override
         public MtsValue setValue( MtsValue value )
         {
@@ -473,24 +473,24 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             return result;
         }
     }
-    
+
     // ========================================
-    
+
     private abstract class HashIterator<T> implements Iterator<T>
     {
         private Entry<MtsValue, MtsValue> _next;
-        
+
         protected HashIterator()
         {
-            _next = MtsTableMap.this.getFirst();
+            _next = getFirst();
         }
-        
+
         @Override
         public boolean hasNext()
         {
             return _next != null;
         }
-        
+
         @Override
         public T next()
         {
@@ -498,16 +498,16 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             _next = MtsTableMap.this.getNext( _next );
             return result;
         }
-        
+
         protected abstract T getResult( Entry<MtsValue, MtsValue> entry );
-        
+
         @Override
         public void remove()
         {
             throw new UnsupportedOperationException();
         }
     }
-    
+
     /* package */final class KeysIterator extends HashIterator<MtsValue>
     {
         @Override
@@ -516,7 +516,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             return entry.getKey();
         }
     }
-    
+
     /* package */final class ValuesIterator extends HashIterator<MtsValue>
     {
         @Override
@@ -525,7 +525,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             return entry.getValue();
         }
     }
-    
+
     /* package */final class EntriesIterator extends HashIterator<Entry<MtsValue, MtsValue>>
     {
         @Override
@@ -534,9 +534,9 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
             return entry;
         }
     }
-    
+
     // ========================================
-    
+
     private final class EntrySet extends AbstractSet<Entry<MtsValue, MtsValue>>
     {
         @Override
@@ -544,85 +544,85 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         {
             if ( !( o instanceof Map.Entry ) )
                 return false;
-            
+
             @SuppressWarnings( "unchecked" )
             Entry<MtsValue, MtsValue> e = (Map.Entry<MtsValue, MtsValue>) o;
             Entry<MtsValue, MtsValue> candidate = getEntry( e.getKey() );
             return ( candidate != null ) && candidate.equals( e );
         }
-        
+
         @Override
         public int size()
         {
             return MtsTableMap.this.size();
         }
-        
+
         @Override
         public void clear()
         {
             MtsTableMap.this.clear();
         }
-        
+
         @Override
         public boolean remove( Object o )
         {
             return MtsTableMap.this.remove( o ) != null;
         }
-        
+
         @Override
         public Iterator<Entry<MtsValue, MtsValue>> iterator()
         {
             return new MtsTableMap.EntriesIterator();
         }
     }
-    
+
     private final class KeysSet extends AbstractSet<MtsValue>
     {
         @Override
         public boolean contains( Object o )
         {
-            return MtsTableMap.this.containsKey( o );
+            return containsKey( o );
         }
-        
+
         @Override
         public int size()
         {
             return MtsTableMap.this.size();
         }
-        
+
         @Override
         public void clear()
         {
             MtsTableMap.this.clear();
         }
-        
+
         @Override
         public Iterator<MtsValue> iterator()
         {
             return new MtsTableMap.KeysIterator();
         }
     }
-    
+
     private final class ValuesCollection extends AbstractCollection<MtsValue>
     {
         @Override
         public boolean contains( Object o )
         {
-            return MtsTableMap.this.containsValue( o );
+            return containsValue( o );
         }
-        
+
         @Override
         public int size()
         {
             return MtsTableMap.this.size();
         }
-        
+
         @Override
         public void clear()
         {
             MtsTableMap.this.clear();
         }
-        
+
         @Override
         public Iterator<MtsValue> iterator()
         {

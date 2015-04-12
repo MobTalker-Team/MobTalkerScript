@@ -17,6 +17,9 @@
 package net.mobtalker.mobtalkerscript.v3;
 
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
+
+import java.util.Arrays;
+
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
@@ -105,14 +108,23 @@ public final class MtsFrame
     {
         MtsInstruction[] instructions = _closure.getPrototype().getInstructions();
         
+//        System.out.println( formatStack() );
+        
         for ( ;; _ip++ )
         {
             MtsInstruction instr = instructions[_ip];
+            
+//            System.out.println( formatExecutedInstruction( instr ) );
+            
             instr.execute( this );
+            
+//            System.out.println( formatStack() );
             
             if ( instr.exits() )
                 break;
         }
+        
+//        System.out.println( formatStack() );
         
         MtsValue result = pop();
         
@@ -120,20 +132,15 @@ public final class MtsFrame
         return result instanceof MtsVarargs ? (MtsVarargs) result : MtsVarargs.of( result );
     }
     
-//    private String formatExecutedInstruction( MtsInstruction instr )
-//    {
-//        MtsFunctionPrototype prototype = _closure.getPrototype();
-//        return new StringBuilder( 50 ).append( "Executing " )
-//                                      .append( '[' )
-//                                      .append( prototype.getName() )
-//                                      .append( ':' )
-//                                      .append( prototype.getSourcePosition( _ip ).Line )
-//                                      .append( "][" )
-//                                      .append( Integer.toString( _ip ) )
-//                                      .append( "] " )
-//                                      .append( instr.toString( prototype ) )
-//                                      .toString();
-//    }
+    private String formatExecutedInstruction( MtsInstruction instr )
+    {
+        MtsFunctionPrototype prototype = _closure.getPrototype();
+        return new StringBuilder( 50 ).append( "Executing [" ).append( prototype.getName() )
+                                      .append( ':' ).append( prototype.getSourcePosition( _ip ).Line )
+                                      .append( "][" ).append( Integer.toString( _ip ) ).append( "] " )
+                                      .append( instr.toString( prototype ) )
+                                      .toString();
+    }
     
     private String formatStack()
     {
@@ -350,8 +357,8 @@ public final class MtsFrame
         s.append( ", Last used Variable or Constant: " ).append( _lastVar );
         s.append( "]\n" );
         
-        s.append( " Locals    " ).append( _locals.toString() ).append( "\n" );
-        s.append( " Externals " ).append( _externals.toString() ).append( "\n" );
+        s.append( " Locals    " ).append( Arrays.toString( _locals ) ).append( "\n" );
+        s.append( " Externals " ).append( Arrays.toString( _externals ) ).append( "\n" );
         s.append( " Stack     " ).append( formatStack() );
         
         return s.toString();

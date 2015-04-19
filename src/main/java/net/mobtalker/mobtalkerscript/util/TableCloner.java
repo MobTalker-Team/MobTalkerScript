@@ -25,28 +25,28 @@ import com.google.common.collect.Maps;
 public class TableCloner
 {
     private final Map<MtsTable, MtsTable> _cache;
-
+    
     // ========================================
-
+    
     {
         _cache = Maps.newIdentityHashMap();
     }
-
+    
     // ========================================
-
+    
     public MtsValue clone( MtsValue o )
     {
         if ( o.isTable() )
         {
             MtsTable t = o.asTable();
-
+            
             MtsTable clone = _cache.get( t );
             if ( clone == null )
             {
                 clone = new MtsTable( t );
                 _cache.put( t, clone );
             }
-
+            
             return clone;
         }
         else

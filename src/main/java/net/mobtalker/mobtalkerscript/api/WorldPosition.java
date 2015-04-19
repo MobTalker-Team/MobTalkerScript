@@ -21,18 +21,18 @@ public class WorldPosition
     public final int X;
     public final int Y;
     public final int Z;
-
+    
     // ========================================
-
+    
     public WorldPosition( int x, int y, int z )
     {
         X = x;
         Y = y;
         Z = z;
     }
-
+    
     // ========================================
-
+    
     @Override
     public int hashCode()
     {
@@ -43,7 +43,7 @@ public class WorldPosition
         result = ( prime * result ) + Z;
         return result;
     }
-
+    
     @Override
     public boolean equals( Object obj )
     {
@@ -53,10 +53,10 @@ public class WorldPosition
             return false;
         if ( !( obj instanceof WorldPosition ) )
             return false;
-
+        
         return equals( (WorldPosition) obj );
     }
-
+    
     public boolean equals( WorldPosition other )
     {
         if ( X != other.X )

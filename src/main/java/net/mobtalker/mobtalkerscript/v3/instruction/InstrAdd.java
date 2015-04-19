@@ -27,13 +27,13 @@ public final class InstrAdd extends MtsBinaryArithmeticInstruction
     {
         return a.add( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.ADD_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

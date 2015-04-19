@@ -27,29 +27,29 @@ public final class InstrTailcall extends InstrCall
     {
         super( nArgs, -1 );
     }
-
+    
     // ========================================
-
+    
     @Override
     protected final MtsVarargs getResults( MtsValue target, MtsVarargs args )
     {
         return new MtsTailcall( target, args );
     }
-
+    
     @Override
     protected final void pushResults( MtsFrame frame, MtsVarargs results )
     {
         frame.push( results );
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.TCALL_NAME + " " + getArgCount();
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

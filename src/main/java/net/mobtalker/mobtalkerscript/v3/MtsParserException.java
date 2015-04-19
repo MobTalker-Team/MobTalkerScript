@@ -22,25 +22,25 @@ package net.mobtalker.mobtalkerscript.v3;
 @SuppressWarnings( "serial" )
 public class MtsParserException extends RuntimeException
 {
-
+    
     public MtsParserException( String msg )
     {
         super( msg );
     }
-
+    
     public MtsParserException( Exception parent )
     {
         super( parent );
     }
-
+    
     public MtsParserException( String msg, Object... args )
     {
         super( String.format( msg, args ) );
     }
-
+    
     public MtsParserException( String msg, Exception parent, Object... args )
     {
         super( String.format( msg, args ), parent );
     }
-
+    
 }

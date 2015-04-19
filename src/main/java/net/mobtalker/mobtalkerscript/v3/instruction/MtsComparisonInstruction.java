@@ -27,9 +27,9 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
         MtsValue b = frame.pop();
         frame.push( compare( frame.pop(), b ) );
     }
-
+    
     protected abstract MtsBoolean compare( MtsValue a, MtsValue b );
-
+    
     @Override
     public final int stackSizeChange()
     {

@@ -30,21 +30,21 @@ public class InstrStoreT extends MtsInstruction
         MtsValue t = frame.pop();
         t.set( key, frame.pop(), true );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return -3;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.STT_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

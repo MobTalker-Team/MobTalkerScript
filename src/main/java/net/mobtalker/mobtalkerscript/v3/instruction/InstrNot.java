@@ -27,21 +27,21 @@ public class InstrNot extends MtsInstruction
     {
         frame.push( frame.pop().toMtsBoolean().not() );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.NOT_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

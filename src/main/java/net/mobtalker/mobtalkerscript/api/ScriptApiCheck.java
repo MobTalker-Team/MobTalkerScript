@@ -25,11 +25,11 @@ public class ScriptApiCheck
     public static EntityReaction checkReaction( MtsValue arg, int i )
     {
         String s = checkString( arg, i );
-
+        
         EntityReaction result = EntityReaction.forName( s );
         if ( result == null )
             throw new MtsArgumentException( i, "'%s' is not a valid reaction", s );
-
+        
         return result;
     }
 }

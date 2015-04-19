@@ -22,33 +22,33 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 public final class FrameValue
 {
     private MtsValue _value;
-
+    
     // ========================================
-
+    
     public FrameValue()
     {
         this( Nil );
     }
-
+    
     public FrameValue( MtsValue value )
     {
         _value = value;
     }
-
+    
     // ========================================
-
+    
     public MtsValue get()
     {
         return _value;
     }
-
+    
     public void set( MtsValue value )
     {
         _value = value;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {

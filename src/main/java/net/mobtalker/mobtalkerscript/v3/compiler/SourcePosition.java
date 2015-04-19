@@ -19,29 +19,29 @@ package net.mobtalker.mobtalkerscript.v3.compiler;
 public class SourcePosition
 {
     public static final SourcePosition ZERO = new SourcePosition( 0, 0 );
-
+    
     // ========================================
-
+    
     public final int Line;
     public final int Coloum;
-
+    
     // ========================================
-
+    
     public SourcePosition( int line, int coloum )
     {
         Line = line;
         Coloum = coloum;
     }
-
+    
     // ========================================
-
+    
     public SourcePosition offsetColoum( int offset )
     {
         return new SourcePosition( Line, Coloum + offset );
     }
-
+    
     // ========================================
-
+    
     @Override
     public int hashCode()
     {
@@ -51,7 +51,7 @@ public class SourcePosition
         result = ( prime * result ) + Line;
         return result;
     }
-
+    
     @Override
     public boolean equals( Object obj )
     {
@@ -68,14 +68,14 @@ public class SourcePosition
             return false;
         return true;
     }
-
+    
     public boolean equals( int line, int col )
     {
         return ( Line == line ) && ( Coloum == col );
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {

@@ -31,33 +31,33 @@ public final class MtsBaseLib
     {
         _G = g;
     }
-
+    
     // ========================================
-
+    
     @MtsNativeField
     public final MtsGlobals _G;
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "assert" )
     public static MtsVarargs assertMts( MtsVarargs args )
     {
         if ( !args.get( 0 ).isTrue() )
             throw new MtsRuntimeException( checkString( args, 1, "assertion failed!" ) );
-
+        
         return args;
     }
-
+    
     @MtsNativeFunction( "error" )
     public static void error( MtsVarargs args )
     {
         throw new MtsRuntimeException( args.get( 0 ).toMtsString().toJava(),
                                        checkInteger( args, 1, 1 ) - 1 );
     }
-
+    
     // ========================================
     // Iterators
-
+    
     @MtsNativeField( "next" )
     public static final MtsFunction next = new MtsFunction()
     {
@@ -68,7 +68,7 @@ public final class MtsBaseLib
             return next == null ? MtsVarargs.Empty : MtsVarargs.of( next.getKey(), next.getValue() );
         }
     };
-
+    
     @MtsNativeField( "inext" )
     public static final MtsFunction inext = new MtsFunction()
     {
@@ -79,10 +79,10 @@ public final class MtsBaseLib
             return next == null ? MtsVarargs.Empty : MtsVarargs.of( next.getKey(), next.getValue() );
         }
     };
-
+    
     private static final MtsString __pairs = MtsString.of( "__pairs" );
     private static final MtsString __ipairs = MtsString.of( "__ipairs" );
-
+    
     @MtsNativeFunction( "pairs" )
     public static MtsValue pairs( MtsValue arg )
     {
@@ -92,7 +92,7 @@ public final class MtsBaseLib
         else
             return MtsVarargs.of( next, arg );
     }
-
+    
     @MtsNativeFunction( "ipairs" )
     public static MtsValue ipairs( MtsValue arg )
     {
@@ -102,9 +102,9 @@ public final class MtsBaseLib
         else
             return MtsVarargs.of( inext, arg );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "print" )
     public void print( MtsVarargs args )
     {
@@ -118,73 +118,73 @@ public final class MtsBaseLib
             _G.out.println();
         }
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "rawget" )
     public static MtsValue rawGet( MtsValue argTable, MtsValue argKey )
     {
         return checkTable( argTable, 0 ).get( argKey );
     }
-
+    
     @MtsNativeFunction( "rawset" )
     public static void rawSet( MtsValue argTable, MtsValue argKey, MtsValue arg )
     {
         checkTable( argTable, 0 ).set( argKey, arg );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "getmetatable" )
     public static MtsTable getMetaTable( MtsValue argTable )
     {
         MtsTable t = checkTable( argTable, 0 );
-
+        
         MtsValue mm = t.getMetaTag( __metatable );
         if ( !mm.isNil() )
             throw new MtsRuntimeException( "cannot retrieve a protected metatable" );
-
+        
         return t.getMetaTable();
     }
-
+    
     @MtsNativeFunction( "setmetatable" )
     public static MtsTable setMetaTable( MtsValue argTable, MtsValue argMetatable )
     {
         MtsTable t = checkTable( argTable, 0 );
-
+        
         MtsValue mm = t.getMetaTag( __metatable );
         if ( !mm.isNil() )
             throw new MtsRuntimeException( "cannot change a protected metatable" );
-
+        
         t.setMetaTable( argMetatable );
         return t;
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "toNumber" )
     public static MtsValue toNumber( MtsValue arg )
     {
         MtsNumber n = arg.toMtsNumber();
         return n.isNaN() ? Nil : n;
     }
-
+    
     @MtsNativeFunction( "toString" )
     public static MtsString toString( MtsValue arg )
     {
         return arg.toMtsString();
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "typeof" )
     public static MtsString typeOf( MtsValue arg )
     {
         return MtsString.of( arg.getType().getName() );
     }
-
+    
     // ========================================
-
+    
     /**
      * TODO Does not follow the Lua signature of load. Currently intended.
      */
@@ -194,7 +194,7 @@ public final class MtsBaseLib
         String chunk = checkString( args, 0, "" );
         MtsValue env = args.get( 1 );
         String sourceName = checkString( args, 2, "<load>" );
-
+        
         MtsFunctionPrototype p;
         try
         {
@@ -204,28 +204,28 @@ public final class MtsBaseLib
         {
             return MtsVarargs.of( Nil, MtsString.of( "Unable to load string: " + ex.getMessage() ) );
         }
-
+        
         if ( env.isNil() )
         {
             env = _G;
         }
-
+        
         return new MtsClosure( p, env );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "pcall" )
     public static MtsValue pCall( MtsVarargs args )
     {
         MtsValue f = args.get( 0 );
         MtsVarargs callArgs = args.subArgs( 1 );
-
+        
         MtsValue result;
         try
         {
             MtsValue callResults = f.call( callArgs );
-
+            
             if ( callResults.isVarArgs() )
                 result = MtsVarargs.of( MtsBoolean.True, callResults.asVarArgs() );
             else
@@ -235,30 +235,30 @@ public final class MtsBaseLib
         {
             result = MtsVarargs.of( MtsBoolean.False, MtsString.of( ex.getMessage() ) );
         }
-
+        
         return result;
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction( "select" )
     public static MtsValue select( MtsVarargs args )
     {
         MtsValue arg1 = checkNotNil( args, 0 );
         if ( arg1.isString() && arg1.asString().toJava().equals( "#" ) )
             return MtsNumber.of( args.count() - 1 );
-
+        
         int i = checkInteger( arg1, 1 );
         if ( i > 0 )
             return args.subArgs( i );
-
+        
         if ( i < 0 )
         {
             i = args.count() + i;
             if ( i > 0 )
                 return args.subArgs( i );
         }
-
+        
         throw new MtsArgumentException( 1, "index out of range" );
     }
 }

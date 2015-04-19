@@ -25,16 +25,16 @@ import com.google.common.collect.Lists;
 public class TreeMultiPattern implements ITreePattern
 {
     private final List<ITreePattern> _patterns;
-
+    
     // ========================================
-
+    
     public TreeMultiPattern( ITreePattern... patterns )
     {
         _patterns = Lists.newArrayList( patterns );
     }
-
+    
     // ========================================
-
+    
     @Override
     public boolean matches( ParserRuleContext ctx )
     {
@@ -43,10 +43,10 @@ public class TreeMultiPattern implements ITreePattern
             if ( pattern.matches( ctx ) )
                 return true;
         }
-
+        
         return false;
     }
-
+    
     @Override
     public <T extends ParserRuleContext> T get( ParserRuleContext ctx )
     {

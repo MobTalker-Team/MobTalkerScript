@@ -27,13 +27,13 @@ public final class InstrPow extends MtsBinaryArithmeticInstruction
     {
         return a.powerTo( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.POW_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

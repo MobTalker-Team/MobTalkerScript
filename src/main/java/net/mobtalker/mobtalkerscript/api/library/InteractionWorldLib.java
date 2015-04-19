@@ -27,28 +27,28 @@ import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
 public class InteractionWorldLib
 {
     private IInteractionWorldLibLogic _logic;
-
+    
     // ========================================
-
+    
     public InteractionWorldLib( IInteractionWorldLibLogic logic )
     {
         _logic = logic;
     }
-
+    
     // ========================================
-
+    
     public IInteractionWorldLibLogic getLogic()
     {
         return _logic;
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsTable getWorlds()
     {
         Map<Integer, IWorldInfo> worlds = _logic.getWorlds();
-
+        
         MtsTable t = new MtsTable( 0, worlds.size() );
         for ( IWorldInfo world : worlds.values() )
         {
@@ -57,76 +57,76 @@ public class InteractionWorldLib
             info.set( "type", MtsString.of( world.getType() ) );
             t.set( MtsNumber.of( world.getID() ), info );
         }
-
+        
         return t;
     }
-
+    
     @MtsNativeFunction
     public MtsVarargs getDifficulty()
     {
         return MtsVarargs.of( MtsString.of( _logic.getDifficulty() ),
                               MtsBoolean.of( _logic.isHardcore() ) );
     }
-
+    
     @MtsNativeFunction
     public MtsBoolean getGameRule( MtsValue argRuleName )
     {
         return MtsBoolean.of( _logic.getGameRule( checkString( argRuleName, 0 ) ) );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsNumber getID()
     {
         return MtsNumber.of( _logic.getWorld().getID() );
     }
-
+    
     @MtsNativeFunction
     public MtsString getName()
     {
         return MtsString.of( _logic.getWorld().getName() );
     }
-
+    
     @MtsNativeFunction
     public MtsString getType()
     {
         return MtsString.of( _logic.getWorld().getType() );
     }
-
+    
     @MtsNativeFunction
     public MtsNumber getTime()
     {
         return MtsNumber.of( _logic.getWorld().getTime() );
     }
-
+    
     @MtsNativeFunction
     public MtsNumber getMoonphase()
     {
         return MtsNumber.of( _logic.getWorld().getMoonphase() );
     }
-
+    
     @MtsNativeFunction
     public MtsBoolean isDaytime()
     {
         return MtsBoolean.of( _logic.getWorld().isDaytime() );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsString getBiome()
     {
         return MtsString.of( _logic.getBiome() );
     }
-
+    
     @MtsNativeFunction
     public MtsVarargs getClimate()
     {
         return MtsVarargs.of( MtsString.of( _logic.getTemperature() ),
                               MtsString.of( _logic.getHumidity() ) );
     }
-
+    
     @MtsNativeFunction
     public MtsVarargs getWeather()
     {

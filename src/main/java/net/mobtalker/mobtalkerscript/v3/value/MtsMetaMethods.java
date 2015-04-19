@@ -35,9 +35,9 @@ public final class MtsMetaMethods
     public static final MtsString __lt = MtsString.of( "__lt" );
     public static final MtsString __lte = MtsString.of( "__lte" );
     public static final MtsString __tostring = MtsString.of( "__tostring" );
-
+    
     // ========================================
-
+    
     private MtsMetaMethods()
     {}
 }

@@ -27,13 +27,13 @@ public class InstrEqual extends MtsComparisonInstruction
     {
         return a.isEqual( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.EQ_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

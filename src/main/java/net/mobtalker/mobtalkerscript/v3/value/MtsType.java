@@ -23,9 +23,9 @@ import com.google.common.collect.Maps;
 public final class MtsType
 {
     private static final HashMap<String, MtsType> _types = Maps.newHashMap();
-
+    
     // ========================================
-
+    
     public static MtsType forName( String name )
     {
         MtsType type = _types.get( name );
@@ -34,12 +34,12 @@ public final class MtsType
             type = new MtsType( name );
             _types.put( name, type );
         }
-
+        
         return type;
     }
-
+    
     // ========================================
-
+    
     public static final MtsType NIL = forName( "nil" );
     public static final MtsType BOOLEAN = forName( "boolean" );
     public static final MtsType NUMBER = forName( "number" );
@@ -48,44 +48,44 @@ public final class MtsType
     public static final MtsType FUNCTION = forName( "function" );
     public static final MtsType VARARGS = forName( "varargs" );
     public static final MtsType USERDATA = forName( "userdata" );
-
+    
     // ========================================
-
+    
     private final String _name;
     private MtsTable _metaTable;
-
+    
     // ========================================
-
+    
     private MtsType( String typeName )
     {
         _name = typeName;
     }
-
+    
     private MtsType( String typeName, boolean metaTable )
     {
         _name = typeName;
         _metaTable = new MtsTable( 0, 0 );
     }
-
+    
     // ========================================
-
+    
     public String getName()
     {
         return _name;
     }
-
+    
     // ========================================
-
+    
     public boolean hasMetaTable()
     {
         return _metaTable != null;
     }
-
+    
     public MtsTable getMetaTable()
     {
         return _metaTable;
     }
-
+    
     /**
      * Sets the metatable used by all instances of this type.
      */
@@ -98,9 +98,9 @@ public final class MtsType
         else
             throw new IllegalArgumentException( "metatable must be a table (was " + table.getType() + ")" );
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {

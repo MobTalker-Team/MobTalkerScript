@@ -27,14 +27,14 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
         MtsValue b = frame.pop();
         frame.push( calculate( frame.pop(), b ) );
     }
-
+    
     @Override
     public final int stackSizeChange()
     {
         return -1;
     }
-
+    
     // ========================================
-
+    
     protected abstract MtsValue calculate( MtsValue a, MtsValue b );
 }

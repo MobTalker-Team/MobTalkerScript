@@ -20,9 +20,9 @@ public class ScoreboardObjectiveInfo
 {
     public final String Name;
     public final String Criteria;
-
+    
     // ========================================
-
+    
     public ScoreboardObjectiveInfo( String name, String criteria )
     {
         Name = name;

@@ -25,14 +25,14 @@ import net.mobtalker.mobtalkerscript.v3.MtsGlobals;
 public class ConsoleGameCommandLibLogic implements IGameCommandLibLogic
 {
     private final MtsGlobals _G;
-
+    
     // ========================================
-
+    
     public ConsoleGameCommandLibLogic( MtsGlobals g )
     {
         _G = g;
     }
-
+    
     // ========================================
     
     @Override

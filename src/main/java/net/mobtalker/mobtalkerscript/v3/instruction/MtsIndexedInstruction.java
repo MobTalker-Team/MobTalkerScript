@@ -21,16 +21,16 @@ import net.mobtalker.mobtalkerscript.v3.MtsFunctionPrototype;
 /* package */abstract class MtsIndexedInstruction extends MtsInstruction
 {
     protected int _index;
-
+    
     // ========================================
-
+    
     protected MtsIndexedInstruction( int i )
     {
         _index = i;
     }
-
+    
     // ========================================
-
+    
     @Override
     public abstract String toString( MtsFunctionPrototype proto );
 }

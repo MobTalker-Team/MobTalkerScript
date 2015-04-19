@@ -27,13 +27,13 @@ public class InstrSub extends MtsBinaryArithmeticInstruction
     {
         return a.substract( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.SUB_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

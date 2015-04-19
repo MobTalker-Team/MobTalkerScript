@@ -23,36 +23,36 @@ import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 public final class InstrLoadNil extends MtsInstruction
 {
     private final int _count;
-
+    
     // ========================================
-
+    
     public InstrLoadNil( int count )
     {
         _count = count;
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {
         frame.pushNil( _count );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return _count;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.LDNIL_NAME + " " + _count;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

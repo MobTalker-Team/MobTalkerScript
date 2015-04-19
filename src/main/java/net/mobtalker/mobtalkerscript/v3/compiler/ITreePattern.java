@@ -21,6 +21,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public interface ITreePattern
 {
     boolean matches( ParserRuleContext ctx );
-
+    
     <T extends ParserRuleContext> T get( ParserRuleContext ctx );
 }

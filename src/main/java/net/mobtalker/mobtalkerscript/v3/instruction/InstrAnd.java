@@ -26,14 +26,14 @@ public final class InstrAnd extends MtsJumpInstruction
     {
         super();
     }
-
+    
     /* package */InstrAnd( int offset )
     {
         super( offset );
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {
@@ -46,21 +46,21 @@ public final class InstrAnd extends MtsJumpInstruction
             super.execute( frame );
         }
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.AND_NAME + " " + getDistance();
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

@@ -26,14 +26,14 @@ public final class InstrOr extends MtsJumpInstruction
     {
         super();
     }
-
+    
     /* package */InstrOr( int offset )
     {
         super( offset );
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {
@@ -46,21 +46,21 @@ public final class InstrOr extends MtsJumpInstruction
             frame.pop();
         }
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.OR_NAME + " " + getDistance();
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

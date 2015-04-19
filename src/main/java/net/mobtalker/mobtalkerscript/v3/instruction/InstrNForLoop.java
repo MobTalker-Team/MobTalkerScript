@@ -27,34 +27,34 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
 public final class InstrNForLoop extends MtsJumpInstruction
 {
     private final int _index;
-
+    
     // ========================================
-
+    
     /* package */InstrNForLoop( int index )
     {
         super();
         _index = index;
     }
-
+    
     /* package */InstrNForLoop( int index, int offset )
     {
         super( offset );
         _index = index;
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {
         FrameValue loopVar = frame.getLocal( _index );
-
+        
         MtsValue loopVal = loopVar.get();
         MtsValue limitVal = frame.getLocal( _index + 1 ).get();
         MtsNumber stepVal = frame.getLocal( _index + 2 ).get().asNumber();
-
+        
         loopVal = loopVal.add( stepVal );
-
+        
         if ( stepVal.isPositive() )
         {
             if ( loopVal.compareTo( limitVal ) <= 0 )
@@ -71,30 +71,30 @@ public final class InstrNForLoop extends MtsJumpInstruction
                 return;
             }
         }
-
+        
         super.execute( frame );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.NFL_NAME + " " + _index + " " + getDistance();
     }
-
+    
     @Override
     public String toString( MtsFunctionPrototype proto )
     {
         return toString() + " (" + proto.getLocalDescription( _index ).getName() + ")";
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

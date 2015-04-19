@@ -27,21 +27,21 @@ public class InstrSize extends MtsInstruction
     {
         frame.push( frame.pop().getLength() );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.SIZE_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

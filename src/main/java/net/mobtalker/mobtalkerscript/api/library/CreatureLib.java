@@ -29,17 +29,17 @@ public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
     {
         super( logic );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public void setName( MtsValue argName )
     {
         _logic.setName( checkString( argName, 0 ) );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public void setEquipment( MtsValue argSlot, MtsValue argItemName, MtsValue argMeta )
     {
@@ -47,44 +47,44 @@ public class CreatureLib extends AbstractUnifiedLib<ICreatureLibLogic>
         EquipmentSlot slot = EquipmentSlot.forName( slotName );
         if ( slot == null )
             throw new MtsArgumentException( 0, "'%s' is not a valid equipment slot", slotName );
-
+        
         String itemName = checkString( argItemName, 1 );
         if ( !_logic.isValidItem( itemName ) )
             throw new MtsArgumentException( 1, "unknown item name '%s'", itemName );
-
+        
         int meta = checkIntegerWithMinimum( argMeta, 2, 0, 0 );
-
+        
         _logic.setEquipment( slot, new ItemInfo( itemName, meta ) );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsValue getReaction( MtsValue argKey )
     {
         return MtsString.of( _logic.getReaction( checkString( argKey, 0 ) ).getName() );
     }
-
+    
     @MtsNativeFunction
     public void setReaction( MtsValue argKey, MtsValue argReaction )
     {
         _logic.setReaction( checkString( argKey, 0 ),
                             checkReaction( argReaction, 1 ) );
     }
-
+    
     public void resetReaction( MtsValue argKey )
     {
         _logic.resetReaction( checkString( argKey, 0 ) );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public void follow( MtsValue argKey )
     {
         _logic.follow( checkString( argKey, 0 ) );
     }
-
+    
     @MtsNativeFunction
     public void stopFollowing()
     {

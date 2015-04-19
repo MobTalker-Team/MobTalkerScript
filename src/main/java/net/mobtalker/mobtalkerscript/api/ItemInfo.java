@@ -20,15 +20,15 @@ public class ItemInfo
 {
     public final String Name;
     public final int Meta;
-
+    
     public ItemInfo( String name, int meta )
     {
         Name = name;
         Meta = meta;
     }
-
+    
     // ========================================
-
+    
     @Override
     public int hashCode()
     {
@@ -38,7 +38,7 @@ public class ItemInfo
         result = ( prime * result ) + Name.hashCode();
         return result;
     }
-
+    
     @Override
     public boolean equals( Object obj )
     {
@@ -46,10 +46,10 @@ public class ItemInfo
             return true;
         if ( ( obj == null ) || !( obj instanceof ItemInfo ) )
             return false;
-
+        
         return equals( (ItemInfo) obj );
     }
-
+    
     public boolean equals( ItemInfo other )
     {
         if ( !Name.equals( other.Name ) )

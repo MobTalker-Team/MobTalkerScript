@@ -20,9 +20,9 @@ public class ItemStackInfo
 {
     public final ItemInfo Item;
     public final int Count;
-
+    
     // ========================================
-
+    
     public ItemStackInfo( ItemInfo item, int count )
     {
         Item = item;

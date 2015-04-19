@@ -22,9 +22,9 @@ public class ScoreboardTeamInfo
     public final String Color;
     public final boolean FriendlyFire;
     public final boolean CanSeeInvisibleMembers;
-
+    
     // ========================================
-
+    
     public ScoreboardTeamInfo( String name, String color, boolean friendlyFire, boolean canSeeInvisibleMembers )
     {
         Name = name;

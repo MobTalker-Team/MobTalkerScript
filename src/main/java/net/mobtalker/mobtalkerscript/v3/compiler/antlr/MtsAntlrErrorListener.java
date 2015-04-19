@@ -33,12 +33,14 @@ public class MtsAntlrErrorListener extends BaseErrorListener
         throw transformSyntaxError( (Mts3Parser) recognizer, (Token) offendingSymbol,
                                     line, charPositionInLine, msg );
     }
-
+    
     // ========================================
-
+    
     private static MtsSyntaxError transformSyntaxError( Mts3Parser recognizer, Token offendingToken,
                                                         int line, int charPositionInLine, String msg )
     {
+        // TODO: Make dead code errors more obvious.
+        
         return new MtsSyntaxError( Paths.get( offendingToken.getTokenSource().getSourceName() ).getFileName().toString(),
                                    line, charPositionInLine, msg );
     }

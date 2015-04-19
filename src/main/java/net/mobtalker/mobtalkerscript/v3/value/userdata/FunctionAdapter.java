@@ -26,15 +26,15 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
     {
         super( method, name );
     }
-
+    
     // ========================================
-
+    
     @Override
     protected Object getCallInstance( MtsVarargs args )
     {
         return null;
     }
-
+    
     @Override
     protected Object[] getCallArguments( MtsVarargs args, int nParams )
     {
@@ -42,13 +42,13 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
             return new Object[] { args };
         if ( nParams == 0 )
             return EMPTY_CALLARGS;
-
+        
         Object[] result = new Object[nParams];
         for ( int i = 0; i < nParams; i++ )
         {
             result[i] = args.get( i );
         }
-
+        
         return result;
     }
 }

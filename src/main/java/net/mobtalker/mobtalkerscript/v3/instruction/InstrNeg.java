@@ -27,21 +27,21 @@ public class InstrNeg extends MtsInstruction
     {
         frame.push( frame.pop().unaryMinus() );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.NEG_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

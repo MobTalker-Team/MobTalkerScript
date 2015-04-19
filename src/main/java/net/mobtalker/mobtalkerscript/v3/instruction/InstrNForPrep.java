@@ -30,43 +30,43 @@ public final class InstrNForPrep extends MtsIndexedInstruction
     {
         super( i );
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {
         MtsValue stepVal = frame.pop();
         MtsValue limitVal = frame.pop();
         MtsValue loopVal = frame.pop();
-
+        
         loopVal = loopVal.substract( stepVal );
-
+        
         frame.getLocal( _index ).set( loopVal );
         frame.getLocal( _index + 1 ).set( limitVal );
         frame.getLocal( _index + 2 ).set( stepVal );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return -3;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.NFP_NAME + " " + _index;
     }
-
+    
     @Override
     public String toString( MtsFunctionPrototype proto )
     {
         return toString() + " (" + proto.getLocalDescription( _index ) + ")";
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

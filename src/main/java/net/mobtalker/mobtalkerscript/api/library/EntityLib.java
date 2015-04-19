@@ -33,22 +33,22 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
     {
         super( logic );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsString getName()
     {
         return MtsString.of( _logic.getName() );
     }
-
+    
     @MtsNativeFunction
     public MtsVarargs getHealth()
     {
         return MtsVarargs.of( MtsNumber.of( _logic.getHealth() ),
                               MtsNumber.of( _logic.getMaxHealth() ) );
     }
-
+    
     @MtsNativeFunction
     public MtsVarargs getPosition()
     {
@@ -57,26 +57,26 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
                               MtsNumber.of( position.Y ),
                               MtsNumber.of( position.Z ) );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsBoolean isRiding()
     {
         return MtsBoolean.of( _logic.isRiding() );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsTable getEffects()
     {
         List<EffectInfo> effects = _logic.getEffects();
-
+        
         MtsTable t = new MtsTable( effects.size(), 0 );
         if ( effects.isEmpty() )
             return t;
-
+        
         for ( EffectInfo effect : effects )
         {
             MtsTable effectTable = new MtsTable( 0, 3 );
@@ -85,47 +85,47 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
             effectTable.set( KEY_EFFECT_AMPLIFIER, MtsNumber.of( effect.Amplifier ) );
             t.list().add( effectTable );
         }
-
+        
         return t;
     }
-
+    
     @MtsNativeFunction
     public MtsBoolean applyEffect( MtsValue argEffect, MtsValue argDuration, MtsValue argAmplifier )
     {
         String name = checkString( argEffect, 0 );
         if ( !_logic.isValidEffect( name ) )
             throw new MtsArgumentException( 0, "'%s' is not a valid potion effect", name );
-
+        
         return MtsBoolean.of( _logic.applyEffect( name,
                                                   checkIntegerWithMinimum( argDuration, 1, 0 ),
                                                   checkIntegerWithMinimum( argAmplifier, 2, 0, 0 ) ) );
     }
-
+    
     @MtsNativeFunction
     public MtsBoolean removeEffect( MtsValue argEffect )
     {
         String name = checkString( argEffect, 0 );
         if ( !_logic.isValidEffect( name ) )
             throw new MtsArgumentException( 0, "'%s' is not a valid potion effect", name );
-
+        
         return MtsBoolean.of( _logic.removeEffect( name ) );
     }
-
+    
     @MtsNativeFunction
     public void removeAllEffects()
     {
         _logic.removeAllEffects();
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsValue getEquipment( MtsValue argSlot )
     {
         if ( argSlot.isNil() )
         {
             EquipmentInfo equipment = _logic.getEquipment();
-
+            
             MtsTable t = new MtsTable( 0, equipment.count() );
             for ( EquipmentSlot slot : equipment.getSlots() )
             {
@@ -135,7 +135,7 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
                 info.set( KEY_ITEM_META, MtsNumber.of( item.Meta ) );
                 t.set( slot.getName(), info );
             }
-
+            
             return t;
         }
         else
@@ -144,22 +144,22 @@ public class EntityLib extends AbstractUnifiedLib<IEntityLibLogic>
             EquipmentSlot slot = EquipmentSlot.forName( slotName );
             if ( slot == null )
                 throw new MtsArgumentException( 0, "'%s' is not a valid equipment slot", slotName );
-
+            
             ItemInfo item = _logic.getEquipment( slot );
             if ( item == null )
                 return Nil;
-
+            
             return MtsVarargs.of( MtsString.of( item.Name ), MtsNumber.of( item.Meta ) );
         }
     }
-
+    
     @MtsNativeFunction
     public MtsValue getHeldItem()
     {
         ItemStackInfo info = _logic.getHeldItem();
         if ( info == null )
             return null;
-
+        
         return MtsVarargs.of( MtsString.of( info.Item.Name ),
                               MtsNumber.of( info.Item.Meta ),
                               MtsNumber.of( info.Count ) );

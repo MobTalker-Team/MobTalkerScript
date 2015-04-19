@@ -27,13 +27,13 @@ public final class InstrMod extends MtsBinaryArithmeticInstruction
     {
         return a.modulo( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.MOD_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

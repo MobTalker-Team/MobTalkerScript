@@ -31,17 +31,17 @@ public class GameCommandLib extends AbstractUnifiedLib<IGameCommandLibLogic>
     {
         super( logic );
     }
-
+    
     // ========================================
-
+    
     @MtsNativeFunction
     public MtsVarargs execute( MtsVarargs args )
     {
         String command = checkString( args, 0 );
-
+        
         List<String> arguments;
         int nArguments = args.count() - 1;
-
+        
         if ( nArguments > 0 )
         {
             arguments = Lists.newArrayListWithCapacity( nArguments );
@@ -54,7 +54,7 @@ public class GameCommandLib extends AbstractUnifiedLib<IGameCommandLibLogic>
         {
             arguments = Collections.emptyList();
         }
-
+        
         int executions = _logic.execute( command, arguments );
         return MtsVarargs.of( MtsBoolean.of( executions > 0 ), MtsNumber.of( executions ) );
     }

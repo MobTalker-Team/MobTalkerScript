@@ -23,18 +23,18 @@ public class ExternalDescription extends VariableDescription
 {
     private final int _parentIndex;
     private final boolean _parentLocal;
-
+    
     // ========================================
-
+    
     public ExternalDescription( String name, int index, boolean parentLocal, int parentIndex )
     {
         super( name, index );
         _parentIndex = parentIndex;
         _parentLocal = parentLocal;
     }
-
+    
     // ========================================
-
+    
     /**
      * If this external references a local or an external of the parent frame
      */
@@ -42,7 +42,7 @@ public class ExternalDescription extends VariableDescription
     {
         return _parentLocal;
     }
-
+    
     /**
      * The index of the local or external that is referenced by this external
      */

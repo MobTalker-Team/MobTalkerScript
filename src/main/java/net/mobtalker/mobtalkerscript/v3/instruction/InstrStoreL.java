@@ -26,35 +26,35 @@ public final class InstrStoreL extends MtsIndexedInstruction
     {
         super( i );
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {
         frame.storeLocal( _index );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return -1;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.STL_NAME + " " + _index;
     }
-
+    
     @Override
     public String toString( MtsFunctionPrototype proto )
     {
         return toString() + " (" + proto.getLocalDescription( _index ).getName() + ")";
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

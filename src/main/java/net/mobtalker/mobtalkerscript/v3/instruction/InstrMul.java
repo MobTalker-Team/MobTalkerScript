@@ -27,13 +27,13 @@ public final class InstrMul extends MtsBinaryArithmeticInstruction
     {
         return a.multiplyBy( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.MUL_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

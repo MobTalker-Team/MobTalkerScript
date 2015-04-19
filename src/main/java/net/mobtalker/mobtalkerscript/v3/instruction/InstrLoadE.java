@@ -26,35 +26,35 @@ public final class InstrLoadE extends MtsIndexedInstruction
     {
         super( i );
     }
-
+    
     // ========================================
-
+    
     @Override
     public void execute( MtsFrame frame )
     {
         frame.pushExternal( _index );
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 1;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.LDE_NAME + " " + _index;
     }
-
+    
     @Override
     public String toString( MtsFunctionPrototype proto )
     {
         return toString() + " (" + proto.getExternalDescription( _index ).getName() + ")";
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

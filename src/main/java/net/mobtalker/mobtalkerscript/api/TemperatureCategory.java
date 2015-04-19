@@ -28,11 +28,11 @@ public enum TemperatureCategory
     WARM( "warm" ),
     HOT( "hot" ),
     HELLISH( "hellish" ),
-
+    
     ; // ========================================
-
+    
     private static final HashMap<String, TemperatureCategory> _values;
-
+    
     static
     {
         _values = Maps.newHashMapWithExpectedSize( values().length );
@@ -41,21 +41,21 @@ public enum TemperatureCategory
             _values.put( value.getName(), value );
         }
     }
-
+    
     public static TemperatureCategory forName( String name )
     {
         return _values.get( name );
     }
-
+    
     // ========================================
-
+    
     private final String _name;
-
+    
     private TemperatureCategory( String name )
     {
         _name = name;
     }
-
+    
     public String getName()
     {
         return _name;

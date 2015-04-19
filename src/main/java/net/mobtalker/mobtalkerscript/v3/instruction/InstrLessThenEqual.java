@@ -27,13 +27,13 @@ public final class InstrLessThenEqual extends MtsComparisonInstruction
     {
         return a.isLessThenOrEqual( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.LTE_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

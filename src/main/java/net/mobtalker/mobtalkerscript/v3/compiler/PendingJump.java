@@ -26,9 +26,9 @@ public class PendingJump
 {
     private final MtsJumpInstruction _instr;
     private final int _sourceIndex;
-
+    
     // ========================================
-
+    
     /**
      * @param instr The instruction to wrap.
      * @param sourceIndex The (absolute) index of <code>instr</code>.
@@ -37,25 +37,25 @@ public class PendingJump
     {
         checkNotNull( instr );
         checkArgument( sourceIndex >= 0 );
-
+        
         _instr = instr;
         _sourceIndex = sourceIndex;
     }
-
+    
     // ========================================
-
+    
     public MtsJumpInstruction getInstruction()
     {
         return _instr;
     }
-
+    
     public int getSourceIndex()
     {
         return _sourceIndex;
     }
-
+    
     // ========================================
-
+    
     /**
      * Sets the absolute jump target.
      */
@@ -63,7 +63,7 @@ public class PendingJump
     {
         setDistance( targetIndex - _sourceIndex );
     }
-
+    
     /**
      * Sets the relative jump target.
      */

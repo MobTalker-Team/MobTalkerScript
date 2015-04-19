@@ -27,13 +27,13 @@ public final class InstrDiv extends MtsBinaryArithmeticInstruction
     {
         return a.divideBy( b );
     }
-
+    
     @Override
     public String toString()
     {
         return Instructions.DIV_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

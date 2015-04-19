@@ -32,29 +32,29 @@ public class FunctionBinaryWriter
     public static void writeChunk( MtsFunctionPrototype prototype, Path path, OpenOption... options ) throws IOException
     {
         try (
-                BufferedOutputStream stream = new BufferedOutputStream( Files.newOutputStream( path, options ) ) )
-                {
+            BufferedOutputStream stream = new BufferedOutputStream( Files.newOutputStream( path, options ) ) )
+        {
             writeChunk( prototype, stream );
-                }
+        }
     }
-
+    
     public static void writeChunk( MtsFunctionPrototype prototype, OutputStream stream ) throws IOException
     {
         new FunctionBinaryWriter().write( prototype, stream );
     }
-
+    
     // ========================================
-
+    
     public void write( MtsFunctionPrototype prototype, OutputStream stream ) throws IOException
     {
         write( prototype, new DataOutputStream( stream ) );
     }
-
+    
     private void write( MtsFunctionPrototype prototype, DataOutputStream stream ) throws IOException
     {
         stream.writeBytes( "MTS" );
         stream.writeByte( ( VERSION_MAJOR << 4 ) | VERSION_MINOR );
-
+        
         stream.writeUTF( prototype.getName() );
         stream.writeUTF( prototype.getSource() );
         stream.writeShort( prototype.getSourceLineStart() );
@@ -62,7 +62,7 @@ public class FunctionBinaryWriter
         stream.writeByte( prototype.getParameterCount() );
         stream.writeByte( prototype.getMaxStackSize() );
         stream.writeBoolean( prototype.hasVarargs() );
-
+        
         int nConstants = prototype.getConstantCount();
         stream.writeShort( nConstants );
         for ( int i = 0; i < nConstants; i++ )
@@ -79,7 +79,7 @@ public class FunctionBinaryWriter
                 stream.writeDouble( constant.asNumber().toJavaDouble() );
             }
         }
-
+        
         int nLocals = prototype.getLocalCount();
         stream.writeByte( nLocals );
         for ( int i = 0; i < nLocals; i++ )
@@ -89,7 +89,7 @@ public class FunctionBinaryWriter
             stream.writeShort( local.getStart() );
             stream.writeShort( local.getEnd() );
         }
-
+        
         int nExternals = prototype.getExternalCount();
         stream.writeByte( nExternals );
         for ( int i = 0; i < nExternals; i++ )
@@ -99,7 +99,7 @@ public class FunctionBinaryWriter
             stream.writeBoolean( external.isParentLocal() );
             stream.writeByte( external.getParentIndex() );
         }
-
+        
         MtsInstruction[] instrs = prototype.getInstructions();
         int nInstrs = instrs.length;
         stream.writeShort( nInstrs );
@@ -110,7 +110,7 @@ public class FunctionBinaryWriter
             stream.writeShort( sourcePosition.Line );
             stream.writeShort( sourcePosition.Coloum );
         }
-
+        
         List<MtsFunctionPrototype> childs = prototype.getNestedPrototypes();
         int nChilds = childs.size();
         stream.writeByte( nChilds );

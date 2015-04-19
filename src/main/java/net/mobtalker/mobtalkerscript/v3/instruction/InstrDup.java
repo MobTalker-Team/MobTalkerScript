@@ -27,21 +27,21 @@ public class InstrDup extends MtsInstruction
     {
         frame.duplicateTop();
     }
-
+    
     @Override
     public int stackSizeChange()
     {
         return 1;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.DUP_NAME;
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

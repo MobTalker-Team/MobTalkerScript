@@ -42,24 +42,24 @@ public class FunctionTextReader
     public static MtsFunctionPrototype readChunk( Path path, Charset charset ) throws IOException
     {
         try (
-                BufferedReader reader = Files.newBufferedReader( path, charset ) )
-                {
+            BufferedReader reader = Files.newBufferedReader( path, charset ) )
+        {
             return readChunk( reader );
-                }
+        }
     }
-
+    
     public static MtsFunctionPrototype readChunk( Readable readable ) throws IOException
     {
         return new FunctionTextReader().read( readable );
     }
-
+    
     // ========================================
-
+    
     public MtsFunctionPrototype read( Readable readable ) throws IOException
     {
         return read( new LineReader( readable ) );
     }
-
+    
     public MtsFunctionPrototype read( LineReader reader ) throws IOException
     {
         String functionName;
@@ -72,9 +72,9 @@ public class FunctionTextReader
         List<ExternalDescription> externals;
         List<MtsInstruction> instructions;
         List<SourcePosition> sourcePositions;
-
+        
         String line;
-
+        
         // Name
         for ( ;; )
         {
@@ -82,74 +82,74 @@ public class FunctionTextReader
                 throw new EOFException();
             if ( !line.startsWith( ".function" ) )
                 throw new IOException( "expected .function tag" );
-
+            
             functionName = line.substring( 10, line.lastIndexOf( '(' ) - 1 );
             assert functionName != null;
-
+            
             break;
         }
-
+        
         // Source
         {
             if ( ( line = reader.readLine() ) == null )
                 throw new EOFException();
             if ( !line.startsWith( ".source" ) )
                 throw new IOException( "expected .source tag" );
-
+            
             int colon = line.indexOf( ':', 8 );
             source = line.substring( 8, colon );
-
+            
             int hyphen = line.indexOf( '-', colon + 1 );
             sourceLineStart = parseInt( line.substring( colon + 1, hyphen ) );
             sourceLineEnd = parseInt( line.substring( hyphen + 1 ) );
-
+            
             assert source != null;
             assert sourceLineStart >= 0;
             assert sourceLineEnd >= 0;
         }
-
+        
         // Parameter count
         if ( ( line = reader.readLine() ) == null )
             throw new EOFException();
         if ( !line.startsWith( ".params" ) )
             throw new IOException( "expected .params tag" );
         nParams = parseInt( line.substring( 8 ) );
-
+        
         // Stack size
         if ( ( line = reader.readLine() ) == null )
             throw new EOFException();
         if ( !line.startsWith( ".stacksize" ) )
             throw new IOException( "expected .stacksize tag" );
         maxStackSize = parseInt( line.substring( 11 ) );
-
+        
         // Varargs
         if ( ( line = reader.readLine() ) == null )
             throw new EOFException();
         if ( !line.startsWith( ".varargs" ) )
             throw new IOException( "expected .varargs tag" );
         hasVarargs = line.charAt( 9 ) == 't';
-
+        
         // Constants
         {
             if ( ( line = reader.readLine() ) == null )
                 throw new EOFException();
             if ( !line.startsWith( ".constants" ) )
                 throw new IOException( "expected .constants tag" );
-
+            
             int count = parseInt( line.substring( 11 ) );
             constants = new ArrayList<>( count );
-
+            
             for ( int i = 0; i < count; i++ )
             {
                 if ( ( line = reader.readLine() ) == null )
                     throw new EOFException();
-
+                
                 line = line.split( ";", 2 )[1];
-
+                
                 if ( line.charAt( 0 ) == '"' )
                 {
                     String escaped = line.substring( 1, line.length() - 1 );
-
+                    
                     constants.add( MtsString.of( StringEscapeUtils.unescapeJava( escaped ) ) );
                 }
                 else
@@ -158,77 +158,77 @@ public class FunctionTextReader
                 }
             }
         }
-
+        
         // Locals
         {
             if ( ( line = reader.readLine() ) == null )
                 throw new EOFException();
             if ( !line.startsWith( ".locals" ) )
                 throw new IOException( "expected .locals tag" );
-
+            
             int count = parseInt( line.substring( 8 ) );
             locals = new ArrayList<>( count );
-
+            
             for ( int i = 0; i < count; i++ )
             {
                 if ( ( line = reader.readLine() ) == null )
                     throw new EOFException();
-
+                
                 String[] values = line.split( ";", 3 );
-
+                
                 int hyphen = values[2].indexOf( '-', 1 );
                 locals.add( new LocalDescription( values[1], i,
                                                   parseInt( values[2].substring( 0, hyphen ) ),
                                                   parseInt( values[2].substring( hyphen + 1 ) ) ) );
             }
         }
-
+        
         // Externals
         {
             if ( ( line = reader.readLine() ) == null )
                 throw new EOFException();
             if ( !line.startsWith( ".externals" ) )
                 throw new IOException( "expected .externals tag" );
-
+            
             int count = parseInt( line.substring( 11 ) );
             externals = new ArrayList<>( count );
-
+            
             for ( int i = 0; i < count; i++ )
             {
                 if ( ( line = reader.readLine() ) == null )
                     throw new EOFException();
-
+                
                 String[] values = line.split( ";", 4 );
-
+                
                 externals.add( new ExternalDescription( values[1], i,
                                                         values[2].equals( "l" ),
                                                         parseInt( values[3] ) ) );
             }
         }
-
+        
         // Instructions
         {
             if ( ( line = reader.readLine() ) == null )
                 throw new EOFException();
             if ( !line.startsWith( ".instructions" ) )
                 throw new IOException( "expected .instructions tag" );
-
+            
             int count = parseInt( line.substring( 14 ) );
             instructions = new ArrayList<>( count );
             sourcePositions = new ArrayList<>( count );
-
+            
             for ( int i = 0; i < count; i++ )
             {
                 if ( ( line = reader.readLine() ) == null )
                     throw new EOFException();
-
+                
                 String[] values = line.split( ";", 4 );
-
+                
                 instructions.add( parseInstruction( values[1] ) );
                 sourcePositions.add( parseSourcePosition( values[2] ) );
             }
         }
-
+        
         MtsFunctionPrototype prototype = new MtsFunctionPrototype( functionName,
                                                                    ImmutableList.copyOf( constants ),
                                                                    ImmutableList.copyOf( locals ),
@@ -241,40 +241,40 @@ public class FunctionTextReader
                                                                    source,
                                                                    sourceLineStart,
                                                                    sourceLineEnd );
-
+        
         // Childs
         {
             if ( ( line = reader.readLine() ) == null )
                 throw new EOFException();
             if ( !line.startsWith( ".childs" ) )
                 throw new IOException( "expected .childs tag" );
-
+            
             int count = parseInt( line.substring( 8 ) );
-
+            
             for ( int i = 0; i < count; i++ )
             {
                 MtsFunctionPrototype child = read( reader );
                 if ( child == null )
                     throw new EOFException();
-
+                
                 prototype.addNestedPrototype( child );
             }
         }
-
+        
         return prototype;
     }
-
+    
     private static SourcePosition parseSourcePosition( String s )
     {
         int splitter = s.indexOf( ':' );
         return new SourcePosition( parseInt( s.substring( 0, splitter ) ),
                                    parseInt( s.substring( splitter + 1 ) ) );
     }
-
+    
     private static MtsInstruction parseInstruction( String s )
     {
         String[] args = StringUtils.split( s );
-
+        
         switch ( args[0] )
         {
             case ADD_NAME:

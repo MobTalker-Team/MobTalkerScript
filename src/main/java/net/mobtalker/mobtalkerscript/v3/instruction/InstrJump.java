@@ -24,28 +24,28 @@ public class InstrJump extends MtsJumpInstruction
     {
         super();
     }
-
+    
     /* package */InstrJump( int distance )
     {
         super( distance );
     }
-
+    
     // ========================================
-
+    
     @Override
     public int stackSizeChange()
     {
         return 0;
     }
-
+    
     // ========================================
-
+    
     @Override
     public String toString()
     {
         return Instructions.JMP_NAME + " " + getDistance();
     }
-
+    
     @Override
     public void writeTo( DataOutputStream stream ) throws IOException
     {

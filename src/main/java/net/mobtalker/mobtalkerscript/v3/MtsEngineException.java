@@ -22,25 +22,25 @@ package net.mobtalker.mobtalkerscript.v3;
 @SuppressWarnings( "serial" )
 public class MtsEngineException extends RuntimeException
 {
-
+    
     public MtsEngineException( String msg )
     {
         super( msg );
     }
-
+    
     public MtsEngineException( Exception parent )
     {
         super( parent );
     }
-
+    
     public MtsEngineException( String msg, Object... args )
     {
         super( String.format( msg, args ) );
     }
-
+    
     public MtsEngineException( String msg, Exception parent, Object... args )
     {
         super( String.format( msg, args ), parent );
     }
-
+    
 }

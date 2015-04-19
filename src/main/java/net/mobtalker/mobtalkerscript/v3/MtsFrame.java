@@ -25,11 +25,13 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
 
 public final class MtsFrame
 {
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
+    private static boolean DEBUG_PRINT = false;
     
-    public static void enableDebug( boolean flag )
+    public static void enableDebug( boolean debug, boolean debugPrint )
     {
-        DEBUG = flag;
+        DEBUG = debug;
+        DEBUG_PRINT = debugPrint;
     }
     
     // ========================================
@@ -108,27 +110,35 @@ public final class MtsFrame
     {
         MtsInstruction[] instructions = _closure.getPrototype().getInstructions();
         
-        System.out.println( formatStack() );
+        if ( DEBUG )
+        {
+            System.out.println( "===== Entering Frame" );
+            System.out.println( formatStack( DEBUG_PRINT ) );
+        }
         
         for ( ;; _ip++ )
         {
             MtsInstruction instr = instructions[_ip];
             
-            System.out.println( formatExecutedInstruction( instr ) );
+            if ( DEBUG )
+            {
+                System.out.println( formatExecutedInstruction( instr ) );
+            }
             
             instr.execute( this );
             
-            System.out.println( formatStack() );
+            if ( DEBUG )
+            {
+                System.out.println( formatStack( DEBUG_PRINT ) );
+            }
             
             if ( instr.exits() )
                 break;
         }
         
-        System.out.println( formatStack() );
-        
         MtsValue result = pop();
         
-        assert isEmpty() : formatStack();
+        assert isEmpty() : "Stack was not emptied " + formatStack( true );
         return result instanceof MtsVarargs ? (MtsVarargs) result : MtsVarargs.of( result );
     }
     
@@ -136,13 +146,13 @@ public final class MtsFrame
     {
         MtsFunctionPrototype prototype = _closure.getPrototype();
         return new StringBuilder( 50 ).append( "Executing [" ).append( prototype.getName() )
-                .append( ':' ).append( prototype.getSourcePosition( _ip ).Line )
-                .append( "][" ).append( Integer.toString( _ip ) ).append( "] " )
-                .append( instr.toString( prototype ) )
-                .toString();
+                                      .append( ':' ).append( prototype.getSourcePosition( _ip ).Line )
+                                      .append( "][" ).append( Integer.toString( _ip ) ).append( "] " )
+                                      .append( instr.toString( prototype ) )
+                                      .toString();
     }
     
-    private String formatStack()
+    private String formatStack( boolean full )
     {
         if ( _top == 0 )
             return "[]";
@@ -154,9 +164,9 @@ public final class MtsFrame
         int limit = _top - 1;
         for ( ; i < limit; ++i )
         {
-            s.append( _stack[i].toString( DEBUG ) ).append( ", " );
+            s.append( _stack[i].toString( full ) ).append( ", " );
         }
-        s.append( _stack[i].toString( DEBUG ) ).append( ']' );
+        s.append( _stack[i].toString( full ) ).append( ']' );
         
         return s.toString();
     }
@@ -359,7 +369,7 @@ public final class MtsFrame
         
         s.append( " Locals    " ).append( Arrays.toString( _locals ) ).append( "\n" );
         s.append( " Externals " ).append( Arrays.toString( _externals ) ).append( "\n" );
-        s.append( " Stack     " ).append( formatStack() );
+        s.append( " Stack     " ).append( formatStack( false ) );
         
         return s.toString();
     }

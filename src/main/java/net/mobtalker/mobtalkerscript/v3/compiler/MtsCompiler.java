@@ -144,6 +144,8 @@ public class MtsCompiler extends Mts3BaseListener
             throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
         }
         
+//        new TreeViewer( Arrays.asList( parser.getRuleNames() ), chunk ).open();
+        
         int lineStart = chunk.getStart().getLine();
         
         // stop token CAN be null if the input is empty and contains only comments and EOF
@@ -1306,8 +1308,9 @@ public class MtsCompiler extends Mts3BaseListener
     {
         ParserRuleContext parent = ctx.getParent();
         return ( parent instanceof PrefixExprContext )
-               && ( parent.getParent().getParent() instanceof ReturnStmtContext )
-               && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
+                && getLast( ( (PrefixExprContext) parent ).Calls ).equals( ctx )
+                && ( parent.getParent().getParent() instanceof ReturnStmtContext )
+                && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
     }
     
     // ========================================

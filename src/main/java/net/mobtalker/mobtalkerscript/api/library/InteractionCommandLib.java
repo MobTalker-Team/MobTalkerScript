@@ -16,7 +16,6 @@
  */
 package net.mobtalker.mobtalkerscript.api.library;
 
-
 public class InteractionCommandLib
 {
     private IInteractionCommandLibLogic _logic;

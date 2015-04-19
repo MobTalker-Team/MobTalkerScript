@@ -482,7 +482,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         
         protected HashIterator()
         {
-            _next = MtsTableMap.this.getFirst();
+            _next = getFirst();
         }
         
         @Override
@@ -581,7 +581,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         @Override
         public boolean contains( Object o )
         {
-            return MtsTableMap.this.containsKey( o );
+            return containsKey( o );
         }
         
         @Override
@@ -608,7 +608,7 @@ public final class MtsTableMap implements Map<MtsValue, MtsValue>
         @Override
         public boolean contains( Object o )
         {
-            return MtsTableMap.this.containsValue( o );
+            return containsValue( o );
         }
         
         @Override

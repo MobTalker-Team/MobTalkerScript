@@ -108,23 +108,23 @@ public final class MtsFrame
     {
         MtsInstruction[] instructions = _closure.getPrototype().getInstructions();
         
-//        System.out.println( formatStack() );
+        System.out.println( formatStack() );
         
         for ( ;; _ip++ )
         {
             MtsInstruction instr = instructions[_ip];
             
-//            System.out.println( formatExecutedInstruction( instr ) );
+            System.out.println( formatExecutedInstruction( instr ) );
             
             instr.execute( this );
             
-//            System.out.println( formatStack() );
+            System.out.println( formatStack() );
             
             if ( instr.exits() )
                 break;
         }
         
-//        System.out.println( formatStack() );
+        System.out.println( formatStack() );
         
         MtsValue result = pop();
         
@@ -136,10 +136,10 @@ public final class MtsFrame
     {
         MtsFunctionPrototype prototype = _closure.getPrototype();
         return new StringBuilder( 50 ).append( "Executing [" ).append( prototype.getName() )
-                                      .append( ':' ).append( prototype.getSourcePosition( _ip ).Line )
-                                      .append( "][" ).append( Integer.toString( _ip ) ).append( "] " )
-                                      .append( instr.toString( prototype ) )
-                                      .toString();
+                .append( ':' ).append( prototype.getSourcePosition( _ip ).Line )
+                .append( "][" ).append( Integer.toString( _ip ) ).append( "] " )
+                .append( instr.toString( prototype ) )
+                .toString();
     }
     
     private String formatStack()

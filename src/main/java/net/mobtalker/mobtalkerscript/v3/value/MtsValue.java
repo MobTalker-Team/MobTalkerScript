@@ -597,7 +597,7 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
     
     /**
      * Converts this value to an {@link MtsNumber}.
-     * 
+     *
      * @throws NumberFormatException If this value cannot be converted.
      */
     public MtsNumber toMtsNumber() throws NumberFormatException

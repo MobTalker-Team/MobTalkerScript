@@ -124,10 +124,19 @@ public final class MtsMathLib
             if ( arg.isNil() )
                 return MtsNumber.of( _rnd.nextDouble() );
             
-            return MtsNumber.of( 1 + _rnd.nextInt( checkInteger( arg, 0 ) ) );
+            return MtsNumber.of( 1 + _rnd.nextInt( checkIntegerWithMinimum( arg, 0, 1 ) ) );
         }
         
-        return MtsNumber.of( checkInteger( arg, 0 ) + _rnd.nextInt( checkInteger( arg2, 1 ) ) );
+        int min = checkInteger( arg, 0 );
+        int max = checkInteger( arg2, 1 );
+        int interval = ( max - min ) + 1; // TODO This is not overflow safe (interval >= Integer.MAX_VALUE)
+        
+        if ( interval <= 0 )
+            throw new MtsArgumentException( "interval [%s,%s] is empty", min, max );
+        if ( interval >= Integer.MAX_VALUE )
+            throw new MtsArgumentException( "interval [%s,%s] is too large", min, max );
+        
+        return MtsNumber.of( min + _rnd.nextInt( interval ) );
     }
     
     @MtsNativeFunction

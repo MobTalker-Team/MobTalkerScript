@@ -16,15 +16,10 @@
  */
 package net.mobtalker.mobtalkerscript.standalone;
 
-import static net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNatives.*;
-
 import java.nio.file.Paths;
 
 import joptsimple.*;
 import joptsimple.internal.Strings;
-import net.mobtalker.mobtalkerscript.api.WorldPosition;
-import net.mobtalker.mobtalkerscript.api.library.*;
-import net.mobtalker.mobtalkerscript.standalone.lib.*;
 import net.mobtalker.mobtalkerscript.util.PrettyPrinter;
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.*;
@@ -50,7 +45,6 @@ public class MobTalkerScript
         
         // Initialize globals
         MtsGlobals _G = new MtsGlobals();
-        createLibraries( _G );
         
         _G.out.println( "MobTalkerScript " //
                         + MtsGlobals.VERSION.toJava()
@@ -133,43 +127,6 @@ public class MobTalkerScript
                 Thread.sleep( 100 );
             }
         }
-    }
-    
-    private static void createLibraries( MtsGlobals env )
-    {
-        DummyCreature dummyCreature = new DummyCreature( "DummyMob", 10, 10, new WorldPosition( 0, 0, 0 ) );
-        DummyPlayer dummyPlayer = new DummyPlayer( "Player", new WorldPosition( 0, 0, 0 ) );
-        
-        {
-            createLibrary( env, new InteractionCommandLib( new ConsoleInteractionCommandLibLogic( env ) ) );
-        }
-        {
-            MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( lib, new GameCommandLib( new ConsoleGameCommandLibLogic( env ) ) );
-            env.set( "Command", lib );
-        }
-        {
-            MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( lib, new EntityLib( new ConsoleEntityLibLogic( dummyCreature ) ) );
-            createLibrary( lib, new CreatureLib( new ConsoleCreatureLibLogic( dummyCreature ) ) );
-            env.set( "Entity", lib );
-        }
-        {
-            MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( lib, new EntityLib( new ConsoleEntityLibLogic( dummyPlayer ) ) );
-            createLibrary( lib, new PlayerLib( new ConsolePlayerLibLogic( dummyPlayer ) ) );
-            env.set( "Player", lib );
-        }
-        {
-            MtsTable lib = new MtsTable( 0, 0 );
-            createLibrary( lib, new InteractionWorldLib( new ConsoleInteractionWorldLibLogic() ) );
-            env.set( "World", lib );
-        }
-//        {
-//            MtsTable lib = new MtsTable( 0, 0 );
-//            createLibrary( new ScoreboardLib( new ConsoleScoreboardLibLogic() ), lib );
-//            env.set( "Scoreboard", lib );
-//        }
     }
     
     // ========================================

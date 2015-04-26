@@ -122,22 +122,18 @@ public final class MtsTableLib
     {
         if ( args.isEmpty() )
             return Nil;
-        
         if ( args.count() > 1 )
             return args.get( _rnd.nextInt( args.count() ) );
         
         MtsValue arg1 = args.get( 0 );
-        if ( arg1.isTable() )
-        {
-            MtsTable t = arg1.asTable();
-            
-            if ( t.list().isEmpty() )
-                return Nil;
-            
-            return t.get( _rnd.nextInt( t.list().size() ) );
-        }
+        if ( !arg1.isTable() )
+            return arg1;
         
-        return arg1;
+        MtsTableList l = arg1.asTable().list();
+        if ( l.isEmpty() )
+            return Nil;
+        
+        return l.get( _rnd.nextInt( l.size() ) );
     }
     
     @MtsNativeFunction

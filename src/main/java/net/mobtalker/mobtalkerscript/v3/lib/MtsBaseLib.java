@@ -19,6 +19,9 @@ package net.mobtalker.mobtalkerscript.v3.lib;
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 import static net.mobtalker.mobtalkerscript.v3.value.MtsMetaMethods.*;
 import static net.mobtalker.mobtalkerscript.v3.value.MtsValue.*;
+
+import java.util.List;
+
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.MtsCompiler;
 import net.mobtalker.mobtalkerscript.v3.value.*;
@@ -225,15 +228,18 @@ public final class MtsBaseLib
         try
         {
             MtsValue callResults = f.call( callArgs );
-            
-            if ( callResults.isVarArgs() )
-                result = MtsVarargs.of( MtsBoolean.True, callResults.asVarArgs() );
-            else
-                result = MtsVarargs.of( MtsBoolean.True, callResults );
+            result = MtsVarargs.of( MtsBoolean.True, callResults.isVarArgs() ? callResults.asVarArgs() : callResults );
         }
         catch ( MtsRuntimeException ex )
         {
-            result = MtsVarargs.of( MtsBoolean.False, MtsString.of( ex.getMessage() ) );
+            List<MtsStackTraceElement> elements = ex.getStackTraceElements();
+            MtsTable t = new MtsTable( elements.size(), 0 );
+            for ( MtsStackTraceElement element : elements )
+            {
+                t.list().add( MtsString.of( element.toString() ) );
+            }
+            
+            result = MtsVarargs.of( MtsBoolean.False, MtsString.of( ex.getMessage() ), t );
         }
         
         return result;

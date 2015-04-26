@@ -37,6 +37,11 @@ public class MtsArgumentException extends MtsRuntimeException
     
     public MtsArgumentException( int argIndex, MtsType expected, MtsType actual )
     {
-        super( "bad argument #%s (%s expected, got %s)", argIndex + 1, expected, actual );
+        super( "bad argument #%d (%s expected, got %s)", argIndex + 1, expected, actual );
+    }
+    
+    public MtsArgumentException( int argIndex, MtsType expectedA, MtsType expectedB, MtsType actual )
+    {
+        super( "bad argument #%d (%s or %s expected, got %s", argIndex + 1, expectedA, expectedB, actual );
     }
 }

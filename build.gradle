@@ -21,7 +21,7 @@ if ( file( 'deploy.gradle' ).exists() ) {
 
 group = "net.mobtalker"
 archivesBaseName = "MobTalkerScript"
-version = "3.0.2-beta"
+version = "3.0.3-beta"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

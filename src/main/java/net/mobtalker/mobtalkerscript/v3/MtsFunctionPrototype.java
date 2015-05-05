@@ -59,7 +59,7 @@ public class MtsFunctionPrototype
     {
         checkNotNull( instructions );
         checkArgument( 0 <= maxStackSize, "Stack size cannot be negative: " + maxStackSize );
-        checkArgument( maxStackSize <= 0xFE, "Stack size exceeds maximum " + maxStackSize );
+        checkArgument( maxStackSize <= 0xFE, "Stack size exceeds maximum: " + maxStackSize );
         checkArgument( 0 <= nParams, "Parameter count cannot be negative: " + nParams );
         
         _instructions = instructions.toArray( new MtsInstruction[instructions.size()] );

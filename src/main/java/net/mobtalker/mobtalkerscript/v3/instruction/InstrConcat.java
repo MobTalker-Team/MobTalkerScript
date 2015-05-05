@@ -44,7 +44,7 @@ public class InstrConcat extends MtsInstruction
     @Override
     public int stackSizeChange()
     {
-        return _count - 1;
+        return -_count + 1;
     }
     
     // ========================================

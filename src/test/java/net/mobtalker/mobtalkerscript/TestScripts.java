@@ -59,4 +59,10 @@ public class TestScripts
         run( "src/test/resources/scripts/vararg.lua" );
     }
     
+    @Test
+    public void testLargeMethod() throws Exception
+    {
+        run( "src/test/resources/scripts/largemethod.lua" );
+    }
+    
 }

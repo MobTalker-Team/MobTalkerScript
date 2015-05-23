@@ -1308,9 +1308,9 @@ public class MtsCompiler extends Mts3BaseListener
     {
         ParserRuleContext parent = ctx.getParent();
         return ( parent instanceof PrefixExprContext )
-                && getLast( ( (PrefixExprContext) parent ).Calls ).equals( ctx )
-                && ( parent.getParent().getParent() instanceof ReturnStmtContext )
-                && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
+               && getLast( ( (PrefixExprContext) parent ).Calls ).equals( ctx )
+               && ( parent.getParent().getParent() instanceof ReturnStmtContext )
+               && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
     }
     
     // ========================================
@@ -1329,7 +1329,7 @@ public class MtsCompiler extends Mts3BaseListener
         }
         else
         {
-            loadNil( 1 );
+            loadConstant( MtsString.Empty );
             visit( args.get( 0 ) );
         }
         

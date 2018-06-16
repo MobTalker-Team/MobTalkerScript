@@ -17,8 +17,7 @@
 package net.mobtalker.mobtalkerscript.v3.value;
 
 import java.util.Iterator;
-
-import com.google.common.collect.Iterators;
+import java.util.ArrayList;
 
 /* package */class EmptyVarargs extends MtsVarargs
 {
@@ -55,6 +54,6 @@ import com.google.common.collect.Iterators;
     @Override
     public Iterator<MtsValue> iterator()
     {
-        return Iterators.emptyIterator();
+        return new ArrayList<MtsValue>().iterator();
     }
 }

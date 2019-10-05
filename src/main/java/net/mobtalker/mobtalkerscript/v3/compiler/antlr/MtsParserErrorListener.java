@@ -16,14 +16,17 @@
  */
 package net.mobtalker.mobtalkerscript.v3.compiler.antlr;
 
-import java.nio.file.Paths;
-
 import net.mobtalker.mobtalkerscript.v3.compiler.MtsSyntaxError;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
 
-import org.antlr.v4.runtime.*;
+import java.nio.file.Paths;
 
-public class MtsAntlrErrorListener extends BaseErrorListener
+public class MtsParserErrorListener
+        extends BaseErrorListener
 {
     @Override
     public <T extends Token> void syntaxError( Recognizer<T, ?> recognizer, T offendingSymbol,

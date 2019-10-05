@@ -120,6 +120,8 @@ public class MtsCompiler extends Mts3BaseListener
     {
         Mts3Lexer lexer = new Mts3Lexer( stream );
         lexer.setTokenFactory( TokenFactory );
+        lexer.removeErrorListeners();
+        lexer.addErrorListener( new MtsLexerErrorListener() );
         
         return lexer;
     }
@@ -127,8 +129,6 @@ public class MtsCompiler extends Mts3BaseListener
     public static Mts3Parser getParser( CharStream stream )
     {
         Mts3Lexer lexer = getLexer( stream );
-        lexer.removeErrorListeners();
-        lexer.addErrorListener( new MtsLexerErrorListener() );
         
         Mts3Parser parser = new Mts3Parser( new CommonTokenStream( lexer ) );
         parser.removeErrorListeners();

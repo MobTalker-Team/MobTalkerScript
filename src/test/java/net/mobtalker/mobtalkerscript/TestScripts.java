@@ -65,4 +65,13 @@ public class TestScripts
         run( "src/test/resources/scripts/largemethod.lua" );
     }
     
+    /**
+     * Regression test for #39 (https://bitbucket.org/MobTalker2/mobtalkerscript/issues/39/)
+     */
+    @Test
+    public void testEquality()
+            throws Exception
+    {
+        run( "src/test/resources/scripts/equality.lua" );
+    }
 }

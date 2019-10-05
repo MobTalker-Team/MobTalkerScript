@@ -87,6 +87,19 @@ task generateAntlr( type: JavaExec ) {
         //'-Xlog',
         //'-XdbgST'
     ]
+
+    // Dirty fix for antlr/antlr4#753 in Antlr 4.4
+    // Taken and adapted from here:
+    // https://github.com/apache/groovy/blob/master/subprojects/parser-antlr4/build.gradle#L34
+    doLast {
+        def parserFilePattern = 'Mts3*'
+        copy {
+            from "$outputDir/src/main/antlr"
+            into outputDir
+            include parserFilePattern
+        }
+        delete "$outputDir/src"
+    }
 }
 tasks.compileJava.dependsOn generateAntlr
 

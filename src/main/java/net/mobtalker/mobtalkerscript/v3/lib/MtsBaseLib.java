@@ -54,8 +54,7 @@ public final class MtsBaseLib
     @MtsNativeFunction( "error" )
     public static void error( MtsVarargs args )
     {
-        throw new MtsRuntimeException( args.get( 0 ).toMtsString().toJava(),
-                                       checkInteger( args, 1, 1 ) - 1 );
+        throw new MtsRuntimeException( checkIntegerWithMinimum( args.get(1), 1, 1, 1 ), args.get( 0 ).toMtsString().toJava() );
     }
     
     // ========================================

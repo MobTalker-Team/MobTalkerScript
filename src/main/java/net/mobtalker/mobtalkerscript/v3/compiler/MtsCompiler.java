@@ -1,97 +1,53 @@
 /*
- * Copyright (C) 2013-2015 Chimaine
- * 
+ * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.base.Strings.*;
-import static net.mobtalker.mobtalkerscript.v3.compiler.CompilerConstants.*;
-import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
-
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
+import com.google.common.collect.Lists;
 import net.mobtalker.mobtalkerscript.util.StringEscapeUtil;
 import net.mobtalker.mobtalkerscript.v3.*;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.*;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.*;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ArgListContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.AssignmentExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.AssignmentStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.BinaryExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.BlockContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.BlockStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.BooleanLiteralContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.BreakStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.CallStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.CharStringContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ChunkContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ConditionalExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ExprFieldContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ExprListContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.FieldContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.FieldExprSuffixContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.FieldNameSuffixContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.FuncNameContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.FunctionDefinitionExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.FunctionDefinitionStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.GenericForStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.GotoStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.HideStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.IfThenElseStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.LabelStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ListFieldContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.LiteralContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.LiteralExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.LocalFunctionDefinitionStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.LocalVariableDeclarationStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.LogicalExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.LongStringContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.MenuStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.NameAndArgsContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.NameFieldContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.NameListContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.NilLiteralContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.NormalStringContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.NumberLiteralContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.NumericForStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ParamListContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.PrefixExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.RepeatStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ReturnStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.SayStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.SceneStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.ShowStmtContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.TableCtorContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.UnaryExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.VarContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.VarOrExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.VarSuffixContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.VarargsExprContext;
-import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.WhileStmtContext;
-import net.mobtalker.mobtalkerscript.v3.instruction.*;
-import net.mobtalker.mobtalkerscript.v3.value.*;
-
+import net.mobtalker.mobtalkerscript.v3.compiler.antlr.MtsErrorStrategy;
+import net.mobtalker.mobtalkerscript.v3.compiler.antlr.MtsLexerErrorListener;
+import net.mobtalker.mobtalkerscript.v3.compiler.antlr.MtsParserErrorListener;
+import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3BaseListener;
+import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Lexer;
+import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser;
+import net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated.Mts3Parser.*;
+import net.mobtalker.mobtalkerscript.v3.instruction.InstrLoadTC;
+import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
+import net.mobtalker.mobtalkerscript.v3.value.MtsBoolean;
+import net.mobtalker.mobtalkerscript.v3.value.MtsNumber;
+import net.mobtalker.mobtalkerscript.v3.value.MtsString;
+import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.google.common.collect.Lists;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static net.mobtalker.mobtalkerscript.v3.compiler.CompilerConstants.ENV;
+import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
 
 public class MtsCompiler extends Mts3BaseListener
 {
@@ -164,6 +120,8 @@ public class MtsCompiler extends Mts3BaseListener
     {
         Mts3Lexer lexer = new Mts3Lexer( stream );
         lexer.setTokenFactory( TokenFactory );
+        lexer.removeErrorListeners();
+        lexer.addErrorListener( new MtsLexerErrorListener() );
         
         return lexer;
     }
@@ -174,7 +132,7 @@ public class MtsCompiler extends Mts3BaseListener
         
         Mts3Parser parser = new Mts3Parser( new CommonTokenStream( lexer ) );
         parser.removeErrorListeners();
-        parser.addErrorListener( new MtsAntlrErrorListener() );
+        parser.addErrorListener( new MtsParserErrorListener() );
         parser.setErrorHandler( new MtsErrorStrategy() );
         parser.getInterpreter().setPredictionMode( PredictionMode.SLL );
         
@@ -1308,9 +1266,9 @@ public class MtsCompiler extends Mts3BaseListener
     {
         ParserRuleContext parent = ctx.getParent();
         return ( parent instanceof PrefixExprContext )
-                && getLast( ( (PrefixExprContext) parent ).Calls ).equals( ctx )
-                && ( parent.getParent().getParent() instanceof ReturnStmtContext )
-                && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
+               && getLast( ( (PrefixExprContext) parent ).Calls ).equals( ctx )
+               && ( parent.getParent().getParent() instanceof ReturnStmtContext )
+               && ( ( (ExprListContext) parent.getParent() ).Exprs.size() == 1 );
     }
     
     // ========================================
@@ -1329,7 +1287,7 @@ public class MtsCompiler extends Mts3BaseListener
         }
         else
         {
-            loadNil( 1 );
+            loadConstant( MtsString.Empty );
             visit( args.get( 0 ) );
         }
         

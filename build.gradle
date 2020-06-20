@@ -15,13 +15,19 @@ apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'license'
 
+ext {
+    mtsRevision = '3.0.5'
+    mtsStatus = 'beta'
+    mtsVersion = mtsRevision + '-' + mtsStatus
+}
+
 if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
 group = "net.mobtalker"
 archivesBaseName = "MobTalkerScript"
-version = "3.0.3-beta"
+version = mtsVersion
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -33,7 +39,7 @@ repositories {
 dependencies {
     compile 'com.tunnelvisionlabs:antlr4-runtime:4.4'
     compile 'org.apache.commons:commons-lang3:3.3.+'
-    compile 'com.google.guava:guava:17.+'
+    compile 'com.google.guava:guava:23.+'
     compile 'net.sf.jopt-simple:jopt-simple:4.5'
     
     testCompile 'junit:junit:4.+'
@@ -87,6 +93,19 @@ task generateAntlr( type: JavaExec ) {
         //'-Xlog',
         //'-XdbgST'
     ]
+
+    // Dirty fix for antlr/antlr4#753 in Antlr 4.4
+    // Taken and adapted from here:
+    // https://github.com/apache/groovy/blob/master/subprojects/parser-antlr4/build.gradle#L34
+    doLast {
+        def parserFilePattern = 'Mts3*'
+        copy {
+            from "$outputDir/src/main/antlr"
+            into outputDir
+            include parserFilePattern
+        }
+        delete "$outputDir/src"
+    }
 }
 tasks.compileJava.dependsOn generateAntlr
 

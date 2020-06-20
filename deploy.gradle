@@ -1,0 +1,74 @@
+apply plugin: 'ivy-publish'
+
+def propertiesFile = 'publish.properties'
+if ( file( propertiesFile ).exists() )
+{
+    def properties = new Properties()
+    file( propertiesFile ).withInputStream {InputStream stream -> properties.load( stream )}
+
+    publishing {
+        publications {
+            ivy( IvyPublication ) {
+                organisation properties.getProperty('organisation', 'net.mobtalker')
+                module properties.getProperty('module', 'mobtalkerscript')
+                revision mtsVersion
+                status properties.getProperty('status', 'integration')
+
+                configurations {
+                    runtime {extend 'compile'}
+                    shadow {}
+                }
+
+                from components.java
+                artifacts = [
+                        artifact( jar ) {
+                            name archivesBaseName
+                            conf 'runtime'
+                        },
+                        artifact( shadowJar ) {
+                            name archivesBaseName
+                            conf 'shadow'
+                        },
+                        artifact( sourceJar ) {
+                            name archivesBaseName
+                        }
+                ]
+            }
+        }
+
+        repositories {
+            /*
+            // Repository which is located in /tmp/ivy-test
+            ivy {
+                name 'local'
+                url uri( 'file:///tmp/ivy-test' )
+            }
+             */
+
+            // Productive repository at https://repo.mobtalker.net
+            //
+            ivy {
+                name 'repo.mobtalker.net'
+                url uri( 'https://repo.mobtalker.net/' )
+
+                if ( properties.containsKey( 'ivyUsername' ) && properties.containsKey( 'ivyPassword' ) )
+                {
+                    credentials {
+                        username = properties['ivyUsername']
+                        password = properties['ivyPassword']
+                    }
+                }
+                else
+                {
+                    throw new UnsupportedOperationException( "Credentials not set for Ivy repository. Set the properties " +
+                                                             "ivyUsername and ivyPassword in the file $propertiesFile " +
+                                                             "to specify username and password, respectively." )
+                }
+            }
+        }
+    }
+}
+else
+{
+    System.err.println "WARNING: $propertiesFile not found. Publishing configuration is not enabled."
+}

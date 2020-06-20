@@ -15,13 +15,19 @@ apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'license'
 
+ext {
+    mtsRevision = '3.0.4'
+    mtsStatus = 'beta'
+    mtsVersion = mtsRevision + '-' + mtsStatus
+}
+
 if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }
 
 group = "net.mobtalker"
 archivesBaseName = "MobTalkerScript"
-version = "3.0.4-beta"
+version = mtsVersion
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

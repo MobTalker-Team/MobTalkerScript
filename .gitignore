@@ -27,5 +27,5 @@
 /atlassian-ide-plugin.xml
 
 ## custom
-/deploy.gradle
 /docs/
+/publish.properties

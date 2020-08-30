@@ -1,3 +1,7 @@
+-- SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
+--
+-- SPDX-License-Identifier: LGPL-3.0-or-later
+
 print('testing vararg')
 
 _G.arg = nil

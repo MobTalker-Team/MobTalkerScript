@@ -1,30 +1,18 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3;
 
-import static com.google.common.base.Preconditions.*;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import net.mobtalker.mobtalkerscript.v3.compiler.SourcePosition;
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
-import com.google.common.collect.Lists;
+import static org.apache.commons.lang3.Validate.*;
 
 public class MtsFunctionPrototype
 {
@@ -57,10 +45,10 @@ public class MtsFunctionPrototype
                                  List<SourcePosition> lineNumbers,
                                  String sourceName, int sourceStart, int sourceEnd )
     {
-        checkNotNull( instructions );
-        checkArgument( 0 <= maxStackSize, "Stack size cannot be negative: " + maxStackSize );
-        checkArgument( maxStackSize <= 0xFE, "Stack size exceeds maximum: " + maxStackSize );
-        checkArgument( 0 <= nParams, "Parameter count cannot be negative: " + nParams );
+        notNull( instructions );
+        isTrue( maxStackSize >= 0, "Stack size cannot be negative: %d", maxStackSize);
+        isTrue( maxStackSize < 0xFF, "Stack size exceeds maximum: %d", maxStackSize);
+        isTrue( 0 <= nParams, "Parameter count cannot be negative: " + nParams );
         
         _instructions = instructions.toArray( new MtsInstruction[instructions.size()] );
         _maxStackSize = maxStackSize;
@@ -71,7 +59,7 @@ public class MtsFunctionPrototype
         _locals = locals.toArray( new LocalDescription[locals.size()] );
         _externals = externals.toArray( new ExternalDescription[externals.size()] );
         
-        _nestedPrototypes = Lists.newArrayList();
+        _nestedPrototypes = new ArrayList<>();
         
         _name = name;
         _lineNumbers = lineNumbers;
@@ -179,7 +167,7 @@ public class MtsFunctionPrototype
     
     public SourcePosition getSourcePosition( int instruction )
     {
-        checkElementIndex( instruction, _lineNumbers.size() );
+        validIndex(_lineNumbers, instruction);
         
         return _lineNumbers.get( instruction );
     }

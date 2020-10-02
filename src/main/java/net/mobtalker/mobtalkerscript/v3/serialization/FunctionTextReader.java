@@ -1,18 +1,7 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.serialization;
 
@@ -31,9 +20,6 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
 
 import org.apache.commons.lang3.*;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.LineReader;
-
 /**
  * Deserializes a function prototype from a textual format.
  */
@@ -48,19 +34,19 @@ public class FunctionTextReader
         }
     }
     
-    public static MtsFunctionPrototype readChunk( Readable readable ) throws IOException
+    public static MtsFunctionPrototype readChunk( Reader in ) throws IOException
     {
-        return new FunctionTextReader().read( readable );
+        return new FunctionTextReader().read( in );
     }
     
     // ========================================
     
-    public MtsFunctionPrototype read( Readable readable ) throws IOException
+    public MtsFunctionPrototype read( Reader in ) throws IOException
     {
-        return read( new LineReader( readable ) );
+        return read( in instanceof BufferedReader ? (BufferedReader)in : new BufferedReader( in ) );
     }
     
-    public MtsFunctionPrototype read( LineReader reader ) throws IOException
+    public MtsFunctionPrototype read( BufferedReader reader ) throws IOException
     {
         String functionName;
         String source;
@@ -230,13 +216,13 @@ public class FunctionTextReader
         }
         
         MtsFunctionPrototype prototype = new MtsFunctionPrototype( functionName,
-                                                                   ImmutableList.copyOf( constants ),
-                                                                   ImmutableList.copyOf( locals ),
-                                                                   ImmutableList.copyOf( externals ),
+                                                                   Collections.unmodifiableList( constants ),
+                                                                   Collections.unmodifiableList( locals ),
+                                                                   Collections.unmodifiableList( externals ),
                                                                    nParams,
                                                                    hasVarargs,
                                                                    maxStackSize,
-                                                                   ImmutableList.copyOf( instructions ),
+                                                                   Collections.unmodifiableList( instructions ),
                                                                    sourcePositions,
                                                                    source,
                                                                    sourceLineStart,

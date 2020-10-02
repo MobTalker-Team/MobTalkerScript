@@ -1,23 +1,13 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
-import static com.google.common.base.Preconditions.*;
 import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
+import static org.apache.commons.lang3.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.validState;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -26,8 +16,6 @@ import net.mobtalker.mobtalkerscript.util.Stack;
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.instruction.*;
 import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
-
-import com.google.common.collect.*;
 
 public class FunctionState
 {
@@ -59,18 +47,18 @@ public class FunctionState
     // ========================================
     
     {
-        _childs = Lists.newArrayList();
+        _childs = new ArrayList<>();
         
-        _constants = Lists.newArrayList();
-        _locals = Lists.newArrayList();
-        _externals = Lists.newArrayList();
+        _constants = new ArrayList<>();
+        _locals = new ArrayList<>();
+        _externals = new ArrayList<>();
         
-        _instructions = Lists.newLinkedList();
+        _instructions = new LinkedList<>();
         _pendingJumps = Stack.newStack();
         
-        _labels = Maps.newHashMapWithExpectedSize( 2 );
+        _labels = new HashMap<>(2, 1);
         
-        _lineNumbers = Lists.newLinkedList();
+        _lineNumbers = new LinkedList<>();
         
         _loops = Stack.newStack();
         _ifElses = Stack.newStack();
@@ -141,7 +129,7 @@ public class FunctionState
         }
         else
         {
-            checkArgument( label.getTarget() != 0, "label '%s' already exists", name );
+            isTrue( label.getTarget() != 0, "label '%s' already exists", name );
         }
         
         label.setTarget( currentIndex() + 1 );
@@ -426,7 +414,7 @@ public class FunctionState
         }
         
         // If we do not have a parent, we cannot create an external for that name
-        checkArgument( _parent != null, name + " is a global!" );
+        isTrue( _parent != null, "%s is a global!", name );
         
         // Create a new external
         int index = _externals.size();
@@ -489,10 +477,10 @@ public class FunctionState
     public MtsFunctionPrototype createPrototype()
     {
         // Ensure that we are in the proper state
-        checkState( _block.getParent() == null, "Not in the outermost function scope!" );
-        checkState( _pendingJumps.isEmpty(), "Didn't close all pending jumps!" );
-        checkState( _loops.isEmpty(), "Didn't close all loops!" );
-        checkState( _ifElses.isEmpty(), "Didn't close all IfElse!" );
+        isTrue( _block.getParent() == null, "Not in the outermost function scope!" );
+        isTrue( _pendingJumps.isEmpty(), "Didn't close all pending jumps!" );
+        isTrue( _loops.isEmpty(), "Didn't close all loops!" );
+        isTrue( _ifElses.isEmpty(), "Didn't close all IfElse!" );
         
         for ( Entry<String, CompilerLabel> label : _labels.entrySet() )
         {
@@ -501,14 +489,14 @@ public class FunctionState
         }
         
         MtsFunctionPrototype p = new MtsFunctionPrototype( _name,
-                                                           ImmutableList.copyOf( _constants ),
-                                                           ImmutableList.copyOf( _locals ),
-                                                           ImmutableList.copyOf( _externals ),
+                                                           Collections.unmodifiableList( _constants ),
+                                                           Collections.unmodifiableList( _locals ),
+                                                           Collections.unmodifiableList( _externals ),
                                                            _nParam,
                                                            _isVarargs,
                                                            calculateMaxStackSize(),
-                                                           ImmutableList.copyOf( _instructions ),
-                                                           ImmutableList.copyOf( _lineNumbers ),
+                                                           Collections.unmodifiableList( _instructions ),
+                                                           Collections.unmodifiableList( _lineNumbers ),
                                                            _sourceFile,
                                                            _sourceLineStart,
                                                            _sourceLineEnd );

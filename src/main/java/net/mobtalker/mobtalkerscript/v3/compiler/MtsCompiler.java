@@ -1,22 +1,11 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
-import com.google.common.collect.Lists;
+import net.mobtalker.mobtalkerscript.util.CollectionUtil;
 import net.mobtalker.mobtalkerscript.util.StringEscapeUtil;
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.antlr.MtsErrorStrategy;
@@ -41,13 +30,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static net.mobtalker.mobtalkerscript.v3.compiler.CompilerConstants.ENV;
 import static net.mobtalker.mobtalkerscript.v3.instruction.Instructions.*;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class MtsCompiler extends Mts3BaseListener
 {
@@ -75,7 +66,7 @@ public class MtsCompiler extends Mts3BaseListener
     
     public static MtsFunctionPrototype loadChunk( String chunk, String source ) throws Exception
     {
-        checkNotNull( chunk, "chunk" );
+        notNull( chunk, "chunk" );
         
         ANTLRInputStream stream = new ANTLRInputStream( chunk );
         stream.name = source;
@@ -407,8 +398,8 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void loadConstant( MtsValue value )
     {
-        checkNotNull( value != null, "value cannot be null" );
-        checkArgument( !value.isNil(), "value cannot be nil" );
+        notNull( value, "value cannot be null" );
+        isTrue( !value.isNil(), "value cannot be nil" );
         
         int index = _currentFunction.getConstantIndex( value );
         addInstr( InstrLoadC( index ) );
@@ -602,7 +593,7 @@ public class MtsCompiler extends Mts3BaseListener
     
     public void loadStringExpression( String input )
     {
-        checkArgument( !isNullOrEmpty( input ), "input cannot be null or empty" );
+        isTrue( !isEmpty( input ), "input cannot be null or empty" );
         
         ANTLRInputStream stream = new ANTLRInputStream( input );
         stream.name = getSourceName() + ":" + getSourcePosition();
@@ -839,11 +830,8 @@ public class MtsCompiler extends Mts3BaseListener
         
         exprList.nTargets = vars.size();
         visit( exprList );
-        
-        for ( VarContext var : Lists.reverse( vars ) )
-        {
-            visit( var );
-        }
+    
+        CollectionUtil.forEachReverse( vars, this::visit );
     }
     
     @Override
@@ -865,10 +853,8 @@ public class MtsCompiler extends Mts3BaseListener
             {
                 declareLocal( identifier.getText() );
             }
-            for ( Token identifier : Lists.reverse( names ) )
-            {
-                storeVariable( identifier.getText() );
-            }
+    
+            CollectionUtil.forEachReverse(names, name -> storeVariable( name.getText() ));
         }
         else
         {

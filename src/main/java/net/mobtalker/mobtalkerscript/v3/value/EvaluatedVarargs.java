@@ -1,24 +1,11 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
 import java.util.*;
-
-import com.google.common.collect.Lists;
 
 /* package */class EvaluatedVarargs extends MtsVarargs
 {
@@ -38,17 +25,16 @@ import com.google.common.collect.Lists;
     
     /* package */EvaluatedVarargs( MtsValue first, MtsVarargs rest )
     {
-        int count = rest.count() + 1;
-        ArrayList<MtsValue> values = Lists.newArrayListWithCapacity( count );
+        List<MtsValue> values = new ArrayList<>( rest.count() + 1 );
         values.add( first );
         
         if ( rest instanceof EvaluatedVarargs )
         {
             values.addAll( ( (EvaluatedVarargs) rest )._values );
         }
-        else if ( count > 1 )
+        else if ( rest.count() > 0 )
         {
-            for ( MtsValue value : values )
+            for ( MtsValue value : rest )
             {
                 values.add( value );
             }

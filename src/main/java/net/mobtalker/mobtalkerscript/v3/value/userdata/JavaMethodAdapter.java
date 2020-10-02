@@ -1,30 +1,19 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.value.userdata;
 
-import static com.google.common.base.Preconditions.*;
+import static net.mobtalker.mobtalkerscript.util.ThrowableUtil.throwUnchecked;
 import static net.mobtalker.mobtalkerscript.v3.value.userdata.NativeHelpers.*;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.reflect.*;
 
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.*;
-
-import com.google.common.base.Throwables;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /* package */abstract class JavaMethodAdapter extends MtsFunction
 {
@@ -40,7 +29,7 @@ import com.google.common.base.Throwables;
     
     protected JavaMethodAdapter( Method method, String name )
     {
-        checkNotNull( method );
+        notNull( method );
         
         // Even if it is already, this turns off security checks.
         method.setAccessible( true );
@@ -76,14 +65,14 @@ import com.google.common.base.Throwables;
         }
         catch ( InvocationTargetException ex )
         {
-            Throwable cause = Throwables.getRootCause( ex );
+            Throwable cause = ExceptionUtils.getRootCause( ex );
             if ( cause instanceof MtsRuntimeException )
             {
                 MtsRuntimeException srex = (MtsRuntimeException) cause;
                 srex.addStackTraceElement( _name );
             }
             
-            throw Throwables.propagate( cause );
+            throw throwUnchecked( cause );
         }
         catch ( Exception ex )
         {

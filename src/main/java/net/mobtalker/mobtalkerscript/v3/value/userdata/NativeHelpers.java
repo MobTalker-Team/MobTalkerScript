@@ -1,18 +1,7 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.value.userdata;
 
@@ -23,14 +12,13 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /* package */class NativeHelpers
 {
     public static List<AnnotatedMethod> getAnnotatedMethods( Class<?> c )
     {
-        List<AnnotatedMethod> results = Lists.newArrayList();
+        List<AnnotatedMethod> results = new ArrayList<>();
         for ( Method m : c.getMethods() )
         {
             AnnotatedMethod am = getAnnotatedMethod( m );
@@ -88,7 +76,7 @@ import com.google.common.collect.Lists;
     public static String getClassName( Class<?> c )
     {
         MtsNativeFunction a = ( (AnnotatedElement) c ).getAnnotation( MtsNativeFunction.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return c.getSimpleName().toLowerCase();
         
         return a.value();
@@ -96,7 +84,7 @@ import com.google.common.collect.Lists;
     
     public static String getMethodName( Method m, MtsNativeFunction a )
     {
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return StringUtils.capitalize( m.getName() );
         
         return a.value();
@@ -105,7 +93,7 @@ import com.google.common.collect.Lists;
     public static String getMethodName( Method m )
     {
         MtsNativeFunction a = m.getAnnotation( MtsNativeFunction.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return StringUtils.capitalize( m.getName() );
         
         return a.value();
@@ -114,7 +102,7 @@ import com.google.common.collect.Lists;
     public static String getFieldName( Field f )
     {
         MtsNativeField a = f.getAnnotation( MtsNativeField.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return StringUtils.capitalize( f.getName() );
         
         return a.value();
@@ -139,4 +127,9 @@ import com.google.common.collect.Lists;
     {
         return MtsVarargs.class.isAssignableFrom( c );
     }
+    
+    // ========================================
+    
+    // private constructor to prevent instantiation
+    private NativeHelpers() {}
 }

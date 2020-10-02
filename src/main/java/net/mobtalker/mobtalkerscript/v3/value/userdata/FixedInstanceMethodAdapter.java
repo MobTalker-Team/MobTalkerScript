@@ -1,26 +1,15 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.value.userdata;
-
-import static com.google.common.base.Preconditions.*;
 
 import java.lang.reflect.Method;
 
 import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 /* package */class FixedInstanceMethodAdapter extends JavaMethodAdapter
 {
@@ -31,7 +20,7 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
     public FixedInstanceMethodAdapter( Object instance, Method method, String name )
     {
         super( method, name );
-        checkNotNull( instance );
+        notNull( instance );
         
         if ( !method.getDeclaringClass().isAssignableFrom( instance.getClass() ) )
             throw new IllegalArgumentException( String.format( "instance is of type %s that is neither the same or a subclass of %s!",

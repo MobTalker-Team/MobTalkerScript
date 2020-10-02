@@ -1,23 +1,15 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.mobtalker.mobtalkerscript.v3.MtsFunctionPrototype;
 import net.mobtalker.mobtalkerscript.v3.compiler.*;
@@ -27,9 +19,6 @@ import net.mobtalker.mobtalkerscript.v3.serialization.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableSet;
 
 public class GrammarTestRig
 {
@@ -63,13 +52,13 @@ public class GrammarTestRig
         compiler.visit( chunk );
         prototype = compiler.compile();
         
-        FunctionTextWriter.writeChunk( prototype, Paths.get( "D:\\test_text" ), Charsets.UTF_8,
+        FunctionTextWriter.writeChunk( prototype, Paths.get( "D:\\test_text" ), StandardCharsets.UTF_8,
                                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
         
         FunctionBinaryWriter.writeChunk( prototype, Paths.get( "D:\\test_binary" ),
                                          StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
         
-        prototype = FunctionTextReader.readChunk( Paths.get( "D:\\test_text" ), Charsets.UTF_8 );
+        prototype = FunctionTextReader.readChunk( Paths.get( "D:\\test_text" ), StandardCharsets.UTF_8 );
         
         prototype = FunctionBinaryReader.readChunk( Paths.get( "D:\\test_binary" ) );
         
@@ -103,16 +92,17 @@ public class GrammarTestRig
      */
     private static final class TreeCleaner extends Mts3BaseListener
     {
-        private static final Set<Integer> IgnoredTokens = ImmutableSet.of( Mts3Lexer.SEMICOLON,
-                                                                           Mts3Lexer.COMMA,
-                                                                           Mts3Lexer.COLON,
-                                                                           Mts3Lexer.DOT,
-                                                                           Mts3Lexer.CURLY_OPEN,
-                                                                           Mts3Lexer.CURLY_CLOSE,
-                                                                           Mts3Lexer.ROUND_OPEN,
-                                                                           Mts3Lexer.ROUND_CLOSE,
-                                                                           Mts3Lexer.SQUARE_OPEN,
-                                                                           Mts3Lexer.SQUARE_CLOSE );
+        private static final Set<Integer> IgnoredTokens = Collections.unmodifiableSet( Stream.of(Mts3Lexer.SEMICOLON,
+                                                                                                 Mts3Lexer.COMMA,
+                                                                                                 Mts3Lexer.COLON,
+                                                                                                 Mts3Lexer.DOT,
+                                                                                                 Mts3Lexer.CURLY_OPEN,
+                                                                                                 Mts3Lexer.CURLY_CLOSE,
+                                                                                                 Mts3Lexer.ROUND_OPEN,
+                                                                                                 Mts3Lexer.ROUND_CLOSE,
+                                                                                                 Mts3Lexer.SQUARE_OPEN,
+                                                                                                 Mts3Lexer.SQUARE_CLOSE
+                                                                                                ).collect( Collectors.toSet() ) );
         
         @Override
         public void visitChildren( RuleNode node )
@@ -141,4 +131,9 @@ public class GrammarTestRig
             return IgnoredTokens.contains( c.getSymbol().getType() );
         }
     }
+    
+    // ========================================
+    
+    // private constructor to prevent instantiation
+    private GrammarTestRig() {}
 }

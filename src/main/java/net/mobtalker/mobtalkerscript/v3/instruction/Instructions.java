@@ -1,26 +1,14 @@
 /*
- * Copyright (C) 2013-2020 Chimaine, MobTalkerScript contributors
+ * SPDX-FileCopyrightText: 2013-2020 Chimaine, MobTalkerScript contributors
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import static com.google.common.base.Preconditions.*;
-
+import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class Instructions
 {
@@ -194,12 +182,12 @@ public class Instructions
     
     static
     {
-        _unaryOps = Maps.newHashMapWithExpectedSize( 3 );
+        _unaryOps = new HashMap<>(3, 1);
         _unaryOps.put( "-", InstrNeg() );
         _unaryOps.put( "not", InstrNot() );
         _unaryOps.put( "#", InstrSize() );
         
-        _binaryOps = Maps.newHashMapWithExpectedSize( 6 );
+        _binaryOps = new HashMap<>(6, 1);
         _binaryOps.put( "+", InstrAdd() );
         _binaryOps.put( "-", InstrSub() );
         _binaryOps.put( "*", InstrMul() );
@@ -213,7 +201,7 @@ public class Instructions
         
         _binaryOps.put( "..", InstrConcat( 2 ) );
         
-        _logicalOps = Maps.newHashMapWithExpectedSize( 3 );
+        _logicalOps = new HashMap<>(3, 1);
         _logicalOps.put( "==", InstrEq() );
         _logicalOps.put( "<", InstrLessThen() );
         _logicalOps.put( "<=", InstrLessThenEqual() );
@@ -262,7 +250,7 @@ public class Instructions
     public static MtsInstruction InstrUnaryOp( String op )
     {
         MtsInstruction instr = _unaryOps.get( op );
-        checkArgument( instr != null, "%s is not a valid unary operator!" );
+        notNull(instr, "%s is not a valid unary operator!", op);
         
         return instr;
     }
@@ -270,7 +258,7 @@ public class Instructions
     public static MtsInstruction InstrBinaryOp( String op )
     {
         MtsInstruction instr = _binaryOps.get( op );
-        checkArgument( instr != null, "%s is not a valid binary operator!", op );
+        notNull( instr, "%s is not a valid binary operator!", op );
         
         return instr;
     }
@@ -278,7 +266,7 @@ public class Instructions
     public static MtsInstruction InstrLogicalOp( String op )
     {
         MtsInstruction instr = _logicalOps.get( op );
-        checkArgument( instr != null, "%s is not a valid logic operator!", op );
+        notNull( instr, "%s is not a valid logic operator!", op );
         
         return instr;
     }

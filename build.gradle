@@ -20,7 +20,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'license'
 
 ext {
-    mtsRevision = '3.0.5'
+    mtsRevision = '3.0.6'
     mtsStatus = 'beta'
     mtsVersion = mtsRevision + '-' + mtsStatus
 }

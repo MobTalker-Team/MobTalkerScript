@@ -5,8 +5,10 @@
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
-import static com.google.common.base.Preconditions.*;
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsJumpInstruction;
+
+import static org.apache.commons.lang3.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * Wrapper around a {@link MtsJumpInstruction} whose target instruction is not yet determined.
@@ -24,10 +26,9 @@ public class PendingJump
      */
     public PendingJump( MtsJumpInstruction instr, int sourceIndex )
     {
-        checkNotNull( instr );
-        checkArgument( sourceIndex >= 0 );
+        isTrue( sourceIndex >= 0 );
         
-        _instr = instr;
+        _instr = notNull( instr );
         _sourceIndex = sourceIndex;
     }
     

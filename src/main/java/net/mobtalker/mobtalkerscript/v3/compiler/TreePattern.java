@@ -6,22 +6,21 @@
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import com.google.common.collect.Lists;
-
 public class TreePattern implements ITreePattern
 {
-    private final ArrayList<Class<? extends ParserRuleContext>> _pattern;
+    private final List<Class<? extends ParserRuleContext>> _pattern;
     
     // ========================================
     
     @SafeVarargs
     public TreePattern( Class<? extends ParserRuleContext>... pattern )
     {
-        _pattern = Lists.newArrayList( pattern );
-        _pattern.trimToSize();
+        _pattern = Arrays.asList(pattern);
     }
     
     // ========================================

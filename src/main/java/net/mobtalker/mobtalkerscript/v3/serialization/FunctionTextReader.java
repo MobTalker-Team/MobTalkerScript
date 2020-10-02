@@ -20,9 +20,6 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
 
 import org.apache.commons.lang3.*;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.LineReader;
-
 /**
  * Deserializes a function prototype from a textual format.
  */
@@ -37,19 +34,19 @@ public class FunctionTextReader
         }
     }
     
-    public static MtsFunctionPrototype readChunk( Readable readable ) throws IOException
+    public static MtsFunctionPrototype readChunk( Reader in ) throws IOException
     {
-        return new FunctionTextReader().read( readable );
+        return new FunctionTextReader().read( in );
     }
     
     // ========================================
     
-    public MtsFunctionPrototype read( Readable readable ) throws IOException
+    public MtsFunctionPrototype read( Reader in ) throws IOException
     {
-        return read( new LineReader( readable ) );
+        return read( in instanceof BufferedReader ? (BufferedReader)in : new BufferedReader( in ) );
     }
     
-    public MtsFunctionPrototype read( LineReader reader ) throws IOException
+    public MtsFunctionPrototype read( BufferedReader reader ) throws IOException
     {
         String functionName;
         String source;
@@ -219,13 +216,13 @@ public class FunctionTextReader
         }
         
         MtsFunctionPrototype prototype = new MtsFunctionPrototype( functionName,
-                                                                   ImmutableList.copyOf( constants ),
-                                                                   ImmutableList.copyOf( locals ),
-                                                                   ImmutableList.copyOf( externals ),
+                                                                   Collections.unmodifiableList( constants ),
+                                                                   Collections.unmodifiableList( locals ),
+                                                                   Collections.unmodifiableList( externals ),
                                                                    nParams,
                                                                    hasVarargs,
                                                                    maxStackSize,
-                                                                   ImmutableList.copyOf( instructions ),
+                                                                   Collections.unmodifiableList( instructions ),
                                                                    sourcePositions,
                                                                    source,
                                                                    sourceLineStart,

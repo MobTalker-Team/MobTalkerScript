@@ -7,8 +7,7 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 import static net.mobtalker.mobtalkerscript.v3.value.MtsMetaMethods.*;
 import net.mobtalker.mobtalkerscript.v3.*;
-
-import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Base class for any value used by MobTalkerScript.
@@ -37,7 +36,7 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
     
     public void setMetaTable( MtsValue table )
     {
-        new MtsRuntimeException( "attempt to set metatable of a %s value", getType() );
+        throw new MtsRuntimeException( "attempt to set metatable of a %s value", getType() );
     }
     
     public final MtsValue getMetaTag( MtsString tag )
@@ -68,11 +67,11 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
      * <p>
      * Describes the indexing access operation <code>table[key]</code>.
      * <p>
-     * If no value for <code>key</code> can be found and <code>useMetaTag</code> is <code>true</code>, the {@value #__index}
+     * If no value for <code>key</code> can be found and <code>useMetaTag</code> is <code>true</code>, the {@link MtsMetaMethods#__index __index}
      * meta tag will be used to retrieve a value for <code>key</code>. If it is an
      *
      * @param key The key used to index this value.
-     * @param useMetaTag Specifies if the {@value #__index} meta tag should be used.
+     * @param useMetaTag Specifies if the {@link MtsMetaMethods#__index __index} meta tag should be used.
      * @return The result of the lookup for a value for <code>key</code>.
      * @throws MtsRuntimeException If this value cannot be indexed.
      */
@@ -146,13 +145,13 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
      * <p>
      * Describes the indexing assignment operation <code>table[key] = value</code>.
      * <p>
-     * If <code>key</code> does not exist already and <code>useMetaTag</code> is <code>true</code>, the {@value #__newindex}
+     * If <code>key</code> does not exist already and <code>useMetaTag</code> is <code>true</code>, the {@link MtsMetaMethods#__newindex __newindex}
      * meta tag is tried. If it is a {@link MtsFunction} invoke <code>call(this, key, value)</code> on it. Otherwise this
      * operation is repeated on it with the same arguments.
      *
      * @param key The key to set the value for.
      * @param value The value to set for key.
-     * @param useMetaTag Specifies if the {@value #__newindex} meta tag should be used.
+     * @param useMetaTag Specifies if the {@link MtsMetaMethods#__newindex __newindex} meta tag should be used.
      */
     public final void set( MtsValue key, MtsValue value, boolean useMetaTag )
     {
@@ -378,9 +377,9 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
     /**
      * Tests equality with the given value.
      * <p>
-     * First the {@link #equals(Object)} method is tried, if it returns true, return {@link #True}.<br>
-     * Otherwise, if both {@link #__eq} meta methods are equal, call it and return the result.<br>
-     * Otherwise, return {@link #False}.
+     * First the {@link #equals(Object)} method is tried, if it returns true, return {@link MtsBoolean#True}.<br>
+     * Otherwise, if both {@link MtsMetaMethods#__eq __eq} meta methods are equal, call it and return the result.<br>
+     * Otherwise, return {@link MtsBoolean#False}.
      */
     public final MtsBoolean isEqual( MtsValue b )
     {
@@ -451,7 +450,7 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
     }
     
     /**
-     * Checks if this value is a {@link MtsUserdata}.
+     * Checks if this value is a user data instance.
      */
     public boolean isUserdata()
     {
@@ -577,7 +576,7 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
     /**
      * Converts this value to an {@link MtsBoolean}.
      * <p>
-     * This should always return {@link #True} unless this object is {@link #Nil} or {@link #False} itself.
+     * This should always return {@link MtsBoolean#True} unless this object is {@link #Nil} or {@link MtsBoolean#False} itself.
      */
     public MtsBoolean toMtsBoolean()
     {
@@ -625,7 +624,7 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
     @Override
     public String toString()
     {
-        return getType().toString() + ':' + Strings.padStart( Integer.toHexString( hashCode() ), 8, '0' );
+        return getType().toString() + ':' + String.format( "%08x", hashCode() );
     }
     
     public String toString( boolean debug )

@@ -5,9 +5,10 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
-import static com.google.common.base.Preconditions.*;
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.SourcePosition;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 public final class MtsClosure extends MtsFunction
 {
@@ -23,11 +24,8 @@ public final class MtsClosure extends MtsFunction
     
     public MtsClosure( MtsFunctionPrototype prototype, FrameValue[] externals )
     {
-        checkNotNull( prototype );
-        checkNotNull( externals );
-        
-        _prototype = prototype;
-        _externals = externals;
+        _prototype = notNull( prototype );
+        _externals = notNull( externals );
     }
     
     // ========================================

@@ -5,11 +5,10 @@
  */
 package net.mobtalker.mobtalkerscript.v3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.mobtalker.mobtalkerscript.v3.compiler.SourcePosition;
-
-import com.google.common.collect.Lists;
 
 /**
  * Thrown when the execution of script code causes an exception.
@@ -21,7 +20,7 @@ public class MtsRuntimeException extends RuntimeException
     private final List<MtsStackTraceElement> _stackTrace;
     
     {
-        _stackTrace = Lists.newArrayList();
+        _stackTrace = new ArrayList<>();
     }
     
     // ========================================

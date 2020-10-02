@@ -5,11 +5,10 @@
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import com.google.common.collect.Lists;
 
 public class TreeMultiPattern implements ITreePattern
 {
@@ -19,7 +18,7 @@ public class TreeMultiPattern implements ITreePattern
     
     public TreeMultiPattern( ITreePattern... patterns )
     {
-        _patterns = Lists.newArrayList( patterns );
+        _patterns = Arrays.asList( patterns );
     }
     
     // ========================================

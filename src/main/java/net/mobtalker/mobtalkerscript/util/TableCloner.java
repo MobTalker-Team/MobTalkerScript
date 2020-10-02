@@ -5,11 +5,10 @@
  */
 package net.mobtalker.mobtalkerscript.util;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import net.mobtalker.mobtalkerscript.v3.value.*;
-
-import com.google.common.collect.Maps;
 
 public class TableCloner
 {
@@ -18,7 +17,7 @@ public class TableCloner
     // ========================================
     
     {
-        _cache = Maps.newIdentityHashMap();
+        _cache = new HashMap<>();
     }
     
     // ========================================

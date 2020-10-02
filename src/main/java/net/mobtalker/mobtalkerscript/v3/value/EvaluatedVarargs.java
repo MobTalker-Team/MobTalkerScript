@@ -7,8 +7,6 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 import java.util.*;
 
-import com.google.common.collect.Lists;
-
 /* package */class EvaluatedVarargs extends MtsVarargs
 {
     private final List<MtsValue> _values;
@@ -27,17 +25,16 @@ import com.google.common.collect.Lists;
     
     /* package */EvaluatedVarargs( MtsValue first, MtsVarargs rest )
     {
-        int count = rest.count() + 1;
-        ArrayList<MtsValue> values = Lists.newArrayListWithCapacity( count );
+        List<MtsValue> values = new ArrayList<>( rest.count() + 1 );
         values.add( first );
         
         if ( rest instanceof EvaluatedVarargs )
         {
             values.addAll( ( (EvaluatedVarargs) rest )._values );
         }
-        else if ( count > 1 )
+        else if ( rest.count() > 0 )
         {
-            for ( MtsValue value : values )
+            for ( MtsValue value : rest )
             {
                 values.add( value );
             }

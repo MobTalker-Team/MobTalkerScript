@@ -5,20 +5,19 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value.userdata;
 
-import static com.google.common.base.Preconditions.*;
 import static net.mobtalker.mobtalkerscript.v3.value.userdata.NativeHelpers.*;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.mobtalker.mobtalkerscript.v3.value.MtsType;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-
 /* package */class ClassAdapter
 {
-    private static final Map<Class<?>, ClassAdapter> _mappers = Maps.newHashMap();
+    private static final Map<Class<?>, ClassAdapter> _mappers = new HashMap<>();
     
     /**
      * Returns a mapper for the given class.
@@ -56,17 +55,14 @@ import com.google.common.collect.Maps;
     
     private ClassAdapter( Class<?> mappedClass, MtsType type )
     {
-        checkNotNull( mappedClass );
-        checkNotNull( type );
-        
-        _mappedClass = mappedClass;
-        _type = type;
+        _mappedClass = notNull( mappedClass );
+        _type = notNull( type );
         _methods = createMethodAdapters( mappedClass );
     }
     
     private Map<String, JavaMethodAdapter> createMethodAdapters( Class<?> c )
     {
-        Map<String, JavaMethodAdapter> methods = Maps.newHashMap();
+        Map<String, JavaMethodAdapter> methods = new HashMap<>();
         
         for ( AnnotatedMethod am : getAnnotatedMethods( c ) )
         {
@@ -112,6 +108,6 @@ import com.google.common.collect.Maps;
             return null;
         
         String name = a.value();
-        return Strings.isNullOrEmpty( name ) ? MtsType.USERDATA : MtsType.forName( name );
+        return isEmpty( name ) ? MtsType.USERDATA : MtsType.forName( name );
     }
 }

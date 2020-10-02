@@ -7,8 +7,6 @@ package net.mobtalker.mobtalkerscript.v3.compiler;
 
 import java.util.ArrayList;
 
-import com.google.common.collect.Lists;
-
 public class PendingJumpCollection
 {
     private final ArrayList<PendingJump> _jumps;
@@ -17,7 +15,7 @@ public class PendingJumpCollection
     
     public PendingJumpCollection()
     {
-        _jumps = Lists.newArrayListWithExpectedSize( 4 );
+        _jumps = new ArrayList<>( 4 );
     }
     
     // ========================================

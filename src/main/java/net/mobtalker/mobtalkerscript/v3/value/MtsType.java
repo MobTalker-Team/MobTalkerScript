@@ -7,11 +7,9 @@ package net.mobtalker.mobtalkerscript.v3.value;
 
 import java.util.HashMap;
 
-import com.google.common.collect.Maps;
-
 public final class MtsType
 {
-    private static final HashMap<String, MtsType> _types = Maps.newHashMap();
+    private static final HashMap<String, MtsType> _types = new HashMap<>();
     
     // ========================================
     

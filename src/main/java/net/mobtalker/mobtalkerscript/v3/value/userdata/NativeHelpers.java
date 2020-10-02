@@ -12,14 +12,13 @@ import net.mobtalker.mobtalkerscript.v3.value.*;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /* package */class NativeHelpers
 {
     public static List<AnnotatedMethod> getAnnotatedMethods( Class<?> c )
     {
-        List<AnnotatedMethod> results = Lists.newArrayList();
+        List<AnnotatedMethod> results = new ArrayList<>();
         for ( Method m : c.getMethods() )
         {
             AnnotatedMethod am = getAnnotatedMethod( m );
@@ -77,7 +76,7 @@ import com.google.common.collect.Lists;
     public static String getClassName( Class<?> c )
     {
         MtsNativeFunction a = ( (AnnotatedElement) c ).getAnnotation( MtsNativeFunction.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return c.getSimpleName().toLowerCase();
         
         return a.value();
@@ -85,7 +84,7 @@ import com.google.common.collect.Lists;
     
     public static String getMethodName( Method m, MtsNativeFunction a )
     {
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return StringUtils.capitalize( m.getName() );
         
         return a.value();
@@ -94,7 +93,7 @@ import com.google.common.collect.Lists;
     public static String getMethodName( Method m )
     {
         MtsNativeFunction a = m.getAnnotation( MtsNativeFunction.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return StringUtils.capitalize( m.getName() );
         
         return a.value();
@@ -103,7 +102,7 @@ import com.google.common.collect.Lists;
     public static String getFieldName( Field f )
     {
         MtsNativeField a = f.getAnnotation( MtsNativeField.class );
-        if ( ( a == null ) || Strings.isNullOrEmpty( a.value() ) )
+        if ( ( a == null ) || isEmpty( a.value() ) )
             return StringUtils.capitalize( f.getName() );
         
         return a.value();
@@ -128,4 +127,9 @@ import com.google.common.collect.Lists;
     {
         return MtsVarargs.class.isAssignableFrom( c );
     }
+    
+    // ========================================
+    
+    // private constructor to prevent instantiation
+    private NativeHelpers() {}
 }

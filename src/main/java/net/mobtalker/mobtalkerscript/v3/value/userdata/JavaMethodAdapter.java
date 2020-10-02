@@ -5,15 +5,15 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value.userdata;
 
-import static com.google.common.base.Preconditions.*;
+import static net.mobtalker.mobtalkerscript.util.ThrowableUtil.throwUnchecked;
 import static net.mobtalker.mobtalkerscript.v3.value.userdata.NativeHelpers.*;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.reflect.*;
 
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.value.*;
-
-import com.google.common.base.Throwables;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /* package */abstract class JavaMethodAdapter extends MtsFunction
 {
@@ -29,7 +29,7 @@ import com.google.common.base.Throwables;
     
     protected JavaMethodAdapter( Method method, String name )
     {
-        checkNotNull( method );
+        notNull( method );
         
         // Even if it is already, this turns off security checks.
         method.setAccessible( true );
@@ -65,14 +65,14 @@ import com.google.common.base.Throwables;
         }
         catch ( InvocationTargetException ex )
         {
-            Throwable cause = Throwables.getRootCause( ex );
+            Throwable cause = ExceptionUtils.getRootCause( ex );
             if ( cause instanceof MtsRuntimeException )
             {
                 MtsRuntimeException srex = (MtsRuntimeException) cause;
                 srex.addStackTraceElement( _name );
             }
             
-            throw Throwables.propagate( cause );
+            throw throwUnchecked( cause );
         }
         catch ( Exception ex )
         {

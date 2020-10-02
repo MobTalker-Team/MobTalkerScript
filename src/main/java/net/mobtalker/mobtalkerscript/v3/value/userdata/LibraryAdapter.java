@@ -5,8 +5,9 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value.userdata;
 
-import static com.google.common.base.Preconditions.*;
+import static net.mobtalker.mobtalkerscript.util.ThrowableUtil.throwUnchecked;
 import static net.mobtalker.mobtalkerscript.v3.value.userdata.NativeHelpers.*;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -14,16 +15,13 @@ import java.util.Map.Entry;
 
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
-
 /* package */class LibraryAdapter
 {
     private static final Map<Class<?>, LibraryAdapter> _mappers;
     
     static
     {
-        _mappers = Maps.newHashMap();
+        _mappers = new HashMap<>();
     }
     
     // ========================================
@@ -82,7 +80,7 @@ import com.google.common.collect.Maps;
     
     private LibraryAdapter( Class<?> mappedClass )
     {
-        checkNotNull( mappedClass );
+        notNull( mappedClass );
         
         _methods = getMethods( mappedClass );
         _fields = getFields( mappedClass );
@@ -135,7 +133,7 @@ import com.google.common.collect.Maps;
             }
             catch ( Exception ex )
             {
-                throw Throwables.propagate( ex );
+                throw throwUnchecked( ex );
             }
             
             t.set( name, value );
@@ -157,7 +155,7 @@ import com.google.common.collect.Maps;
     
     private static Map<String, Method> getMethods( Class<?> c )
     {
-        Map<String, Method> methods = Maps.newHashMap();
+        Map<String, Method> methods = new HashMap<>();
         
         for ( AnnotatedMethod am : getAnnotatedMethods( c ) )
         {
@@ -169,7 +167,7 @@ import com.google.common.collect.Maps;
     
     private static Map<String, Field> getFields( Class<?> c )
     {
-        Map<String, Field> fields = Maps.newHashMap();
+        Map<String, Field> fields = new HashMap<>();
         
         for ( Field f : getAnnotatedFields( c ) )
         {

@@ -8,14 +8,13 @@ package net.mobtalker.mobtalkerscript.v3.lib;
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
 
 import java.nio.file.*;
+import java.util.Arrays;
 import java.util.List;
 
 import net.mobtalker.mobtalkerscript.v3.*;
 import net.mobtalker.mobtalkerscript.v3.compiler.*;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 import net.mobtalker.mobtalkerscript.v3.value.userdata.MtsNativeFunction;
-
-import com.google.common.collect.Lists;
 
 public class MtsPackageLib
 {
@@ -36,7 +35,7 @@ public class MtsPackageLib
         _G = g;
         _loadedPackages = new MtsTable( 0, 1 );
         _basePath = basePath;
-        _searchPaths = Lists.newArrayList( "/?", "/lib/?" );
+        _searchPaths = Arrays.asList("/?", "/lib/?");
     }
     
     // ========================================

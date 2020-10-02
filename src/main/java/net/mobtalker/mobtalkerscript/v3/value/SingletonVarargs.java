@@ -5,9 +5,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
+import java.util.Collections;
 import java.util.Iterator;
-
-import com.google.common.collect.Iterators;
 
 /* package */class SingletonVarargs extends MtsVarargs
 {
@@ -72,7 +71,7 @@ import com.google.common.collect.Iterators;
     @Override
     public Iterator<MtsValue> iterator()
     {
-        return Iterators.singletonIterator( _value );
+        return Collections.singleton(_value).iterator();
     }
     
     // ========================================

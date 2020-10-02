@@ -5,13 +5,13 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
-import static com.google.common.base.Preconditions.*;
-
 import java.util.*;
 
 import net.mobtalker.mobtalkerscript.v3.MtsArithmeticException;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class MtsString extends MtsValue
 {
@@ -30,7 +30,7 @@ public class MtsString extends MtsValue
     
     public static MtsString of( String s )
     {
-        checkNotNull( s );
+        notNull( s );
         
         int length = s.length();
         if ( length == 0 )

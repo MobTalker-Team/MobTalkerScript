@@ -12,8 +12,6 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsTable.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Sets;
-
 public class PrettyPrinter
 {
     private final Set<MtsValue> _cache;
@@ -28,7 +26,7 @@ public class PrettyPrinter
     
     public PrettyPrinter( String indent )
     {
-        _cache = Sets.newHashSet();
+        _cache = new HashSet<>();
         _indent = indent;
     }
     

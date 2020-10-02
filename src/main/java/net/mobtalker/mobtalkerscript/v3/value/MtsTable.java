@@ -5,8 +5,8 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value;
 
-import static com.google.common.base.Preconditions.*;
 import static net.mobtalker.mobtalkerscript.v3.MtsCheck.*;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.*;
 
@@ -83,7 +83,7 @@ public class MtsTable extends MtsValueWithMetaTable implements Iterable<MtsTable
      */
     public MtsTable.Entry getNext( MtsValue key )
     {
-        checkNotNull( key );
+        notNull( key );
         
         if ( isEmpty() )
             return null;
@@ -103,7 +103,7 @@ public class MtsTable extends MtsValueWithMetaTable implements Iterable<MtsTable
     
     public MtsTable.Entry getINext( MtsNumber key )
     {
-        checkNotNull( key );
+        notNull( key );
         return getINext( key.toJavaInt() - 1 );
     }
     

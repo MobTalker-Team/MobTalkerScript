@@ -11,8 +11,6 @@ import java.util.*;
 import net.mobtalker.mobtalkerscript.v3.MtsFrame;
 import net.mobtalker.mobtalkerscript.v3.value.*;
 
-import com.google.common.collect.Lists;
-
 public class InstrNewTable extends MtsInstruction
 {
     private final int _nListElements;
@@ -36,26 +34,26 @@ public class InstrNewTable extends MtsInstruction
         // List elements
         if ( _nListElements > 0 )
         {
-            List<MtsValue> values = new ArrayList<>( _nListElements );
+            Deque<MtsValue> deque = new LinkedList<>();
             
             { // First value can be varargs
                 MtsValue value = frame.pop();
                 if ( value.isVarArgs() )
                 {
-                    unpackVarargs( value.asVarArgs(), values );
+                    unpackVarargs( value.asVarArgs(), deque );
                 }
                 else
                 {
-                    values.add( value );
+                    deque.addFirst( value );
                 }
             }
             
             for ( int i = 1; i < _nListElements; i++ )
             {
-                values.add( frame.pop() );
+                deque.addFirst( frame.pop() );
             }
             
-            t.list().addAll( Lists.reverse( values ) );
+            t.list().addAll( deque );
         }
         
         // Key-Value pairs
@@ -69,12 +67,12 @@ public class InstrNewTable extends MtsInstruction
         frame.push( t );
     }
     
-    private static void unpackVarargs( MtsVarargs varargs, List<MtsValue> list )
+    private static void unpackVarargs( MtsVarargs varargs, Deque<MtsValue> deque )
     {
         int count = varargs.count();
         for ( int i = count - 1; i >= 0; --i )
         {
-            list.add( varargs.get( i ) );
+            deque.addFirst( varargs.get( i ) );
         }
     }
     

@@ -5,15 +5,14 @@
  */
 package net.mobtalker.mobtalkerscript.v3;
 
-import static com.google.common.base.Preconditions.*;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import net.mobtalker.mobtalkerscript.v3.compiler.SourcePosition;
 import net.mobtalker.mobtalkerscript.v3.instruction.MtsInstruction;
 import net.mobtalker.mobtalkerscript.v3.value.MtsValue;
 
-import com.google.common.collect.Lists;
+import static org.apache.commons.lang3.Validate.*;
 
 public class MtsFunctionPrototype
 {
@@ -46,10 +45,10 @@ public class MtsFunctionPrototype
                                  List<SourcePosition> lineNumbers,
                                  String sourceName, int sourceStart, int sourceEnd )
     {
-        checkNotNull( instructions );
-        checkArgument( 0 <= maxStackSize, "Stack size cannot be negative: " + maxStackSize );
-        checkArgument( maxStackSize <= 0xFE, "Stack size exceeds maximum: " + maxStackSize );
-        checkArgument( 0 <= nParams, "Parameter count cannot be negative: " + nParams );
+        notNull( instructions );
+        isTrue( maxStackSize >= 0, "Stack size cannot be negative: %d", maxStackSize);
+        isTrue( maxStackSize < 0xFF, "Stack size exceeds maximum: %d", maxStackSize);
+        isTrue( 0 <= nParams, "Parameter count cannot be negative: " + nParams );
         
         _instructions = instructions.toArray( new MtsInstruction[instructions.size()] );
         _maxStackSize = maxStackSize;
@@ -60,7 +59,7 @@ public class MtsFunctionPrototype
         _locals = locals.toArray( new LocalDescription[locals.size()] );
         _externals = externals.toArray( new ExternalDescription[externals.size()] );
         
-        _nestedPrototypes = Lists.newArrayList();
+        _nestedPrototypes = new ArrayList<>();
         
         _name = name;
         _lineNumbers = lineNumbers;
@@ -168,7 +167,7 @@ public class MtsFunctionPrototype
     
     public SourcePosition getSourcePosition( int instruction )
     {
-        checkElementIndex( instruction, _lineNumbers.size() );
+        validIndex(_lineNumbers, instruction);
         
         return _lineNumbers.get( instruction );
     }

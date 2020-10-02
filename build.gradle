@@ -43,7 +43,6 @@ repositories {
 dependencies {
     compile 'com.tunnelvisionlabs:antlr4-runtime:4.4'
     compile 'org.apache.commons:commons-lang3:3.3.+'
-    compile 'com.google.guava:guava:23.+'
     compile 'net.sf.jopt-simple:jopt-simple:4.5'
     
     testCompile 'junit:junit:4.+'

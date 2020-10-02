@@ -5,11 +5,10 @@
  */
 package net.mobtalker.mobtalkerscript.v3.instruction;
 
-import static com.google.common.base.Preconditions.*;
-
+import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class Instructions
 {
@@ -183,12 +182,12 @@ public class Instructions
     
     static
     {
-        _unaryOps = Maps.newHashMapWithExpectedSize( 3 );
+        _unaryOps = new HashMap<>(3, 1);
         _unaryOps.put( "-", InstrNeg() );
         _unaryOps.put( "not", InstrNot() );
         _unaryOps.put( "#", InstrSize() );
         
-        _binaryOps = Maps.newHashMapWithExpectedSize( 6 );
+        _binaryOps = new HashMap<>(6, 1);
         _binaryOps.put( "+", InstrAdd() );
         _binaryOps.put( "-", InstrSub() );
         _binaryOps.put( "*", InstrMul() );
@@ -202,7 +201,7 @@ public class Instructions
         
         _binaryOps.put( "..", InstrConcat( 2 ) );
         
-        _logicalOps = Maps.newHashMapWithExpectedSize( 3 );
+        _logicalOps = new HashMap<>(3, 1);
         _logicalOps.put( "==", InstrEq() );
         _logicalOps.put( "<", InstrLessThen() );
         _logicalOps.put( "<=", InstrLessThenEqual() );
@@ -251,7 +250,7 @@ public class Instructions
     public static MtsInstruction InstrUnaryOp( String op )
     {
         MtsInstruction instr = _unaryOps.get( op );
-        checkArgument( instr != null, "%s is not a valid unary operator!" );
+        notNull(instr, "%s is not a valid unary operator!", op);
         
         return instr;
     }
@@ -259,7 +258,7 @@ public class Instructions
     public static MtsInstruction InstrBinaryOp( String op )
     {
         MtsInstruction instr = _binaryOps.get( op );
-        checkArgument( instr != null, "%s is not a valid binary operator!", op );
+        notNull( instr, "%s is not a valid binary operator!", op );
         
         return instr;
     }
@@ -267,7 +266,7 @@ public class Instructions
     public static MtsInstruction InstrLogicalOp( String op )
     {
         MtsInstruction instr = _logicalOps.get( op );
-        checkArgument( instr != null, "%s is not a valid logic operator!", op );
+        notNull( instr, "%s is not a valid logic operator!", op );
         
         return instr;
     }

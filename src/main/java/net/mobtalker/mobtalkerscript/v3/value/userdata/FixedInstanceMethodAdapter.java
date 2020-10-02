@@ -5,11 +5,11 @@
  */
 package net.mobtalker.mobtalkerscript.v3.value.userdata;
 
-import static com.google.common.base.Preconditions.*;
-
 import java.lang.reflect.Method;
 
 import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 /* package */class FixedInstanceMethodAdapter extends JavaMethodAdapter
 {
@@ -20,7 +20,7 @@ import net.mobtalker.mobtalkerscript.v3.value.MtsVarargs;
     public FixedInstanceMethodAdapter( Object instance, Method method, String name )
     {
         super( method, name );
-        checkNotNull( instance );
+        notNull( instance );
         
         if ( !method.getDeclaringClass().isAssignableFrom( instance.getClass() ) )
             throw new IllegalArgumentException( String.format( "instance is of type %s that is neither the same or a subclass of %s!",

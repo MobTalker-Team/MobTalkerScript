@@ -5,7 +5,7 @@
  */
 package net.mobtalker.mobtalkerscript.v3.compiler;
 
-import static com.google.common.base.Preconditions.*;
+import static org.apache.commons.lang3.Validate.validState;
 
 public class CompilerLabel
 {
@@ -29,7 +29,7 @@ public class CompilerLabel
     
     public void setTarget( int index )
     {
-        checkState( _target == -1, "Index already set" );
+        validState( _target == -1, "Index already set" );
         _target = index;
         _gotos.setTarget( index );
     }

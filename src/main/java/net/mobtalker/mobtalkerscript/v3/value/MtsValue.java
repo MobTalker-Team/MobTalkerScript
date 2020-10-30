@@ -387,7 +387,7 @@ public abstract class MtsValue implements IMtsCallable, Comparable<MtsValue>
             return MtsBoolean.True;
         
         MtsValue tagA = getMetaTag( __eq );
-        if ( tagA.isNil() || !tagA.equals( b.getMetaTag( __eq ) ) )
+        if ( tagA.isNil() )
             return MtsBoolean.False;
         
         return tagA.call( this, b ).get().toMtsBoolean();

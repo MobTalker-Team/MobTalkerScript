@@ -47,38 +47,39 @@ public class GrammarTestRig
         {
             throw new MtsSyntaxError( ex.getSourceName(), ex.getSourcePosition(), ex.getOriginalMessage() );
         }
-        
+
         MtsCompiler compiler = new MtsCompiler( path, 0, 0 );
         compiler.visit( chunk );
         prototype = compiler.compile();
-        
+
         FunctionTextWriter.writeChunk( prototype, Paths.get( "D:\\test_text" ), StandardCharsets.UTF_8,
                                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
-        
+
         FunctionBinaryWriter.writeChunk( prototype, Paths.get( "D:\\test_binary" ),
                                          StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
-        
+
         prototype = FunctionTextReader.readChunk( Paths.get( "D:\\test_text" ), StandardCharsets.UTF_8 );
-        
+
         prototype = FunctionBinaryReader.readChunk( Paths.get( "D:\\test_binary" ) );
-        
+
         new TreeCleaner().visit( chunk );
-        chunk.inspect( parser );
-        
+
+        System.out.println( chunk.toStringTree( parser ) );
+
 //                long elapsed = stopwatch.stop().elapsed( TimeUnit.MICROSECONDS );
 //                runtimes.add( elapsed );
 //                min = elapsed < min ? elapsed : min;
 //                max = elapsed > max ? elapsed : max;
 //                all += elapsed;
 //            }
-        
+
 //            System.out.printf( "Runs: %d, Min: %.2f, Max: %.2f, Avg: %.2f, Sum: %.2f\n",
 //                               runs, ( min / 1000.0 ), ( max / 1000.0 ), ( avg( runtimes ) / 1000.0 ), ( all / 1000.0 ) );
 //        }
-        
+
 //        new MtsClosure( prototype, new MtsGlobals() ).call();
     }
-    
+
     private static double avg( Collection<Long> c )
     {
         int sum = 0;
@@ -86,7 +87,7 @@ public class GrammarTestRig
             sum += i;
         return (double) sum / (double) c.size();
     }
-    
+
     /**
      * Removes some clutter from the tree for nicer display
      */

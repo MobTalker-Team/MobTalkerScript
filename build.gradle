@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.tunnelvisionlabs:antlr4:4.4'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.+'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.+'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
     }
 }
@@ -25,10 +25,6 @@ ext {
     mtsVersion = mtsRevision + '-' + mtsStatus
 }
 
-if ( file( 'deploy.gradle' ).exists() ) {
-    apply from: 'deploy.gradle'
-}
-
 group = "net.mobtalker"
 archivesBaseName = "MobTalkerScript"
 version = mtsVersion
@@ -41,7 +37,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.tunnelvisionlabs:antlr4-runtime:4.4'
+    annotationProcessor 'com.tunnelvisionlabs:antlr4-runtime:4.+'
+    compile 'com.tunnelvisionlabs:antlr4-runtime:4.+'
     compile 'org.apache.commons:commons-lang3:3.3.+'
     compile 'net.sf.jopt-simple:jopt-simple:4.5'
     
@@ -128,4 +125,8 @@ license {
     mapping {
         java = 'SLASHSTAR_STYLE'
     }
+}
+
+if ( file( 'deploy.gradle' ).exists() ) {
+    apply from: 'deploy.gradle'
 }

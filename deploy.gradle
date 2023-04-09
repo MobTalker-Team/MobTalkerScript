@@ -18,36 +18,35 @@ if ( file( propertiesFile ).exists() )
                 revision mtsVersion
                 status properties.getProperty('status', 'integration')
 
+                from components.java
+
                 configurations {
-                    runtime {extend 'compile'}
+                    runtime { extend 'compile' }
                     shadow {}
                 }
 
-                from components.java
                 artifacts = [
-                        artifact( jar ) {
-                            name archivesBaseName
-                            conf 'runtime'
-                        },
-                        artifact( shadowJar ) {
-                            name archivesBaseName
-                            conf 'shadow'
-                        },
-                        artifact( sourceJar ) {
-                            name archivesBaseName
-                        }
+                    artifact( jar ) {
+                        name archivesBaseName
+                        conf 'runtime'
+                    },
+                    artifact( shadowJar ) {
+                        name archivesBaseName
+                        conf 'shadow'
+                    },
+                    artifact( sourceJar ) {
+                        name archivesBaseName
+                    }
                 ]
             }
         }
 
         repositories {
-            /*
             // Repository which is located in /tmp/ivy-test
             ivy {
                 name 'local'
                 url uri( 'file:///tmp/ivy-test' )
             }
-             */
 
             // Productive repository at https://repo.mobtalker.net
             //

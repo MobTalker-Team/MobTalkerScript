@@ -25,9 +25,9 @@
 ## intellij
 /out
 /.idea
-/*.iml
-/*.ipr
-/*.iws
+*.iml
+*.ipr
+*.iws
 /atlassian-ide-plugin.xml
 
 ## custom

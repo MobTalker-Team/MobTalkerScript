@@ -3,13 +3,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 buildscript {
-    repositories { 
-        jcenter() 
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.tunnelvisionlabs:antlr4:4.4'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.+'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.+'
+        classpath 'com.github.johnrengelman:shadow:8.+'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.+'
     }
 }
 
@@ -38,11 +41,11 @@ repositories {
 
 dependencies {
     annotationProcessor 'com.tunnelvisionlabs:antlr4-runtime:4.+'
-    compile 'com.tunnelvisionlabs:antlr4-runtime:4.+'
-    compile 'org.apache.commons:commons-lang3:3.3.+'
-    compile 'net.sf.jopt-simple:jopt-simple:4.5'
+    implementation 'com.tunnelvisionlabs:antlr4-runtime:4.+'
+    implementation 'org.apache.commons:commons-lang3:3.3.+'
+    implementation 'net.sf.jopt-simple:jopt-simple:4.5'
     
-    testCompile 'junit:junit:4.+'
+    testImplementation 'junit:junit:4.+'
 }
 
 jar {
@@ -57,10 +60,10 @@ shadowJar {
         attributes 'Main-Class': 'net.mobtalker.mobtalkerscript.standalone.MobTalkerScript'
     }
     
-    classifier = 'standalone'
+    archiveClassifier.set('standalone')
 }
 
-task sourceJar( type: Jar ) {
+tasks.register('sourceJar', Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
 }
@@ -70,34 +73,34 @@ artifacts {
     archives sourceJar
 }
 
-task generateAntlr( type: JavaExec ) {
+tasks.register('generateAntlr', JavaExec) {
     def grammarFile = 'src/main/antlr/Mts3.g4'
     def outputDir = 'src/main/java/net/mobtalker/mobtalkerscript/v3/compiler/antlr/generated'
 
-    main 'org.antlr.v4.Tool'
-    classpath 'src/main/antlr/templates'
-    classpath buildscript.configurations.classpath
-    
-    inputs.file grammarFile
-    inputs.file 'src/main/antlr/templates/org/antlr/v4/tool/templates/codegen/Java/Java.stg'
-    //outputs.dir( "${outputDir}" )
-    
-    args = [ 
-        grammarFile,
-        '-o', outputDir,
-        '-package', 'net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated',
-        '-no-visitor',
-        '-listener',
-        //'-no-listener',
-        '-encoding', 'UTF-8',
-        //'-Xlog',
-        //'-XdbgST'
+    it.main 'org.antlr.v4.Tool'
+    it.classpath 'src/main/antlr/templates'
+    it.classpath buildscript.configurations.classpath
+
+    it.inputs.file grammarFile
+    it.inputs.file 'src/main/antlr/templates/org/antlr/v4/tool/templates/codegen/Java/Java.stg'
+    //it.outputs.dir( "${outputDir}" )
+
+    it.args = [
+            grammarFile,
+            '-o', outputDir,
+            '-package', 'net.mobtalker.mobtalkerscript.v3.compiler.antlr.generated',
+            '-no-visitor',
+            '-listener',
+            //'-no-listener',
+            '-encoding', 'UTF-8',
+            //'-Xlog',
+            //'-XdbgST'
     ]
 
     // Dirty fix for antlr/antlr4#753 in Antlr 4.4
     // Taken and adapted from here:
     // https://github.com/apache/groovy/blob/master/subprojects/parser-antlr4/build.gradle#L34
-    doLast {
+    it.doLast {
         def parserFilePattern = 'Mts3*'
         copy {
             from "$outputDir/src/main/antlr"
@@ -109,26 +112,22 @@ task generateAntlr( type: JavaExec ) {
 }
 tasks.compileJava.dependsOn generateAntlr
 
-task cleanAntlr( type: Delete ) {
-    delete generateAntlr.outputs.getFiles()
+tasks.register('cleanAntlr', Delete) {
+    it.delete generateAntlr.outputs.getFiles()
 }
 
 license {    
     include "**/*.java"
     exclude "**/generated/**"
     
-    header project.file( 'HEADER' )    
+    header project.file( 'HEADER' )
     
     ignoreFailures false
     strictCheck false
- 
-    mapping {
-        java = 'SLASHSTAR_STYLE'
-    }
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs <<'-Xlint:deprecation'
+tasks.withType(JavaCompile).configureEach {
+    it.options.compilerArgs << '-Xlint:deprecation'
 }
 
 if ( file( 'deploy.gradle' ).exists() ) {

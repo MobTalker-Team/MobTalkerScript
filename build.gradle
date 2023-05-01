@@ -127,6 +127,10 @@ license {
     }
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs <<'-Xlint:deprecation'
+}
+
 if ( file( 'deploy.gradle' ).exists() ) {
     apply from: 'deploy.gradle'
 }

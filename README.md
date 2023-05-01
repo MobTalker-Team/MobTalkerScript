@@ -1,61 +1,121 @@
 # MobTalkerScript
-[![REUSE badge](https://api.reuse.software/badge/bitbucket.org/MobTalker2/mobtalkerscript)](https://api.reuse.software/info/bitbucket.org/MobTalker2/mobtalkerscript)
+[![REUSE badge][reuse-compliance-badge]][reuse-compliance]
 
 MobTalkerScript is a scripting language specifically designed for the Minecraft Modification MobTalker2.
 
-For more information about MobTalkerScript, visit the [MobTalker2 Wiki](http://www.mobtalker.net/wiki/MobTalkerScript2).
+For more information about MobTalkerScript, visit the [MobTalker2 Wiki][wiki].
 
 
 ## Compiling
 1. Install Git and Gradle
 2. Clone the repository
-3. Run 'gradle build' to build the project
+3. Run `gradle build` to build the project
 
 
 ## Contributing
 ### Creating an issue
-If you're not a programmer or aren't comfortable with submitting a Pull Request,
+If you're not a programmer or aren't comfortable submitting a Pull Request,
 you can submit an issue report to the tracker. That way other contributors can start working on fixing it.
 
 ### Submitting a Pull Request
 If you want to help the project by fixing bugs or implementing new features, 
 you can fork the repository and submit a Pull Request.
 
-1. Fork the repository (develop or master, depending of the nature of the PR)
-2. Run 'gradle generateAntlr'
-3. Setup your workspace
-    - For Eclipse, run 'gradle eclipse'
-    - For IntelliJ, run 'gradle idea'
+1. Fork the repository (develop or master, depending on the nature of the PR)
+2. Run `gradle generateAntlr`
+3. Set up your workspace
+    - For Eclipse, run `gradle eclipse`
+    - For IntelliJ, run `gradle idea`
 4. Make your changes
 5. Submit your PR
 
-MobTalkerScript uses [git-flow](https://www.atlassian.com/git/workflows#!workflow-gitflow) as its workflow. PRs that do not follow this workflow are rejected immediately.
+To increase the chances that your PR gets accepted, follow these basic rules:
+
+- Follow the git-flow rules (see below).
+    - **Never** commit to `master`. Only project members are allowed to make releases.
+- Make sure your files are REUSE compliant by including the license header (see below).
+- Follow the general coding style of the rest of the project (e.g. spaces instead of tabs).
+
+#### git-flow
+
+MobTalkerScript uses [git-flow] as its workflow. PRs that do not follow this workflow are rejected immediately.
 
 - Features must branched from `develop` and be prefixed with `feature/`.
 - Bugfixes are made directly on `develop`.
 - If you're submitting a critical bugfix, branch from `master` and prefix the branch with `hotfix/`.
 
-To increase the chances that your PR gets accepted, follow these basic rules
+#### REUSE
 
-- Follow the git-flow rules.
-    - **Never** commit to `master`. Only project members are allowed to make releases.
-- Include the license header on top of your files.
-- Follow the general coding style of the rest of the project (e.g. spaces instead of tabs).
+Additionally, MobTalkerScript aims to be compliant with the [REUSE specification][reuse].
+In order to achieve this, it's recommended to install the Python utilities
+[`pre-commit`][pre-commit] and [`reuse`][reuse-tool]. The former is a multi-language
+package manager for pre-commit hooks, whereas the latter is a command-line tool
+which can be used to lint the repository to ensure its REUSE compliance. You
+can follow these steps to set both up:
+
+1. [Install `reuse`][reuse-tool-install]
+2. [Install `pre-commit`][pre-commit-install]
+3. Install the git pre-commit hook scripts:
+   ```shell
+   $ pre-commit install
+   ```
+4. (optional) Run against all modified files to ensure they are compliant:
+   ```shell
+   $ pre-commit run
+   ```
+5. A pre-commit hook will now prevent committing files that are in violation of
+   the REUSE specification.
+
+It's not strictly necessary to use the above-mentioned tools to ensure your
+files are compiant, naturally. As long as you make sure the license headers are
+present and correct, everything is fine. If you prefer doing this by hand,
+please ensure that any file you commit meets either of the following conditions:
+
+- **The file has a [valid license header][reuse-add-info].** This way of
+  specifying licenses is preferred. Use the other options only when adding a
+  license header is impractical, might cause issues or is impossible altogether.
+- **The file has an accompanying file named `<filename>.license` in the same
+  directory which contains a valid license header.** Use this if you need to
+  specify a license for binary files (e.g., images, audio files).
+- **The file has a valid entry in [`.reuse/dep5`][dep5].** Avoid using this
+  option whenever possible.
 
 ## Maintainers
-* mezzodrinker <contact@mobtalker.net>
+- mezzodrinker <contact@mobtalker.net>
 
 ## License
 This work is licensed under multiple licenses. In general, the following schema applies:
-* **Code:** GNU Lesser General Public License v3.0 or later
-* **Trivial files/configurations:** Creative Commons Zero v1.0 Universal
 
-Please note that each file has a license header (or file called `<filename>.license`) which contains SPDX identifiers for the licenses used in the file.
+- **Code:** GNU Lesser General Public License v3.0 or later
+- **Trivial files/configurations:** Creative Commons Zero v1.0 Universal
+
+As this repository follows the REUSE specification, each file has a license
+header, accompanying file called `<filename>.license`, or a matching entry in
+`.reuse/dep5` which contains the SPDX identifier of the licenses used in the file.
 
 This software includes files generated by the ANTLR software at http://www.antlr.org/.
 
 This software may contain unmodified, (partially) repackaged versions of the following libraries:
-* [ANTLR](http://www.antlr.org/)
-* [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/)
-* [Guava](https://code.google.com/p/guava-libraries/)
-* [JOpt Simple](https://pholser.github.io/jopt-simple/)
+
+- [ANTLR][antlr]
+- [Apache Commons Lang][commons-lang]
+- [Guava][guava]
+- [JOpt Simple][jopt-simple]
+
+[antlr]: http://www.antlr.org/
+[commons-lang]: https://commons.apache.org/proper/commons-lang/
+[dep5]: .reuse/dep5
+[git-flow]: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
+[guava]: https://github.com/google/guava
+[jopt-simple]: https://jopt-simple.github.io/jopt-simple/
+[pre-commit]: https://pre-commit.com/
+[pre-commit-install]: https://pre-commit.com/#install
+[reuse]: https://reuse.software/spec/
+[reuse-compliance]: https://api.reuse.software/info/bitbucket.org/MobTalker2/mobtalkerscript 
+[reuse-compliance-badge]: https://api.reuse.software/badge/bitbucket.org/MobTalker2/mobtalkerscript
+[reuse-add-info]: https://reuse.software/faq/#step-2
+[reuse-copy-work]: https://reuse.software/faq/#copy-work
+[reuse-tool]: https://git.fsfe.org/reuse/tool
+[reuse-tool-add-header]: https://reuse.readthedocs.io/en/stable/usage.html#addheader
+[reuse-tool-install]: https://git.fsfe.org/reuse/tool#install
+[wiki]: https://www.mobtalker.net/wiki/MobTalkerScript
